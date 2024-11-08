@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Mopups:PopupPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:Mopups="clr-namespace:Mopups.Pages;assembly=Mopups"
+             xmlns:Animations="clr-namespace:Mopups.Animations;assembly=Mopups"
+             xmlns:uranium="http://schemas.enisn-projects.io/dotnet/maui/uraniumui"
+             xmlns:material="http://schemas.enisn-projects.io/dotnet/maui/uraniumui/material"
+             xmlns:m="clr-namespace:UraniumUI.Icons.MaterialIcons;assembly=UraniumUI.Icons.MaterialIcons"
+             xmlns:models="clr-namespace:bsm24.Models"
+             xmlns:services="clr-namespace:bsm24.Services"
+             x:Class="bsm24.Views.PopupSettings"
+             BackgroundClicked="PopupPage_BackgroundClicked"
+             BackgroundInputTransparent="False"
+             CloseWhenBackgroundIsClicked="True"
+             HasSystemPadding="False"
+             BackgroundColor="#60000000"
+             Title="Settings">
+
+    <Frame CornerRadius="20"
+           BackgroundColor="White"
+           WidthRequest="300"
+           HorizontalOptions="Center"
+           VerticalOptions="Center">
+
+        <VerticalStackLayout Spacing="16">
+            <Label Text="{Binding PinSize, StringFormat='Pin Size: {0:0.##}'}" />
+            <Slider Maximum="128"
+                    Minimum="1"   
+                    Value="{Binding PinSize}"/>
+
+            <Label Text="{Binding PinScaleLimit, StringFormat='Max Pin Scale Limit: {0:0.##}'}" />
+            <Slider Maximum="2"
+                    Minimum="0.01"
+                    Value="{Binding PinScaleLimit}"/>
+
+            <Label Text="{Binding PdfQuality, StringFormat='PDF-Quality: {0:0.##}'}" />
+            <Slider Maximum="800"
+                    Minimum="100"
+                    Value="{Binding PdfQuality}"/>
+
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="2*" />
+                    <ColumnDefinition Width="1*" />
+                </Grid.ColumnDefinitions>
+                <Label Text="Lock Plan Rotate" Grid.Column="0" Grid.Row="0"/>
+                <Switch x:Name="isPlanRotateLocked" IsToggled="{Binding IsPlanRotateLocked}" HorizontalOptions="Start" Grid.Column="1" Grid.Row="0"/>
+            </Grid>
+            
+            <Picker
+                  VerticalOptions="Center"
+                  Title="Theme:"
+                  ItemsSource="{Binding Source={x:Static models:Theme.AvailableThemes}}"
+                  ItemDisplayBinding="{Binding DisplayName}"
+                  SelectedItem="{Binding Path=Theme, Source={x:Static services:SettingsService.Instance}}"/>
+
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <Button Grid.Column="0"
+                    Text="OK"
+                    Clicked="OnOkClicked" />
+                <Button Grid.Column="1"
+                    Text="Export Settings"
+                    Clicked="OnExportSettingsClicked" />                
+            </Grid>
+        </VerticalStackLayout>
+    </Frame>
+
+</Mopups:PopupPage>

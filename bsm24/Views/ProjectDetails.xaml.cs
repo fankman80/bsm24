@@ -1,0 +1,164 @@
+﻿#nullable disable
+
+using PDFtoImage;
+using SkiaSharp;
+using System.Globalization;
+using UraniumUI.Pages;
+
+namespace bsm24.Views;
+
+public partial class ProjectDetails : UraniumContentPage
+{
+    private Boolean isPdfExist = true;
+
+    public ProjectDetails()
+    {
+        InitializeComponent();
+    }
+
+    protected override void OnAppearing()
+    {
+        base.OnAppearing();
+
+        if (GlobalJson.Data.pdf == null)
+        {
+            isPdfExist = false;
+        }
+
+
+        client_name.Text = GlobalJson.Data.client_name;
+        object_address.Text = GlobalJson.Data.object_address;
+        working_title.Text = GlobalJson.Data.working_title;
+        object_name.Text = GlobalJson.Data.object_name;
+        project_manager.Text = GlobalJson.Data.project_manager;
+
+        if (GlobalJson.Data.creation_date == null)
+        {
+            creation_date.Date = DateTime.Parse(DateTime.Now.Date.ToString("d", new CultureInfo("de-DE")));
+        }
+        else
+        {
+            creation_date.Date = DateTime.Parse(GlobalJson.Data.creation_date);
+        }
+
+        HeaderUpdate();
+    }
+
+    private async void OnOkayClicked(object sender, EventArgs e)
+    {
+        GlobalJson.Data.client_name = client_name.Text;
+        GlobalJson.Data.object_address = object_address.Text;
+        GlobalJson.Data.working_title = working_title.Text;
+        GlobalJson.Data.object_name = object_name.Text;
+        GlobalJson.Data.project_manager = project_manager.Text;
+        GlobalJson.Data.creation_date = creation_date.Date.Value.ToString("d");
+
+        // save data to file
+        GlobalJson.SaveToFile();
+
+        if (!isPdfExist)
+        {
+            await new LoadDataToView().LoadData(new FileResult(Path.Combine(FileSystem.AppDataDirectory, GlobalJson.Data.jsonFile)));
+            isPdfExist = true;
+        }
+
+        await Shell.Current.GoToAsync("//homescreen");
+    }
+
+    public static async Task<FileResult> PickPdfFileAsync()
+    {
+        try
+        {
+            // Öffne den FilePicker nur für PDF-Dateien
+            var fileResult = await FilePicker.Default.PickAsync(new PickOptions
+            {
+                PickerTitle = "Bitte wähle eine PDF-Datei aus",
+                FileTypes = FilePickerFileType.Pdf // Nur PDF-Dateien anzeigen
+            });
+
+            if (fileResult != null)
+                return fileResult;
+        }
+        catch (Exception ex)
+        {
+            // Fehlerbehandlung (z.B. wenn der Benutzer den Picker abbricht)
+            Console.WriteLine($"Fehler beim Auswählen der Datei: {ex.Message}");
+        }
+        return null; // Kein PDF ausgewählt
+    }
+
+    private async void OnCancelClicked(object sender, EventArgs e)
+    {
+        await Shell.Current.GoToAsync("//homescreen");
+    }
+
+    private async void OnThumbCaptureClicked(object sender, EventArgs e)
+    {
+        _ = await CapturePicture.Capture(null, GlobalJson.Data.projectPath, "title_thumbnail.jpg");
+
+        HeaderUpdate();
+    }
+
+    private async void OnAddPdfClicked(object sender, EventArgs e)
+    {
+        busyOverlay.IsVisible = true;
+        activityIndicator.IsRunning = true;
+
+        await Task.Run(async () =>
+        {
+            var result = await PickPdfFileAsync();
+            var root = GlobalJson.Data;
+            byte[] bytearray = File.ReadAllBytes(result.FullPath);
+            int pagecount = Conversion.GetPageCount(bytearray);
+
+            for (int i = 0; i < pagecount; i++)
+            {
+                string imgPath = Path.Combine(FileSystem.AppDataDirectory, GlobalJson.Data.planPath, "plan_" + i + ".jpg");
+                Conversion.SaveJpeg(imgPath, bytearray, i, options: new RenderOptions(Dpi: 300));
+
+                // Bildgrösse auslesen
+                var stream = File.OpenRead(imgPath);
+                var skBitmap = SKBitmap.Decode(stream);
+                Size _imgSize = new(skBitmap.Width, skBitmap.Height);
+
+                Plan plan = new()
+                {
+                    name = "Plan " + i,
+                    file = "plan_" + i + ".jpg",
+                    imageSize = _imgSize
+                };
+
+                // Überprüfen, ob die Plans-Struktur initialisiert ist
+                root.plans ??= [];
+                root.plans["plan_" + i] = plan;
+                GlobalJson.SaveToFile();
+            }
+
+            GlobalJson.Data.pdf = new Pdf
+            {
+                file = result.FileName,
+                pos = new Point(0, 0)
+            };
+        });
+
+        activityIndicator.IsRunning = false;
+        busyOverlay.IsVisible = false;
+    }
+
+    private static void HeaderUpdate()
+    {
+        // aktualisiere den Header Text
+        Services.SettingsService.Instance.FlyoutHeaderTitle = GlobalJson.Data.object_name;
+        Services.SettingsService.Instance.FlyoutHeaderDesc = GlobalJson.Data.client_name;
+
+        // aktualisiere das Thumbnail Bild
+        if (File.Exists(Path.Combine(FileSystem.AppDataDirectory, GlobalJson.Data.projectPath, "title_thumbnail.jpg")))
+        {
+            Services.SettingsService.Instance.FlyoutHeaderImage = Path.Combine(FileSystem.AppDataDirectory, GlobalJson.Data.projectPath, "title_thumbnail.jpg");
+        }
+        else
+        {
+            Services.SettingsService.Instance.FlyoutHeaderImage = "banner_thumbnail.png";
+        }
+    }
+}

@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<uranium:UraniumContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:views="clr-namespace:bsm24.Views"
+             xmlns:uranium="http://schemas.enisn-projects.io/dotnet/maui/uraniumui"
+             xmlns:material="http://schemas.enisn-projects.io/dotnet/maui/uraniumui/material"
+             xmlns:m="clr-namespace:UraniumUI.Icons.MaterialIcons;assembly=UraniumUI.Icons.MaterialIcons"
+             xmlns:ffimageloading="clr-namespace:FFImageLoading.Maui;assembly=FFImageLoading.Maui"
+             x:Class="bsm24.Views.SetPin"
+             Title="Set Pin">
+
+    <Grid Margin="16">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <StackLayout Grid.Row="0" Margin="-5,-5,-5,10">
+            <CollectionView x:Name="ImageGallery"
+                            ItemsSource="{Binding Images}"
+                            VerticalOptions="FillAndExpand">
+                <CollectionView.ItemsLayout>
+                    <GridItemsLayout Orientation="Vertical" Span="{Binding DynamicSpan}" />
+                </CollectionView.ItemsLayout>
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <StackLayout>
+                            <views:SquareView>
+                                <ffimageloading:CachedImage Source="{Binding .}"
+                                                            CacheType="Memory"
+                                                            Aspect="AspectFill"
+                                                            Margin="0,0,10,10">
+                                    <ffimageloading:CachedImage.GestureRecognizers>
+                                        <TapGestureRecognizer Tapped="OnImageTapped" />
+                                    </ffimageloading:CachedImage.GestureRecognizers>
+                                </ffimageloading:CachedImage>
+                            </views:SquareView>
+                        </StackLayout>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+        </StackLayout>
+
+        <StackLayout Grid.Row="1" Spacing="16">
+            <material:TextField
+                x:Name="PinTxt"
+                MaxLength="50"
+                Title="Bezeichnung"
+                Icon="{FontImageSource FontFamily=MaterialOutlined, Glyph={x:Static m:MaterialRegular.Push_pin}}"/>
+
+            <material:EditorField
+                x:Name="PinInfo"
+                Title="Beschreibung"
+                Icon="{FontImageSource FontFamily=MaterialOutlined, Glyph={x:Static m:MaterialRegular.Info}}" />
+
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <VerticalStackLayout Grid.Column="0">
+                    <Label Text="Lock Moving:" VerticalTextAlignment="Start" />
+                    <Switch x:Name="LockSwitch" HorizontalOptions="Start" />
+                </VerticalStackLayout>
+
+                <VerticalStackLayout Grid.Column="1">
+                    <Label Text="Lock Rotate:" VerticalTextAlignment="Start" />
+                    <Switch x:Name="LockRotate" HorizontalOptions="Start" />
+                </VerticalStackLayout>
+                
+                <ImageButton Grid.Column="2"
+                             x:Name="PinImage"
+                             Source="{Binding}"                               
+                             Aspect="AspectFit"
+                             HorizontalOptions="End"
+                             WidthRequest="80"
+                             HeightRequest="80"
+                             CornerRadius="10"
+                             Padding="10"
+                             BorderWidth="1"
+                             BorderColor="LightGrey"
+                             Clicked="OnPinSelectClick">
+                </ImageButton>
+            </Grid>
+        
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <Button Grid.Column="0"
+                        ImageSource="{FontImageSource FontFamily=MaterialOutlined, Glyph={x:Static m:MaterialRegular.Check}}"
+                        Clicked="OnOkayClick"/>
+                <Button Grid.Column="1"
+                        ImageSource="{FontImageSource FontFamily=MaterialOutlined, Glyph={x:Static m:MaterialRegular.Camera_alt}}"
+                        Clicked="TakePhoto"/>
+                <Button Grid.Column="2"
+                        ImageSource="{FontImageSource FontFamily=MaterialOutlined, Glyph={x:Static m:MaterialRegular.Delete_outline}}"
+                        Clicked="OnDeleteClick"/>
+            </Grid>
+        </StackLayout>
+    </Grid>
+
+</uranium:UraniumContentPage>

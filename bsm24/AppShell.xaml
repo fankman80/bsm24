@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Shell xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+       xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+       xmlns:sys="clr-namespace:System;assembly=netstandard"
+       xmlns:views="clr-namespace:bsm24.Views"
+       xmlns:uranium="http://schemas.enisn-projects.io/dotnet/maui/uraniumui"
+       xmlns:material="http://schemas.enisn-projects.io/dotnet/maui/uraniumui/material"
+       xmlns:m="clr-namespace:UraniumUI.Icons.MaterialIcons;assembly=UraniumUI.Icons.MaterialIcons" 
+       x:Class="bsm24.AppShell"
+       x:Name="shell"
+       FlyoutBackgroundImageAspect="AspectFill"
+       FlyoutHeaderBehavior="CollapseOnScroll">
+
+    <Shell.FlyoutHeaderTemplate>
+        <DataTemplate>
+            <Grid BackgroundColor="Gray">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="100" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="70" />
+                    <RowDefinition Height="30" />
+                </Grid.RowDefinitions>
+                <Image Grid.Column="0"
+                       Grid.RowSpan="2"
+                       Aspect="AspectFill"
+                       Source="{Binding FlyoutHeaderImage}"/>
+                <Label Grid.Column="1"
+                       Grid.Row="0"
+                       Text="{Binding FlyoutHeaderDesc}"
+                       LineBreakMode="WordWrap"
+                       Padding="6"
+                       FontSize="18"
+                       TextColor="White" 
+                       HorizontalTextAlignment="Start"/>
+                <Label Grid.Column="1"
+                       Grid.Row="1"
+                       Text="{Binding FlyoutHeaderTitle}"
+                       LineBreakMode="WordWrap"
+                       Padding="6"
+                       FontSize="14"
+                       TextColor="White" 
+                       FontAttributes="Bold" 
+                       HorizontalTextAlignment="Start"/>
+            </Grid>
+        </DataTemplate>
+    </Shell.FlyoutHeaderTemplate>
+
+    <Shell.FlyoutFooterTemplate>
+        <DataTemplate>
+            <StackLayout>
+                <Label Text="" 
+                       FontSize="8"/>
+                <Label Text="BSM24 Beta"
+                       TextColor="DarkRed"
+                       FontAttributes="Bold"
+                       FontSize="12"
+                       HorizontalOptions="Center" />
+                <Label Text="{Binding Source={x:Static sys:DateTime.Now}, StringFormat='{0: dd. MMMM yyyy}'}"
+                       TextColor="DarkGrey"
+                       FontSize="12"
+                       HorizontalOptions="Center" />
+                <Label Text="" 
+                       FontSize="8"/>
+            </StackLayout>
+        </DataTemplate>
+    </Shell.FlyoutFooterTemplate>
+
+    <ShellContent Route="homescreen"
+                    ContentTemplate="{DataTemplate views:HomeScreen}"
+                    FlyoutItemIsVisible="False" />
+
+    <MenuItem Text="New Project"
+              Clicked="OnNewClicked"
+              IconImageSource="{FontImageSource FontFamily=MaterialOutlined, Color=Black, Glyph={x:Static m:MaterialRegular.Add_box}}"/>
+
+    <ShellContent Route="open_project"
+                  Title="Open Project"
+                  Icon="{FontImageSource FontFamily=MaterialOutlined, Color=Black, Glyph={x:Static m:MaterialRegular.Open_in_new}}"
+                  ContentTemplate="{DataTemplate views:OpenProject}" />
+
+    <ShellContent Route="project_details"
+                  Title="Project Details"
+                  Icon="{FontImageSource FontFamily=MaterialOutlined, Color=Black, Glyph={x:Static m:MaterialRegular.Home_work}}"
+                  ContentTemplate="{DataTemplate views:ProjectDetails}" />
+
+    <MenuItem Text="Settings"
+              Clicked="OnSettingsClicked"
+              IconImageSource="{FontImageSource FontFamily=MaterialOutlined, Color=Black, Glyph={x:Static m:MaterialRegular.Settings}}"/>
+
+    <MenuItem Text="Export Report"
+              Clicked="OnExportClicked"
+              IconImageSource="{FontImageSource FontFamily=MaterialOutlined, Color=Black, Glyph={x:Static m:MaterialRegular.File_download}}"/>
+
+    <MenuItem Text="Share Report"
+              Clicked="OnShareClicked"
+              IconImageSource="{FontImageSource FontFamily=MaterialOutlined, Color=Black, Glyph={x:Static m:MaterialRegular.Share}}"/>
+
+    <MenuItem>
+        <Shell.MenuItemTemplate>
+            <DataTemplate>
+                <Label HeightRequest="1.4" Margin="16,0,16,0" BackgroundColor="DarkRed"></Label>
+            </DataTemplate>
+        </Shell.MenuItemTemplate>
+    </MenuItem>
+</Shell>

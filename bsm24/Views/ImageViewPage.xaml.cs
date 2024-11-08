@@ -1,0 +1,259 @@
+﻿#nullable disable
+
+using MetadataExtractor;
+using MetadataExtractor.Formats.Exif;
+using System.Globalization;
+using bsm24.ViewModels;
+using MR.Gestures;
+using Mopups.Services;
+using CommunityToolkit.Maui.Views;
+using CommunityToolkit.Maui.Core.Views;
+using System.IO;
+using SkiaSharp;
+
+namespace bsm24.Views;
+
+[QueryProperty(nameof(PlanId), "planId")]
+[QueryProperty(nameof(PinId), "pinId")]
+[QueryProperty(nameof(PinIcon), "pinIcon")]
+[QueryProperty(nameof(ImgSource), "imgSource")]
+
+public partial class ImageViewPage : IQueryAttributable
+{
+    public string PlanId { get; set; }
+    public string PinId { get; set; }
+    public string PinIcon { get; set; }
+    public string ImgSource { get; set; }
+
+    private bool isCleared = false;
+
+    public ImageViewPage()
+    {
+        InitializeComponent();
+        BindingContext = new TransformViewModel();
+    }
+
+    public void ApplyQueryAttributes(IDictionary<string, object> query)
+    {
+        if (query.TryGetValue("planId", out object value1))
+            PlanId = value1 as string;
+
+        if (query.TryGetValue("pinId", out object value2))
+            PinId = value2 as string;
+
+        if (query.TryGetValue("pinIcon", out object value3))
+            PinIcon = value3 as string;
+
+        if (query.TryGetValue("imgSource", out object value4))
+        {
+            ImgSource = value4 as string;
+
+            var overlayPath = Path.ChangeExtension(Path.Combine(FileSystem.AppDataDirectory, GlobalJson.Data.imageOverlayPath, ImgSource), ".png");
+            if (File.Exists(overlayPath))
+                OverlayView.Source = overlayPath;
+
+            var imgPath = Path.Combine(FileSystem.AppDataDirectory, GlobalJson.Data.imagePath, ImgSource);
+
+            // Lade die Metadaten aus dem Bild
+            var directories = ImageMetadataReader.ReadMetadata(imgPath);
+
+            // Finde die EXIF-Unterverzeichnisse
+            var exifSubIfdDirectory = directories.OfType<ExifSubIfdDirectory>().FirstOrDefault();
+
+            if (exifSubIfdDirectory != null)
+            {
+                // Beispiel: Lese das Aufnahmedatum
+                var dateTimeOriginal = exifSubIfdDirectory.GetDescription(ExifDirectoryBase.TagDateTimeOriginal);
+                // Konvertiere das Datum in ein DateTime-Objekt
+                if (DateTime.TryParseExact(dateTimeOriginal, "yyyy:MM:dd HH:mm:ss", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime dateTime))
+                {
+                    // Formatierte Ausgabe im europäischen Format
+                    string formattedDate = dateTime.ToString("D") + " / " + dateTime.ToString("HH:mm");
+                    this.Title = formattedDate;
+                } 
+            }
+            ImageView.Source = imgPath;
+        }
+    }
+
+    public void OnPinching(object sender, PinchEventArgs e)
+    {
+        var imageView = (TransformViewModel)ImageView.BindingContext;
+        imageView.AnchorX = 1 / ImageView.Width * (e.Center.X - ImageView.TranslationX);
+        imageView.AnchorY = 1 / ImageView.Height * (e.Center.Y - ImageView.TranslationY);
+    }
+
+    public void OnDoubleTapped(object sender, EventArgs e)
+    {
+        ImageFit();
+    }
+
+    private void ImageFit()
+    {
+        var imageView = (TransformViewModel)ImageView.BindingContext;
+        var scale = Math.Min(this.Width / ImageView.Width, this.Height / ImageView.Height);
+        imageView.AnchorX = 0;
+        imageView.AnchorY = 0;
+        imageView.Scale = scale;
+        imageView.TranslationX = (this.Width - ImageView.Width * scale) / 2;
+        imageView.TranslationY = (this.Height - ImageView.Height * scale) / 2;
+    }
+
+    //private async void DrawingView_DrawingLineCompleted(object sender, CommunityToolkit.Maui.Core.DrawingLineCompletedEventArgs e)
+    //{
+    //var stream = await DrawView.GetImageStream(200, 200);
+
+    //imageView.Source = ImageSource.FromStream(() => stream);
+    //}
+
+    private void OnDrawing(object sender, EventArgs e)
+    {
+        isCleared = false;
+    }
+
+    private void DrawClicked(object sender, EventArgs e)
+    {
+        var imageView = (TransformViewModel)ImageView.BindingContext;
+        imageView.IsPanningEnabled = false;
+        imageView.IsPinchingEnabled = false;
+        DrawView.WidthRequest = ImageView.Width;
+        DrawView.HeightRequest = ImageView.Height;
+
+        DrawView.InputTransparent = false;
+
+        CheckBtn.IsVisible = true;
+        EraseBtn.IsVisible = true;
+        DrawBtn.IsVisible = false;
+        PenSizeSlider.IsVisible = true;
+        ColorPicker.IsVisible = true;
+    }
+
+    private void CheckClicked(object sender, EventArgs e)
+    {
+        var imageView = (TransformViewModel)ImageView.BindingContext;
+        imageView.IsPanningEnabled = true;
+        imageView.IsPinchingEnabled = true;
+
+        DrawView.InputTransparent = true;
+
+        CheckBtn.IsVisible = false;
+        EraseBtn.IsVisible = false;
+        DrawBtn.IsVisible = true;
+        PenSizeSlider.IsVisible = false;
+        ColorPicker.IsVisible = false;
+
+        var overlayPath = Path.ChangeExtension(Path.Combine(FileSystem.AppDataDirectory, GlobalJson.Data.imageOverlayPath, ImgSource), ".png");
+        
+        if (isCleared)
+        {
+            if (File.Exists(overlayPath))
+                File.Delete(overlayPath);
+        }
+        else
+        {
+            _ = SaveDrawingView(overlayPath);
+        }
+    }
+
+    private void EraseClicked(object sender, EventArgs e)
+    {
+        isCleared = true;
+        OverlayView.Source = null;
+        DrawView.Clear();
+    }
+
+    private void OnSliderValueChanged(object sender, ValueChangedEventArgs e)
+    {
+        DrawView.LineWidth = (int)e.NewValue;
+    }
+
+    private void ColorButtonClicked(object sender, EventArgs e)
+    {
+        var button = (Microsoft.Maui.Controls.Button)sender;
+        DrawView.LineColor = button.BackgroundColor;
+    }
+
+    private async void OnDeleteButtonClicked(object sender, EventArgs e)
+    {
+        var popup = new PopupDualResponse("Wollen Sie dieses Bild wirklich löschen?");
+        await MopupService.Instance.PushAsync(popup);
+        var result = await popup.PopupDismissedTask;
+
+        if (result != null)
+        {
+            string file = Path.Combine(FileSystem.AppDataDirectory, GlobalJson.Data.imagePath, GlobalJson.Data.plans[PlanId].pins[PinId].images[ImgSource].file);
+            if (File.Exists(file))
+                File.Delete(file);
+
+            file = Path.Combine(FileSystem.AppDataDirectory, GlobalJson.Data.thumbnailPath, GlobalJson.Data.plans[PlanId].pins[PinId].images[ImgSource].file);
+            if (File.Exists(file))
+                File.Delete(file);
+
+            GlobalJson.Data.plans[PlanId].pins[PinId].images.Remove(ImgSource);
+
+            // save data to file
+            GlobalJson.SaveToFile();
+
+            await Shell.Current.GoToAsync($"..?planId={PlanId}&pinId={PinId}&pinIcon={PinIcon}");
+        }
+    }
+
+    private async Task SaveDrawingView(string filePath)
+    {
+        // Eckpunkte für Boundingbox
+        var boundingBox = new DrawingLine
+        {
+            Points = [
+                new(0, 0),
+                new((float)DrawView.Width, 0),
+                new((float)DrawView.Width, (float)DrawView.Height),
+                new(0, (float)DrawView.Height),
+                new(0, 0)],
+            LineColor = Colors.Black,
+            LineWidth = 1f
+        };
+        DrawView.Lines.Add(boundingBox);
+        var cts = new CancellationTokenSource(TimeSpan.FromSeconds(5));
+        Stream draw_stream = await DrawingView.GetImageStream(DrawView.Lines,
+                                                            new Size(DrawView.Width, DrawView.Height),
+                                                            Colors.Transparent,
+                                                            cts.Token);
+        if (draw_stream != null)
+        {
+            // Konvertiere den Stream zu einem SKBitmap für die Bearbeitung
+            using var dwStream = new SKManagedStream(draw_stream);
+            using var dwBitmap = SKBitmap.Decode(dwStream);
+
+            // Zuschneiden (crop) mit SKBitmap
+            using var croppedBitmap = new SKBitmap((int)DrawView.Width, (int)DrawView.Height);
+            using var canvas = new SKCanvas(croppedBitmap);
+
+            // Hintergrundbild verwenden falls vorhanden
+            if (OverlayView.Source != null)
+            {
+                using var bgStream = File.OpenRead(((FileImageSource)OverlayView.Source).File);
+                using var bgBitmap = SKBitmap.Decode(bgStream);
+                canvas.DrawBitmap(bgBitmap, new SKPoint(0,0));
+            }
+
+            var sourceRect = new SKRect((dwBitmap.Width - (int)DrawView.Width) / 2,
+                                        (dwBitmap.Height - (int)DrawView.Height) / 2,
+                                        (dwBitmap.Width - (int)DrawView.Width) / 2 + (int)DrawView.Width,
+                                        (dwBitmap.Height - (int)DrawView.Height) / 2 + (int)DrawView.Height);
+            var destRect = new SKRect(0, 0, (int)DrawView.Width, (int)DrawView.Height);
+            canvas.DrawBitmap(dwBitmap, sourceRect, destRect);
+            canvas.Flush();
+
+            // Speichere das zugeschnittene Bild
+            using var image = SKImage.FromBitmap(croppedBitmap);
+            using var data = image.Encode(SKEncodedImageFormat.Png, 90); // PNG oder JPG
+
+            if (File.Exists(filePath))
+                File.Delete(filePath);
+
+            using var fileStream = new FileStream(filePath, FileMode.Create, FileAccess.Write);
+            data.SaveTo(fileStream);
+            fileStream.Close();
+        }
+    }
+}

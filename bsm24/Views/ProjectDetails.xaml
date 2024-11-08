@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<uranium:UraniumContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:bsm24.ViewModels"
+             xmlns:views="clr-namespace:bsm24.Views"
+             xmlns:uranium="http://schemas.enisn-projects.io/dotnet/maui/uraniumui"
+             xmlns:material="http://schemas.enisn-projects.io/dotnet/maui/uraniumui/material"
+             xmlns:m="clr-namespace:UraniumUI.Icons.MaterialIcons;assembly=UraniumUI.Icons.MaterialIcons"
+             xmlns:ffimageloading="clr-namespace:FFImageLoading.Maui;assembly=FFImageLoading.Maui"
+             x:Class="bsm24.Views.ProjectDetails"
+             Title="Project Details">
+
+    <Grid>
+        <Grid Margin="16">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <ScrollView Grid.Row="0" Grid.ColumnSpan="2" >
+                <VerticalStackLayout Spacing="16">
+                    <material:TextField
+                        x:Name="client_name"
+                        Text=""
+                        Title="Name"
+                        AllowClear="True"
+                        Icon="{FontImageSource FontFamily=MaterialOutlined, Glyph={x:Static m:MaterialRegular.Person}}" />
+
+                    <material:TextField
+                        x:Name="object_name"
+                        Text=""
+                        Title="Objekt"
+                        AllowClear="True"
+                        Icon="{FontImageSource FontFamily=MaterialOutlined, Glyph={x:Static m:MaterialRegular.Home_work}}" />
+
+                    <material:EditorField
+                        x:Name="object_address"
+                        Text=""
+                        Title="Adresse"
+                        Icon="{FontImageSource FontFamily=MaterialOutlined, Glyph={x:Static m:MaterialRegular.Home}}" />
+
+                    <material:TextField
+                        x:Name="working_title"
+                        Text=""
+                        Title="Projektvorgang"
+                        AllowClear="True"
+                        Icon="{FontImageSource FontFamily=MaterialOutlined, Glyph={x:Static m:MaterialRegular.Work_outline}}" />
+
+                    <material:TextField
+                        x:Name="project_manager"
+                        Text=""
+                        Title="Projektleiter"
+                        AllowClear="True"
+                        Icon="{FontImageSource FontFamily=MaterialOutlined, Glyph={x:Static m:MaterialRegular.Badge}}" />
+
+                    <material:DatePickerField
+                        x:Name="creation_date"
+                        Title="Datum"
+                        Icon="{FontImageSource FontFamily=MaterialOutlined, Glyph={x:Static m:MaterialRegular.Calendar_month}}" />
+
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <Label Text="Titelbild " HorizontalTextAlignment="End"/>
+
+                        <Button Grid.Column="0"
+                                Text="Add PDF"
+                                ImageSource="{FontImageSource FontFamily=MaterialOutlined, Color=White, Size=40, Glyph={x:Static m:MaterialRegular.Picture_as_pdf}}"
+                                Clicked="OnAddPdfClicked"/>
+                        <Border Grid.Column="1"
+                                StrokeThickness="0"
+                                StrokeShape="RoundRectangle 8" >
+                            <ffimageloading:CachedImage CacheType="Memory" Source="{Binding FlyoutHeaderImage}" Aspect="AspectFill">
+                                <ffimageloading:CachedImage.HeightRequest>
+                                    <OnIdiom x:TypeArguments="x:Double" Desktop="100" Phone="100" Tablet="100"  />
+                                </ffimageloading:CachedImage.HeightRequest>
+                                <ffimageloading:CachedImage.WidthRequest>
+                                    <OnIdiom x:TypeArguments="x:Double" Desktop="100" Phone="100" Tablet="100"  />
+                                </ffimageloading:CachedImage.WidthRequest>
+                            </ffimageloading:CachedImage>
+                        </Border>
+
+                        <Button Grid.Column="1"
+                                    Background="Transparent"
+                                    ImageSource="{FontImageSource FontFamily=MaterialOutlined, Color=White, Size=40, Glyph={x:Static m:MaterialRegular.Camera_alt}}"  
+                                    HeightRequest="100"
+                                    Clicked="OnThumbCaptureClicked"/>
+                    </Grid>
+                </VerticalStackLayout>
+            </ScrollView>
+
+            <Button Grid.Row="1" Grid.Column="0"
+                    Text="OK"
+                    Clicked="OnOkayClicked"/>
+            <Button Grid.Row="1" Grid.Column="1"
+                    Text="Cancel"
+                    Clicked="OnCancelClicked"/>
+        </Grid>
+        <!-- Overlay für Busy-Indikator -->
+        <Grid x:Name="busyOverlay"
+                BackgroundColor="Black"
+                Opacity="0.5"
+                IsVisible="False"
+                VerticalOptions="FillAndExpand"
+                HorizontalOptions="FillAndExpand"
+                ZIndex="10">
+            <ActivityIndicator x:Name="activityIndicator"
+                                IsRunning="True"
+                                VerticalOptions="Center"
+                                HorizontalOptions="Center"
+                                Color="White" />
+        </Grid>
+    </Grid>
+</uranium:UraniumContentPage>

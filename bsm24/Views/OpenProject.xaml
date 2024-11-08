@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<uranium:UraniumContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:views="clr-namespace:bsm24.Views"
+             xmlns:uranium="http://schemas.enisn-projects.io/dotnet/maui/uraniumui"
+             xmlns:material="http://schemas.enisn-projects.io/dotnet/maui/uraniumui/material"
+             xmlns:m="clr-namespace:UraniumUI.Icons.MaterialIcons;assembly=UraniumUI.Icons.MaterialIcons"
+             xmlns:ffimageloading="clr-namespace:FFImageLoading.Maui;assembly=FFImageLoading.Maui"
+             x:Class="bsm24.Views.OpenProject"
+             Title="Open Project">
+
+    <Grid>
+        <StackLayout Margin="16">
+            <CollectionView x:Name="fileListView"
+                                ItemsLayout="VerticalGrid, 1"
+                                VerticalOptions="FillAndExpand">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <Grid Padding="0, 6, 0, 6">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="60" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="60" />
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="25" />
+                                <RowDefinition Height="35" />
+                            </Grid.RowDefinitions>
+                            <Label Grid.Column="1"
+                                    Grid.Row="0"
+                                    VerticalTextAlignment="End"
+                                    TextColor="DarkRed"
+                                    FontSize="14"
+                                    Text="{Binding FileName}"/>
+                            <Label Grid.Column="1"
+                                    Grid.Row="1"
+                                    FontSize="12"
+                                    Text="{Binding FileDate}"/>
+                            <Button Grid.Column="0"
+                                    Grid.ColumnSpan="2"
+                                    Grid.RowSpan="2"
+                                    BorderColor="Transparent"
+                                    BorderWidth="0"
+                                    Background="Transparent"
+                                    Clicked="OnProjectClicked"/>
+                            <ffimageloading:CachedImage Grid.Column="0"
+                                                            Grid.RowSpan="2"
+                                                            Source="{Binding ImagePath}"
+                                                            CacheType="Memory"
+                                                            Aspect="AspectFill"/>
+                            <Button Grid.Column="2"
+                                    Grid.RowSpan="2"
+                                    BorderColor="Black"
+                                    BorderWidth="1"
+                                    Background="Transparent"
+                                    ImageSource="{FontImageSource FontFamily=MaterialOutlined, Color=Black, Glyph={x:Static m:MaterialRegular.Edit}}"
+                                    Clicked="OnDeleteClicked"/>
+                        </Grid>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+        </StackLayout>
+        
+        <!-- Overlay für Busy-Indikator -->
+        <Grid x:Name="busyOverlay"
+                    BackgroundColor="Black"
+                    Opacity="0.5"
+                    IsVisible="False"
+                    VerticalOptions="FillAndExpand"
+                    HorizontalOptions="FillAndExpand"
+                    ZIndex="10">
+            <ActivityIndicator x:Name="activityIndicator"
+                                    IsRunning="True"
+                                    VerticalOptions="Center"
+                                    HorizontalOptions="Center"
+                                    Color="White" />
+        </Grid>
+    </Grid>
+</uranium:UraniumContentPage>
