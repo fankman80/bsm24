@@ -23,7 +23,7 @@
         <VerticalStackLayout Spacing="16">
             <Label
                 HorizontalOptions="Start"
-                Text="Rename Plan:"/>
+                Text="Plan umbenennen:"/>
             <material:TextField x:Name="plan_rename" Title="" />
 
             <Grid>
@@ -35,7 +35,7 @@
                     Text="OK"
                     Clicked="OnOkClicked" />
                 <Button Grid.Column="1"
-                    Text="Delete"
+                    Text="Plan löschen"
                     Clicked="OnDeleteClicked" />
             </Grid>
         </VerticalStackLayout>
