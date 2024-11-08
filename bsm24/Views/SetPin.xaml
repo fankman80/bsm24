@@ -60,12 +60,12 @@
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
                 <VerticalStackLayout Grid.Column="0">
-                    <Label Text="Lock Moving:" VerticalTextAlignment="Start" />
+                    <Label Text="Pin sperren:" VerticalTextAlignment="Start" />
                     <Switch x:Name="LockSwitch" HorizontalOptions="Start" />
                 </VerticalStackLayout>
 
                 <VerticalStackLayout Grid.Column="1">
-                    <Label Text="Lock Rotate:" VerticalTextAlignment="Start" />
+                    <Label Text="Rotation sperren:" VerticalTextAlignment="Start" />
                     <Switch x:Name="LockRotate" HorizontalOptions="Start" />
                 </VerticalStackLayout>
                 
