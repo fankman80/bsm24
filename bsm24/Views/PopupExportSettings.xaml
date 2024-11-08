@@ -35,39 +35,39 @@
                     <RowDefinition Height="*" />
                 </Grid.RowDefinitions>                
                 
-                <Label Text="Export Plan Images:" Grid.Column="0" Grid.Row="0"/>
+                <Label Text="Exportiere Pläne:" Grid.Column="0" Grid.Row="0"/>
                 <Switch x:Name="isPlanExport" IsToggled="{Binding IsPlanExport}" HorizontalOptions="Start" Grid.Column="1" Grid.Row="0"/>
 
-                <Label Text="Export Position Images:"  Grid.Column="0" Grid.Row="1"/>
+                <Label Text="Positionsbilder:"  Grid.Column="0" Grid.Row="1"/>
                 <Switch x:Name="isPosImageExport" IsToggled="{Binding IsPosImageExport}" HorizontalOptions="Start" Grid.Column="1" Grid.Row="1"/>
 
-                <Label Text="Export Images:" Grid.Column="0" Grid.Row="2"/>
+                <Label Text="Exportiere Fotos:" Grid.Column="0" Grid.Row="2"/>
                 <Switch x:Name="isImageExport" IsToggled="{Binding IsImageExport}" HorizontalOptions="Start" Grid.Column="1" Grid.Row="2"/>
 
-                <Label Text="Show Pin-Icons:" Grid.Column="0" Grid.Row="3"/>
+                <Label Text="Exportiere Pin-Icons:" Grid.Column="0" Grid.Row="3"/>
                 <Switch x:Name="isPinIconExport" IsToggled="{Binding IsPinIconExport}" HorizontalOptions="Start" Grid.Column="1" Grid.Row="3"/>
             </Grid>
-            <Label Text="{Binding ImageExportSize, StringFormat='Image Size: {0:0.##} mm'}"/>
+            <Label Text="{Binding ImageExportSize, StringFormat='Fotogrösse: {0:0.##} mm'}"/>
             <Slider Maximum="160"
                     Minimum="10"
                     Value="{Binding ImageExportSize}"/>
 
-            <Label Text="{Binding ImageExportQuality, StringFormat='Image Quality: {0:0.##}'}"/>
+            <Label Text="{Binding ImageExportQuality, StringFormat='Bildqualität: {0:0.##}'}"/>
             <Slider Maximum="100"
                     Minimum="10"
                     Value="{Binding ImageExportQuality}"/>            
             
-            <Label Text="{Binding ImageExportScale, StringFormat='Image Scale: {0:0.##}'}" />
+            <Label Text="{Binding ImageExportScale, StringFormat='Auflösung Fotos: {0:0.##}'}" />
             <Slider Maximum="1"
                     Minimum="0.01"
                     Value="{Binding ImageExportScale}"/>
             
-            <Label Text="{Binding PosImageExportSize, StringFormat='Position Image Cut-Size: {0:0.##} Points'}" />
+            <Label Text="{Binding PosImageExportSize, StringFormat='Positionsbilder Ausschnittsgrösse: {0:0.##} Points'}" />
             <Slider Maximum="1000"
                     Minimum="100"
                     Value="{Binding PosImageExportSize}"/>
 
-            <Label Text="{Binding PosImageExportScale, StringFormat='Position Image Scale: {0:0.##}'}" />
+            <Label Text="{Binding PosImageExportScale, StringFormat='Auflösung Positionsbilder: {0:0.##}'}" />
             <Slider Maximum="1"
                     Minimum="0.01"
                     Value="{Binding PosImageExportScale}"/>
