@@ -27,14 +27,14 @@
                     <material:TextField
                         x:Name="client_name"
                         Text=""
-                        Title="Name"
+                        Title="Kunde/Bauherrschaft"
                         AllowClear="True"
                         Icon="{FontImageSource FontFamily=MaterialOutlined, Glyph={x:Static m:MaterialRegular.Person}}" />
 
                     <material:TextField
                         x:Name="object_name"
                         Text=""
-                        Title="Objekt"
+                        Title="Objektbezeichnung"
                         AllowClear="True"
                         Icon="{FontImageSource FontFamily=MaterialOutlined, Glyph={x:Static m:MaterialRegular.Home_work}}" />
 
@@ -100,7 +100,7 @@
                     Text="OK"
                     Clicked="OnOkayClicked"/>
             <Button Grid.Row="1" Grid.Column="1"
-                    Text="Cancel"
+                    Text="Abbrechen"
                     Clicked="OnCancelClicked"/>
         </Grid>
         <!-- Overlay für Busy-Indikator -->
