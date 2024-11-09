@@ -78,16 +78,12 @@ public partial class ExportReport
                                             var imgName = GlobalJson.Data.plans[plan.Key].pins[pin.Key].images[img.Key].file;
                                             var imgPath = Path.Combine(FileSystem.AppDataDirectory, GlobalJson.Data.imagePath, imgName);
                                             var overlayFile = Path.GetFileNameWithoutExtension(imgName) + ".png";
-                                            var overlayDrawingPath = Path.Combine(FileSystem.AppDataDirectory, GlobalJson.Data.imageOverlayPath, overlayFile);
-                                            var overlayImage = new List<(string, SKPoint, string, SKPoint)>();
-                                            if (File.Exists(overlayDrawingPath))
-                                                overlayImage.Add((overlayDrawingPath, new SKPoint(0, 0), "", new SKPoint(0, 0)));
+                                            var overlayDrawingPath = Path.Combine(FileSystem.AppDataDirectory, GlobalJson.Data.imageOverlayPath, overlayFile);                        
                                             var _img = await XmlImage.GenerateImage(mainPart,
                                                                                     new FileResult(imgPath),
                                                                                     Double.Parse(SettingsService.Instance.ImageExportScale),
                                                                                     widthMilimeters: Int32.Parse(SettingsService.Instance.ImageExportSize),
-                                                                                    imageQuality: Int32.Parse(SettingsService.Instance.ImageExportQuality),
-                                                                                    overlayImages: overlayImage);
+                                                                                    imageQuality: Int32.Parse(SettingsService.Instance.ImageExportQuality));
                                             paragraph.Append(new D.Run(_img));
                                         }
                                     }
