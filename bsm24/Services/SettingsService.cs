@@ -95,7 +95,14 @@ public partial class SettingsService : INotifyPropertyChanged
         }
     }
 
+#if WINDOWS
+    private string _pinScaleLimit = "0,8";
+#endif
+
+#if ANDROID
     private string _pinScaleLimit = "0,5";
+#endif
+
     public string PinScaleLimit
     {
         get => _pinScaleLimit;

@@ -25,13 +25,9 @@ public partial class CapturePicture
                     string resultPath = null;
                     string filename;
                     if (customFilename != null)
-                    {
                         filename = customFilename;
-                    }
                     else
-                    {
                         filename = "IMG_" + DateTime.Now.ToString("yyyyMMdd_HHmmss") + Path.GetExtension(originalFilePath);
-                    }
 
                     if (filepath != null)
                     {
@@ -47,31 +43,8 @@ public partial class CapturePicture
 
                     if (thumbnailPath != null)
                     {
-                        var originalStream2 = File.OpenRead(originalFilePath);
-                        var skBitmap = SKBitmap.Decode(originalStream2);
                         string thumbFilePath = Path.Combine(FileSystem.AppDataDirectory, thumbnailPath, filename);
-
-                        // Zielgröße festlegen (keine Kante kürzer als 150 Pixel)
-                        int minSize = Settings.thumbSize;
-
-                        // Berechne den Skalierungsfaktor basierend auf der kürzeren Seite
-                        float scale = minSize / (float)Math.Min(skBitmap.Width, skBitmap.Height);
-
-                        // Berechne die neue Breite und Höhe unter Beibehaltung des Seitenverhältnisses
-                        int targetWidth = (int)(skBitmap.Width * scale);
-                        int targetHeight = (int)(skBitmap.Height * scale);
-
-                        // Erstelle eine neue Bitmap mit den verkleinerten Abmessungen
-                        var resizedBitmap = new SKBitmap(targetWidth, targetHeight);
-                        skBitmap.ScalePixels(resizedBitmap, SKSamplingOptions.Default);
-
-                        // Speichere das verkleinerte Bild als JPEG
-                        var image = SKImage.FromBitmap(resizedBitmap);
-                        var data = image.Encode(SKEncodedImageFormat.Jpeg, 90); // 90 = Qualität
-                        var newStream2 = File.Create(thumbFilePath);
-                        data.SaveTo(newStream2);
-                        newStream2.Close();
-                        originalStream2.Close();
+                        Thumbnail.Generate(originalFilePath, thumbFilePath);
                     }
 
                     if (File.Exists(originalFilePath)) //lösche das Originalfoto

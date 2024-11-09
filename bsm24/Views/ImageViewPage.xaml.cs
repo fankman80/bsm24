@@ -46,12 +46,7 @@ public partial class ImageViewPage : IQueryAttributable
         if (query.TryGetValue("imgSource", out object value4))
         {
             ImgSource = value4 as string;
-
-            String imgPath;
-            if (GlobalJson.Data.Plans[PlanId].Pins[PinId].Fotos[ImgSource].HasOverlay)
-                imgPath = Path.Combine(FileSystem.AppDataDirectory, GlobalJson.Data.ImagePath, "originals", ImgSource);
-            else
-                imgPath = Path.Combine(FileSystem.AppDataDirectory, GlobalJson.Data.ImagePath, ImgSource);
+            var imgPath = Path.Combine(FileSystem.AppDataDirectory, GlobalJson.Data.ImagePath, ImgSource);
 
             // Lade die Metadaten aus dem Bild
             var directories = ImageMetadataReader.ReadMetadata(imgPath);
@@ -143,18 +138,25 @@ public partial class ImageViewPage : IQueryAttributable
 
         var imgPath = Path.Combine(FileSystem.AppDataDirectory, GlobalJson.Data.ImagePath, ImgSource);
         var origPath = Path.Combine(FileSystem.AppDataDirectory, GlobalJson.Data.ImagePath, "originals", ImgSource);
+        var thumbPath = Path.Combine(FileSystem.AppDataDirectory, GlobalJson.Data.ThumbnailPath, ImgSource);
 
         if (isCleared)
         {
             if (File.Exists(imgPath))
                 File.Delete(imgPath);
             File.Move(origPath, imgPath);
+         
+            Thumbnail.Generate(imgPath, thumbPath);
         }
         else
         {
             if (!File.Exists(origPath))
                 File.Copy(imgPath, origPath);
             _ = SaveDrawingView(imgPath);
+
+            GlobalJson.Data.Plans[PlanId].Pins[PinId].Fotos[ImgSource].HasOverlay = true;
+            // save data to file
+            GlobalJson.SaveToFile();
         }
     }
 
@@ -163,6 +165,9 @@ public partial class ImageViewPage : IQueryAttributable
         isCleared = true;
         ImageView.Source = Path.Combine(FileSystem.AppDataDirectory, GlobalJson.Data.ImagePath, "originals", ImgSource);
         DrawView.Clear();
+        GlobalJson.Data.Plans[PlanId].Pins[PinId].Fotos[ImgSource].HasOverlay = false;
+        // save data to file
+        GlobalJson.SaveToFile();
     }
 
     private void OnSliderValueChanged(object sender, ValueChangedEventArgs e)
@@ -193,7 +198,6 @@ public partial class ImageViewPage : IQueryAttributable
                 File.Delete(file);
 
             GlobalJson.Data.Plans[PlanId].Pins[PinId].Fotos.Remove(ImgSource);
-
             // save data to file
             GlobalJson.SaveToFile();
 
@@ -253,6 +257,9 @@ public partial class ImageViewPage : IQueryAttributable
             using var fileStream = new FileStream(filePath, FileMode.Create, FileAccess.Write);
             data.SaveTo(fileStream);
             fileStream.Close();
+
+            var thumbPath = Path.Combine(FileSystem.AppDataDirectory, GlobalJson.Data.ThumbnailPath, ImgSource);
+            Thumbnail.Generate(filePath, thumbPath);
         }
     }
 }

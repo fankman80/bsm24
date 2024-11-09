@@ -27,7 +27,7 @@
                         <StackLayout>
                             <views:SquareView>
                                 <ffimageloading:CachedImage Source="{Binding .}"
-                                                            CacheType="Memory"
+                                                            CacheType="None"
                                                             Aspect="AspectFill"
                                                             Margin="0,0,10,10">
                                     <ffimageloading:CachedImage.GestureRecognizers>
