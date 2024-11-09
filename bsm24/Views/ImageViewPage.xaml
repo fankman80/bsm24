@@ -32,8 +32,6 @@
 
                 <Image x:Name="ImageView" />
 
-                <Image x:Name="OverlayView" />
-
                 <mct:DrawingView
                         x:Name="DrawView"
                         BackgroundColor="Transparent"
