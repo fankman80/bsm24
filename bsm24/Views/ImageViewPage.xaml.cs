@@ -49,6 +49,7 @@ public partial class ImageViewPage : IQueryAttributable
             ImgSource = value4 as string;
             
             var imgPath = Path.Combine(FileSystem.AppDataDirectory, GlobalJson.Data.imagePath, ImgSource);
+            var imgOrigPath = Path.Combine(FileSystem.AppDataDirectory, GlobalJson.Data.imagePath, "originals", ImgSource);
 
             // Lade die Metadaten aus dem Bild
             var directories = ImageMetadataReader.ReadMetadata(imgPath);
@@ -64,7 +65,7 @@ public partial class ImageViewPage : IQueryAttributable
                 if (DateTime.TryParseExact(dateTimeOriginal, "yyyy:MM:dd HH:mm:ss", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime dateTime))
                 {
                     // Formatierte Ausgabe im europäischen Format
-                    string formattedDate = dateTime.ToString("D") + " / " + dateTime.ToString("HH:mm");
+                    string formattedDate = dateTime.ToString("d") + " / " + dateTime.ToString("HH:mm");
                     this.Title = formattedDate;
                 } 
             }
@@ -154,7 +155,6 @@ public partial class ImageViewPage : IQueryAttributable
     private void EraseClicked(object sender, EventArgs e)
     {
         isCleared = true;
-        OverlayView.Source = null;
         DrawView.Clear();
     }
 
