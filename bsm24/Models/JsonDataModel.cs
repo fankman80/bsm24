@@ -49,7 +49,7 @@ public class Pin
 public class Image
 {
     public string file { get; set; }
-    public string overlayFile { get; set; }
+    public bool hasOverlay { get; set; }
     public bool isChecked { get; set; }
 }
 
