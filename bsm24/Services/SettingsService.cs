@@ -202,6 +202,7 @@ public partial class SettingsService : INotifyPropertyChanged
             }
         }
     }
+
     private string _imageExportSize = "40";
     public string ImageExportSize
     {
@@ -216,6 +217,19 @@ public partial class SettingsService : INotifyPropertyChanged
         }
     }
 
+    private string _planExportSize = "140";
+    public string PlanExportSize
+    {
+        get => _planExportSize;
+        set
+        {
+            if (_planExportSize != value)
+            {
+                _planExportSize = Math.Round(Convert.ToDouble(value), 0).ToString();
+                OnPropertyChanged(nameof(PlanExportSize));
+            }
+        }
+    }
 
     private string _imageExportScale = "0,1";
     public string ImageExportScale

@@ -22,7 +22,7 @@
            HorizontalOptions="Center"
            VerticalOptions="Center">
 
-        <VerticalStackLayout Spacing="16">
+        <VerticalStackLayout Spacing="10">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="2*" />
@@ -52,6 +52,11 @@
                     Minimum="10"
                     Value="{Binding ImageExportSize}"/>
 
+            <Label Text="{Binding PlanExportSize, StringFormat='Planhöhe: {0:0.##} mm'}"/>
+            <Slider Maximum="300"
+                    Minimum="10"
+                    Value="{Binding PlanExportSize}"/>
+            
             <Label Text="{Binding ImageExportQuality, StringFormat='Bildqualität: {0:0.##}'}"/>
             <Slider Maximum="100"
                     Minimum="10"

@@ -145,7 +145,7 @@ public partial class ImageViewPage : IQueryAttributable
             if (File.Exists(imgPath))
                 File.Delete(imgPath);
             File.Move(origPath, imgPath);
-         
+
             Thumbnail.Generate(imgPath, thumbPath);
         }
         else
@@ -235,7 +235,7 @@ public partial class ImageViewPage : IQueryAttributable
             using var origBitmap = SKBitmap.Decode(origStream);
 
             // Zuschneiden (crop) mit SKBitmap
-            using var croppedBitmap = new SKBitmap((int)DrawView.Width, (int)DrawView.Height);
+            using var croppedBitmap = new SKBitmap((int)ImageView.Width, (int)ImageView.Height);
             using var canvas = new SKCanvas(croppedBitmap);
 
             var sourceRect = new SKRect((dwBitmap.Width - (int)DrawView.Width) / 2,
@@ -249,7 +249,7 @@ public partial class ImageViewPage : IQueryAttributable
 
             // Speichere das zugeschnittene Bild
             using var image = SKImage.FromBitmap(croppedBitmap);
-            using var data = image.Encode(SKEncodedImageFormat.Png, 90); // PNG oder JPG
+            using var data = image.Encode(SKEncodedImageFormat.Jpeg, 90);
 
             if (File.Exists(filePath))
                 File.Delete(filePath);

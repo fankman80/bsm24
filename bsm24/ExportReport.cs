@@ -1,7 +1,7 @@
 ﻿using bsm24.Services;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Wordprocessing;
-using OpenXmlPowerTools;
+using Codeuctivity.OpenXmlPowerTools;
 using SkiaSharp;
 using D = DocumentFormat.OpenXml.Wordprocessing;
 
@@ -167,7 +167,7 @@ public partial class ExportReport
                                     foreach (var plan in GlobalJson.Data.Plans)
                                     {
                                         run.Append(new D.Text("- " + GlobalJson.Data.Plans[plan.Key].Name));
-                                        run.Append(new D.Break());
+                                        run.Append(new Break() { Type = BreakValues.TextWrapping });
                                     }
                                 }
                             }
@@ -211,7 +211,7 @@ public partial class ExportReport
                                         var _img = await XmlImage.GenerateImage(mainPart,
                                                                                 new FileResult(imgPath),
                                                                                 0.5,
-                                                                                heightMilimeters: 140,
+                                                                                heightMilimeters: Int32.Parse(SettingsService.Instance.PlanExportSize),
                                                                                 imageQuality: Int32.Parse(SettingsService.Instance.ImageExportQuality),
                                                                                 overlayImages: pinList);
 
@@ -219,11 +219,10 @@ public partial class ExportReport
                                         var fontSize = new D.FontSize() { Val = "32" }; // 16pt Schriftgröße
                                         runProperties.Append(fontSize);
                                         run.PrependChild(runProperties); // weise Schrift-Property zu
-
                                         run.Append(new D.Text(GlobalJson.Data.Plans[plan.Key].Name));
-                                        run.Append(new D.Break());
+                                        run.Append(new Break() { Type = BreakValues.TextWrapping });
                                         run.Append(_img);
-                                        if (i > GlobalJson.Data.Plans.Count) run.Append(new Break() { Type = BreakValues.Page });  // letzter Seitenumbruch nicht einfügen
+                                        if (i < GlobalJson.Data.Plans.Count-1) run.Append(new Break() { Type = BreakValues.Page });  // letzter Seitenumbruch nicht einfügen
                                     }
                                 }
                             }

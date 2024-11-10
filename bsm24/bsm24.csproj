@@ -152,6 +152,7 @@
 
 	<ItemGroup>
 		<PackageReference Include="Camera.MAUI" Version="1.5.1" />
+		<PackageReference Include="Codeuctivity.OpenXmlPowerTools" Version="8.0.251" />
 		<PackageReference Include="CommunityToolkit.Maui" Version="9.1.1" />
 		<PackageReference Include="CommunityToolkit.Maui.Core" Version="9.1.1" />
 		<PackageReference Include="DocumentFormat.OpenXml" Version="3.1.1" />
@@ -163,7 +164,6 @@
 		<PackageReference Include="Microsoft.Maui.Essentials" Version="8.0.93" />
 		<PackageReference Include="Mopups" Version="1.3.2" />
 		<PackageReference Include="MR.Gestures" Version="5.0.0" />
-		<PackageReference Include="OpenXmlPowerTools" Version="4.5.3.2" />
 		<PackageReference Include="PDFtoImage" Version="5.0.0-preview" />
 		<PackageReference Include="UraniumUI" Version="2.10.2" />
 		<PackageReference Include="UraniumUI.Icons.FontAwesome" Version="2.10.2" />

@@ -1,11 +1,10 @@
 ﻿using Camera.MAUI;
 using CommunityToolkit.Maui;
+using CommunityToolkit.Maui.Storage;
 using FFImageLoading.Maui;
 using Mopups.Hosting;
 using MR.Gestures;
 using UraniumUI;
-using CommunityToolkit.Maui.Storage;
-
 
 #if WINDOWS
 using Microsoft.UI;
@@ -16,9 +15,9 @@ using Windows.Graphics;
 namespace bsm24;
 public static class MauiProgram
 {
-	public static MauiApp CreateMauiApp()
-	{
-	    var builder = MauiApp.CreateBuilder();
+    public static MauiApp CreateMauiApp()
+    {
+        var builder = MauiApp.CreateBuilder();
         builder
             .UseMauiApp<App>()
             .UseMauiCameraView()
@@ -52,7 +51,7 @@ public static class MauiProgram
             if (view is Microsoft.Maui.Controls.Entry)
             {
 #if ANDROID
-                handler.PlatformView.Background=null;
+                handler.PlatformView.Background = null;
                 handler.PlatformView.SetBackgroundColor(Android.Graphics.Color.Transparent);
 #elif IOS || MACCATALYST
                 handler.PlatformView.BackgroundColor = UIKit.UIColor.Clear;
@@ -66,5 +65,5 @@ public static class MauiProgram
         });
 
         return builder.Build();
-	}
+    }
 }

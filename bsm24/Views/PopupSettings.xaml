@@ -22,7 +22,7 @@
            HorizontalOptions="Center"
            VerticalOptions="Center">
 
-        <VerticalStackLayout Spacing="16">
+        <VerticalStackLayout Spacing="10">
             <Label Text="{Binding PinScaleLimit, StringFormat='Pingrösse limitieren: {0:0.##}'}" />
             <Slider Maximum="2"
                     Minimum="0.01"
