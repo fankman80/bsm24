@@ -37,6 +37,30 @@
 		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 	</PropertyGroup>
 
+	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net8.0-windows10.0.26100.0|AnyCPU'">
+	  <ApplicationDisplayVersion>0.91</ApplicationDisplayVersion>
+	  <ApplicationTitle>BSM24</ApplicationTitle>
+	  <ApplicationId>com.ebbe.bsm24</ApplicationId>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net8.0-android34.0|AnyCPU'">
+	  <ApplicationDisplayVersion>0.91</ApplicationDisplayVersion>
+	  <ApplicationTitle>BSM24</ApplicationTitle>
+	  <ApplicationId>com.ebbe.bsm24</ApplicationId>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net8.0-windows10.0.26100.0|AnyCPU'">
+	  <ApplicationDisplayVersion>0.91</ApplicationDisplayVersion>
+	  <ApplicationTitle>BSM24</ApplicationTitle>
+	  <ApplicationId>com.ebbe.bsm24</ApplicationId>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net8.0-android34.0|AnyCPU'">
+	  <ApplicationDisplayVersion>0.91</ApplicationDisplayVersion>
+	  <ApplicationTitle>BSM24</ApplicationTitle>
+	  <ApplicationId>com.ebbe.bsm24</ApplicationId>
+	</PropertyGroup>
+
 	<ItemGroup>
 		<!-- App Icon -->
 		<MauiIcon Include="Resources\AppIcon\ic_background.png" ForegroundFile="Resources\AppIcon\ic_foreground.png" />
