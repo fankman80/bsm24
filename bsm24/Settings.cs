@@ -3,9 +3,13 @@ namespace bsm24;
 
 public static class Settings
 {
-    public static int thumbSize = 150;
+    public static int ThumbSize { get => thumbSize; set => thumbSize = value; }
 
-    public static (string fileName, string imageName, Point anchor, Size size)[] pinData =
+    public static (string fileName, string imageName, Point anchor, Size size)[] PinData { get => pinData; set => pinData = value; }
+
+    private static int thumbSize = 150;
+
+    private static (string fileName, string imageName, Point anchor, Size size)[] pinData =
     [
     ("a_pin_blue.png", "", new Point(0.0625, 0.9375), new Size(64,64)),
     ("a_pin_green.png", "", new Point(0.0625, 0.9375), new Size(64,64)),

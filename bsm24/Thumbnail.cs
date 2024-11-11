@@ -17,7 +17,7 @@ class Thumbnail
         string thumbFilePath = Path.Combine(FileSystem.AppDataDirectory, thumbnailPath);
 
         // Zielgröße festlegen (keine Kante kürzer als 150 Pixel)
-        int minSize = Settings.thumbSize;
+        int minSize = Settings.ThumbSize;
 
         // Berechne den Skalierungsfaktor basierend auf der kürzeren Seite
         float scale = minSize / (float)Math.Min(skBitmap.Width, skBitmap.Height);

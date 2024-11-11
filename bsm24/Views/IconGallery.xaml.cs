@@ -41,7 +41,7 @@ public partial class IconGallery : UraniumContentPage, IQueryAttributable
 
     private void MyView_Load()
     {
-        Images = new ObservableCollection<string>(Settings.pinData.Select(item => item.fileName));
+        Images = new ObservableCollection<string>(Settings.PinData.Select(item => item.fileName));
     }
 
     private void OnSizeChanged(object sender, EventArgs e)
@@ -65,9 +65,9 @@ public partial class IconGallery : UraniumContentPage, IQueryAttributable
         GlobalJson.Data.Plans[PlanId].Pins[PinId].PinIcon = fileName;
 
         // suche Pin-Daten
-        GlobalJson.Data.Plans[PlanId].Pins[PinId].PinTxt = Settings.pinData.FirstOrDefault(item => item.fileName.Equals(fileName, StringComparison.OrdinalIgnoreCase)).imageName;
-        GlobalJson.Data.Plans[PlanId].Pins[PinId].Anchor = Settings.pinData.FirstOrDefault(item => item.fileName.Equals(fileName, StringComparison.OrdinalIgnoreCase)).anchor;
-        GlobalJson.Data.Plans[PlanId].Pins[PinId].Size = Settings.pinData.FirstOrDefault(item => item.fileName.Equals(fileName, StringComparison.OrdinalIgnoreCase)).size;
+        GlobalJson.Data.Plans[PlanId].Pins[PinId].PinTxt = Settings.PinData.FirstOrDefault(item => item.fileName.Equals(fileName, StringComparison.OrdinalIgnoreCase)).imageName;
+        GlobalJson.Data.Plans[PlanId].Pins[PinId].Anchor = Settings.PinData.FirstOrDefault(item => item.fileName.Equals(fileName, StringComparison.OrdinalIgnoreCase)).anchor;
+        GlobalJson.Data.Plans[PlanId].Pins[PinId].Size = Settings.PinData.FirstOrDefault(item => item.fileName.Equals(fileName, StringComparison.OrdinalIgnoreCase)).size;
 
         // save data to file
         GlobalJson.SaveToFile();

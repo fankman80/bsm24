@@ -313,17 +313,18 @@ public partial class NewPage : IQueryAttributable
         {
             string currentDateTime = DateTime.Now.ToString("yyyyMMdd_HHmmss");
             string newPin = "a_pin_red.png";
+
             var pos = new Point(0.5, 0.5);
 
             Pin newPinData = new()
             {
                 Pos = pos,
-                Anchor = Settings.pinData.FirstOrDefault(item => item.fileName.Equals(newPin, StringComparison.OrdinalIgnoreCase)).anchor,
-                Size = Settings.pinData.FirstOrDefault(item => item.fileName.Equals(newPin, StringComparison.OrdinalIgnoreCase)).size,
+                Anchor = Settings.PinData.FirstOrDefault(item => item.fileName.Equals(newPin, StringComparison.OrdinalIgnoreCase)).anchor,
+                Size = Settings.PinData.FirstOrDefault(item => item.fileName.Equals(newPin, StringComparison.OrdinalIgnoreCase)).size,
                 IsLocked = false,
                 IsLockRotate = false,
                 InfoTxt = "",
-                PinTxt = Settings.pinData.FirstOrDefault(item => item.fileName.Equals(newPin, StringComparison.OrdinalIgnoreCase)).imageName,
+                PinTxt = Settings.PinData.FirstOrDefault(item => item.fileName.Equals(newPin, StringComparison.OrdinalIgnoreCase)).imageName,
                 PinIcon = newPin,
                 Fotos = []
             };

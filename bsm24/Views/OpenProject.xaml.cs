@@ -77,9 +77,9 @@ public partial class OpenProject : UraniumContentPage
                 MainThread.BeginInvokeOnMainThread(async () =>
                 {
                     // Daten laden und verarbeiten (nicht UI-bezogen)
-                    await new LoadDataToView().ResetApp();
+                    LoadDataToView.ResetApp();
                     GlobalJson.LoadFromFile(item.FilePath);
-                    await new LoadDataToView().LoadData(new FileResult(item.FilePath));
+                    LoadDataToView.LoadData(new FileResult(item.FilePath));
                     OpenProject.HeaderUpdate();  // UI-Aktualisierung
                     await Shell.Current.GoToAsync("//project_details");
                 });

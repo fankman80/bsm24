@@ -234,7 +234,7 @@ public partial class ImageViewPage : IQueryAttributable
             using var origStream = File.OpenRead(filePath);
             using var origBitmap = SKBitmap.Decode(origStream);
 
-            // Zuschneiden (crop) mit SKBitmap
+            // Zuschneiden mit SKBitmap
             using var croppedBitmap = new SKBitmap((int)ImageView.Width, (int)ImageView.Height);
             using var canvas = new SKCanvas(croppedBitmap);
 

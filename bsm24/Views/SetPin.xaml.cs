@@ -99,8 +99,8 @@ public partial class SetPin : UraniumContentPage, IQueryAttributable
     private async void OnOkayClick(object sender, EventArgs e)
     {
         // write data
-        GlobalJson.Data.Plans[PlanId].Pins[PinId].Anchor = Settings.pinData.FirstOrDefault(item => item.fileName.Equals(PinIcon, StringComparison.OrdinalIgnoreCase)).anchor;
-        GlobalJson.Data.Plans[PlanId].Pins[PinId].Size = Settings.pinData.FirstOrDefault(item => item.fileName.Equals(PinIcon, StringComparison.OrdinalIgnoreCase)).size;
+        GlobalJson.Data.Plans[PlanId].Pins[PinId].Anchor = Settings.PinData.FirstOrDefault(item => item.fileName.Equals(PinIcon, StringComparison.OrdinalIgnoreCase)).anchor;
+        GlobalJson.Data.Plans[PlanId].Pins[PinId].Size = Settings.PinData.FirstOrDefault(item => item.fileName.Equals(PinIcon, StringComparison.OrdinalIgnoreCase)).size;
         GlobalJson.Data.Plans[PlanId].Pins[PinId].PinTxt = PinTxt.Text;
         GlobalJson.Data.Plans[PlanId].Pins[PinId].InfoTxt = PinInfo.Text;
         GlobalJson.Data.Plans[PlanId].Pins[PinId].IsLocked = LockSwitch.IsToggled;
@@ -140,7 +140,7 @@ public partial class SetPin : UraniumContentPage, IQueryAttributable
     private void UpdateSpan()
     {
         double screenWidth = this.Width;
-        double imageWidth = Settings.thumbSize; // Mindestbreite in Pixeln
+        double imageWidth = Settings.ThumbSize; // Mindestbreite in Pixeln
         DynamicSpan = Math.Max(3, (int)(screenWidth / imageWidth));
         DynamicSize = (int)(screenWidth / DynamicSpan);
         OnPropertyChanged(nameof(DynamicSpan));
@@ -148,7 +148,7 @@ public partial class SetPin : UraniumContentPage, IQueryAttributable
     }
 }
 
-public class SquareView : ContentView
+public partial class SquareView : ContentView
 {
     protected override async void OnSizeAllocated(double width, double height)
     {

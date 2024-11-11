@@ -6,7 +6,7 @@ namespace bsm24;
 
 public partial class LoadDataToView
 {
-    public async Task LoadData(FileResult path)
+    public static void LoadData(FileResult path)
     {
         if (path != null && !string.IsNullOrEmpty(path.FullPath))
         {
@@ -43,7 +43,7 @@ public partial class LoadDataToView
         }
     }
 
-    public async Task ResetApp()
+    public static void ResetApp()
     {
         // Liste für zu entfernende ShellItems erstellen
         var itemsToRemove = new List<ShellItem>();

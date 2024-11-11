@@ -1,7 +1,7 @@
 ﻿using bsm24.Services;
+using Codeuctivity.OpenXmlPowerTools;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Wordprocessing;
-using Codeuctivity.OpenXmlPowerTools;
 using SkiaSharp;
 using D = DocumentFormat.OpenXml.Wordprocessing;
 
@@ -78,7 +78,7 @@ public partial class ExportReport
                                             var imgName = GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].Fotos[img.Key].File;
                                             var imgPath = Path.Combine(FileSystem.AppDataDirectory, GlobalJson.Data.ImagePath, imgName);
                                             var overlayFile = Path.GetFileNameWithoutExtension(imgName) + ".png";
-                                            var overlayDrawingPath = Path.Combine(FileSystem.AppDataDirectory, GlobalJson.Data.ImageOverlayPath, overlayFile);                        
+                                            var overlayDrawingPath = Path.Combine(FileSystem.AppDataDirectory, GlobalJson.Data.ImageOverlayPath, overlayFile);
                                             var _img = await XmlImage.GenerateImage(mainPart,
                                                                                     new FileResult(imgPath),
                                                                                     Double.Parse(SettingsService.Instance.ImageExportScale),
@@ -95,7 +95,7 @@ public partial class ExportReport
                                         var planPath = Path.Combine(FileSystem.AppDataDirectory, GlobalJson.Data.PlanPath, planName);
                                         var pinPos = GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].Pos;
                                         var pinImage = GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].PinIcon;
-                                    
+
                                         // Pin-Icon ein/ausblenden
                                         var pinList = new List<(string, SKPoint, string, SKPoint)>();
                                         if (SettingsService.Instance.IsPinIconExport.Equals("true", StringComparison.CurrentCultureIgnoreCase))
@@ -111,7 +111,7 @@ public partial class ExportReport
                                         }
                                         else
                                             pinList = null;
-                                    
+
                                         var _imgPlan = await XmlImage.GenerateImage(mainPart,
                                                                                     new FileResult(planPath),
                                                                                     Double.Parse(SettingsService.Instance.PosImageExportScale),
@@ -154,75 +154,82 @@ public partial class ExportReport
                 if (SettingsService.Instance.IsPlanExport.Equals("true", StringComparison.CurrentCultureIgnoreCase))
                 {
                     // create Plan Index
-                    foreach (var paragraph in mainPart.Document.Body.Elements<D.Paragraph>())
+                    if (mainPart?.Document?.Body != null)
                     {
-                        var run = paragraph.Elements<D.Run>().FirstOrDefault(r => r.InnerText.Contains("${plan_indexes}"));
-                        if (run != null)
+                        foreach (var paragraph in mainPart.Document.Body.Elements<D.Paragraph>())
                         {
-                            foreach (var text in run.Elements<D.Text>())
+                            var run = paragraph.Elements<D.Run>().FirstOrDefault(r => r.InnerText.Contains("${plan_indexes}"));
+                            if (run != null)
                             {
-                                if (text.Text.Contains("${plan_indexes}"))
+                                foreach (var text in run.Elements<D.Text>())
                                 {
-                                    text.Text = ""; // Lösche den Platzhaltertext
-                                    foreach (var plan in GlobalJson.Data.Plans)
+                                    if (text.Text.Contains("${plan_indexes}"))
                                     {
-                                        run.Append(new D.Text("- " + GlobalJson.Data.Plans[plan.Key].Name));
-                                        run.Append(new Break() { Type = BreakValues.TextWrapping });
+                                        text.Text = ""; // Lösche den Platzhaltertext
+                                        foreach (var plan in GlobalJson.Data.Plans)
+                                        {
+                                            run.Append(new D.Text("- " + GlobalJson.Data.Plans[plan.Key].Name));
+                                            run.Append(new Break() { Type = BreakValues.TextWrapping });
+                                        }
                                     }
                                 }
                             }
                         }
                     }
 
-                    // add Plan Images
-                    foreach (var paragraph in mainPart.Document.Body.Elements<D.Paragraph>())
+
+                    if (mainPart?.Document?.Body != null)
                     {
-                        var run = paragraph.Elements<D.Run>().FirstOrDefault(r => r.InnerText.Contains("${plan_images}"));
-                        if (run != null)
+                        // add Plan Images
+                        foreach (var paragraph in mainPart.Document.Body.Elements<D.Paragraph>())
                         {
-                            foreach (var text in run.Elements<D.Text>())
+                            var run = paragraph.Elements<D.Run>().FirstOrDefault(r => r.InnerText.Contains("${plan_images}"));
+                            if (run != null)
                             {
-                                if (text.Text.Contains("${plan_images}"))
+                                foreach (var text in run.Elements<D.Text>())
                                 {
-                                    int i = 1;
-                                    text.Text = ""; // Lösche den Platzhaltertext
-                                    foreach (var plan in GlobalJson.Data.Plans)
+                                    if (text.Text.Contains("${plan_images}"))
                                     {
-                                        var imgName = GlobalJson.Data.Plans[plan.Key].File;
-                                        var imgPath = Path.Combine(FileSystem.AppDataDirectory, GlobalJson.Data.PlanPath, imgName);
-
-                                        // generate Pin-Image-List
-                                        var pinList = new List<(string, SKPoint, string, SKPoint)>();
-                                        if (GlobalJson.Data.Plans[plan.Key].Pins != null)
+                                        int i = 1;
+                                        text.Text = ""; // Lösche den Platzhaltertext
+                                        foreach (var plan in GlobalJson.Data.Plans)
                                         {
-                                            foreach (var pin in GlobalJson.Data.Plans[plan.Key].Pins)
+                                            var imgName = GlobalJson.Data.Plans[plan.Key].File;
+                                            var imgPath = Path.Combine(FileSystem.AppDataDirectory, GlobalJson.Data.PlanPath, imgName);
+
+                                            // generate Pin-Image-List
+                                            var pinList = new List<(string, SKPoint, string, SKPoint)>();
+                                            if (GlobalJson.Data.Plans[plan.Key].Pins != null)
                                             {
-                                                pinList.Add((GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].PinIcon,
-                                                            new SKPoint((float)GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].Pos.X, (float)GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].Pos.Y),
-                                                            "    Pos. " + i.ToString(),
-                                                            new SKPoint((float)GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].Anchor.X, (float)GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].Anchor.Y)));
-                                                i += 1;
+                                                foreach (var pin in GlobalJson.Data.Plans[plan.Key].Pins)
+                                                {
+                                                    pinList.Add((GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].PinIcon,
+                                                                new SKPoint((float)GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].Pos.X, (float)GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].Pos.Y),
+                                                                "    Pos. " + i.ToString(),
+                                                                new SKPoint((float)GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].Anchor.X, (float)GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].Anchor.Y)));
+                                                    i += 1;
+                                                }
                                             }
-                                        }
-                                        else
-                                        {
-                                            pinList = null;
-                                        }
-                                        var _img = await XmlImage.GenerateImage(mainPart,
-                                                                                new FileResult(imgPath),
-                                                                                0.5,
-                                                                                heightMilimeters: Int32.Parse(SettingsService.Instance.PlanExportSize),
-                                                                                imageQuality: Int32.Parse(SettingsService.Instance.ImageExportQuality),
-                                                                                overlayImages: pinList);
+                                            else
+                                            {
+                                                pinList = null;
+                                            }
+                                            var _img = await XmlImage.GenerateImage(mainPart,
+                                                                                    new FileResult(imgPath),
+                                                                                    0.5,
+                                                                                    heightMilimeters: Int32.Parse(SettingsService.Instance.PlanExportSize),
+                                                                                    imageQuality: Int32.Parse(SettingsService.Instance.ImageExportQuality),
+                                                                                    overlayImages: pinList);
 
-                                        var runProperties = new D.RunProperties(); // definiere Schriftgrösse
-                                        var fontSize = new D.FontSize() { Val = "32" }; // 16pt Schriftgröße
-                                        runProperties.Append(fontSize);
-                                        run.PrependChild(runProperties); // weise Schrift-Property zu
-                                        run.Append(new D.Text(GlobalJson.Data.Plans[plan.Key].Name));
-                                        run.Append(new Break() { Type = BreakValues.TextWrapping });
-                                        run.Append(_img);
-                                        if (i < GlobalJson.Data.Plans.Count-1) run.Append(new Break() { Type = BreakValues.Page });  // letzter Seitenumbruch nicht einfügen
+                                            var runProperties = new D.RunProperties(); // definiere Schriftgrösse
+                                            var fontSize = new D.FontSize() { Val = "32" }; // 16pt Schriftgröße
+                                            runProperties.Append(fontSize);
+                                            run.PrependChild(runProperties); // weise Schrift-Property zu
+                                            run.Append(new D.Text(GlobalJson.Data.Plans[plan.Key].Name));
+                                            run.Append(new Break() { Type = BreakValues.TextWrapping });
+                                            run.Append(_img);
+                                            if (i < GlobalJson.Data.Plans.Count - 1) run.Append(new Break() { Type = BreakValues.Page });  // letzter Seitenumbruch nicht einfügen
+                                        }
                                     }
                                 }
                             }

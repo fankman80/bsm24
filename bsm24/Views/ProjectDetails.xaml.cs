@@ -3,7 +3,6 @@
 using bsm24.Models;
 using PDFtoImage;
 using SkiaSharp;
-using System.Globalization;
 using UraniumUI.Pages;
 
 namespace bsm24.Views;
@@ -48,7 +47,7 @@ public partial class ProjectDetails : UraniumContentPage
 
         if (!isPdfExist)
         {
-            await new LoadDataToView().LoadData(new FileResult(Path.Combine(FileSystem.AppDataDirectory, GlobalJson.Data.JsonFile)));
+            LoadDataToView.LoadData(new FileResult(Path.Combine(FileSystem.AppDataDirectory, GlobalJson.Data.JsonFile)));
             isPdfExist = true;
         }
 

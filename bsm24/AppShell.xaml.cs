@@ -35,7 +35,7 @@ public partial class AppShell : Shell
         {
             string filePath = Path.Combine(FileSystem.AppDataDirectory, result, result + ".json");
 
-            await new LoadDataToView().ResetApp();
+            LoadDataToView.ResetApp();
 
             GlobalJson.CreateNewFile(filePath);
             GlobalJson.Data.Client_name = "";

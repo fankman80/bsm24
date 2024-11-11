@@ -208,7 +208,6 @@ public partial class XmlImage
     {
         if (Path.IsPathRooted(file) && File.Exists(file))
             return File.OpenRead(file);
-
 #if ANDROID
         var context = Android.App.Application.Context;
         var resources = context.Resources;
@@ -227,6 +226,7 @@ public partial class XmlImage
             if (stream is not null)
                 return stream;
         }
+        await Task.CompletedTask;
 #elif WINDOWS
         try
         {
@@ -265,8 +265,8 @@ public partial class XmlImage
 		file = Path.Combine(root, file);
 		if (File.Exists(file))
 			return File.OpenRead(file);
+        await Task.CompletedTask;
 #endif
-
         return null;
     }
 }
