@@ -16,6 +16,7 @@
    
     <Border
         StrokeShape="RoundRectangle 20,20,20,20"
+        Padding="16,16,16,16"
         BackgroundColor="White"
         WidthRequest="300"
         HorizontalOptions="Center"

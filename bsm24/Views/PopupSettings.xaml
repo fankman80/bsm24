@@ -18,6 +18,7 @@
 
     <Border
         StrokeShape="RoundRectangle 20,20,20,20"
+        Padding="16,16,16,16"
         BackgroundColor="White"
         WidthRequest="300"
         HorizontalOptions="Center"
@@ -42,14 +43,7 @@
                 <Label Text="Pläne rotieren" Grid.Column="0" Grid.Row="0"/>
                 <Switch x:Name="isPlanRotateLocked" IsToggled="{Binding IsPlanRotateLocked}" HorizontalOptions="Start" Grid.Column="1" Grid.Row="0"/>
             </Grid>
-            
-            <Picker
-                  VerticalOptions="Center"
-                  Title="Thema:"
-                  ItemsSource="{Binding Source={x:Static models:Theme.AvailableThemes}}"
-                  ItemDisplayBinding="{Binding DisplayName}"
-                  SelectedItem="{Binding Path=Theme, Source={x:Static services:SettingsService.Instance}}"/>
-
+           
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" />

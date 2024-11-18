@@ -98,20 +98,7 @@ public partial class NewPage : IQueryAttributable
         }
 
         PlanContainer.PropertyChanged += (s, e) =>
-        {
-            var scaleSpeed = 1 / PlanContainer.Scale;
-            Point screenCenter = new(this.Width / 2, this.Height / 2);
-            Point planCenter = new(PlanContainer.Width / 2, PlanContainer.Height / 2);
-            var _x =  planCenter.X - screenCenter.X;
-            var _y =  planCenter.Y - screenCenter.Y;
-            var a = (PlanContainer.Width / 2) + (_x * scaleSpeed);
-            var b = (PlanContainer.Height / 2) + (_y * scaleSpeed);
-
-            this.Title = Math.Round(a, 0).ToString() + "/" + 
-                         Math.Round(b, 0).ToString() + " <-> " +
-                         Math.Round(PlanContainer.AnchorX, 2).ToString() + "/" +
-                         Math.Round(PlanContainer.AnchorY, 2).ToString();
-            
+        {   
             if (e.PropertyName == "Scale")
             {
                 var scale = 1 / PlanContainer.Scale;
@@ -332,21 +319,31 @@ public partial class NewPage : IQueryAttributable
             string currentDateTime = DateTime.Now.ToString("yyyyMMdd_HHmmss");
             string newPin = "a_pin_red.png";
 
-            var scaleSpeed = 1 / PlanContainer.Scale;
+
             Point screenCenter = new(this.Width / 2, this.Height / 2);
-            Point planCenter = new(PlanContainer.TranslationX + (PlanContainer.Width / 2), PlanContainer.TranslationY + (PlanContainer.Height / 2));
+            Point translated = new(screenCenter.X + PlanContainer.TranslationX, screenCenter.Y + PlanContainer.TranslationY);
 
-            var _x = screenCenter.X - planCenter.X;
-            var _y = screenCenter.Y - planCenter.Y;
+            // Schritt 3: Rotation rückgängig machen
+            double angleInRadians = -PlanContainer.Rotation * Math.PI / 180; // Inverse Rotation (negativer Winkel)
+            double rotatedX = translated.X * Math.Cos(angleInRadians) - translated.Y * Math.Sin(angleInRadians);
+            double rotatedY = translated.X * Math.Sin(angleInRadians) + translated.Y * Math.Cos(angleInRadians);
 
-            //double angle = PlanContainer.Rotation * Math.PI / 180.0;
-            //var _a = Math.Sin(Math.Atan(_x / _y) - angle) * Math.Sqrt(_x*_x + _y*_y);
-            //var _b = -Math.Cos(Math.Atan(_x / _y) - angle) * Math.Sqrt(_x*_x + _y*_y);
+            // Schritt 4: Skalierung rückgängig machen
+            double scaledX = rotatedX / PlanContainer.Scale;
+            double scaledY = rotatedY / PlanContainer.Scale;
 
-            var a = (PlanContainer.Width / 2) + (_x * scaleSpeed);
-            var b = (PlanContainer.Height / 2) + (_y * scaleSpeed);
+            // Schritt 5: Ankerpunkt berücksichtigen (AnchorX und AnchorY anstelle von PlanContainer.X/Y)
+            double imageWidth = PlanContainer.Width;
+            double imageHeight = PlanContainer.Height;
+            double anchorOffsetX = (PlanContainer.AnchorX - 0.5) * imageWidth;
+            double anchorOffsetY = (PlanContainer.AnchorY - 0.5) * imageHeight;
 
-            Point pos = new(1 / PlanContainer.Width * a, 1 / PlanContainer.Height * b);
+            double imageX = scaledX - anchorOffsetX;
+            double imageY = scaledY - -anchorOffsetY;
+
+
+            Point pos = new(1 / PlanContainer.Width * imageX, 1 / PlanContainer.Height * imageY);
+
 
             Pin newPinData = new()
             {
