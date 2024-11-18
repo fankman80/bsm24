@@ -20,7 +20,6 @@ public static class MauiProgram
             .UseFFImageLoading()
             .ConfigureMRGestures()
             .ConfigureMopups()
-            .UseFFImageLoading()
             .ConfigureFonts(fonts =>
             {
                 fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
