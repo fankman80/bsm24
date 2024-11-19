@@ -6,7 +6,6 @@
              xmlns:uranium="http://schemas.enisn-projects.io/dotnet/maui/uraniumui"
              xmlns:material="http://schemas.enisn-projects.io/dotnet/maui/uraniumui/material"
              xmlns:m="clr-namespace:UraniumUI.Icons.MaterialIcons;assembly=UraniumUI.Icons.MaterialIcons"
-             xmlns:vm="clr-namespace:bsm24.ViewModels"
              xmlns:services="clr-namespace:bsm24.Services"
              x:Class="bsm24.Views.PopupSettings"
              BackgroundClicked="PopupPage_BackgroundClicked"
@@ -15,10 +14,6 @@
              HasSystemPadding="False"
              BackgroundColor="#60000000"
              Title="Settings">
-
-    <ContentPage.BindingContext>
-        <vm:ThemeViewModel />
-    </ContentPage.BindingContext>
 
     <Border
         StrokeShape="RoundRectangle 20,20,20,20"

@@ -99,18 +99,6 @@ public partial class NewPage: IQueryAttributable
 
         PlanContainer.PropertyChanged += (s, e) =>
         {
-            var _scale = PlanContainer.Scale;
-            Point screenCenter = new(this.Width / 2, this.Height / 2);
-            Point planPos = new(PlanContainer.TranslationX, PlanContainer.TranslationY);
-            Point anchorDif = new((0.5 - PlanContainer.AnchorX) * PlanContainer.Width * _scale, (0.5 - PlanContainer.AnchorY) * PlanContainer.Height * _scale);
-            Point planAnchor = new(PlanContainer.Width * PlanContainer.AnchorX, PlanContainer.Height * PlanContainer.AnchorY);
-
-            double scaledX = (screenCenter.X - planPos.X - planAnchor.X - anchorDif.X) / _scale;
-            double scaledY = (screenCenter.Y - planPos.Y - planAnchor.Y - anchorDif.Y) / _scale;
-
-            this.Title = $"{scaledX} / {scaledY} --- {PlanContainer.AnchorX} / {PlanContainer.AnchorY}";
-
-
             if (e.PropertyName == "Scale")
             {
                 var scale = 1 / PlanContainer.Scale;
@@ -200,6 +188,7 @@ public partial class NewPage: IQueryAttributable
         };
 
         PlanContainer.Children.Add(smallImage);
+        PlanContainer.InvalidateMeasure(); //Aktualisierung forcieren
 
         // set transparency
         if (GlobalJson.Data.Plans[PlanId].Pins[pinId].IsLocked == true)

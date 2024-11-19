@@ -39,8 +39,6 @@ public partial class LoadDataToView
                         }
                     };
 
-                    newFlyoutItem.Icon.SetAppThemeColor(FontImageSource.ColorProperty, (Color)Application.Current.Resources["Primary"], (Color)Application.Current.Resources["PrimaryDark"]);
-
                     // Register the route
                     Routing.RegisterRoute(planId, typeof(Views.NewPage));
 
