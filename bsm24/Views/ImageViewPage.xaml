@@ -12,7 +12,7 @@
     <ContentPage.ToolbarItems>
         <ToolbarItem
             IconImageSource="{FontImageSource FontFamily=MaterialOutlined, Glyph={x:Static m:MaterialRegular.Delete}}" 
-            Text="Delete"
+            Text="Delete"          
             Clicked="OnDeleteButtonClicked"/>
     </ContentPage.ToolbarItems>
     

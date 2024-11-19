@@ -38,10 +38,14 @@
                 <Button Grid.Column="0"
                     x:Name="okButtonText"
                     Text="Ok"
+                    BackgroundColor="{DynamicResource Primary}"
+                    TextColor="{DynamicResource PrimaryDarkText}"                        
                     Clicked="OnOkClicked" />
                 <Button Grid.Column="1"
                     x:Name="cancelButtonText"
                     Text="Cancel"
+                    BackgroundColor="{DynamicResource Primary}"
+                    TextColor="{DynamicResource PrimaryDarkText}"                        
                     Clicked="OnCancelClicked" />
             </Grid>
         </VerticalStackLayout>

@@ -16,6 +16,10 @@
              BackgroundColor="#60000000"
              Title="Settings">
 
+    <ContentPage.BindingContext>
+        <vm:ThemeViewModel />
+    </ContentPage.BindingContext>
+
     <Border
         StrokeShape="RoundRectangle 20,20,20,20"
         Padding="16,16,16,16"
@@ -44,14 +48,20 @@
                 <Switch x:Name="isPlanRotateLocked" IsToggled="{Binding IsPlanRotateLocked}" HorizontalOptions="Start" Grid.Column="1" Grid.Row="0"/>
             </Grid>
 
-            <Picker x:Name="themePicker" Title="Select Theme" SelectedIndexChanged="OnThemePickerChanged">
-                <Picker.Items>
-                    <x:String>Light</x:String>
-                    <x:String>Dark</x:String>
-                    <x:String>System Default</x:String>
-                </Picker.Items>
+            <Picker
+                x:Name="darkModePicker"
+                Title="Dark-Mode:"
+                ItemsSource="{Binding DarkMode}"
+                SelectedItem="{Binding SelectedDarkMode}">
+            </Picker>            
+            
+            <Picker
+                x:Name="colorThemePicker"
+                Title="UI-Thema:"
+                ItemsSource="{Binding Themes}"
+                SelectedItem="{Binding SelectedTheme}">
             </Picker>
-
+            
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" />
@@ -59,9 +69,13 @@
                 </Grid.ColumnDefinitions>
                 <Button Grid.Column="0"
                     Text="OK"
+                    BackgroundColor="{DynamicResource Primary}"
+                    TextColor="{DynamicResource PrimaryDarkText}"                        
                     Clicked="OnOkClicked" />
                 <Button Grid.Column="1"
                     Text="Export Einstellungen"
+                    BackgroundColor="{DynamicResource Primary}"
+                    TextColor="{DynamicResource PrimaryDarkText}"                        
                     Clicked="OnExportSettingsClicked" />                
             </Grid>
         </VerticalStackLayout>

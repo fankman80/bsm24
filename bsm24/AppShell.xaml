@@ -54,7 +54,7 @@
                 <Label Text="" 
                        FontSize="8"/>
                 <Label Text="BSM24 Beta"
-                       TextColor="{AppThemeBinding {StaticResource Primary}, Dark={StaticResource PrimaryDark}}"
+                       TextColor="{AppThemeBinding {DynamicResource Primary}, Dark={DynamicResource PrimaryDark}}"
                        FontAttributes="Bold"
                        FontSize="12"
                        HorizontalOptions="Center" />
@@ -74,34 +74,34 @@
 
     <MenuItem Text="Neues Projekt"
               Clicked="OnNewClicked"
-              IconImageSource="{FontImageSource FontFamily=MaterialOutlined, Color={AppThemeBinding {StaticResource Primary}, Dark={StaticResource PrimaryDark}}, Glyph={x:Static m:MaterialRegular.Add_box}}"/>
+              IconImageSource="{FontImageSource FontFamily=MaterialOutlined, Color={AppThemeBinding {DynamicResource Primary}, Dark={DynamicResource PrimaryDark}}, Glyph={x:Static m:MaterialRegular.Add_box}}"/>
 
     <ShellContent Route="open_project"
                   Title="Projekt öffnen"
-                  Icon="{FontImageSource FontFamily=MaterialOutlined, Color={AppThemeBinding {StaticResource Primary}, Dark={StaticResource PrimaryDark}}, Glyph={x:Static m:MaterialRegular.Open_in_new}}"
+                  Icon="{FontImageSource FontFamily=MaterialOutlined, Color={AppThemeBinding {DynamicResource Primary}, Dark={DynamicResource PrimaryDark}}, Glyph={x:Static m:MaterialRegular.Open_in_new}}"
                   ContentTemplate="{DataTemplate views:OpenProject}" />
 
     <ShellContent Route="project_details"
                   Title="Projekt Details"
-                  Icon="{FontImageSource FontFamily=MaterialOutlined, Color={AppThemeBinding {StaticResource Primary}, Dark={StaticResource PrimaryDark}}, Glyph={x:Static m:MaterialRegular.Home_work}}"
+                  Icon="{FontImageSource FontFamily=MaterialOutlined, Color={AppThemeBinding {DynamicResource Primary}, Dark={DynamicResource PrimaryDark}}, Glyph={x:Static m:MaterialRegular.Home_work}}"
                   ContentTemplate="{DataTemplate views:ProjectDetails}" />
 
     <MenuItem Text="Einstellungen"
               Clicked="OnSettingsClicked"
-              IconImageSource="{FontImageSource FontFamily=MaterialOutlined, Color={AppThemeBinding {StaticResource Primary}, Dark={StaticResource PrimaryDark}}, Glyph={x:Static m:MaterialRegular.Settings}}"/>
+              IconImageSource="{FontImageSource FontFamily=MaterialOutlined, Color={AppThemeBinding {DynamicResource Primary}, Dark={DynamicResource PrimaryDark}}, Glyph={x:Static m:MaterialRegular.Settings}}"/>
 
     <MenuItem Text="Bericht exportieren"
               Clicked="OnExportClicked"
-              IconImageSource="{FontImageSource FontFamily=MaterialOutlined, Color={AppThemeBinding {StaticResource Primary}, Dark={StaticResource PrimaryDark}}, Glyph={x:Static m:MaterialRegular.File_download}}"/>
+              IconImageSource="{FontImageSource FontFamily=MaterialOutlined, Color={AppThemeBinding {DynamicResource Primary}, Dark={DynamicResource PrimaryDark}}, Glyph={x:Static m:MaterialRegular.File_download}}"/>
 
     <MenuItem Text="Bericht teilen"
               Clicked="OnShareClicked"
-              IconImageSource="{FontImageSource FontFamily=MaterialOutlined, Color={AppThemeBinding {StaticResource Primary}, Dark={StaticResource PrimaryDark}}, Glyph={x:Static m:MaterialRegular.Share}}"/>
+              IconImageSource="{FontImageSource FontFamily=MaterialOutlined, Color={AppThemeBinding {DynamicResource Primary}, Dark={DynamicResource PrimaryDark}}, Glyph={x:Static m:MaterialRegular.Share}}"/>
 
     <MenuItem>
         <Shell.MenuItemTemplate>
             <DataTemplate>
-                <Label HeightRequest="1.4" Margin="16,0,16,0" BackgroundColor="{AppThemeBinding {StaticResource Primary}, Dark={StaticResource PrimaryDark}}"></Label>
+                <Label HeightRequest="1.4" Margin="16,0,16,0" BackgroundColor="{AppThemeBinding {DynamicResource Primary}, Dark={DynamicResource PrimaryDark}}"></Label>
             </DataTemplate>
         </Shell.MenuItemTemplate>
     </MenuItem>

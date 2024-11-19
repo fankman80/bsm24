@@ -86,6 +86,8 @@
                 </Grid.ColumnDefinitions>
                 <Button Grid.Column="0"
                     Text="OK"
+                    BackgroundColor="{DynamicResource Primary}"
+                    TextColor="{DynamicResource PrimaryDarkText}"                        
                     Clicked="OnOkClicked" />
             </Grid>
         </VerticalStackLayout>

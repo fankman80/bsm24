@@ -35,9 +35,13 @@
                 </Grid.ColumnDefinitions>
                 <Button Grid.Column="0"
                     Text="OK"
+                    BackgroundColor="{DynamicResource Primary}"
+                    TextColor="{DynamicResource PrimaryDarkText}"                        
                     Clicked="OnOkClicked" />
                 <Button Grid.Column="1"
                     Text="Plan löschen"
+                    BackgroundColor="{DynamicResource Primary}"
+                    TextColor="{DynamicResource PrimaryDarkText}"                        
                     Clicked="OnDeleteClicked" />
             </Grid>
         </VerticalStackLayout>

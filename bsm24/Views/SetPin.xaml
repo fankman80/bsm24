@@ -46,12 +46,12 @@
                 x:Name="PinTxt"
                 MaxLength="50"
                 Title="Bezeichnung"
-                Icon="{FontImageSource FontFamily=MaterialOutlined, Color={AppThemeBinding {StaticResource Primary}, Dark={StaticResource PrimaryDark}}, Glyph={x:Static m:MaterialRegular.Push_pin}}"/>
+                Icon="{FontImageSource FontFamily=MaterialOutlined, Color={AppThemeBinding {DynamicResource Primary}, Dark={DynamicResource PrimaryDark}}, Glyph={x:Static m:MaterialRegular.Push_pin}}"/>
 
             <material:EditorField
                 x:Name="PinInfo"
                 Title="Beschreibung"
-                Icon="{FontImageSource FontFamily=MaterialOutlined, Color={AppThemeBinding {StaticResource Primary}, Dark={StaticResource PrimaryDark}}, Glyph={x:Static m:MaterialRegular.Info}}" />
+                Icon="{FontImageSource FontFamily=MaterialOutlined, Color={AppThemeBinding {DynamicResource Primary}, Dark={DynamicResource PrimaryDark}}, Glyph={x:Static m:MaterialRegular.Info}}" />
 
             <Grid>
                 <Grid.ColumnDefinitions>
@@ -61,7 +61,7 @@
                 </Grid.ColumnDefinitions>
                 <VerticalStackLayout Grid.Column="0">
                     <Label Text="Pin sperren:" VerticalTextAlignment="Start" />
-                    <Switch x:Name="LockSwitch" HorizontalOptions="Start" />
+                    <Switch x:Name="LockSwitch" HorizontalOptions="Start"/>
                 </VerticalStackLayout>
 
                 <VerticalStackLayout Grid.Column="1">
@@ -89,12 +89,18 @@
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
                 <Button Grid.Column="0"
+                        BackgroundColor="{DynamicResource Primary}"
+                        TextColor="{DynamicResource PrimaryDarkText}"                        
                         ImageSource="{FontImageSource FontFamily=MaterialOutlined, Glyph={x:Static m:MaterialRegular.Check}}"
                         Clicked="OnOkayClick"/>
                 <Button Grid.Column="1"
+                        BackgroundColor="{DynamicResource Primary}"
+                        TextColor="{DynamicResource PrimaryDarkText}"
                         ImageSource="{FontImageSource FontFamily=MaterialOutlined, Glyph={x:Static m:MaterialRegular.Camera_alt}}"
                         Clicked="TakePhoto"/>
                 <Button Grid.Column="2"
+                        BackgroundColor="{DynamicResource Primary}"
+                        TextColor="{DynamicResource PrimaryDarkText}"                        
                         ImageSource="{FontImageSource FontFamily=MaterialOutlined, Glyph={x:Static m:MaterialRegular.Delete_outline}}"
                         Clicked="OnDeleteClick"/>
             </Grid>

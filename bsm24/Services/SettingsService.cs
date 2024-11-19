@@ -11,20 +11,7 @@ public partial class SettingsService : INotifyPropertyChanged
 
     private SettingsService()
     {
-        Theme = Theme.System;
         ImageQuality = "300";
-    }
-
-    private Theme _theme;
-    public Theme Theme
-    {
-        get => _theme;
-        set
-        {
-            if (_theme == value) return;
-            _theme = value;
-            OnPropertyChanged(_theme.DisplayName);
-        }
     }
 
     private string _imageQuality;

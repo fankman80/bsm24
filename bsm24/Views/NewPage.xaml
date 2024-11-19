@@ -58,6 +58,8 @@
             </AbsoluteLayout>
         </mr:ContentView>
         <Button ImageSource="{FontImageSource FontFamily=MaterialOutlined, Glyph={x:Static m:MaterialRegular.Add_location_alt}}"
+            BackgroundColor="{DynamicResource Primary}"
+            TextColor="{DynamicResource PrimaryDarkText}"                
             Margin="20"
             WidthRequest="60"
             HeightRequest="60"
