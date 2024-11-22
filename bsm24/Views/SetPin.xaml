@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <uranium:UraniumContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:ff="clr-namespace:FFImageLoading.Maui;assembly=FFImageLoading.Maui"                             
              xmlns:views="clr-namespace:bsm24.Views"
              xmlns:uranium="http://schemas.enisn-projects.io/dotnet/maui/uraniumui"
              xmlns:material="http://schemas.enisn-projects.io/dotnet/maui/uraniumui/material"
              xmlns:m="clr-namespace:UraniumUI.Icons.MaterialSymbols;assembly=UraniumUI.Icons.MaterialSymbols"
-             xmlns:ffimageloading="clr-namespace:FFImageLoading.Maui;assembly=FFImageLoading.Maui"
+             x:DataType="views:SetPin"
              x:Class="bsm24.Views.SetPin"
              Title="Pin bearbeiten">
 
@@ -23,17 +24,16 @@
                     <GridItemsLayout Orientation="Vertical" Span="{Binding DynamicSpan}" />
                 </CollectionView.ItemsLayout>
                 <CollectionView.ItemTemplate>
-                    <DataTemplate>
+                    <DataTemplate x:DataType="x:String">
                         <StackLayout>
                             <views:SquareView>
-                                <ffimageloading:CachedImage Source="{Binding .}"
-                                                            CacheType="None"
-                                                            Aspect="AspectFill"
-                                                            Margin="0,0,10,10">
-                                    <ffimageloading:CachedImage.GestureRecognizers>
+                                <ff:CachedImage Source="{Binding .}"
+                                       Aspect="AspectFill"
+                                       Margin="0,0,10,10">
+                                    <ff:CachedImage.GestureRecognizers>
                                         <TapGestureRecognizer Tapped="OnImageTapped" />
-                                    </ffimageloading:CachedImage.GestureRecognizers>
-                                </ffimageloading:CachedImage>
+                                    </ff:CachedImage.GestureRecognizers>
+                                </ff:CachedImage>
                             </views:SquareView>
                         </StackLayout>
                     </DataTemplate>
@@ -41,7 +41,7 @@
             </CollectionView>
         </StackLayout>
 
-        <StackLayout Grid.Row="1" Spacing="16">
+        <StackLayout Grid.Row="1" Spacing="16" x:DataType="x:AppThemeBindingExtension">
             <material:TextField
                 x:Name="PinTxt"
                 TextColor="{AppThemeBinding {DynamicResource PrimaryText}, Dark={DynamicResource PrimaryDarkText}}"

@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <uranium:UraniumContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:ff="clr-namespace:FFImageLoading.Maui;assembly=FFImageLoading.Maui" 
              xmlns:views="clr-namespace:bsm24.Views"
              xmlns:uranium="http://schemas.enisn-projects.io/dotnet/maui/uraniumui"
              xmlns:material="http://schemas.enisn-projects.io/dotnet/maui/uraniumui/material"
-             xmlns:m="clr-namespace:UraniumUI.Icons.MaterialSymbols;assembly=UraniumUI.Icons.MaterialSymbols"
-             xmlns:ffimageloading="clr-namespace:FFImageLoading.Maui;assembly=FFImageLoading.Maui"
+             xmlns:m="clr-namespace:UraniumUI.Icons.MaterialSymbols;assembly=UraniumUI.Icons.MaterialSymbols"            
              x:Class="bsm24.Views.IconGallery"
+             x:DataType="views:IconGallery"
              Title="Pin auswählen">
 
     <CollectionView x:Name="ImageGallery"
@@ -16,15 +17,14 @@
             <GridItemsLayout Orientation="Vertical" Span="{Binding DynamicSpan}" />
         </CollectionView.ItemsLayout>
         <CollectionView.ItemTemplate>
-            <DataTemplate>
-                <ffimageloading:CachedImage Source="{Binding .}"
-                                            CacheType="Memory"
-                                            Aspect="AspectFit"
-                                            Margin="0,0,10,10">
-                    <ffimageloading:CachedImage.GestureRecognizers>
+            <DataTemplate x:DataType="x:String">
+                <ff:CachedImage Source="{Binding .}"
+                        Aspect="AspectFit"
+                        Margin="0,0,10,10">
+                    <ff:CachedImage.GestureRecognizers>
                         <TapGestureRecognizer Tapped="OnImageTapped" />
-                    </ffimageloading:CachedImage.GestureRecognizers>
-                </ffimageloading:CachedImage>
+                    </ff:CachedImage.GestureRecognizers>
+                </ff:CachedImage>
             </DataTemplate>
         </CollectionView.ItemTemplate>
     </CollectionView>

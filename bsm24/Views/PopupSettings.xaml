@@ -23,7 +23,7 @@
         HorizontalOptions="Center"
         VerticalOptions="Center">
 
-        <VerticalStackLayout>
+        <VerticalStackLayout x:DataType="services:SettingsService">
             <Label Text="{Binding PinScaleLimit, StringFormat='Pingrösse limitieren: {0:0.##}'}" />
             <Slider Maximum="2"
                     Minimum="0.01"

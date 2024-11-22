@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <mr:ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
 				xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+                xmlns:ff="clr-namespace:FFImageLoading.Maui;assembly=FFImageLoading.Maui" 
 				xmlns:mr="clr-namespace:MR.Gestures;assembly=MR.Gestures"
                 xmlns:mct="clr-namespace:CommunityToolkit.Maui.Views;assembly=CommunityToolkit.Maui"
                 xmlns:m="clr-namespace:UraniumUI.Icons.MaterialSymbols;assembly=UraniumUI.Icons.MaterialSymbols"
 				xmlns:views="clr-namespace:bsm24.Views"
+                xmlns:pc="clr-namespace:bsm24.ViewModels"
 				BackgroundColor="Black"
 				x:Class="bsm24.Views.ImageViewPage"
 				Title="">
@@ -15,8 +17,8 @@
             Text="Delete"          
             Clicked="OnDeleteButtonClicked"/>
     </ContentPage.ToolbarItems>
-    
-    <AbsoluteLayout IsClippedToBounds="True">
+
+    <AbsoluteLayout IsClippedToBounds="True" x:DataType="pc:TransformViewModel">
         <mr:ContentView
             PanningCommand="{Binding PanningCommand}"
             PinchingCommand="{Binding PinchingCommand}"
@@ -30,7 +32,7 @@
                 AnchorX="{Binding AnchorX}"
 				AnchorY="{Binding AnchorY}">
 
-                <Image x:Name="ImageView" />
+                <ff:CachedImage x:Name="ImageView" />
 
                 <mct:DrawingView
                         x:Name="DrawView"

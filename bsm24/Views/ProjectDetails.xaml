@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<uranium:UraniumContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+<uranium:UraniumContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"     
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:ff="clr-namespace:FFImageLoading.Maui;assembly=FFImageLoading.Maui"                             
              xmlns:vm="clr-namespace:bsm24.ViewModels"
              xmlns:views="clr-namespace:bsm24.Views"
              xmlns:uranium="http://schemas.enisn-projects.io/dotnet/maui/uraniumui"
              xmlns:material="http://schemas.enisn-projects.io/dotnet/maui/uraniumui/material"
              xmlns:m="clr-namespace:UraniumUI.Icons.MaterialSymbols;assembly=UraniumUI.Icons.MaterialSymbols"
-             xmlns:ffimageloading="clr-namespace:FFImageLoading.Maui;assembly=FFImageLoading.Maui"  
+             xmlns:services="clr-namespace:bsm24.Services"
              x:Class="bsm24.Views.ProjectDetails"
              Title="Projekt Details">
 
@@ -23,7 +24,7 @@
             </Grid.ColumnDefinitions>
 
             <ScrollView Grid.Row="0" Grid.ColumnSpan="2">
-                <VerticalStackLayout>
+                <VerticalStackLayout x:DataType="services:SettingsService">
                     <material:TextField
                         x:Name="client_name"
                         TextColor="{AppThemeBinding {DynamicResource PrimaryText}, Dark={DynamicResource PrimaryDarkText}}"
@@ -92,14 +93,14 @@
                         <Border Grid.Column="1" Grid.Row="0" Grid.RowSpan="2"
                                 StrokeThickness="0"
                                 StrokeShape="RoundRectangle 8" >
-                            <ffimageloading:CachedImage CacheType="Memory" Source="{Binding FlyoutHeaderImage}" Aspect="AspectFill">
-                                <ffimageloading:CachedImage.HeightRequest>
+                            <ff:CachedImage x:Name="titleThumbnail" Source="{Binding FlyoutHeaderImage}" Aspect="AspectFill">
+                                <ff:CachedImage.HeightRequest>
                                     <OnIdiom x:TypeArguments="x:Double" Desktop="100" Phone="100" Tablet="100"  />
-                                </ffimageloading:CachedImage.HeightRequest>
-                                <ffimageloading:CachedImage.WidthRequest>
+                                </ff:CachedImage.HeightRequest>
+                                <ff:CachedImage.WidthRequest>
                                     <OnIdiom x:TypeArguments="x:Double" Desktop="100" Phone="100" Tablet="100"  />
-                                </ffimageloading:CachedImage.WidthRequest>
-                            </ffimageloading:CachedImage>
+                                </ff:CachedImage.WidthRequest>
+                            </ff:CachedImage>
                         </Border>
 
                         <Button Grid.Column="1" Grid.Row="0" Grid.RowSpan="2"

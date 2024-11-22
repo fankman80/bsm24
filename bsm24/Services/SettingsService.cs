@@ -1,4 +1,5 @@
-﻿using DocumentFormat.OpenXml.Drawing;
+﻿#nullable disable
+
 using System.ComponentModel;
 
 namespace bsm24.Services;
@@ -10,8 +11,8 @@ public partial class SettingsService : INotifyPropertyChanged
     private SettingsService()
     {
         ImageQuality = "300";
-        Themes = new List<string> { "Lachs", "Gras", "Ozean", "Feuer" };
-        DarkMode = new List<string> { "Light", "Dark", "System Default" };
+        Themes = ["Lachs", "Gras", "Ozean", "Feuer"];
+        DarkMode = ["Light", "Dark", "System Default"];
         SelectedTheme = Themes[0]; // Standardauswahl
         SelectedDarkMode = DarkMode[0]; // Standardauswahl
     }

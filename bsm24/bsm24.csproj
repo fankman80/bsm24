@@ -39,6 +39,7 @@
 		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">10.0.18362.0</SupportedOSPlatformVersion>
 		<TargetPlatformMinVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">10.0.18362.0</TargetPlatformMinVersion>
 		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+		<MauiEnableXamlCBindingWithSourceCompilation>true</MauiEnableXamlCBindingWithSourceCompilation>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -61,6 +62,7 @@
 
 	<ItemGroup>
 	  <None Remove="FodyWeavers.xml" />
+	  <None Remove="FodyWeavers.xsd" />
 	  <None Remove="Resources\AppIcon\icon1.png" />
 	  <None Remove="Resources\Images\a_pin_blue.png" />
 	  <None Remove="Resources\Images\a_pin_green.png" />

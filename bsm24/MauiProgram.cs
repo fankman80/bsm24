@@ -1,10 +1,11 @@
 ﻿using Camera.MAUI;
 using CommunityToolkit.Maui;
-using FFImageLoading.Maui;
 using Mopups.Hosting;
 using MR.Gestures;
 using UraniumUI;
 using CommunityToolkit.Maui.Storage;
+
+using FFImageLoading.Maui;
 
 namespace bsm24;
 public static class MauiProgram

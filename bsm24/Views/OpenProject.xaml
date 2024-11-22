@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <uranium:UraniumContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:ff="clr-namespace:FFImageLoading.Maui;assembly=FFImageLoading.Maui" 
              xmlns:views="clr-namespace:bsm24.Views"
              xmlns:uranium="http://schemas.enisn-projects.io/dotnet/maui/uraniumui"
              xmlns:m="clr-namespace:UraniumUI.Icons.MaterialSymbols;assembly=UraniumUI.Icons.MaterialSymbols"
-             xmlns:ffimageloading="clr-namespace:FFImageLoading.Maui;assembly=FFImageLoading.Maui"
+             xmlns:local="clr-namespace:bsm24"
              x:Class="bsm24.Views.OpenProject"
              Title="Projekt laden">
 
@@ -14,7 +15,7 @@
                                 ItemsLayout="VerticalGrid, 1"
                                 VerticalOptions="FillAndExpand">
                 <CollectionView.ItemTemplate>
-                    <DataTemplate>
+                    <DataTemplate x:DataType="local:FileItem">
                         <Grid Padding="0, 6, 0, 6">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="60" />
@@ -42,11 +43,10 @@
                                     BorderWidth="0"
                                     Background="Transparent"
                                     Clicked="OnProjectClicked"/>
-                            <ffimageloading:CachedImage Grid.Column="0"
-                                                        Grid.RowSpan="2"
-                                                        Source="{Binding ImagePath}"
-                                                        CacheType="Memory"
-                                                        Aspect="AspectFill"/>
+                            <ff:CachedImage Grid.Column="0"
+                                    Grid.RowSpan="2"
+                                    Source="{Binding ImagePath}"
+                                    Aspect="AspectFill"/>
                             <Button Grid.Column="2"
                                     Grid.RowSpan="2"
                                     BorderColor="{AppThemeBinding {DynamicResource Primary}, Dark={DynamicResource PrimaryDark}}"

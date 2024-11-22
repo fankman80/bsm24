@@ -3,9 +3,12 @@
 using bsm24.Models;
 using bsm24.Services;
 using bsm24.ViewModels;
+using Codeuctivity.OpenXmlPowerTools;
+using DocumentFormat.OpenXml.Presentation;
 using Mopups.Services;
 using MR.Gestures;
 using System.Globalization;
+using System.Threading;
 
 namespace bsm24.Views;
 
@@ -24,6 +27,8 @@ public partial class NewPage: IQueryAttributable
     private double densityX, densityY;
 
     private bool isFirstLoad = true;
+
+    private Point mousePos;
 
     public NewPage(string planId)
     {
@@ -369,6 +374,25 @@ public partial class NewPage: IQueryAttributable
 
             AddPin(currentDateTime, newPinData.PinIcon);
         };
+    }
+
+    private void OnMouseMoved(object sender, MouseEventArgs e)
+    {
+        mousePos = e.Center;
+
+        this.Title = mousePos.ToString();
+    }
+
+    private void OnMouseScroll(object sender, ScrollWheelEventArgs e)
+    {
+        double zoomFactor = e.ScrollDelta.Y > 0 ? 1.1 : 0.9; // Sanfter Zoom
+        double newScale = PlanContainer.Scale * zoomFactor;
+        newScale = Math.Max(0.1, Math.Min(newScale, 10));
+
+        var planPanContainer = (TransformViewModel)PlanContainer.BindingContext;
+        planPanContainer.AnchorX = mousePos.X / PlanContainer.Width;
+        planPanContainer.AnchorY = mousePos.Y / PlanContainer.Height;
+        planPanContainer.Scale = newScale;
     }
 
     private async void OnEditButtonClicked(object sender, EventArgs e)

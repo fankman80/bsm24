@@ -1,11 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Shell xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
        xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-       xmlns:sys="clr-namespace:System;assembly=netstandard"
+       xmlns:ff="clr-namespace:FFImageLoading.Maui;assembly=FFImageLoading.Maui" 
        xmlns:views="clr-namespace:bsm24.Views"
        xmlns:uranium="http://schemas.enisn-projects.io/dotnet/maui/uraniumui"
        xmlns:material="http://schemas.enisn-projects.io/dotnet/maui/uraniumui/material"
-       xmlns:m="clr-namespace:UraniumUI.Icons.MaterialSymbols;assembly=UraniumUI.Icons.MaterialSymbols" 
+       xmlns:m="clr-namespace:UraniumUI.Icons.MaterialSymbols;assembly=UraniumUI.Icons.MaterialSymbols"
+       xmlns:sys="clr-namespace:System;assembly=System.Runtime"
+       xmlns:services="clr-namespace:bsm24.Services"
        x:Class="bsm24.AppShell"
        x:Name="shell"
        FlyoutBackgroundImageAspect="AspectFill"
@@ -13,7 +15,7 @@
        Shell.FlyoutBehavior="{OnIdiom Desktop=Locked, Default=Flyout}">
 
     <Shell.FlyoutHeaderTemplate>
-        <DataTemplate>
+        <DataTemplate x:DataType="services:SettingsService">
             <Grid BackgroundColor="Gray">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="100" />
@@ -23,7 +25,7 @@
                     <RowDefinition Height="70" />
                     <RowDefinition Height="30" />
                 </Grid.RowDefinitions>
-                <Image Grid.Column="0"
+                <ff:CachedImage Grid.Column="0"
                        Grid.RowSpan="2"
                        Aspect="AspectFill"
                        Source="{Binding FlyoutHeaderImage}"/>
@@ -50,7 +52,7 @@
 
     <Shell.FlyoutFooterTemplate>
         <DataTemplate>
-            <StackLayout>
+            <StackLayout x:DataType="sys:DateTime">
                 <Label Text="" 
                        FontSize="4"/>
                 <Label Text="BSM24 Beta"

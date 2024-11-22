@@ -15,13 +15,15 @@ public partial class App : Application
         System.Globalization.CultureInfo.CurrentCulture = new System.Globalization.CultureInfo("de-DE");
         System.Globalization.CultureInfo.CurrentUICulture = new System.Globalization.CultureInfo("de-DE");
 
-        MainPage = UraniumServiceProvider.Current.GetRequiredService<AppShell>();
+        //MainPage = UraniumServiceProvider.Current.GetRequiredService<AppShell>();
     }
 
     protected override Window CreateWindow(IActivationState? activationState)
     {
-        var window = base.CreateWindow(activationState);
-        window.Title = "BSM 24 by EBBE";
+        var window = new Window(UraniumServiceProvider.Current.GetRequiredService<AppShell>())
+        {
+            Title = "BSM 24 by EBBE"
+        };
 
 #if WINDOWS
         window.HandlerChanged += (sender, args) =>

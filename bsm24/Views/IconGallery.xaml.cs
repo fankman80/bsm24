@@ -1,6 +1,6 @@
-﻿using FFImageLoading.Maui;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using UraniumUI.Pages;
+using FFImageLoading.Maui;
 
 #nullable disable
 
