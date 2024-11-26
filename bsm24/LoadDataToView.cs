@@ -31,7 +31,9 @@ public partial class LoadDataToView
                         {
                             FontFamily = "MaterialOutlined",
                             Glyph = UraniumUI.Icons.MaterialSymbols.MaterialOutlined.Layers,
-                            Color = (Color)Application.Current.Resources["Primary"] // Primärfarbe aus den Ressourcen
+                            Color = Application.Current.RequestedTheme == AppTheme.Dark
+                                    ? (Color)Application.Current.Resources["PrimaryDark"]
+                                    : (Color)Application.Current.Resources["Primary"]
                         },
                         Items =
                         {
@@ -58,9 +60,7 @@ public partial class LoadDataToView
         foreach (var shellitem in (Application.Current.Windows[0].Page as AppShell).Items)
         {
             if (shellitem.AutomationId != null)
-            {
                 itemsToRemove.Add(shellitem);
-            }
         }
 
         // Jetzt die gesammelten Items entfernen, nachdem die Iteration abgeschlossen ist

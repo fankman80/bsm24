@@ -87,30 +87,10 @@
 
     <ShellContent Route="project_details"
                   Title="Projekt Details"
-                  IsVisible="False"
+                  FlyoutItemIsVisible="False"
                   Icon="{FontImageSource FontFamily=MaterialOutlined, Color={AppThemeBinding {DynamicResource Primary}, Dark={DynamicResource PrimaryDark}}, Glyph={x:Static m:MaterialOutlined.Home_work}}"
                   ContentTemplate="{DataTemplate views:ProjectDetails}" />
 
-    <MenuItem Text="Einstellungen"
-              Clicked="OnSettingsClicked"
-              IconImageSource="{FontImageSource FontFamily=MaterialOutlined, Color={AppThemeBinding {DynamicResource Primary}, Dark={DynamicResource PrimaryDark}}, Glyph={x:Static m:MaterialOutlined.Settings}}"/>
-
-    <MenuItem Text="Bericht exportieren"
-              Clicked="OnExportClicked"
-              Shell.FlyoutItemIsVisible="False"
-              IconImageSource="{FontImageSource FontFamily=MaterialOutlined, Color={AppThemeBinding {DynamicResource Primary}, Dark={DynamicResource PrimaryDark}}, Glyph={x:Static m:MaterialOutlined.Download}}"/>
-
-    <MenuItem Text="Bericht teilen"
-              Clicked="OnShareClicked"
-              Shell.FlyoutItemIsVisible="False"
-              IconImageSource="{FontImageSource FontFamily=MaterialOutlined, Color={AppThemeBinding {DynamicResource Primary}, Dark={DynamicResource PrimaryDark}}, Glyph={x:Static m:MaterialOutlined.Share}}"/>
-
-    <ShellContent Route="Bericht exportieren"
-                  Title="export_report"
-                  IsVisible="False"
-                  Icon="{FontImageSource FontFamily=MaterialOutlined, Color={AppThemeBinding {DynamicResource Primary}, Dark={DynamicResource PrimaryDark}}, Glyph={x:Static m:MaterialOutlined.Download}}"
-                  ContentTemplate="{DataTemplate views:VoidPage}" />    
-    
     <MenuItem>
         <Shell.MenuItemTemplate>
             <DataTemplate>

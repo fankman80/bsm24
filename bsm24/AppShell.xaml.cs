@@ -87,7 +87,7 @@ public partial class AppShell : Shell
         File.Delete(outputPath);
     }
 
-    private async void OnExportClicked(object sender, EventArgs e)
+    public async void OnExportClicked(object sender, EventArgs e)
     { 
         string outputPath = Path.Combine(FileSystem.AppDataDirectory, GlobalJson.Data.ProjectPath, GlobalJson.Data.ProjectPath + ".docx");
         await ExportReport.DocX("template.docx", outputPath);

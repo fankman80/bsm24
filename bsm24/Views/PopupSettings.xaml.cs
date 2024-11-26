@@ -64,8 +64,8 @@ public partial class PopupSettings : PopupPage
             {
                 // Aktualisiere die Farbe des Icons basierend auf dem aktuellen Theme
                 fontIcon.Color = (Color)(Application.Current.RequestedTheme == AppTheme.Dark
-                    ? Application.Current.Resources["PrimaryDark"]
-                    : Application.Current.Resources["Primary"]);
+                                ? Application.Current.Resources["PrimaryDark"]
+                                : Application.Current.Resources["Primary"]);
             }
         }
     }
