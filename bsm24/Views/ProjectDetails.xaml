@@ -8,6 +8,7 @@
              xmlns:material="http://schemas.enisn-projects.io/dotnet/maui/uraniumui/material"
              xmlns:m="clr-namespace:UraniumUI.Icons.MaterialSymbols;assembly=UraniumUI.Icons.MaterialSymbols"
              xmlns:services="clr-namespace:bsm24.Services"
+             Shell.TitleColor="{DynamicResource PrimaryDark}"                            
              x:Class="bsm24.Views.ProjectDetails"
              Title="Projekt Details">
 
@@ -28,6 +29,7 @@
                     <material:TextField
                         x:Name="client_name"
                         TextColor="{AppThemeBinding {DynamicResource PrimaryText}, Dark={DynamicResource PrimaryDarkText}}"
+                        BorderColor="{AppThemeBinding {DynamicResource Secondary}, Dark={DynamicResource SecondaryDark}}"
                         AccentColor="{DynamicResource Primary}"
                         Text=""
                         Title="Kunde/Bauherrschaft"
@@ -36,6 +38,7 @@
                     <material:TextField
                         x:Name="object_name"
                         TextColor="{AppThemeBinding {DynamicResource PrimaryText}, Dark={DynamicResource PrimaryDarkText}}"
+                        BorderColor="{AppThemeBinding {DynamicResource Secondary}, Dark={DynamicResource SecondaryDark}}"
                         AccentColor="{DynamicResource Primary}"
                         Text=""
                         Title="Objektbezeichnung"
@@ -44,6 +47,7 @@
                     <material:EditorField
                         x:Name="object_address"
                         TextColor="{AppThemeBinding {DynamicResource PrimaryText}, Dark={DynamicResource PrimaryDarkText}}"
+                        BorderColor="{AppThemeBinding {DynamicResource Secondary}, Dark={DynamicResource SecondaryDark}}"
                         AccentColor="{DynamicResource Primary}"
                         Text=""
                         Title="Adresse"
@@ -52,6 +56,7 @@
                     <material:TextField
                         x:Name="working_title"
                         TextColor="{AppThemeBinding {DynamicResource PrimaryText}, Dark={DynamicResource PrimaryDarkText}}"
+                        BorderColor="{AppThemeBinding {DynamicResource Secondary}, Dark={DynamicResource SecondaryDark}}"
                         AccentColor="{DynamicResource Primary}"
                         Text=""
                         Title="Projektvorgang"
@@ -60,6 +65,7 @@
                     <material:TextField
                         x:Name="project_manager"
                         TextColor="{AppThemeBinding {DynamicResource PrimaryText}, Dark={DynamicResource PrimaryDarkText}}"
+                        BorderColor="{AppThemeBinding {DynamicResource Secondary}, Dark={DynamicResource SecondaryDark}}"
                         AccentColor="{DynamicResource Primary}"
                         Text=""
                         Title="Projektleiter"
@@ -79,6 +85,7 @@
                         <material:DatePickerField Grid.Column="0" Grid.Row="0"
                         x:Name="creation_date"
                         TextColor="{AppThemeBinding {DynamicResource PrimaryText}, Dark={DynamicResource PrimaryDarkText}}"
+                        BorderColor="{AppThemeBinding {DynamicResource Secondary}, Dark={DynamicResource SecondaryDark}}"
                         AccentColor="{DynamicResource Primary}"
                         Title="Datum"
                         Icon="{FontImageSource FontFamily=MaterialOutlined, Color={AppThemeBinding {DynamicResource Primary}, Dark={DynamicResource PrimaryDark}}, Glyph={x:Static m:MaterialOutlined.Calendar_month}}" />
@@ -92,13 +99,13 @@
 
                         <Border Grid.Column="1" Grid.Row="0" Grid.RowSpan="2"
                                 StrokeThickness="0"
-                                StrokeShape="RoundRectangle 8" >
+                                StrokeShape="RoundRectangle 8,8,8,8" >
                             <ff:CachedImage x:Name="titleThumbnail" Source="{Binding FlyoutHeaderImage}" Aspect="AspectFill">
                                 <ff:CachedImage.HeightRequest>
-                                    <OnIdiom x:TypeArguments="x:Double" Desktop="100" Phone="100" Tablet="100"  />
+                                    <OnIdiom x:TypeArguments="x:Double" Desktop="100" Phone="100" Tablet="100"/>
                                 </ff:CachedImage.HeightRequest>
                                 <ff:CachedImage.WidthRequest>
-                                    <OnIdiom x:TypeArguments="x:Double" Desktop="100" Phone="100" Tablet="100"  />
+                                    <OnIdiom x:TypeArguments="x:Double" Desktop="100" Phone="100" Tablet="100"/>
                                 </ff:CachedImage.WidthRequest>
                             </ff:CachedImage>
                         </Border>

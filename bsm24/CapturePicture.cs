@@ -1,16 +1,9 @@
 ﻿#nullable disable
 
-using SkiaSharp;
-
 namespace bsm24;
 
-public partial class CapturePicture
+public class CapturePicture
 {
-    public CapturePicture(string filepath, string thumbnailPath = null)
-    {
-        _ = CapturePicture.Capture(filepath, thumbnailPath);
-    }
-
     public static async Task<FileResult> Capture(string filepath, string thumbnailPath=null, string customFilename=null)
     {
         if (MediaPicker.Default.IsCaptureSupported)

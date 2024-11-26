@@ -8,10 +8,11 @@
                 xmlns:m="clr-namespace:UraniumUI.Icons.MaterialSymbols;assembly=UraniumUI.Icons.MaterialSymbols"
                 xmlns:pc="clr-namespace:bsm24.ViewModels"
                 BackgroundColor="Grey"
+                Shell.TitleColor="{DynamicResource PrimaryDark}"
                 x:Class="bsm24.Views.NewPage"
                 x:DataType="views:NewPage"
                 Title="{Binding PageTitle}">
-
+    
             <!--DownCommand="{Binding DownCommand}"
 			    UpCommand="{Binding UpCommand}"
 			    TappingCommand="{Binding TappingCommand}"
@@ -33,8 +34,8 @@
 
     <ContentPage.ToolbarItems>
         <ToolbarItem
-            IconImageSource="{FontImageSource FontFamily=MaterialOutlined, Glyph={x:Static m:MaterialOutlined.Edit}}" 
-            Text="Plan bearbeiten"
+            IconImageSource="{FontImageSource FontFamily=MaterialOutlined, Color={DynamicResource PrimaryDark}, Glyph={x:Static m:MaterialOutlined.Edit}}" 
+            Text="Plan bearbeiten"            
             Clicked="OnEditButtonClicked"/>
     </ContentPage.ToolbarItems>
 

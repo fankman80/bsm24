@@ -8,6 +8,8 @@
              xmlns:m="clr-namespace:UraniumUI.Icons.MaterialSymbols;assembly=UraniumUI.Icons.MaterialSymbols"            
              x:Class="bsm24.Views.IconGallery"
              x:DataType="views:IconGallery"
+             BackgroundColor="White"
+             Shell.TitleColor="{DynamicResource PrimaryDark}"
              Title="Pin auswählen">
 
     <CollectionView x:Name="ImageGallery"

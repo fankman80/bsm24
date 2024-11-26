@@ -6,6 +6,7 @@
              xmlns:uranium="http://schemas.enisn-projects.io/dotnet/maui/uraniumui"
              xmlns:m="clr-namespace:UraniumUI.Icons.MaterialSymbols;assembly=UraniumUI.Icons.MaterialSymbols"
              xmlns:local="clr-namespace:bsm24"
+             Shell.TitleColor="{DynamicResource PrimaryDark}"
              x:Class="bsm24.Views.OpenProject"
              Title="Projekt laden">
 
@@ -19,8 +20,8 @@
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="60" />
                                 <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="60" />
-                                <ColumnDefinition Width="60" />
+                                <ColumnDefinition Width="40" />
+                                <ColumnDefinition Width="40" />
                             </Grid.ColumnDefinitions>
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="25" />
@@ -50,16 +51,16 @@
                             <Button Grid.Column="2"
                                     Grid.RowSpan="2"
                                     Padding="0"
-                                    WidthRequest="50"
-                                    HeightRequest="50"
+                                    WidthRequest="40"
+                                    HeightRequest="40"
                                     Background="Transparent"
                                     ImageSource="{FontImageSource FontFamily=MaterialOutlined, Color={AppThemeBinding {DynamicResource Primary}, Dark={DynamicResource PrimaryDark}}, Glyph={x:Static m:MaterialOutlined.Save}}"
                                     Clicked="OnSaveClicked"/>
                             <Button Grid.Column="3"
                                     Grid.RowSpan="2"
                                     Padding="0"
-                                    WidthRequest="50"
-                                    HeightRequest="50"
+                                    WidthRequest="40"
+                                    HeightRequest="40"
                                     Background="Transparent"
                                     ImageSource="{FontImageSource FontFamily=MaterialOutlined, Color={AppThemeBinding {DynamicResource Primary}, Dark={DynamicResource PrimaryDark}}, Glyph={x:Static m:MaterialOutlined.Delete}}"
                                     Clicked="OnDeleteClicked"/>

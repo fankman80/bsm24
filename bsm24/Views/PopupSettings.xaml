@@ -18,7 +18,7 @@
     <Border
         StrokeShape="RoundRectangle 20,20,20,20"
         Padding="16,16,16,16"
-        BackgroundColor="White"
+        BackgroundColor="{AppThemeBinding Light={DynamicResource PrimaryBackground}, Dark={DynamicResource PrimaryBackgroundDark}}"
         WidthRequest="300"
         HorizontalOptions="Center"
         VerticalOptions="Center">
@@ -29,6 +29,7 @@
                     Minimum="0.01"
                     ThumbColor="{DynamicResource Primary}"
                     MinimumTrackColor="{DynamicResource Primary}"
+                    MaximumTrackColor="{DynamicResource PrimaryDark}"
                     Value="{Binding PinScaleLimit}"/>
 
             <Label Text="{Binding PdfQuality, StringFormat='PDF-Qualität: {0:0.##}'}" />
@@ -36,6 +37,7 @@
                     Minimum="100"
                     ThumbColor="{DynamicResource Primary}"
                     MinimumTrackColor="{DynamicResource Primary}"
+                    MaximumTrackColor="{DynamicResource PrimaryDark}"
                     Value="{Binding PdfQuality}"/>
 
             <Grid>
@@ -46,6 +48,7 @@
                 <Label Text="Pläne rotieren" Grid.Column="0" Grid.Row="0"/>
                 <Switch x:Name="isPlanRotateLocked" Grid.Row="0"
                         ThumbColor="{DynamicResource Primary}"
+                        OnColor="{DynamicResource PrimaryDark}"
                         IsToggled="{Binding IsPlanRotateLocked}"
                         HorizontalOptions="Start" Grid.Column="1"/>
             </Grid>
@@ -54,6 +57,7 @@
                 x:Name="darkModePicker"
                 Title="Dark-Mode:"
                 AccentColor="{DynamicResource Primary}"
+                TitleColor="{AppThemeBinding Light={DynamicResource PrimaryText}, Dark={DynamicResource PrimaryDarkText}}"
                 ItemsSource="{Binding DarkMode}"
                 SelectedItem="{Binding SelectedDarkMode}">
             </material:PickerField>
@@ -62,8 +66,10 @@
                 x:Name="colorThemePicker"
                 Title="UI-Thema:"
                 AccentColor="{DynamicResource Primary}"
+                TitleColor="{AppThemeBinding Light={DynamicResource PrimaryText}, Dark={DynamicResource PrimaryDarkText}}"
                 ItemsSource="{Binding Themes}"
-                SelectedItem="{Binding SelectedTheme}">
+                SelectedItem="{Binding SelectedTheme}"
+                BindingContextChanged="OnSelectedValueChanged">
             </material:PickerField>
             
             <Grid>
@@ -72,14 +78,14 @@
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
                 <Button Grid.Column="0"
-                    Text="OK"
+                    Text="OK"                        
                     BackgroundColor="{DynamicResource Primary}"
-                    TextColor="{DynamicResource PrimaryDarkText}"                        
+                    TextColor="{DynamicResource PrimaryDarkText}"                    
                     Clicked="OnOkClicked" />
                 <Button Grid.Column="1"
                     Text="Export Einstellungen"
                     BackgroundColor="{DynamicResource Primary}"
-                    TextColor="{DynamicResource PrimaryDarkText}"                        
+                    TextColor="{DynamicResource PrimaryDarkText}"                   
                     Clicked="OnExportSettingsClicked" />                
             </Grid>
         </VerticalStackLayout>

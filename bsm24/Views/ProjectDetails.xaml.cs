@@ -85,7 +85,7 @@ public partial class ProjectDetails : UraniumContentPage
 
     private async void OnThumbCaptureClicked(object sender, EventArgs e)
     {
-        _ = await CapturePicture.Capture(null, GlobalJson.Data.ProjectPath, "title_thumbnail.jpg");
+        await CapturePicture.Capture(null, GlobalJson.Data.ProjectPath, "title_thumbnail.jpg");
 
         HeaderUpdate();
     }

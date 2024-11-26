@@ -10,13 +10,15 @@
        xmlns:services="clr-namespace:bsm24.Services"
        x:Class="bsm24.AppShell"
        x:Name="shell"
+       FlyoutBackgroundColor="{AppThemeBinding Light={DynamicResource PrimaryBackground}, Dark={DynamicResource PrimaryBackgroundDark}}"
+       Shell.ForegroundColor="{DynamicResource PrimaryDark}"
        FlyoutBackgroundImageAspect="AspectFill"
        FlyoutHeaderBehavior="Fixed"
        Shell.FlyoutBehavior="{OnIdiom Desktop=Locked, Default=Flyout}">
 
     <Shell.FlyoutHeaderTemplate>
         <DataTemplate x:DataType="services:SettingsService">
-            <Grid BackgroundColor="Gray">
+            <Grid BackgroundColor="{DynamicResource PrimaryBackgroundDark}">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="100" />
                     <ColumnDefinition Width="*" />
@@ -33,18 +35,18 @@
                        Grid.Row="0"
                        Text="{Binding FlyoutHeaderDesc}"
                        LineBreakMode="WordWrap"
-                       Padding="6"
+                       Padding="6,6,0,0"
                        FontSize="18"
-                       TextColor="White" 
+                       TextColor="{DynamicResource PrimaryDark}"
+                       FontAttributes="Bold" 
                        HorizontalTextAlignment="Start"/>
                 <Label Grid.Column="1"
                        Grid.Row="1"
                        Text="{Binding FlyoutHeaderTitle}"
                        LineBreakMode="WordWrap"
-                       Padding="6"
+                       Padding="6,0,0,0"
                        FontSize="14"
-                       TextColor="White" 
-                       FontAttributes="Bold" 
+                       TextColor="{DynamicResource PrimaryDark}"  
                        HorizontalTextAlignment="Start"/>
             </Grid>
         </DataTemplate>
@@ -71,8 +73,8 @@
     </Shell.FlyoutFooterTemplate>
   
     <ShellContent Route="homescreen"
-                    ContentTemplate="{DataTemplate views:HomeScreen}"
-                    FlyoutItemIsVisible="False" />
+                  ContentTemplate="{DataTemplate views:HomeScreen}"
+                  FlyoutItemIsVisible="False" />
 
     <MenuItem Text="Neues Projekt"
               Clicked="OnNewClicked"
@@ -85,6 +87,7 @@
 
     <ShellContent Route="project_details"
                   Title="Projekt Details"
+                  IsVisible="False"
                   Icon="{FontImageSource FontFamily=MaterialOutlined, Color={AppThemeBinding {DynamicResource Primary}, Dark={DynamicResource PrimaryDark}}, Glyph={x:Static m:MaterialOutlined.Home_work}}"
                   ContentTemplate="{DataTemplate views:ProjectDetails}" />
 
@@ -94,12 +97,20 @@
 
     <MenuItem Text="Bericht exportieren"
               Clicked="OnExportClicked"
+              Shell.FlyoutItemIsVisible="False"
               IconImageSource="{FontImageSource FontFamily=MaterialOutlined, Color={AppThemeBinding {DynamicResource Primary}, Dark={DynamicResource PrimaryDark}}, Glyph={x:Static m:MaterialOutlined.Download}}"/>
 
     <MenuItem Text="Bericht teilen"
               Clicked="OnShareClicked"
+              Shell.FlyoutItemIsVisible="False"
               IconImageSource="{FontImageSource FontFamily=MaterialOutlined, Color={AppThemeBinding {DynamicResource Primary}, Dark={DynamicResource PrimaryDark}}, Glyph={x:Static m:MaterialOutlined.Share}}"/>
 
+    <ShellContent Route="Bericht exportieren"
+                  Title="export_report"
+                  IsVisible="False"
+                  Icon="{FontImageSource FontFamily=MaterialOutlined, Color={AppThemeBinding {DynamicResource Primary}, Dark={DynamicResource PrimaryDark}}, Glyph={x:Static m:MaterialOutlined.Download}}"
+                  ContentTemplate="{DataTemplate views:VoidPage}" />    
+    
     <MenuItem>
         <Shell.MenuItemTemplate>
             <DataTemplate>

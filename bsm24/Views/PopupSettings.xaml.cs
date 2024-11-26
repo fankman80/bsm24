@@ -39,6 +39,7 @@ public partial class PopupSettings : PopupPage
         ReturnValue = null;
         await MopupService.Instance.PopAsync();
     }
+
     private async void OnExportSettingsClicked(object sender, EventArgs e)
     {
         // Show Settings Page
@@ -48,6 +49,24 @@ public partial class PopupSettings : PopupPage
         if (result != null)
         {
 
+        }
+    }
+
+    private void OnSelectedValueChanged(object sender, EventArgs e)
+    {
+        // Hole die AppShell
+        var appShell = (AppShell)Application.Current.Windows[0].Page;
+
+        // Durchlaufe die FlyoutItems und aktualisiere die Icon-Farbe
+        foreach (var item in appShell.Items)
+        {
+            if (item is FlyoutItem flyoutItem && flyoutItem.Icon is FontImageSource fontIcon)
+            {
+                // Aktualisiere die Farbe des Icons basierend auf dem aktuellen Theme
+                fontIcon.Color = (Color)(Application.Current.RequestedTheme == AppTheme.Dark
+                    ? Application.Current.Resources["PrimaryDark"]
+                    : Application.Current.Resources["Primary"]);
+            }
         }
     }
 }

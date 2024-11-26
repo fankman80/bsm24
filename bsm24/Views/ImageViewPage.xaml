@@ -8,6 +8,7 @@
 				xmlns:views="clr-namespace:bsm24.Views"
                 xmlns:pc="clr-namespace:bsm24.ViewModels"
 				BackgroundColor="Black"
+                Shell.TitleColor="{DynamicResource PrimaryDark}"
 				x:Class="bsm24.Views.ImageViewPage"
 				Title="">
     

@@ -17,7 +17,7 @@
     <Border
         StrokeShape="RoundRectangle 20,20,20,20"
         Padding="16,16,16,16"
-        BackgroundColor="White"
+        BackgroundColor="{AppThemeBinding Light={DynamicResource PrimaryBackground}, Dark={DynamicResource PrimaryBackgroundDark}}"
         WidthRequest="300"
         HorizontalOptions="Center"
         VerticalOptions="Center">
@@ -30,6 +30,7 @@
             
             <material:TextField x:Name="text_entry"
                                 TextColor="{AppThemeBinding {DynamicResource PrimaryText}, Dark={DynamicResource PrimaryDarkText}}"
+                                BorderColor="{AppThemeBinding {DynamicResource Secondary}, Dark={DynamicResource SecondaryDark}}"
                                 AccentColor="{DynamicResource Primary}"
                                 Title="" />
 

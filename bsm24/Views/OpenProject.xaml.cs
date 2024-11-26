@@ -46,7 +46,7 @@ public partial class OpenProject : UraniumContentPage
                 {
                     FileName = Path.GetFileNameWithoutExtension(file),
                     FilePath = file,
-                    FileDate = "Geändert am:\n" + File.GetLastWriteTime(file).Date.ToString("D", new CultureInfo("de-DE")),
+                    FileDate = "Geändert am:\n" + File.GetLastWriteTime(file).Date.ToString("d", new CultureInfo("de-DE")),
                     ImagePath = thumbImg
                 });
             }
@@ -81,13 +81,20 @@ public partial class OpenProject : UraniumContentPage
                     GlobalJson.LoadFromFile(item.FilePath);
                     LoadDataToView.LoadData(new FileResult(item.FilePath));
                     HeaderUpdate();  // UI-Aktualisierung
+
+                    Helper.FlyoutItemState("project_details", true);
+                    Helper.FlyoutItemState("export_report", true);
+                    Helper.FlyoutItemState("share_report", true);
+
                     await Shell.Current.GoToAsync("//project_details");
                 });
             }
         });
+
         activityIndicator.IsRunning = false;
         busyOverlay.IsVisible = false;
     }
+
     private void OnSaveClicked(object sender, EventArgs e)
     {
 
