@@ -3,6 +3,12 @@
 using Mopups.Services;
 using System.Globalization;
 using UraniumUI.Pages;
+using ICSharpCode.SharpZipLib.Core;
+using ICSharpCode.SharpZipLib.Zip;
+using System.IO;
+using CommunityToolkit.Maui.Alerts;
+using CommunityToolkit.Maui.Storage;
+
 
 namespace bsm24.Views;
 public partial class OpenProject : UraniumContentPage
@@ -97,12 +103,91 @@ public partial class OpenProject : UraniumContentPage
         busyOverlay.IsVisible = false;
     }
 
-    private void OnSaveClicked(object sender, EventArgs e)
+    private async void OnSaveClicked(object sender, EventArgs e)
     {
+        var popup = new PopupDualResponse("Wollen Sie dieses Projekt wirklich als Zip exportieren?");
+        await MopupService.Instance.PushAsync(popup);
+        var result = await popup.PopupDismissedTask;
+        if (result != null)
+        {
+            var button = sender as Button;
+            if (button.BindingContext is FileItem item)
+            { 
+                string sourceDirectory = Path.GetDirectoryName(item.FilePath); // Pfad zum zu zippenden Ordner
+                string outputPath = Path.Combine(FileSystem.AppDataDirectory, Path.GetFileNameWithoutExtension(item.FileName) + ".zip");
+                ZipDirectory(sourceDirectory, outputPath);
 
+                CancellationToken cancellationToken = new();
+                var saveStream = File.Open(outputPath, FileMode.Open);
+                var fileSaveResult = await FileSaver.Default.SaveAsync(Path.GetFileNameWithoutExtension(item.FileName) + ".zip", saveStream, cancellationToken);
+                if (fileSaveResult.IsSuccessful)
+                    await Toast.Make($"Zip wurde exportiert").Show(cancellationToken);
+                else
+                    await Toast.Make($"Zip wurde nicht exportiert").Show(cancellationToken);
+                saveStream.Close();
+                File.Delete(outputPath);
+            }
+        }
     }
 
-    private async void OnDeleteClicked(object sender, EventArgs e)
+    public static void ZipDirectory(string sourceDirectory, string zipFilePath)
+    {
+        try
+        {
+            using var fsOut = File.Create(zipFilePath);
+            using var zipOutputStream = new ZipOutputStream(fsOut);
+            zipOutputStream.SetLevel(9); // Set compression level (0-9)
+
+            // Use recursive method to compress folder
+            OpenProject.CompressFolder(sourceDirectory, zipOutputStream, sourceDirectory.Length + 1);
+
+            zipOutputStream.Finish();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error zipping directory: {ex.Message}");
+        }
+    }
+
+    private static void CompressFolder(string path, ZipOutputStream zipStream, int folderOffset)
+    {
+        var files = Directory.GetFiles(path);
+
+        foreach (var filename in files)
+        {
+            var fileInfo = new FileInfo(filename);
+
+            // Calculate the relative path within the zip file
+            string entryName = filename[folderOffset..];
+            entryName = ZipEntry.CleanName(entryName); // Clean the entry name
+
+            var newEntry = new ZipEntry(entryName)
+            {
+                DateTime = fileInfo.LastWriteTime, // Use the file's last write time
+                Size = fileInfo.Length
+            };
+
+            zipStream.PutNextEntry(newEntry);
+
+            // Write the file to the zip stream
+            using (var fileStream = File.OpenRead(filename))
+            {
+                fileStream.CopyTo(zipStream);
+            }
+
+            zipStream.CloseEntry();
+        }
+
+        // Get directories within this folder and recurse
+        var folders = Directory.GetDirectories(path);
+        foreach (var folder in folders)
+        {
+            OpenProject.CompressFolder(folder, zipStream, folderOffset);
+        }
+    }
+
+
+private async void OnDeleteClicked(object sender, EventArgs e)
     {
         var popup = new PopupDualResponse("Wollen Sie dieses Projekt wirklich löschen?");
         await MopupService.Instance.PushAsync(popup);
@@ -124,7 +209,7 @@ public partial class OpenProject : UraniumContentPage
                     File.Delete(file);
 
                 // Rekursives Löschen von Verzeichnissen
-                string[] directories = Directory.GetDirectories(Path.GetDirectoryName(item.FilePath), "*", SearchOption.AllDirectories);
+                string[] directories = Directory.GetDirectories(Path.GetDirectoryName(item.FilePath), "*", SearchOption.TopDirectoryOnly);
                 foreach (var directory in directories)
                     Directory.Delete(directory, true);
 

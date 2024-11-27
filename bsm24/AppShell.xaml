@@ -35,7 +35,7 @@
                        Grid.Row="0"
                        Text="{Binding FlyoutHeaderDesc}"
                        LineBreakMode="WordWrap"
-                       Padding="6,6,0,0"
+                       Padding="4,4,4,0"
                        FontSize="18"
                        TextColor="{DynamicResource PrimaryDark}"
                        FontAttributes="Bold" 
@@ -44,7 +44,7 @@
                        Grid.Row="1"
                        Text="{Binding FlyoutHeaderTitle}"
                        LineBreakMode="WordWrap"
-                       Padding="6,0,0,0"
+                       Padding="4,0,4,0"
                        FontSize="14"
                        TextColor="{DynamicResource PrimaryDark}"  
                        HorizontalTextAlignment="Start"/>

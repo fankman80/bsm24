@@ -13,7 +13,7 @@ public partial class SettingsService : INotifyPropertyChanged
         ImageQuality = "300";
         Themes = ["Lachs", "Gras", "Ozean", "Feuer", "Lady"];
         DarkMode = ["Light", "Dark", "System Default"];
-        SelectedTheme = Themes[1]; // Standardauswahl
+        SelectedTheme = Themes[3]; // Standardauswahl
         SelectedDarkMode = DarkMode[0]; // Standardauswahl
     }
 
