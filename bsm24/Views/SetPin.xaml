@@ -48,7 +48,6 @@
                 x:Name="PinTxt"
                 BorderColor="{AppThemeBinding {DynamicResource Secondary}, Dark={DynamicResource SecondaryDark}}"
                 AccentColor="{DynamicResource Primary}"
-                MaxLength="50"
                 Title="Bezeichnung"
                 Icon="{FontImageSource FontFamily=MaterialOutlined, Color={AppThemeBinding {DynamicResource Primary}, Dark={DynamicResource PrimaryDark}}, Glyph={x:Static m:MaterialOutlined.Push_pin}}"/>
 
