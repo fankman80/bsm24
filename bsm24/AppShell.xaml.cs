@@ -37,7 +37,7 @@ public partial class AppShell : Shell
 
             LoadDataToView.ResetApp();
 
-            Helper.AddMenuItem("Projekt-Daten", UraniumUI.Icons.MaterialSymbols.MaterialOutlined.Settings, "OnProjectDetailsClicked");
+            Helper.AddMenuItem("Projekt-Daten", UraniumUI.Icons.MaterialSymbols.MaterialOutlined.Home_work, "OnProjectDetailsClicked");
             Helper.AddMenuItem("Bericht exportieren", UraniumUI.Icons.MaterialSymbols.MaterialOutlined.Download, "OnExportClicked");
             Helper.AddMenuItem("Bericht teilen", UraniumUI.Icons.MaterialSymbols.MaterialOutlined.Share, "OnShareClicked");
             Helper.AddMenuItem("Einstellungen", UraniumUI.Icons.MaterialSymbols.MaterialOutlined.Settings, "OnSettingsClicked");
