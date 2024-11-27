@@ -37,10 +37,11 @@ public partial class AppShell : Shell
 
             LoadDataToView.ResetApp();
 
+            Helper.AddMenuItem("Projekt-Daten", UraniumUI.Icons.MaterialSymbols.MaterialOutlined.Settings, "OnProjectDetailsClicked");
             Helper.AddMenuItem("Bericht exportieren", UraniumUI.Icons.MaterialSymbols.MaterialOutlined.Download, "OnExportClicked");
             Helper.AddMenuItem("Bericht teilen", UraniumUI.Icons.MaterialSymbols.MaterialOutlined.Share, "OnShareClicked");
             Helper.AddMenuItem("Einstellungen", UraniumUI.Icons.MaterialSymbols.MaterialOutlined.Settings, "OnSettingsClicked");
-            Helper.AddDivider();
+            Helper.AddDivider();     
 
             GlobalJson.CreateNewFile(filePath);
             GlobalJson.Data.Client_name = "";
@@ -61,6 +62,11 @@ public partial class AppShell : Shell
 
             await Shell.Current.GoToAsync("//project_details");
         }
+    }
+
+    private async void OnProjectDetailsClicked(object sender, EventArgs e)
+    {
+        await Shell.Current.GoToAsync("//project_details");
     }
 
     private async void OnSettingsClicked(object sender, EventArgs e)
