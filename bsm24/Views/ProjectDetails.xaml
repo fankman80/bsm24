@@ -29,48 +29,43 @@
                 <VerticalStackLayout x:DataType="services:SettingsService">
                     <material:TextField
                         x:Name="client_name"
-                        TextColor="{AppThemeBinding {DynamicResource PrimaryText}, Dark={DynamicResource PrimaryDarkText}}"
-                        BorderColor="{AppThemeBinding {DynamicResource Secondary}, Dark={DynamicResource SecondaryDark}}"
-                        AccentColor="{DynamicResource Primary}"
-                        Text=""
+                        TextColor="{AppThemeBinding Light={DynamicResource PrimaryText}, Dark={DynamicResource PrimaryDarkText}}"
+                        BorderColor="{AppThemeBinding Light={DynamicResource SecondaryBackground}, Dark={DynamicResource SecondaryBackground}}"
+                        AccentColor="{AppThemeBinding Light={DynamicResource Secondary}, Dark={DynamicResource SecondaryDark}}"
                         Title="Kunde/Bauherrschaft"
-                        Icon="{FontImageSource FontFamily=MaterialOutlined, Color={AppThemeBinding {DynamicResource Primary}, Dark={DynamicResource PrimaryDark}}, Glyph={x:Static m:MaterialOutlined.Person}}" />
+                        Icon="{FontImageSource FontFamily=MaterialOutlined, Color={AppThemeBinding Light={DynamicResource Primary}, Dark={DynamicResource PrimaryDark}}, Glyph={x:Static m:MaterialOutlined.Person}}" />
 
                     <material:TextField
                         x:Name="object_name"
-                        TextColor="{AppThemeBinding {DynamicResource PrimaryText}, Dark={DynamicResource PrimaryDarkText}}"
-                        BorderColor="{AppThemeBinding {DynamicResource Secondary}, Dark={DynamicResource SecondaryDark}}"
-                        AccentColor="{DynamicResource Primary}"
-                        Text=""
+                        TextColor="{AppThemeBinding Light={DynamicResource PrimaryText}, Dark={DynamicResource PrimaryDarkText}}"
+                        BorderColor="{AppThemeBinding Light={DynamicResource SecondaryBackground}, Dark={DynamicResource SecondaryBackground}}"
+                        AccentColor="{AppThemeBinding Light={DynamicResource Secondary}, Dark={DynamicResource SecondaryDark}}"
                         Title="Objektbezeichnung"
-                        Icon="{FontImageSource FontFamily=MaterialOutlined, Color={AppThemeBinding {DynamicResource Primary}, Dark={DynamicResource PrimaryDark}}, Glyph={x:Static m:MaterialOutlined.Home_work}}" />
+                        Icon="{FontImageSource FontFamily=MaterialOutlined, Color={AppThemeBinding Light={DynamicResource Primary}, Dark={DynamicResource PrimaryDark}}, Glyph={x:Static m:MaterialOutlined.Home_work}}" />
 
                     <material:EditorField
                         x:Name="object_address"
-                        TextColor="{AppThemeBinding {DynamicResource PrimaryText}, Dark={DynamicResource PrimaryDarkText}}"
-                        BorderColor="{AppThemeBinding {DynamicResource Secondary}, Dark={DynamicResource SecondaryDark}}"
-                        AccentColor="{DynamicResource Primary}"
-                        Text=""
+                        TextColor="{AppThemeBinding Light={DynamicResource PrimaryText}, Dark={DynamicResource PrimaryDarkText}}"
+                        BorderColor="{AppThemeBinding Light={DynamicResource SecondaryBackground}, Dark={DynamicResource SecondaryBackground}}"
+                        AccentColor="{AppThemeBinding Light={DynamicResource Secondary}, Dark={DynamicResource SecondaryDark}}"
                         Title="Adresse"
-                        Icon="{FontImageSource FontFamily=MaterialOutlined, Color={AppThemeBinding {DynamicResource Primary}, Dark={DynamicResource PrimaryDark}}, Glyph={x:Static m:MaterialOutlined.Home}}" />
+                        Icon="{FontImageSource FontFamily=MaterialOutlined, Color={AppThemeBinding Light={DynamicResource Primary}, Dark={DynamicResource PrimaryDark}}, Glyph={x:Static m:MaterialOutlined.Home}}" />
 
                     <material:TextField
                         x:Name="working_title"
-                        TextColor="{AppThemeBinding {DynamicResource PrimaryText}, Dark={DynamicResource PrimaryDarkText}}"
-                        BorderColor="{AppThemeBinding {DynamicResource Secondary}, Dark={DynamicResource SecondaryDark}}"
-                        AccentColor="{DynamicResource Primary}"
-                        Text=""
+                        TextColor="{AppThemeBinding Light={DynamicResource PrimaryText}, Dark={DynamicResource PrimaryDarkText}}"
+                        BorderColor="{AppThemeBinding Light={DynamicResource SecondaryBackground}, Dark={DynamicResource SecondaryBackground}}"
+                        AccentColor="{AppThemeBinding Light={DynamicResource Secondary}, Dark={DynamicResource SecondaryDark}}"
                         Title="Projektvorgang"
-                        Icon="{FontImageSource FontFamily=MaterialOutlined, Color={AppThemeBinding {DynamicResource Primary}, Dark={DynamicResource PrimaryDark}}, Glyph={x:Static m:MaterialOutlined.Receipt_long}}" />
+                        Icon="{FontImageSource FontFamily=MaterialOutlined, Color={AppThemeBinding Light={DynamicResource Primary}, Dark={DynamicResource PrimaryDark}}, Glyph={x:Static m:MaterialOutlined.Receipt_long}}" />
 
                     <material:TextField
                         x:Name="project_manager"
-                        TextColor="{AppThemeBinding {DynamicResource PrimaryText}, Dark={DynamicResource PrimaryDarkText}}"
-                        BorderColor="{AppThemeBinding {DynamicResource Secondary}, Dark={DynamicResource SecondaryDark}}"
-                        AccentColor="{DynamicResource Primary}"
-                        Text=""
+                        TextColor="{AppThemeBinding Light={DynamicResource PrimaryText}, Dark={DynamicResource PrimaryDarkText}}"
+                        BorderColor="{AppThemeBinding Light={DynamicResource SecondaryBackground}, Dark={DynamicResource SecondaryBackground}}"
+                        AccentColor="{AppThemeBinding Light={DynamicResource Secondary}, Dark={DynamicResource SecondaryDark}}"
                         Title="Projektleiter"
-                        Icon="{FontImageSource FontFamily=MaterialOutlined, Color={AppThemeBinding {DynamicResource Primary}, Dark={DynamicResource PrimaryDark}}, Glyph={x:Static m:MaterialOutlined.Badge}}" />
+                        Icon="{FontImageSource FontFamily=MaterialOutlined, Color={AppThemeBinding Light={DynamicResource Primary}, Dark={DynamicResource PrimaryDark}}, Glyph={x:Static m:MaterialOutlined.Badge}}" />
 
                     <Grid RowSpacing="16">
                         <Grid.ColumnDefinitions>
@@ -80,17 +75,17 @@
 
                         <VerticalStackLayout Grid.Column="0">
                             <material:DatePickerField x:Name="creation_date"
-                                    TextColor="{AppThemeBinding {DynamicResource PrimaryText}, Dark={DynamicResource PrimaryDarkText}}"
-                                    BorderColor="{AppThemeBinding {DynamicResource Secondary}, Dark={DynamicResource SecondaryDark}}"
-                                    AccentColor="{DynamicResource Primary}"
+                                    TextColor="{AppThemeBinding Light={DynamicResource PrimaryText}, Dark={DynamicResource PrimaryDarkText}}"
+                                    BorderColor="{AppThemeBinding Light={DynamicResource SecondaryBackground}, Dark={DynamicResource SecondaryBackground}}"
+                                    AccentColor="{AppThemeBinding Light={DynamicResource Secondary}, Dark={DynamicResource SecondaryDark}}"
                                     Title="Datum"
                                     AllowClear="False"
-                                    Icon="{FontImageSource FontFamily=MaterialOutlined, Color={AppThemeBinding {DynamicResource Primary}, Dark={DynamicResource PrimaryDark}}, Glyph={x:Static m:MaterialOutlined.Calendar_month}}" />
+                                    Icon="{FontImageSource FontFamily=MaterialOutlined, Color={AppThemeBinding Light={DynamicResource Primary}, Dark={DynamicResource PrimaryDark}}, Glyph={x:Static m:MaterialOutlined.Calendar_month}}" />
 
                             <Button Text="Add PDF"
-                                    BackgroundColor="{DynamicResource Primary}"
-                                    TextColor="{DynamicResource PrimaryDarkText}"                                
-                                    ImageSource="{FontImageSource FontFamily=MaterialOutlined, Color=White, Glyph={x:Static m:MaterialOutlined.Picture_as_pdf}}"
+                                    BackgroundColor="{AppThemeBinding Light={DynamicResource Primary}, Dark={DynamicResource PrimaryDark}}"
+                                    TextColor="{AppThemeBinding Light={DynamicResource PrimaryDarkText}, Dark={DynamicResource PrimaryText}}"                         
+                                    ImageSource="{FontImageSource FontFamily=MaterialOutlined, Color={AppThemeBinding Light={DynamicResource PrimaryDarkText}, Dark={DynamicResource PrimaryText}}, Glyph={x:Static m:MaterialOutlined.Picture_as_pdf}}"
                                     Clicked="OnAddPdfClicked"/>
                         </VerticalStackLayout>
                         
@@ -117,15 +112,16 @@
 
             <Button Grid.Row="1" Grid.Column="0"                    
                     Text="OK"
-                    BackgroundColor="{DynamicResource Primary}"
-                    TextColor="{DynamicResource PrimaryDarkText}"
+                    BackgroundColor="{AppThemeBinding Light={DynamicResource Primary}, Dark={DynamicResource PrimaryDark}}"
+                    TextColor="{AppThemeBinding Light={DynamicResource PrimaryDarkText}, Dark={DynamicResource PrimaryText}}"
                     Clicked="OnOkayClicked"/>
             <Button Grid.Row="1" Grid.Column="1"
-                    BackgroundColor="{DynamicResource Primary}"
-                    TextColor="{DynamicResource PrimaryDarkText}"                    
+                    BackgroundColor="{AppThemeBinding Light={DynamicResource Primary}, Dark={DynamicResource PrimaryDark}}"
+                    TextColor="{AppThemeBinding Light={DynamicResource PrimaryDarkText}, Dark={DynamicResource PrimaryText}}"              
                     Text="Abbrechen"
                     Clicked="OnCancelClicked"/>
         </Grid>
+        
         <!-- Overlay für Busy-Indikator -->
         <Grid x:Name="busyOverlay"
                 BackgroundColor="Black"
@@ -134,11 +130,18 @@
                 VerticalOptions="FillAndExpand"
                 HorizontalOptions="FillAndExpand"
                 ZIndex="10">
-            <ActivityIndicator x:Name="activityIndicator"
-                                IsRunning="True"
-                                VerticalOptions="Center"
-                                HorizontalOptions="Center"
-                                Color="White" />
+            <StackLayout VerticalOptions="Center" HorizontalOptions="Center">
+                <ActivityIndicator x:Name="activityIndicator"
+                                    IsRunning="True"
+                                    VerticalOptions="Center"
+                                    HorizontalOptions="Center"
+                                    Color="White" />
+                <Label x:Name="busyText"
+                       Text="Bitte warten..."
+                       TextColor="White"
+                       FontSize="Medium"
+                       HorizontalOptions="Center" />
+            </StackLayout>
         </Grid>
     </Grid>
 </uranium:UraniumContentPage>

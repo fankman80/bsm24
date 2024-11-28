@@ -31,7 +31,7 @@
                             <Label Grid.Column="1"
                                     Grid.Row="0"
                                     VerticalTextAlignment="End"
-                                    TextColor="{AppThemeBinding {DynamicResource Primary}, Dark={DynamicResource PrimaryDark}}"
+                                    TextColor="{AppThemeBinding Light={DynamicResource Primary}, Dark={DynamicResource PrimaryDark}}"
                                     FontSize="14"
                                     Text="{Binding FileName}"/>
                             <Label Grid.Column="1"
@@ -55,7 +55,7 @@
                                     WidthRequest="40"
                                     HeightRequest="40"
                                     Background="Transparent"
-                                    ImageSource="{FontImageSource FontFamily=MaterialOutlined, Color={AppThemeBinding {DynamicResource Primary}, Dark={DynamicResource PrimaryDark}}, Glyph={x:Static m:MaterialOutlined.Folder_zip}}"
+                                    ImageSource="{FontImageSource FontFamily=MaterialOutlined, Color={AppThemeBinding Light={DynamicResource Primary}, Dark={DynamicResource PrimaryDark}}, Glyph={x:Static m:MaterialOutlined.Folder_zip}}"
                                     Clicked="OnSaveClicked"/>
                             <Button Grid.Column="3"
                                     Grid.RowSpan="2"
@@ -63,7 +63,7 @@
                                     WidthRequest="40"
                                     HeightRequest="40"
                                     Background="Transparent"
-                                    ImageSource="{FontImageSource FontFamily=MaterialOutlined, Color={AppThemeBinding {DynamicResource Primary}, Dark={DynamicResource PrimaryDark}}, Glyph={x:Static m:MaterialOutlined.Delete}}"
+                                    ImageSource="{FontImageSource FontFamily=MaterialOutlined, Color={AppThemeBinding Light={DynamicResource Primary}, Dark={DynamicResource PrimaryDark}}, Glyph={x:Static m:MaterialOutlined.Delete}}"
                                     Clicked="OnDeleteClicked"/>
                         </Grid>
                     </DataTemplate>
@@ -73,17 +73,24 @@
         
         <!-- Overlay für Busy-Indikator -->
         <Grid x:Name="busyOverlay"
-                    BackgroundColor="Black"
-                    Opacity="0.5"
-                    IsVisible="False"
-                    VerticalOptions="FillAndExpand"
-                    HorizontalOptions="FillAndExpand"
-                    ZIndex="10">
-            <ActivityIndicator x:Name="activityIndicator"
+                BackgroundColor="Black"
+                Opacity="0.5"
+                IsVisible="False"
+                VerticalOptions="FillAndExpand"
+                HorizontalOptions="FillAndExpand"
+                ZIndex="10">
+            <StackLayout VerticalOptions="Center" HorizontalOptions="Center">
+                <ActivityIndicator x:Name="activityIndicator"
                                     IsRunning="True"
                                     VerticalOptions="Center"
                                     HorizontalOptions="Center"
                                     Color="White" />
+                <Label x:Name="busyText"
+                       Text="Bitte warten..."
+                       TextColor="White"
+                       FontSize="Medium"
+                       HorizontalOptions="Center" />
+            </StackLayout>
         </Grid>
     </Grid>
 </uranium:UraniumContentPage>

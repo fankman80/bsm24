@@ -376,6 +376,11 @@ public partial class NewPage: IQueryAttributable
         };
     }
 
+    private void SetRegionClicked(object sender, EventArgs e)
+    {
+
+    }
+
     private void OnMouseMoved(object sender, MouseEventArgs e)
     {
         mousePos = e.Center;

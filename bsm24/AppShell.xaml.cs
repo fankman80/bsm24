@@ -68,7 +68,9 @@ public partial class AppShell : Shell
     private async void OnProjectDetailsClicked(object sender, EventArgs e)
     {
         await Shell.Current.GoToAsync("project_details");
+#if ANDROID
         Shell.Current.FlyoutIsPresented = false;
+#endif
     }
 
     private async void OnSettingsClicked(object sender, EventArgs e)

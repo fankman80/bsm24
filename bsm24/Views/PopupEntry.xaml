@@ -29,9 +29,9 @@
                 Text=""/>
             
             <material:TextField x:Name="text_entry"
-                                TextColor="{AppThemeBinding {DynamicResource PrimaryText}, Dark={DynamicResource PrimaryDarkText}}"
-                                BorderColor="{AppThemeBinding {DynamicResource Secondary}, Dark={DynamicResource SecondaryDark}}"
-                                AccentColor="{DynamicResource Primary}"
+                                TextColor="{AppThemeBinding Light={DynamicResource PrimaryText}, Dark={DynamicResource PrimaryDarkText}}"
+                                BorderColor="{AppThemeBinding Light={DynamicResource SecondaryBackground}, Dark={DynamicResource SecondaryBackground}}"
+                                AccentColor="{AppThemeBinding Light={DynamicResource Secondary}, Dark={DynamicResource SecondaryDark}}"
                                 Title="" />
 
             <Grid>
@@ -42,14 +42,14 @@
                 <Button Grid.Column="0"
                     x:Name="okButtonText"
                     Text="Ok"
-                    BackgroundColor="{DynamicResource Primary}"
-                    TextColor="{DynamicResource PrimaryDarkText}"                        
+                    BackgroundColor="{AppThemeBinding Light={DynamicResource Primary}, Dark={DynamicResource PrimaryDark}}"
+                    TextColor="{AppThemeBinding Light={DynamicResource PrimaryDarkText}, Dark={DynamicResource PrimaryText}}"                     
                     Clicked="OnOkClicked" />
                 <Button Grid.Column="1"
                     x:Name="cancelButtonText"
                     Text="Cancel"
-                    BackgroundColor="{DynamicResource Primary}"
-                    TextColor="{DynamicResource PrimaryDarkText}"                        
+                    BackgroundColor="{AppThemeBinding Light={DynamicResource Primary}, Dark={DynamicResource PrimaryDark}}"
+                    TextColor="{AppThemeBinding Light={DynamicResource PrimaryDarkText}, Dark={DynamicResource PrimaryText}}"                       
                     Clicked="OnCancelClicked" />
             </Grid>
         </VerticalStackLayout>

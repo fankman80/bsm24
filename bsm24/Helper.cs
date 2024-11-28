@@ -50,8 +50,9 @@ public class Helper
     {
         var menuItem = new MenuItem
         {
-            Text = "----------- Pläne -----------", // Placeholder-Text (wird nicht wirklich verwendet)
-            IsEnabled = false // Deaktiviert, damit es keine Interaktivität hat
+            Text = "----------- Pläne -----------",
+            IsEnabled = false,
+            AutomationId = "990",
         };
 
         if (Shell.Current.Items is IList<ShellItem> shellItems)

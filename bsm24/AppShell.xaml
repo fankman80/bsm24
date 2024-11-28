@@ -58,7 +58,7 @@
             <StackLayout x:DataType="sys:DateTime">
                 <Label Text="BSM24 Beta"
                        Margin="0,8,0,0"
-                       TextColor="{AppThemeBinding {DynamicResource Primary}, Dark={DynamicResource PrimaryDark}}"
+                       TextColor="{AppThemeBinding Light={DynamicResource Primary}, Dark={DynamicResource PrimaryDark}}"
                        FontAttributes="Bold"
                        FontSize="12"
                        HorizontalOptions="Center" />
@@ -67,12 +67,10 @@
                        TextColor="DarkGrey"
                        FontSize="12"
                        HorizontalOptions="Center" />
- 
+
             </StackLayout>
         </DataTemplate>
     </Shell.FlyoutFooterTemplate>
-
-
 
     <ShellContent Route="homescreen"
                   ContentTemplate="{DataTemplate views:HomeScreen}"
@@ -80,13 +78,13 @@
 
     <MenuItem Text="Neues Projekt"
               Clicked="OnNewClicked"
-              IconImageSource="{FontImageSource FontFamily=MaterialOutlined, Color={AppThemeBinding {DynamicResource Primary}, Dark={DynamicResource PrimaryDark}}, Glyph={x:Static m:MaterialOutlined.Add_box}}"/>
+              IconImageSource="{FontImageSource FontFamily=MaterialOutlined, Color={AppThemeBinding Light={DynamicResource Primary}, Dark={DynamicResource PrimaryDark}}, Glyph={x:Static m:MaterialOutlined.Add_box}}"/>
 
     <ShellContent Route="open_project"
                   Title="Projekt öffnen"
-                  Icon="{FontImageSource FontFamily=MaterialOutlined, Color={AppThemeBinding {DynamicResource Primary}, Dark={DynamicResource PrimaryDark}}, Glyph={x:Static m:MaterialOutlined.Open_in_new}}"
+                  Icon="{FontImageSource FontFamily=MaterialOutlined, Color={AppThemeBinding Light={DynamicResource Primary}, Dark={DynamicResource PrimaryDark}}, Glyph={x:Static m:MaterialOutlined.Open_in_new}}"
                   ContentTemplate="{DataTemplate views:OpenProject}" />
-
+    
     <!-- <MenuItem>
         <Shell.MenuItemTemplate>
             <DataTemplate>
@@ -96,5 +94,6 @@
             </DataTemplate>
         </Shell.MenuItemTemplate>
     </MenuItem> -->
-    
+
+    <!-- Overlay für Busy-Indikator -->
 </Shell>

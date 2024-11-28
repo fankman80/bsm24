@@ -10,9 +10,9 @@
     <Color x:Key="PrimaryDarkText">#ffffff</Color>    
     <Color x:Key="PrimaryBackground">#ffffff</Color>
     <Color x:Key="PrimaryBackgroundDark">#212121</Color>
-    
-    <Color x:Key="Secondary">#919191</Color>
-    <Color x:Key="SecondaryDark">#E1E1E1</Color>
+
+    <Color x:Key="Secondary">#c9a59b</Color>
+    <Color x:Key="SecondaryDark">#c9a59b</Color>
     <Color x:Key="SecondaryDarkText">#ffffff</Color>
     <Color x:Key="SecondaryBackground">#ACACAC</Color>
     <Color x:Key="SecondaryBackgroundDark">#404040</Color>

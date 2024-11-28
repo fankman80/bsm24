@@ -72,7 +72,7 @@ public partial class OpenProject : UraniumContentPage
     {
         busyOverlay.IsVisible = true;
         activityIndicator.IsRunning = true;
-
+        busyText.Text = "Projekt wird geladen...";
         // Hintergrundoperation (nicht UI-Operationen)
         await Task.Run(() =>
         {
@@ -96,11 +96,12 @@ public partial class OpenProject : UraniumContentPage
                     HeaderUpdate();  // UI-Aktualisierung
 
                     await Shell.Current.GoToAsync("project_details");
+#if ANDROID
                     Shell.Current.FlyoutIsPresented = false;
+#endif
                 });
             }
         });
-
         activityIndicator.IsRunning = false;
         busyOverlay.IsVisible = false;
     }
@@ -117,7 +118,18 @@ public partial class OpenProject : UraniumContentPage
             { 
                 string sourceDirectory = Path.GetDirectoryName(item.FilePath); // Pfad zum zu zippenden Ordner
                 string outputPath = Path.Combine(FileSystem.AppDataDirectory, Path.GetFileNameWithoutExtension(item.FileName) + ".zip");
-                ZipDirectory(sourceDirectory, outputPath);
+                    
+                    
+                busyOverlay.IsVisible = true;
+                activityIndicator.IsRunning = true;
+                busyText.Text = "Daten werden komprimiert...";
+
+                // Hintergrundoperation (nicht UI-Operationen)
+                await Task.Run(() => { ZipDirectory(sourceDirectory, outputPath); });
+
+                activityIndicator.IsRunning = false;
+                busyOverlay.IsVisible = false;
+
 
                 CancellationToken cancellationToken = new();
                 var saveStream = File.Open(outputPath, FileMode.Open);

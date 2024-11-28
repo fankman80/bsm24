@@ -14,6 +14,7 @@ public partial class ProjectDetails : UraniumContentPage
     public ProjectDetails()
     {
         InitializeComponent();
+
     }
 
     protected override void OnAppearing()
@@ -53,7 +54,14 @@ public partial class ProjectDetails : UraniumContentPage
 
         HeaderUpdate();
 
+        // Entferne die aktuelle Seite aus dem Stack
+        var currentPage = Shell.Current.CurrentPage;
+        Shell.Current.Navigation.RemovePage(currentPage);
+
         await Shell.Current.GoToAsync("//homescreen");
+#if ANDROID
+        Shell.Current.FlyoutIsPresented = true;
+#endif
     }
 
     public static async Task<FileResult> PickPdfFileAsync()
@@ -94,6 +102,7 @@ public partial class ProjectDetails : UraniumContentPage
     {
         busyOverlay.IsVisible = true;
         activityIndicator.IsRunning = true;
+        busyText.Text = "PDF wird konvertiert...";
 
         await Task.Run(async () =>
         {

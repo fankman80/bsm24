@@ -12,7 +12,7 @@ public partial class SettingsService : INotifyPropertyChanged
     {
         ImageQuality = "300";
         Themes = ["EBBE", "Lachs", "Gras", "Ozean", "Feuer", "Barbie"];
-        DarkMode = ["Light", "Dark", "System Default"];
+        DarkMode = ["Light", "Dark"];
         SelectedTheme = Themes[0]; // Standardauswahl
         SelectedDarkMode = DarkMode[0]; // Standardauswahl
     }
@@ -297,8 +297,8 @@ public partial class SettingsService : INotifyPropertyChanged
                         App.Current.Resources["PrimaryDark"] = Color.FromArgb("#ededed");
                         App.Current.Resources["PrimaryDarkText"] = Color.FromArgb("#ffffff");
                         App.Current.Resources["PrimaryBackground"] = Color.FromArgb("#ffffff");
-                        App.Current.Resources["PrimaryBackgroundDark"] = Color.FromArgb("#404040");
-                        App.Current.Resources["SecondaryBackgroundDark"] = Color.FromArgb("#404040");
+                        App.Current.Resources["Secondary"] = Color.FromArgb("#404040");
+                        App.Current.Resources["SecondaryDark"] = Color.FromArgb("#ffffff");
                         break;
 
                     case "Lachs":
@@ -307,8 +307,8 @@ public partial class SettingsService : INotifyPropertyChanged
                         App.Current.Resources["PrimaryDark"] = Color.FromArgb("#c9a59b");
                         App.Current.Resources["PrimaryDarkText"] = Color.FromArgb("#ffffff");
                         App.Current.Resources["PrimaryBackground"] = Color.FromArgb("#ffffff");
-                        App.Current.Resources["PrimaryBackgroundDark"] = Color.FromArgb("#404040");
-                        App.Current.Resources["SecondaryBackgroundDark"] = Color.FromArgb("#404040");
+                        App.Current.Resources["Secondary"] = Color.FromArgb("#c9a59b");
+                        App.Current.Resources["SecondaryDark"] = Color.FromArgb("#ffffff");
                         break;
 
                     case "Gras":
@@ -317,8 +317,8 @@ public partial class SettingsService : INotifyPropertyChanged
                         App.Current.Resources["PrimaryDark"] = Color.FromArgb("#73b572");
                         App.Current.Resources["PrimaryDarkText"] = Color.FromArgb("#ffffff");
                         App.Current.Resources["PrimaryBackground"] = Color.FromArgb("#ffffff");
-                        App.Current.Resources["PrimaryBackgroundDark"] = Color.FromArgb("#404040");
-                        App.Current.Resources["SecondaryBackgroundDark"] = Color.FromArgb("#404040");
+                        App.Current.Resources["Secondary"] = Color.FromArgb("#73b572");
+                        App.Current.Resources["SecondaryDark"] = Color.FromArgb("#ffffff");
                         break;
 
                     case "Ozean":
@@ -327,8 +327,8 @@ public partial class SettingsService : INotifyPropertyChanged
                         App.Current.Resources["PrimaryDark"] = Color.FromArgb("#9caedb");
                         App.Current.Resources["PrimaryDarkText"] = Color.FromArgb("#ffffff");
                         App.Current.Resources["PrimaryBackground"] = Color.FromArgb("#ffffff");
-                        App.Current.Resources["PrimaryBackgroundDark"] = Color.FromArgb("#404040");
-                        App.Current.Resources["SecondaryBackgroundDark"] = Color.FromArgb("#404040");
+                        App.Current.Resources["Secondary"] = Color.FromArgb("#9caedb");
+                        App.Current.Resources["SecondaryDark"] = Color.FromArgb("#ffffff");
                         break;
 
                     case "Feuer":
@@ -337,8 +337,8 @@ public partial class SettingsService : INotifyPropertyChanged
                         App.Current.Resources["PrimaryDark"] = Color.FromArgb("#edba93");
                         App.Current.Resources["PrimaryDarkText"] = Color.FromArgb("#ffffff");
                         App.Current.Resources["PrimaryBackground"] = Color.FromArgb("#ffffff");
-                        App.Current.Resources["PrimaryBackgroundDark"] = Color.FromArgb("#404040");
-                        App.Current.Resources["SecondaryBackgroundDark"] = Color.FromArgb("#404040");
+                        App.Current.Resources["Secondary"] = Color.FromArgb("#edba93");
+                        App.Current.Resources["SecondaryDark"] = Color.FromArgb("#ffffff");
                         break;
 
                     case "Barbie":
@@ -347,8 +347,8 @@ public partial class SettingsService : INotifyPropertyChanged
                         App.Current.Resources["PrimaryDark"] = Color.FromArgb("#f2a7ea");
                         App.Current.Resources["PrimaryDarkText"] = Color.FromArgb("#ffffff");
                         App.Current.Resources["PrimaryBackground"] = Color.FromArgb("#ffffff");
-                        App.Current.Resources["PrimaryBackgroundDark"] = Color.FromArgb("#404040");
-                        App.Current.Resources["SecondaryBackgroundDark"] = Color.FromArgb("#404040");
+                        App.Current.Resources["Secondary"] = Color.FromArgb("#f2a7ea");
+                        App.Current.Resources["SecondaryDark"] = Color.FromArgb("#ffffff");
                         break;
 
                     default:
@@ -388,9 +388,6 @@ public partial class SettingsService : INotifyPropertyChanged
                         break;
                     case "Dark":
                         App.Current.UserAppTheme = AppTheme.Dark; // Setze auf dunkles Theme
-                        break;
-                    case "System Default":
-                        App.Current.UserAppTheme = AppTheme.Unspecified; // Verwende das systemweite Theme
                         break;
                 }
             }
