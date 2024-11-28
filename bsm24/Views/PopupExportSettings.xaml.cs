@@ -42,7 +42,7 @@ public partial class PopupExportSettings : PopupPage
 
         busyOverlay.IsVisible = true;
         activityIndicator.IsRunning = true;
-        busyText.Text = "Projekt wird geteilt...";
+        busyText.Text = "Bericht wird geteilt...";
         // Hintergrundoperation (nicht UI-Operationen)
         await Task.Run(async () =>
         {
@@ -71,7 +71,7 @@ public partial class PopupExportSettings : PopupPage
 
         busyOverlay.IsVisible = true;
         activityIndicator.IsRunning = true;
-        busyText.Text = "Projekt wird gespeichert...";
+        busyText.Text = "Bericht wird gespeichert...";
         // Hintergrundoperation (nicht UI-Operationen)
         await Task.Run(async () =>
         {
