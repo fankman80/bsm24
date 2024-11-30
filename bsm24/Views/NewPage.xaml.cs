@@ -272,13 +272,13 @@ public partial class NewPage: IQueryAttributable
 
     public void OnRotated(object sender, RotateEventArgs e)
     {
-        if (e.NumberOfTouches == 0)
-        {
-            var planPanContainer = (TransformViewModel)PlanContainer.BindingContext;
-            planPanContainer.AnchorX = 0.5;
-            planPanContainer.AnchorY = 0.5;
-            planPanContainer.IsPanningEnabled = true;
-        }
+        //if (e.NumberOfTouches == 0)
+        //{
+        //    var planPanContainer = (TransformViewModel)PlanContainer.BindingContext;
+        //    planPanContainer.AnchorX = 0.5;
+        //    planPanContainer.AnchorY = 0.5;
+        //    planPanContainer.IsPanningEnabled = true;
+        //}
     }
 
     public void OnDown(object sender, DownUpEventArgs e)
@@ -289,8 +289,8 @@ public partial class NewPage: IQueryAttributable
             planPanContainer.IsPanningEnabled = false;
 
             // Korrektur für rotierte Pläne einbauen...
-            planPanContainer.AnchorX = 1 / PlanContainer.Width * (e.Center.X - PlanContainer.TranslationX);
-            planPanContainer.AnchorY = 1 / PlanContainer.Height * (e.Center.Y - PlanContainer.TranslationY);
+            planPanContainer.AnchorX = 1 / (PlanContainer.Width * PlanContainer.Scale) * (e.Center.X - PlanContainer.TranslationX);
+            planPanContainer.AnchorY = 1 / (PlanContainer.Height * PlanContainer.Scale) * (e.Center.Y - PlanContainer.TranslationY);
         }
     }
 
