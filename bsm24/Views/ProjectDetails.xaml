@@ -87,8 +87,8 @@
                                     ImageSource="{FontImageSource FontFamily=MaterialOutlined, Color={AppThemeBinding Light={DynamicResource PrimaryDarkText}, Dark={DynamicResource PrimaryText}}, Glyph={x:Static m:MaterialOutlined.Picture_as_pdf}}"
                                     Clicked="OnAddPdfClicked"/>
                         </VerticalStackLayout>
-                        
-                        <Border Grid.Column="1"
+
+                        <Border Grid.Column="1" Grid.Row="0" Grid.RowSpan="2"
                                 Margin="0,4,0,0"
                                 Stroke="Grey"
                                 StrokeThickness="1"
@@ -96,14 +96,12 @@
                                 HeightRequest="130"
                                 WidthRequest="130"
                                 StrokeShape="RoundRectangle 10">
-                                <ImageButton Source="{Binding FlyoutHeaderImage}"
-                                             Aspect="AspectFill"
-                                             Clicked="OnThumbCaptureClicked"/>
+                                <Image Source="{Binding FlyoutHeaderImage}" Aspect="AspectFill"/>
                         </Border>
-                        <Image Grid.Column="1" Grid.Row="0" Grid.RowSpan="2"
-                               WidthRequest="60"
-                               HeightRequest="60"
-                               Source="{FontImageSource FontFamily=MaterialOutlined, Color=White, Glyph={x:Static m:MaterialOutlined.Photo_camera}}"/>
+                        <ImageButton Grid.Column="1" Grid.Row="0" Grid.RowSpan="2"
+                               BackgroundColor="Transparent"
+                               Source="{FontImageSource FontFamily=MaterialOutlined, Color=White, Size=60, Glyph={x:Static m:MaterialOutlined.Photo_camera}}"
+                               Clicked="OnThumbCaptureClicked"/>
 
                     </Grid>
                 </VerticalStackLayout>

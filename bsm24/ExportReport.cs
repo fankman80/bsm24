@@ -20,7 +20,7 @@ public partial class ExportReport
             {"${creation_date}", GlobalJson.Data.Creation_date},
             {"${project_manager}", GlobalJson.Data.Project_manager},
             {"${plan_indexes}", "${plan_indexes}"}, //bereinige splitted runs
-            {"${plan_images}", "${plan_images}"} //bereinige splitted runs
+            {"${plan_images}", "${plan_images}"}, //bereinige splitted runs
             {"${title_image}", "${title_image}"} //bereinige splitted runs
         };
 
@@ -111,7 +111,9 @@ public partial class ExportReport
                                             ];
                                         }
                                         else
+                                        {
                                             pinList = null;
+                                        }
 
                                         var _imgPlan = await XmlImage.GenerateImage(mainPart,
                                                                                     new FileResult(planPath),

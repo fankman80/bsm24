@@ -13,8 +13,7 @@
 
     <Grid>
         <StackLayout Margin="16,0,16,0">
-            <CollectionView x:Name="fileListView"
-                            ItemsLayout="VerticalGrid, 1">
+            <CollectionView x:Name="fileListView" ItemsLayout="VerticalGrid, 1">
                 <CollectionView.ItemTemplate>
                     <DataTemplate x:DataType="local:FileItem">
                         <Grid Padding="0, 6, 0, 6">
