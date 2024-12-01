@@ -34,6 +34,12 @@ public partial class ProjectDetails : UraniumContentPage
         HeaderUpdate();
     }
 
+    protected override bool OnBackButtonPressed()
+    {
+        // Return true to prevent back button 
+        return true;
+    }
+
     private async void OnOkayClicked(object sender, EventArgs e)
     {
         GlobalJson.Data.Client_name = client_name.Text;
