@@ -62,6 +62,8 @@ public partial class PopupExportSettings : PopupPage
             await Toast.Make($"Bericht wurde nicht geteilt").Show(cancellationToken);
         }
         File.Delete(outputPath);
+
+        await MopupService.Instance.PopAsync();
     }
 
     private async void OnSaveClicked(object sender, EventArgs e)
@@ -89,6 +91,8 @@ public partial class PopupExportSettings : PopupPage
             await Toast.Make($"Bericht wurde nicht gespeichert").Show(cancellationToken);
         saveStream.Close();
         File.Delete(outputPath);
+
+        await MopupService.Instance.PopAsync();
     }
 
     private static async Task ShareFileAsync(string filePath)

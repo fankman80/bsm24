@@ -68,6 +68,7 @@ public partial class IconGallery : UraniumContentPage, IQueryAttributable
         GlobalJson.Data.Plans[PlanId].Pins[PinId].PinTxt = Settings.PinData.FirstOrDefault(item => item.fileName.Equals(fileName, StringComparison.OrdinalIgnoreCase)).imageName;
         GlobalJson.Data.Plans[PlanId].Pins[PinId].Anchor = Settings.PinData.FirstOrDefault(item => item.fileName.Equals(fileName, StringComparison.OrdinalIgnoreCase)).anchor;
         GlobalJson.Data.Plans[PlanId].Pins[PinId].Size = Settings.PinData.FirstOrDefault(item => item.fileName.Equals(fileName, StringComparison.OrdinalIgnoreCase)).size;
+        GlobalJson.Data.Plans[PlanId].Pins[PinId].IsLockRotate = Settings.PinData.FirstOrDefault(item => item.fileName.Equals(fileName, StringComparison.OrdinalIgnoreCase)).isLockRotate;
 
         // save data to file
         GlobalJson.SaveToFile();

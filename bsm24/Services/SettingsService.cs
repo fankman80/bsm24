@@ -11,7 +11,7 @@ public partial class SettingsService : INotifyPropertyChanged
     private SettingsService()
     {
         ImageQuality = "300";
-        Themes = ["EBBE", "Lachs", "Gras", "Ozean", "Feuer", "Barbie"];
+        Themes = ["EBBE", "Lachs", "Gras", "Ozean", "Feuer", "Flower", "Barbie"];
         DarkMode = ["Light", "Dark"];
         SelectedTheme = Themes[0]; // Standardauswahl
         SelectedDarkMode = DarkMode[0]; // Standardauswahl
@@ -341,10 +341,20 @@ public partial class SettingsService : INotifyPropertyChanged
                         App.Current.Resources["SecondaryDark"] = Color.FromArgb("#ffffff");
                         break;
 
+                    case "Flower":
+                        App.Current.Resources["Primary"] = Color.FromArgb("#9f4bcc");
+                        App.Current.Resources["PrimaryText"] = Color.FromArgb("#000000");
+                        App.Current.Resources["PrimaryDark"] = Color.FromArgb("#e5befa");
+                        App.Current.Resources["PrimaryDarkText"] = Color.FromArgb("#ffffff");
+                        App.Current.Resources["PrimaryBackground"] = Color.FromArgb("#ffffff");
+                        App.Current.Resources["Secondary"] = Color.FromArgb("#e5befa");
+                        App.Current.Resources["SecondaryDark"] = Color.FromArgb("#ffffff");
+                        break;
+
                     case "Barbie":
                         App.Current.Resources["Primary"] = Color.FromArgb("#fc03df");
                         App.Current.Resources["PrimaryText"] = Color.FromArgb("#000000");
-                        App.Current.Resources["PrimaryDark"] = Color.FromArgb("#f2a7ea");
+                        App.Current.Resources["PrimaryDark"] = Color.FromArgb("#e5befa");
                         App.Current.Resources["PrimaryDarkText"] = Color.FromArgb("#ffffff");
                         App.Current.Resources["PrimaryBackground"] = Color.FromArgb("#ffffff");
                         App.Current.Resources["Secondary"] = Color.FromArgb("#f2a7ea");

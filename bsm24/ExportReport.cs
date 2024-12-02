@@ -3,6 +3,7 @@ using Codeuctivity.OpenXmlPowerTools;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Wordprocessing;
 using SkiaSharp;
+using System.Globalization;
 using D = DocumentFormat.OpenXml.Wordprocessing;
 
 namespace bsm24;
@@ -17,7 +18,7 @@ public partial class ExportReport
             {"${object_address}", GlobalJson.Data.Object_address},
             {"${working_title}", GlobalJson.Data.Working_title},
             {"${object_name}", GlobalJson.Data.Object_name},
-            {"${creation_date}", GlobalJson.Data.Creation_date},
+            {"${creation_date}", GlobalJson.Data.Creation_date.Date.ToString("D")},
             {"${project_manager}", GlobalJson.Data.Project_manager},
             {"${plan_indexes}", "${plan_indexes}"}, //bereinige splitted runs
             {"${plan_images}", "${plan_images}"}, //bereinige splitted runs

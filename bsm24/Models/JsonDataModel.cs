@@ -8,7 +8,7 @@ namespace bsm24.Models
         public string Object_address { get; set; }
         public string Working_title { get; set; }
         public string Object_name { get; set; }
-        public string Creation_date { get; set; }
+        public DateTime Creation_date { get; set; }
         public string Project_manager { get; set; }
         public Pdf PlanPdf { get; set; }
         public Dictionary<string, Plan> Plans { get; set; }
@@ -23,8 +23,6 @@ namespace bsm24.Models
     public class Pdf
     {
         public string File { get; set; }
-        public Point Pos { get; set; }
-        public int Rotation { get; set; }
     }
 
     public class Plan
@@ -53,6 +51,7 @@ namespace bsm24.Models
         public string File { get; set; }
         public bool HasOverlay { get; set; }
         public bool IsChecked { get; set; }
+        public DateTime DateTime { get; set; }
     }
 
     public class Position

@@ -18,7 +18,7 @@
                     <DataTemplate x:DataType="local:FileItem">
                         <Grid Padding="0, 6, 0, 6">
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="60" />
+                                <ColumnDefinition Width="66" />
                                 <ColumnDefinition Width="*" />
                                 <ColumnDefinition Width="40" />
                                 <ColumnDefinition Width="40" />

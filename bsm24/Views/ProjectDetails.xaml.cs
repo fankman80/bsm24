@@ -3,6 +3,7 @@
 using bsm24.Models;
 using PDFtoImage;
 using SkiaSharp;
+using System.Globalization;
 using UraniumUI.Pages;
 
 namespace bsm24.Views;
@@ -29,9 +30,9 @@ public partial class ProjectDetails : UraniumContentPage
         working_title.Text = GlobalJson.Data.Working_title;
         object_name.Text = GlobalJson.Data.Object_name;
         project_manager.Text = GlobalJson.Data.Project_manager;
-        creation_date.Date = DateTime.Parse(GlobalJson.Data.Creation_date);
+        creation_date.Date = GlobalJson.Data.Creation_date;
 
-        HeaderUpdate();
+    HeaderUpdate();
     }
 
     private async void OnOkayClicked(object sender, EventArgs e)
@@ -41,7 +42,7 @@ public partial class ProjectDetails : UraniumContentPage
         GlobalJson.Data.Working_title = working_title.Text;
         GlobalJson.Data.Object_name = object_name.Text;
         GlobalJson.Data.Project_manager = project_manager.Text;
-        GlobalJson.Data.Creation_date = creation_date.Date.Value.ToString("d");
+        GlobalJson.Data.Creation_date = creation_date.Date.Value;
 
         // save data to file
         GlobalJson.SaveToFile();
@@ -137,7 +138,6 @@ public partial class ProjectDetails : UraniumContentPage
             GlobalJson.Data.PlanPdf = new Pdf
             {
                 File = result.FileName,
-                Pos = new Point(0, 0)
             };
         });
 

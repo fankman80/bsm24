@@ -46,6 +46,7 @@
             Panning="OnPanning"
             Pinching="OnPinching"
             Pinched="OnPinched"
+            DoubleTapped="OnDoubleTapped"
             ScrollWheelChanged="OnMouseScroll">
             <AbsoluteLayout x:Name="PlanContainer"
                 Scale="{Binding Scale}"

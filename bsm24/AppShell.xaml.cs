@@ -44,7 +44,7 @@ public partial class AppShell : Shell
             GlobalJson.Data.Object_address = "";
             GlobalJson.Data.Working_title = "";
             GlobalJson.Data.Object_name = "";
-            GlobalJson.Data.Creation_date = DateTime.Parse(DateTime.Now.Date.ToString("d", new CultureInfo("de-DE"))).ToString();
+            GlobalJson.Data.Creation_date = DateTime.Now;
             GlobalJson.Data.Project_manager = "";
             GlobalJson.Data.ProjectPath = Path.Combine(result);
             GlobalJson.Data.JsonFile = Path.Combine(result, result + ".json");
@@ -57,6 +57,9 @@ public partial class AppShell : Shell
             GlobalJson.SaveToFile();
 
             await Shell.Current.GoToAsync("project_details");
+#if ANDROID
+            Shell.Current.FlyoutIsPresented = false;
+#endif
         }
     }
 

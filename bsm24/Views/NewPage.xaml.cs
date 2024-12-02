@@ -28,7 +28,7 @@ public partial class NewPage: IQueryAttributable
 
     private Point mousePos;
 
-    private readonly TransformViewModel planPanContainer;
+    private readonly TransformViewModel planContainer;
 
     public NewPage(string planId)
     {
@@ -37,7 +37,7 @@ public partial class NewPage: IQueryAttributable
         PlanId = planId;
         PageTitle = GlobalJson.Data.Plans[PlanId].Name;
         OnPropertyChanged(nameof(PageTitle));
-        planPanContainer = (TransformViewModel)PlanContainer.BindingContext;
+        planContainer = (TransformViewModel)PlanContainer.BindingContext;
     }
 
     public void ApplyQueryAttributes(IDictionary<string, object> query)
@@ -95,13 +95,6 @@ public partial class NewPage: IQueryAttributable
     private void AddPlan()
     {
         PlanImage.Source = Path.Combine(FileSystem.AppDataDirectory, GlobalJson.Data.PlanPath, GlobalJson.Data.Plans[PlanId].File);
-
-        if (BindingContext is TransformViewModel viewModel)
-        {
-            // Set Plan Position
-            //viewModel.TranslationX = planPos.X;
-            //viewModel.TranslationY = planPos.Y;
-        }
 
         PlanContainer.PropertyChanged += (s, e) =>
         {
@@ -161,20 +154,17 @@ public partial class NewPage: IQueryAttributable
         var scaleLimit = Convert.ToDouble(SettingsService.Instance.PinScaleLimit);
         if (scaleLimit < 1) smallImage.Scale = scaleLimit;
 
-        //smallImage.BindingContext = SettingsService.Instance;
-        //smallImage.SetBinding(ScaleProperty, new Binding("PinSize"));
-
         smallImage.Down += (s, e) =>
         {
             if (GlobalJson.Data.Plans[PlanId].Pins[pinId].IsLocked == true) return;
-            planPanContainer.IsPanningEnabled = false;
+            planContainer.IsPanningEnabled = false;
             activePin = smallImage;
         };
 
         smallImage.Up += (s, e) =>
         {
             if (GlobalJson.Data.Plans[PlanId].Pins[pinId].IsLocked == true) return;
-            planPanContainer.IsPanningEnabled = true;
+            planContainer.IsPanningEnabled = true;
             activePin = null;
 
             var x = smallImage.TranslationX / GlobalJson.Data.Plans[PlanId].ImageSize.Width * densityX;
@@ -256,14 +246,19 @@ public partial class NewPage: IQueryAttributable
         }
     }
 
+    public void OnDoubleTapped(object sender, EventArgs e)
+    {
+        ImageFit();
+    }
+
     public void OnPinching(object sender, PinchEventArgs e)
     {
-        planPanContainer.IsPanningEnabled = false;
+        planContainer.IsPanningEnabled = false;
     }
 
     public void OnPinched(object sender, PinchEventArgs e)
     {
-        planPanContainer.IsPanningEnabled = true;
+        planContainer.IsPanningEnabled = true;
     }
 
     public void OnPanning(object sender, PanEventArgs e)
@@ -287,11 +282,11 @@ public partial class NewPage: IQueryAttributable
         }
         else
         {
-            planPanContainer.TranslationX += deltaX * scaleSpeed;
-            planPanContainer.TranslationY += deltaY * scaleSpeed;
+            planContainer.TranslationX += deltaX * scaleSpeed;
+            planContainer.TranslationY += deltaY * scaleSpeed;
 
-            planPanContainer.AnchorX = 1 / PlanContainer.Width * ((this.Width / 2) - PlanContainer.TranslationX);
-            planPanContainer.AnchorY = 1 / PlanContainer.Height * ((this.Height / 2) - PlanContainer.TranslationY);
+            planContainer.AnchorX = 1 / PlanContainer.Width * ((this.Width / 2) - PlanContainer.TranslationX);
+            planContainer.AnchorY = 1 / PlanContainer.Height * ((this.Height / 2) - PlanContainer.TranslationY);
         }
     }
 
@@ -308,7 +303,7 @@ public partial class NewPage: IQueryAttributable
                 Anchor = Settings.PinData.FirstOrDefault(item => item.fileName.Equals(newPin, StringComparison.OrdinalIgnoreCase)).anchor,
                 Size = Settings.PinData.FirstOrDefault(item => item.fileName.Equals(newPin, StringComparison.OrdinalIgnoreCase)).size,
                 IsLocked = false,
-                IsLockRotate = false,
+                IsLockRotate = Settings.PinData.FirstOrDefault(item => item.fileName.Equals(newPin, StringComparison.OrdinalIgnoreCase)).isLockRotate,
                 InfoTxt = "",
                 PinTxt = Settings.PinData.FirstOrDefault(item => item.fileName.Equals(newPin, StringComparison.OrdinalIgnoreCase)).imageName,
                 PinIcon = newPin,
@@ -348,9 +343,9 @@ public partial class NewPage: IQueryAttributable
         double newScale = PlanContainer.Scale * zoomFactor;
         newScale = Math.Max(0.1, Math.Min(newScale, 10));
 
-        planPanContainer.AnchorX = mousePos.X / PlanContainer.Width;
-        planPanContainer.AnchorY = mousePos.Y / PlanContainer.Height;
-        planPanContainer.Scale = newScale;
+        planContainer.AnchorX = mousePos.X / PlanContainer.Width;
+        planContainer.AnchorY = mousePos.Y / PlanContainer.Height;
+        planContainer.Scale = newScale;
     }
 
     private async void OnEditButtonClicked(object sender, EventArgs e)
@@ -399,6 +394,17 @@ public partial class NewPage: IQueryAttributable
                 GlobalJson.SaveToFile();
                 break;
         }
+    }
+
+    private void ImageFit()
+    {
+        var scale = Math.Min(this.Width / PlanContainer.Width, this.Height / PlanContainer.Height);
+        planContainer.Rotation = 0;
+        planContainer.Scale = scale;
+        planContainer.TranslationX = (this.Width - PlanContainer.Width) / 2;
+        planContainer.TranslationY = (this.Height - PlanContainer.Height) / 2;
+        planContainer.AnchorX = 1 / PlanContainer.Width * ((this.Width / 2) - PlanContainer.TranslationX);
+        planContainer.AnchorY = 1 / PlanContainer.Height * ((this.Height / 2) - PlanContainer.TranslationY);
     }
 }
 

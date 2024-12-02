@@ -74,7 +74,7 @@ public partial class LoadDataToView
         GlobalJson.Data.Object_address = null;
         GlobalJson.Data.Working_title = null;
         GlobalJson.Data.Object_name = null;
-        GlobalJson.Data.Creation_date = null;
+        GlobalJson.Data.Creation_date = DateTime.Now;
         GlobalJson.Data.Project_manager = null;
         GlobalJson.Data.PlanPdf = null;
         GlobalJson.Data.Plans = null;

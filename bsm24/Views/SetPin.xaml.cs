@@ -1,8 +1,8 @@
 ﻿using bsm24.Models;
+using FFImageLoading.Maui;
 using Mopups.Services;
 using System.Collections.ObjectModel;
 using UraniumUI.Pages;
-using FFImageLoading.Maui;
 
 #nullable disable
 
@@ -58,7 +58,8 @@ public partial class SetPin : UraniumContentPage, IQueryAttributable
             Images.Add(new ImageItem
             {
                 ImagePath = Path.Combine(FileSystem.AppDataDirectory, GlobalJson.Data.ThumbnailPath, imgPath),
-                IsChecked = isChecked
+                IsChecked = isChecked,
+                DateTime = GlobalJson.Data.Plans[PlanId].Pins[PinId].Fotos[img.Key].DateTime
             });
         }
 
@@ -135,16 +136,11 @@ public partial class SetPin : UraniumContentPage, IQueryAttributable
 
         if (path != null)
         {
-            Images.Add(new ImageItem
-            {
-                ImagePath = path.FullPath,
-                IsChecked = true
-            });
-
             Foto newImageData = new()
             {
-                IsChecked = false,
-                File = path.FileName
+                IsChecked = true,
+                File = path.FileName,
+                DateTime = DateTime.Now
             };
 
             // Neues Image hinzufügen
@@ -153,6 +149,13 @@ public partial class SetPin : UraniumContentPage, IQueryAttributable
 
             // save data to file
             GlobalJson.SaveToFile();
+
+            Images.Add(new ImageItem
+            {
+                ImagePath = path.FullPath,
+                IsChecked = true,
+                DateTime = DateTime.Now
+            });
         }
     }
 
@@ -176,6 +179,7 @@ public class ImageItem
 {
     public string ImagePath { get; set; }
     public bool IsChecked { get; set; }
+    public DateTime DateTime { get; set; }
 }
 
 public partial class SquareView : ContentView

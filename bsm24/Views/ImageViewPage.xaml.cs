@@ -3,12 +3,9 @@
 using bsm24.ViewModels;
 using CommunityToolkit.Maui.Core.Views;
 using CommunityToolkit.Maui.Views;
-using MetadataExtractor;
-using MetadataExtractor.Formats.Exif;
 using Mopups.Services;
 using MR.Gestures;
 using SkiaSharp;
-using System.Globalization;
 
 namespace bsm24.Views;
 
@@ -51,24 +48,11 @@ public partial class ImageViewPage : IQueryAttributable
             ImgSource = value4 as string;
             var imgPath = Path.Combine(FileSystem.AppDataDirectory, GlobalJson.Data.ImagePath, ImgSource);
 
-            // Lade die Metadaten aus dem Bild
-            var directories = ImageMetadataReader.ReadMetadata(imgPath);
+            // Formatierte Ausgabe im europäischen Format
+            var dateTime = GlobalJson.Data.Plans[PlanId].Pins[PinId].Fotos[ImgSource].DateTime;
+            string formattedDate = dateTime.ToString("d") + " / " + dateTime.ToString("HH:mm");
+            this.Title = formattedDate;
 
-            // Finde die EXIF-Unterverzeichnisse
-            var exifSubIfdDirectory = directories.OfType<ExifSubIfdDirectory>().FirstOrDefault();
-
-            if (exifSubIfdDirectory != null)
-            {
-                // Beispiel: Lese das Aufnahmedatum
-                var dateTimeOriginal = exifSubIfdDirectory.GetDescription(ExifDirectoryBase.TagDateTimeOriginal);
-                // Konvertiere das Datum in ein DateTime-Objekt
-                if (DateTime.TryParseExact(dateTimeOriginal, "yyyy:MM:dd HH:mm:ss", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime dateTime))
-                {
-                    // Formatierte Ausgabe im europäischen Format
-                    string formattedDate = dateTime.ToString("d") + " / " + dateTime.ToString("HH:mm");
-                    this.Title = formattedDate;
-                }
-            }
             ImageView.Source = imgPath;
         }
     }
@@ -105,11 +89,11 @@ public partial class ImageViewPage : IQueryAttributable
     private void ImageFit()
     {
         var scale = Math.Min(this.Width / ImageViewContainer.Width, this.Height / ImageViewContainer.Height);
-        imageViewContainer.AnchorX = 0;
-        imageViewContainer.AnchorY = 0;
         imageViewContainer.Scale = scale;
-        imageViewContainer.TranslationX = (this.Width - ImageViewContainer.Width * scale) / 2;
-        imageViewContainer.TranslationY = (this.Height - ImageViewContainer.Height * scale) / 2;
+        imageViewContainer.TranslationX = (this.Width - ImageViewContainer.Width) / 2;
+        imageViewContainer.TranslationY = (this.Height - ImageViewContainer.Height) / 2;
+        imageViewContainer.AnchorX = 1 / ImageViewContainer.Width * ((this.Width / 2) - ImageViewContainer.TranslationX);
+        imageViewContainer.AnchorY = 1 / ImageViewContainer.Height * ((this.Height / 2) - ImageViewContainer.TranslationY);
     }
 
     //private async void DrawingView_DrawingLineCompleted(object sender, CommunityToolkit.Maui.Core.DrawingLineCompletedEventArgs e)

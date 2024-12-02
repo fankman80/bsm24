@@ -16,10 +16,13 @@ public static class GlobalJson
         set => _userData = value;
     }
 
-    public static string ToJson()
+    public static JsonSerializerOptions GetOptions()
     {
-        // Verwenden von WriteIndented für eine formatierte Ausgabe
-        JsonSerializerOptions options = new() { WriteIndented = true };
+        return new() { WriteIndented = true };
+    }
+
+    public static string ToJson(JsonSerializerOptions options)
+    {
         return JsonSerializer.Serialize(_userData, options);
     }
 
@@ -38,7 +41,7 @@ public static class GlobalJson
 
         try
         {
-            string json = ToJson();
+            string json = ToJson(GetOptions());
             json = json.Replace("\r\n", "\n").Replace("\r", "\n"); // Zeilenumbrüche für Android anpassen
 
             File.WriteAllText(_filePath, json); // Überschreibt die Datei mit neuen Daten
@@ -74,21 +77,20 @@ public static class GlobalJson
     {
         try
         {
-            if (!File.Exists(filePath))
-            {
-                string directoryPath = Path.GetDirectoryName(filePath);
-                if (!Directory.Exists(directoryPath))
-                {
-                    Directory.CreateDirectory(directoryPath);
-                    Directory.CreateDirectory(Path.Combine(directoryPath, "images"));
-                    Directory.CreateDirectory(Path.Combine(directoryPath, "images", "originals"));
-                    Directory.CreateDirectory(Path.Combine(directoryPath, "plans"));
-                    Directory.CreateDirectory(Path.Combine(directoryPath, "thumbnails"));
-                }
+            filePath = GetUniqueFilePath(filePath);
 
-                File.WriteAllText(filePath, ""); // Erstellt eine neue Datei;
-                _filePath = filePath;
+            string directoryPath = Path.GetDirectoryName(filePath);
+            if (!Directory.Exists(directoryPath))
+            {
+                Directory.CreateDirectory(directoryPath);
+                Directory.CreateDirectory(Path.Combine(directoryPath, "images"));
+                Directory.CreateDirectory(Path.Combine(directoryPath, "images", "originals"));
+                Directory.CreateDirectory(Path.Combine(directoryPath, "plans"));
+                Directory.CreateDirectory(Path.Combine(directoryPath, "thumbnails"));
             }
+
+            File.WriteAllText(filePath, ""); // Erstellt eine neue Datei;
+            _filePath = filePath;
         }
         catch (Exception ex)
         {
@@ -99,5 +101,24 @@ public static class GlobalJson
     public static String GetFilePath()
     {
         return _filePath;
+    }
+
+    private static string GetUniqueFilePath(string filePath)
+    {
+        string directory = Path.GetDirectoryName(filePath);
+        string fileNameWithoutExtension = Path.GetFileNameWithoutExtension(filePath);
+        string extension = Path.GetExtension(filePath);
+
+        int counter = 1;
+        string newFilePath = filePath;
+
+        // Prüfe, ob die Datei existiert und hänge fortlaufend eine Nummer an
+        while (File.Exists(newFilePath))
+        {
+            newFilePath = Path.Combine(directory, $"{fileNameWithoutExtension} ({counter}){extension}");
+            counter++;
+        }
+
+        return newFilePath;
     }
 }

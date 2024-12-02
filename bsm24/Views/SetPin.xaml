@@ -48,7 +48,7 @@
 
                             <BoxView BackgroundColor="White" Opacity="0.7" HeightRequest="40" VerticalOptions="End"/>
 
-                            <Label Text="16.02.1980" FontSize="12" TextColor="{DynamicResource Primary}" VerticalOptions="End" Margin="12"/>
+                            <Label Text="{Binding DateTime}" FontSize="12" TextColor="{DynamicResource Primary}" VerticalOptions="End" Margin="10,0,0,4"/>
 
                             <CheckBox
                                 IsChecked="{Binding IsChecked}"

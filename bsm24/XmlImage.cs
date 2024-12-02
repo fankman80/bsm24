@@ -1,7 +1,9 @@
 ﻿#nullable disable
 
+using Codeuctivity.OpenXmlPowerTools;
 using DocumentFormat.OpenXml;
 using DocumentFormat.OpenXml.Packaging;
+using DocumentFormat.OpenXml.Wordprocessing;
 using SkiaSharp;
 using A = DocumentFormat.OpenXml.Drawing;
 using D = DocumentFormat.OpenXml.Wordprocessing;
@@ -51,7 +53,8 @@ public partial class XmlImage
         if (overlayImages != null)
         {
             // Font definition
-            var font = new SKFont { Size = 64.0f, Edging = SKFontEdging.Antialias };
+            var typeface = SKTypeface.FromFamilyName("Arial", SKFontStyle.Bold);
+            var font = new SKFont { Size = 96.0f, Edging = SKFontEdging.Antialias, Typeface = typeface };
             var paint = new SKPaint { Color = new SKColor(255, 0, 0) };
 
             foreach ((string, SKPoint, string, SKPoint) overlayImage in overlayImages.Select(v => v))
