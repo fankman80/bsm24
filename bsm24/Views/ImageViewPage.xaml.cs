@@ -26,10 +26,13 @@ public partial class ImageViewPage : IQueryAttributable
 
     private bool isCleared = false;
 
+    private readonly TransformViewModel imageViewContainer;
+
     public ImageViewPage()
     {
         InitializeComponent();
         BindingContext = new TransformViewModel();
+        imageViewContainer = (TransformViewModel)ImageViewContainer.BindingContext;
     }
 
     public void ApplyQueryAttributes(IDictionary<string, object> query)
@@ -75,22 +78,38 @@ public partial class ImageViewPage : IQueryAttributable
         ImageFit();
     }
 
+    public void OnPinching(object sender, PinchEventArgs e)
+    {
+        imageViewContainer.IsPanningEnabled = false;
+    }
+
+    public void OnPinched(object sender, PinchEventArgs e)
+    {
+        imageViewContainer.IsPanningEnabled = true;
+    }
+
     public void OnPanning(object sender, PanEventArgs e)
     {
-        var imageView = (TransformViewModel)ImageView.BindingContext;
-        imageView.AnchorX = 1 / ImageView.Width * ((this.Width / 2) - ImageView.TranslationX);
-        imageView.AnchorY = 1 / ImageView.Height * ((this.Height / 2) - ImageView.TranslationY);
+        var scaleSpeed = 1 / ImageViewContainer.Scale;
+        double angle = ImageViewContainer.Rotation * Math.PI / 180.0;
+        double deltaX = e.DeltaDistance.X * Math.Cos(angle) - -e.DeltaDistance.Y * Math.Sin(angle);
+        double deltaY = -e.DeltaDistance.X * Math.Sin(angle) + e.DeltaDistance.Y * Math.Cos(angle);
+
+        imageViewContainer.TranslationX += deltaX * scaleSpeed;
+        imageViewContainer.TranslationY += deltaY * scaleSpeed;
+
+        imageViewContainer.AnchorX = 1 / ImageViewContainer.Width * ((this.Width / 2) - ImageViewContainer.TranslationX);
+        imageViewContainer.AnchorY = 1 / ImageViewContainer.Height * ((this.Height / 2) - ImageViewContainer.TranslationY);
     }
 
     private void ImageFit()
     {
-        var imageView = (TransformViewModel)ImageView.BindingContext;
-        var scale = Math.Min(this.Width / ImageView.Width, this.Height / ImageView.Height);
-        imageView.AnchorX = 0;
-        imageView.AnchorY = 0;
-        imageView.Scale = scale;
-        imageView.TranslationX = (this.Width - ImageView.Width * scale) / 2;
-        imageView.TranslationY = (this.Height - ImageView.Height * scale) / 2;
+        var scale = Math.Min(this.Width / ImageViewContainer.Width, this.Height / ImageViewContainer.Height);
+        imageViewContainer.AnchorX = 0;
+        imageViewContainer.AnchorY = 0;
+        imageViewContainer.Scale = scale;
+        imageViewContainer.TranslationX = (this.Width - ImageViewContainer.Width * scale) / 2;
+        imageViewContainer.TranslationY = (this.Height - ImageViewContainer.Height * scale) / 2;
     }
 
     //private async void DrawingView_DrawingLineCompleted(object sender, CommunityToolkit.Maui.Core.DrawingLineCompletedEventArgs e)
@@ -107,11 +126,10 @@ public partial class ImageViewPage : IQueryAttributable
 
     private void DrawClicked(object sender, EventArgs e)
     {
-        var imageView = (TransformViewModel)ImageView.BindingContext;
-        imageView.IsPanningEnabled = false;
-        imageView.IsPinchingEnabled = false;
-        DrawView.WidthRequest = ImageView.Width;
-        DrawView.HeightRequest = ImageView.Height;
+        imageViewContainer.IsPanningEnabled = false;
+        imageViewContainer.IsPinchingEnabled = false;
+        DrawView.WidthRequest = ImageViewContainer.Width;
+        DrawView.HeightRequest = ImageViewContainer.Height;
 
         DrawView.InputTransparent = false;
 
@@ -124,9 +142,8 @@ public partial class ImageViewPage : IQueryAttributable
 
     private void CheckClicked(object sender, EventArgs e)
     {
-        var imageView = (TransformViewModel)ImageView.BindingContext;
-        imageView.IsPanningEnabled = true;
-        imageView.IsPinchingEnabled = true;
+        imageViewContainer.IsPanningEnabled = true;
+        imageViewContainer.IsPinchingEnabled = true;
 
         DrawView.InputTransparent = true;
 
@@ -235,7 +252,7 @@ public partial class ImageViewPage : IQueryAttributable
             using var origBitmap = SKBitmap.Decode(origStream);
 
             // Zuschneiden mit SKBitmap
-            using var croppedBitmap = new SKBitmap((int)ImageView.Width, (int)ImageView.Height);
+            using var croppedBitmap = new SKBitmap((int)ImageViewContainer.Width, (int)ImageViewContainer.Height);
             using var canvas = new SKCanvas(croppedBitmap);
 
             var sourceRect = new SKRect((dwBitmap.Width - (int)DrawView.Width) / 2,

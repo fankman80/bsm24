@@ -76,16 +76,19 @@ public partial class ExportReport
                                         // add Pictures
                                         foreach (var img in GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].Fotos)
                                         {
-                                            var imgName = GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].Fotos[img.Key].File;
-                                            var imgPath = Path.Combine(FileSystem.AppDataDirectory, GlobalJson.Data.ImagePath, imgName);
-                                            var overlayFile = Path.GetFileNameWithoutExtension(imgName) + ".png";
-                                            var overlayDrawingPath = Path.Combine(FileSystem.AppDataDirectory, GlobalJson.Data.ImageOverlayPath, overlayFile);
-                                            var _img = await XmlImage.GenerateImage(mainPart,
-                                                                                    new FileResult(imgPath),
-                                                                                    Double.Parse(SettingsService.Instance.ImageExportScale),
-                                                                                    widthMilimeters: Int32.Parse(SettingsService.Instance.ImageExportSize),
-                                                                                    imageQuality: Int32.Parse(SettingsService.Instance.ImageExportQuality));
-                                            paragraph.Append(new D.Run(_img));
+                                            if (GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].Fotos[img.Key].IsChecked)
+                                            {
+                                                var imgName = GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].Fotos[img.Key].File;
+                                                var imgPath = Path.Combine(FileSystem.AppDataDirectory, GlobalJson.Data.ImagePath, imgName);
+                                                var overlayFile = Path.GetFileNameWithoutExtension(imgName) + ".png";
+                                                var overlayDrawingPath = Path.Combine(FileSystem.AppDataDirectory, GlobalJson.Data.ImageOverlayPath, overlayFile);
+                                                var _img = await XmlImage.GenerateImage(mainPart,
+                                                                                        new FileResult(imgPath),
+                                                                                        Double.Parse(SettingsService.Instance.ImageExportScale),
+                                                                                        widthMilimeters: Int32.Parse(SettingsService.Instance.ImageExportSize),
+                                                                                        imageQuality: Int32.Parse(SettingsService.Instance.ImageExportQuality));
+                                                paragraph.Append(new D.Run(_img));
+                                            }
                                         }
                                     }
 

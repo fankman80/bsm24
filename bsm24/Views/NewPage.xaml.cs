@@ -28,6 +28,8 @@ public partial class NewPage: IQueryAttributable
 
     private Point mousePos;
 
+    private readonly TransformViewModel planPanContainer;
+
     public NewPage(string planId)
     {
         InitializeComponent();
@@ -35,6 +37,7 @@ public partial class NewPage: IQueryAttributable
         PlanId = planId;
         PageTitle = GlobalJson.Data.Plans[PlanId].Name;
         OnPropertyChanged(nameof(PageTitle));
+        planPanContainer = (TransformViewModel)PlanContainer.BindingContext;
     }
 
     public void ApplyQueryAttributes(IDictionary<string, object> query)
@@ -137,7 +140,6 @@ public partial class NewPage: IQueryAttributable
 
     private void AddPin(string pinId, string pinIcon)
     {
-        var planPanContainer = (TransformViewModel)PlanContainer.BindingContext;
         Point _originAnchor = GlobalJson.Data.Plans[PlanId].Pins[pinId].Anchor;
         Point _originPos = GlobalJson.Data.Plans[PlanId].Pins[pinId].Pos;
         Size _planSize = GlobalJson.Data.Plans[PlanId].ImageSize;
@@ -256,44 +258,12 @@ public partial class NewPage: IQueryAttributable
 
     public void OnPinching(object sender, PinchEventArgs e)
     {
-        var planPanContainer = (TransformViewModel)PlanContainer.BindingContext;
         planPanContainer.IsPanningEnabled = false;
     }
 
     public void OnPinched(object sender, PinchEventArgs e)
     {
-        var planPanContainer = (TransformViewModel)PlanContainer.BindingContext;
         planPanContainer.IsPanningEnabled = true;
-    }
-
-    public void OnRotating(object sender, RotateEventArgs e)
-    {
-        //var planPanContainer = (TransformViewModel)PlanContainer.BindingContext;
-        //planPanContainer.IsPanningEnabled = false;
-    }
-
-    public void OnRotated(object sender, RotateEventArgs e)
-    {
-        //if (e.NumberOfTouches == 0)
-        //{
-        //    var planPanContainer = (TransformViewModel)PlanContainer.BindingContext;
-        //    planPanContainer.AnchorX = 0.5;
-        //    planPanContainer.AnchorY = 0.5;
-        //    planPanContainer.IsPanningEnabled = true;
-        //}
-    }
-
-    public void OnDown(object sender, DownUpEventArgs e)
-    {
-        //if (e.NumberOfTouches == 2)
-        //{
-            //var planPanContainer = (TransformViewModel)PlanContainer.BindingContext;
-            //planPanContainer.IsPanningEnabled = false;
-
-            // Korrektur für rotierte Pläne einbauen...
-            //planPanContainer.AnchorX = 1 / PlanContainer.Width * (e.Center.X - PlanContainer.TranslationX);
-            //planPanContainer.AnchorY = 1 / PlanContainer.Height * (e.Center.Y - PlanContainer.TranslationY);
-        //}
     }
 
     public void OnPanning(object sender, PanEventArgs e)
@@ -304,20 +274,25 @@ public partial class NewPage: IQueryAttributable
         //testIcon.TranslationX = (this.Width / 2) - PlanContainer.TranslationX-32;
         //testIcon.TranslationY = (this.Height / 2) - PlanContainer.TranslationY-32;
 
+
+        var scaleSpeed = 1 / PlanContainer.Scale;
+        double angle = PlanContainer.Rotation * Math.PI / 180.0;
+        double deltaX = e.DeltaDistance.X * Math.Cos(angle) - -e.DeltaDistance.Y * Math.Sin(angle);
+        double deltaY = -e.DeltaDistance.X * Math.Sin(angle) + e.DeltaDistance.Y * Math.Cos(angle);
+
         if (activePin != null)
         {
-            var scaleSpeed = 1 / PlanContainer.Scale;
-            double angle = PlanContainer.Rotation * Math.PI / 180.0;
-            double deltaX = e.DeltaDistance.X * Math.Cos(angle) - -e.DeltaDistance.Y * Math.Sin(angle);
-            double deltaY = -e.DeltaDistance.X * Math.Sin(angle) + e.DeltaDistance.Y * Math.Cos(angle);
-
             activePin.TranslationX += deltaX * scaleSpeed;
             activePin.TranslationY += deltaY * scaleSpeed;
         }
+        else
+        {
+            planPanContainer.TranslationX += deltaX * scaleSpeed;
+            planPanContainer.TranslationY += deltaY * scaleSpeed;
 
-        var planPanContainer = (TransformViewModel)PlanContainer.BindingContext;
-        planPanContainer.AnchorX = 1 / PlanContainer.Width * ((this.Width / 2) - PlanContainer.TranslationX);
-        planPanContainer.AnchorY = 1 / PlanContainer.Height * ((this.Height / 2) - PlanContainer.TranslationY);
+            planPanContainer.AnchorX = 1 / PlanContainer.Width * ((this.Width / 2) - PlanContainer.TranslationX);
+            planPanContainer.AnchorY = 1 / PlanContainer.Height * ((this.Height / 2) - PlanContainer.TranslationY);
+        }
     }
 
     private void SetPinClicked(object sender, EventArgs e)
@@ -344,11 +319,7 @@ public partial class NewPage: IQueryAttributable
             if (GlobalJson.Data.Plans.TryGetValue(PlanId, out Plan value))
             {
                 var plan = value;
-
-                // Überprüfen, ob die Pins-Struktur initialisiert ist
                 plan.Pins ??= [];
-
-                // Neuen Pin hinzufügen
                 plan.Pins[currentDateTime] = newPinData;
 
                 // save data to file
@@ -377,7 +348,6 @@ public partial class NewPage: IQueryAttributable
         double newScale = PlanContainer.Scale * zoomFactor;
         newScale = Math.Max(0.1, Math.Min(newScale, 10));
 
-        var planPanContainer = (TransformViewModel)PlanContainer.BindingContext;
         planPanContainer.AnchorX = mousePos.X / PlanContainer.Width;
         planPanContainer.AnchorY = mousePos.Y / PlanContainer.Height;
         planPanContainer.Scale = newScale;

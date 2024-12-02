@@ -14,7 +14,7 @@ namespace bsm24.Views;
 
 public partial class SetPin : UraniumContentPage, IQueryAttributable
 {
-    public ObservableCollection<string> Images { get; set; }
+    public ObservableCollection<ImageItem> Images { get; set; }
     public string PlanId { get; set; }
     public string PinId { get; set; }
     public string PinIcon { get; set; }
@@ -53,7 +53,13 @@ public partial class SetPin : UraniumContentPage, IQueryAttributable
         foreach (var img in GlobalJson.Data.Plans[PlanId].Pins[PinId].Fotos)
         {
             string imgPath = GlobalJson.Data.Plans[PlanId].Pins[PinId].Fotos[img.Key].File;
-            Images.Add(Path.Combine(FileSystem.AppDataDirectory, GlobalJson.Data.ThumbnailPath, imgPath));
+            bool isChecked = GlobalJson.Data.Plans[PlanId].Pins[PinId].Fotos[img.Key].IsChecked;
+
+            Images.Add(new ImageItem
+            {
+                ImagePath = Path.Combine(FileSystem.AppDataDirectory, GlobalJson.Data.ThumbnailPath, imgPath),
+                IsChecked = isChecked
+            });
         }
 
         ImageGallery.ItemsSource = null; // Temporär die ItemsSource auf null setzen
@@ -90,6 +96,23 @@ public partial class SetPin : UraniumContentPage, IQueryAttributable
         await Shell.Current.GoToAsync($"icongallery?planId={PlanId}&pinId={PinId}");
     }
 
+    private void OnCheckedChanged(object sender, CheckedChangedEventArgs e)
+    {
+        bool isChecked = e.Value;
+
+        if (sender is CheckBox checkBox)
+        {
+            if (checkBox.BindingContext is ImageItem item)
+            {
+                var fileName = Path.GetFileName(item.ImagePath);
+                GlobalJson.Data.Plans[PlanId].Pins[PinId].Fotos[fileName].IsChecked = isChecked;
+
+                // save data to file
+                GlobalJson.SaveToFile();
+            }
+        }
+    }
+
     private async void OnOkayClick(object sender, EventArgs e)
     {
         // write data
@@ -110,20 +133,27 @@ public partial class SetPin : UraniumContentPage, IQueryAttributable
     {
         FileResult path = await CapturePicture.Capture(GlobalJson.Data.ImagePath, GlobalJson.Data.ThumbnailPath);
 
-        Images.Add(path.FullPath);
-
-        Foto newImageData = new()
+        if (path != null)
         {
-            IsChecked = false,
-            File = path.FileName
-        };
+            Images.Add(new ImageItem
+            {
+                ImagePath = path.FullPath,
+                IsChecked = true
+            });
 
-        // Neues Image hinzufügen
-        var pin = GlobalJson.Data.Plans[PlanId].Pins[PinId];
-        pin.Fotos[path.FileName] = newImageData;
+            Foto newImageData = new()
+            {
+                IsChecked = false,
+                File = path.FileName
+            };
 
-        // save data to file
-        GlobalJson.SaveToFile();
+            // Neues Image hinzufügen
+            var pin = GlobalJson.Data.Plans[PlanId].Pins[PinId];
+            pin.Fotos[path.FileName] = newImageData;
+
+            // save data to file
+            GlobalJson.SaveToFile();
+        }
     }
 
     private void OnSizeChanged(object sender, EventArgs e)
@@ -140,6 +170,12 @@ public partial class SetPin : UraniumContentPage, IQueryAttributable
         OnPropertyChanged(nameof(DynamicSpan));
         OnPropertyChanged(nameof(DynamicSize));
     }
+}
+
+public class ImageItem
+{
+    public string ImagePath { get; set; }
+    public bool IsChecked { get; set; }
 }
 
 public partial class SquareView : ContentView

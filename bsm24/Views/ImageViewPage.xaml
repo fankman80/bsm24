@@ -21,20 +21,18 @@
 
     <AbsoluteLayout IsClippedToBounds="True" x:DataType="pc:TransformViewModel">
         <mr:ContentView
-            PanningCommand="{Binding PanningCommand}"
             PinchingCommand="{Binding PinchingCommand}"
             Panning="OnPanning"
+            Pinching="OnPinching"
+            Pinched="OnPinched"
             DoubleTapped="OnDoubleTapped">
-
-            <AbsoluteLayout
+            <AbsoluteLayout x:Name="ImageViewContainer"
 				Scale="{Binding Scale}"
 				TranslationX="{Binding TranslationX}"
 				TranslationY="{Binding TranslationY}"
                 AnchorX="{Binding AnchorX}"
 				AnchorY="{Binding AnchorY}">
-
                 <ff:CachedImage x:Name="ImageView" />
-
                 <mct:DrawingView
                     x:Name="DrawView"
                     BackgroundColor="Transparent"

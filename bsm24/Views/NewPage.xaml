@@ -41,15 +41,11 @@
 
     <AbsoluteLayout IsClippedToBounds="True" x:DataType="pc:TransformViewModel">
         <mr:ContentView
-            PanningCommand="{Binding PanningCommand}"
             PinchingCommand="{Binding PinchingCommand}"
             RotatingCommand="{Binding RotatingCommand}"
             Panning="OnPanning"
             Pinching="OnPinching"
             Pinched="OnPinched"
-            Rotating="OnRotating"
-            Rotated="OnRotated"
-            Down="OnDown" 
             ScrollWheelChanged="OnMouseScroll">
             <AbsoluteLayout x:Name="PlanContainer"
                 Scale="{Binding Scale}"

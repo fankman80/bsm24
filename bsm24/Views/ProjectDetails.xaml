@@ -9,7 +9,6 @@
              xmlns:m="clr-namespace:UraniumUI.Icons.MaterialSymbols;assembly=UraniumUI.Icons.MaterialSymbols"
              xmlns:services="clr-namespace:bsm24.Services"
              Shell.TitleColor="{DynamicResource PrimaryDark}"
-             NavigationPage.HasBackButton = false
              BackgroundColor="{AppThemeBinding Light={DynamicResource PrimaryBackground}, Dark={DynamicResource PrimaryBackgroundDark}}"
              x:Class="bsm24.Views.ProjectDetails"
              Title="Projekt Details">
@@ -100,9 +99,11 @@
                                 <Image Source="{Binding FlyoutHeaderImage}" Aspect="AspectFill"/>
                         </Border>
                         <ImageButton Grid.Column="1" Grid.Row="0" Grid.RowSpan="2"
-                               BackgroundColor="Transparent"
-                               Source="{FontImageSource FontFamily=MaterialOutlined, Color=White, Size=60, Glyph={x:Static m:MaterialOutlined.Photo_camera}}"
-                               Clicked="OnThumbCaptureClicked"/>
+                                BackgroundColor="Transparent"
+                                HeightRequest="100"
+                                WidthRequest="100"                                     
+                                Source="{FontImageSource FontFamily=MaterialOutlined, Color=White, Size=60, Glyph={x:Static m:MaterialOutlined.Photo_camera}}"
+                                Clicked="OnThumbCaptureClicked"/>
 
                     </Grid>
                 </VerticalStackLayout>
