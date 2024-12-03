@@ -61,9 +61,9 @@ public partial class OpenProject : UraniumContentPage
             Console.WriteLine("Fehler beim Durchsuchen der Verzeichnisse: " + ex.Message);
         }
 
-        // Liste der JSON-Dateien dem ListView zuweisen
+        // Liste der JSON-Dateien dem ListView zuweisen        
         fileListView.ItemsSource = foundFiles;
-        fileListView.Footer = foundFiles.Count + " Projekte";
+        fileListView.Footer = foundFiles.Count + " Projekt(e)";
     }
 
     private async void OnProjectClicked(object sender, EventArgs e)

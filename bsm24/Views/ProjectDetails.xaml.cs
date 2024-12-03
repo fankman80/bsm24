@@ -100,13 +100,19 @@ public partial class ProjectDetails : UraniumContentPage
 
     private async void OnAddPdfClicked(object sender, EventArgs e)
     {
+        await Shell.Current.GoToAsync("loadPdfImages");
+    }
+
+    private async void OnAddPdfClicked_bak(object sender, EventArgs e)
+    {
+        var result = await PickPdfFileAsync();
+
         busyOverlay.IsVisible = true;
         activityIndicator.IsRunning = true;
         busyText.Text = "PDF wird konvertiert...";
 
-        await Task.Run(async () =>
+        await Task.Run(() =>
         {
-            var result = await PickPdfFileAsync();
             var root = GlobalJson.Data;
             byte[] bytearray = File.ReadAllBytes(result.FullPath);
             int pagecount = Conversion.GetPageCount(bytearray);
@@ -138,6 +144,7 @@ public partial class ProjectDetails : UraniumContentPage
             {
                 File = result.FileName,
             };
+            return Task.CompletedTask;
         });
 
         activityIndicator.IsRunning = false;

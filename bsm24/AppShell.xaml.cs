@@ -22,6 +22,7 @@ public partial class AppShell : Shell
         Routing.RegisterRoute("setpin", typeof(SetPin));
         Routing.RegisterRoute("imageview", typeof(ImageViewPage));
         Routing.RegisterRoute("project_details", typeof(ProjectDetails));
+        Routing.RegisterRoute("loadPdfImages", typeof(LoadPDFPages));
     }
 
     private async void OnNewClicked(object sender, EventArgs e)
@@ -31,6 +32,16 @@ public partial class AppShell : Shell
         var result = await popup.PopupDismissedTask;
         if (result != null)
         {
+            // Prüfe, ob die Datei existiert und hänge fortlaufend eine Nummer an
+            int counter = 1;
+            string _result = result;
+            while (Directory.Exists(Path.Combine(FileSystem.AppDataDirectory, _result)))
+            {
+                _result = Path.Combine($"{result} ({counter})");
+                counter++;
+            }
+            result = _result;
+
             string filePath = Path.Combine(FileSystem.AppDataDirectory, result, result + ".json");
 
             LoadDataToView.ResetApp();

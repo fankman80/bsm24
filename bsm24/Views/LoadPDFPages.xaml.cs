@@ -1,5 +1,7 @@
 ﻿#nullable disable
 
+using PDFtoImage;
+using SkiaSharp;
 using System.Globalization;
 using UraniumUI.Pages;
 
@@ -15,10 +17,77 @@ public partial class LoadPDFPages : UraniumContentPage
     protected override void OnAppearing()
     {
         base.OnAppearing();
-        LoadJsonFiles();
+        LoadPDFImages();
     }
 
-    private void LoadJsonFiles()
+    private async void LoadPDFImages()
+    {
+        List<FileItem> pdfImages = [];
+        var result = await PickPdfFileAsync();
+
+        busyOverlay.IsVisible = true;
+        activityIndicator.IsRunning = true;
+        busyText.Text = "PDF wird konvertiert...";
+
+        await Task.Run(() =>
+        {
+            var root = GlobalJson.Data;
+            byte[] bytearray = File.ReadAllBytes(result.FullPath);
+            int pagecount = Conversion.GetPageCount(bytearray);
+
+            var cacheDir = Path.Combine(FileSystem.AppDataDirectory, "cache");
+            if (!Directory.Exists(cacheDir))
+            {
+                Directory.CreateDirectory(cacheDir);
+            }
+
+            for (int i = 0; i < pagecount; i++)
+            {
+                string imgPath = Path.Combine(FileSystem.AppDataDirectory, cacheDir, "plan_" + i + ".jpg");
+                Conversion.SaveJpeg(imgPath, bytearray, i, options: new RenderOptions(Dpi: 300));
+
+                // Bildgrösse auslesen
+                var stream = File.OpenRead(imgPath);
+                var skBitmap = SKBitmap.Decode(stream);
+                Size _imgSize = new(skBitmap.Width, skBitmap.Height);
+
+                pdfImages.Add(new FileItem
+                {
+                    ImagePath = imgPath,
+                });
+            }
+
+            fileListView.ItemsSource = pdfImages;
+            fileListView.Footer = pdfImages.Count + " Seite(n)";
+        });
+
+        activityIndicator.IsRunning = false;
+        busyOverlay.IsVisible = false;
+    }
+
+    public static async Task<FileResult> PickPdfFileAsync()
+    {
+        try
+        {
+            // Öffne den FilePicker nur für PDF-Dateien
+            var fileResult = await FilePicker.Default.PickAsync(new PickOptions
+            {
+                PickerTitle = "Bitte wähle eine PDF-Datei aus",
+                FileTypes = FilePickerFileType.Pdf // Nur PDF-Dateien anzeigen
+            });
+
+            if (fileResult != null)
+                return fileResult;
+        }
+        catch (Exception ex)
+        {
+            // Fehlerbehandlung (z.B. wenn der Benutzer den Picker abbricht)
+            Console.WriteLine($"Fehler beim Auswählen der Datei: {ex.Message}");
+        }
+        return null; // Kein PDF ausgewählt
+    }
+
+    private void AddPdfImages()
     {
         // Hauptverzeichnis, in dem die Suche beginnen soll (z.B. das App-Datenverzeichnis)
         string rootDirectory = FileSystem.AppDataDirectory;
@@ -61,6 +130,5 @@ public partial class LoadPDFPages : UraniumContentPage
         fileListView.ItemsSource = foundFiles;
         fileListView.Footer = foundFiles.Count + " Projekte";
     }
-
 
 }

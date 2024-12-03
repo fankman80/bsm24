@@ -77,8 +77,6 @@ public static class GlobalJson
     {
         try
         {
-            filePath = GetUniqueFilePath(filePath);
-
             string directoryPath = Path.GetDirectoryName(filePath);
             if (!Directory.Exists(directoryPath))
             {
@@ -101,24 +99,5 @@ public static class GlobalJson
     public static String GetFilePath()
     {
         return _filePath;
-    }
-
-    private static string GetUniqueFilePath(string filePath)
-    {
-        string directory = Path.GetDirectoryName(filePath);
-        string fileNameWithoutExtension = Path.GetFileNameWithoutExtension(filePath);
-        string extension = Path.GetExtension(filePath);
-
-        int counter = 1;
-        string newFilePath = filePath;
-
-        // Prüfe, ob die Datei existiert und hänge fortlaufend eine Nummer an
-        while (File.Exists(newFilePath))
-        {
-            newFilePath = Path.Combine(directory, $"{fileNameWithoutExtension} ({counter}){extension}");
-            counter++;
-        }
-
-        return newFilePath;
     }
 }

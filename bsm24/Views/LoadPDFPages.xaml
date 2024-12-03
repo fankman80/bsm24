@@ -16,10 +16,8 @@
             <CollectionView x:Name="fileListView" ItemsLayout="VerticalGrid, 2">
                 <CollectionView.ItemTemplate>
                     <DataTemplate x:DataType="local:FileItem">
-                        <ff:CachedImage Grid.Column="0"
-                                    Grid.RowSpan="2"
-                                    Source="{Binding ImagePath}"
-                                    Aspect="AspectFill"/>
+                        <ff:CachedImage Source="{Binding ImagePath}"
+                                        Aspect="AspectFill"/>
                     </DataTemplate>
                 </CollectionView.ItemTemplate>
             </CollectionView>
