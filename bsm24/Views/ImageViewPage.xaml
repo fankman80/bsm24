@@ -14,7 +14,7 @@
     
     <ContentPage.ToolbarItems>
         <ToolbarItem
-            IconImageSource="{FontImageSource FontFamily=MaterialOutlined, Glyph={x:Static m:MaterialOutlined.Delete}}" 
+            IconImageSource="{FontImageSource FontFamily=MaterialOutlined, Color={DynamicResource PrimaryDark}, Glyph={x:Static m:MaterialOutlined.Delete}}" 
             Text="Delete"          
             Clicked="OnDeleteButtonClicked"/>
     </ContentPage.ToolbarItems>
