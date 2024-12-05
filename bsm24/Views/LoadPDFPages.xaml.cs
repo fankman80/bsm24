@@ -11,7 +11,6 @@ public partial class LoadPDFPages : UraniumContentPage
 {
     FileResult result;
     public int DynamicSpan { get; set; } = 2; // Standardwert
-    public int DynamicSize { get; set; }
     public int MinSize = 2;
 
     public LoadPDFPages()
@@ -117,10 +116,10 @@ public partial class LoadPDFPages : UraniumContentPage
         if (MinSize == 1)
         {
             MinSize = 2;
-            btnRows.ImageSource = new FontImageSource
+            btnRows.IconImageSource = new FontImageSource
             {
                 FontFamily = "MaterialOutlined",
-                Glyph = UraniumUI.Icons.MaterialSymbols.MaterialOutlined.Splitscreen_landscape,
+                Glyph = UraniumUI.Icons.MaterialSymbols.MaterialOutlined.Grid_on,
                 Color = Application.Current.RequestedTheme == AppTheme.Dark
                         ? (Color)Application.Current.Resources["Primary"]
                         : (Color)Application.Current.Resources["PrimaryDark"]
@@ -130,10 +129,10 @@ public partial class LoadPDFPages : UraniumContentPage
         {
             MinSize = 1;
             DynamicSpan = 1;
-            btnRows.ImageSource = new FontImageSource
+            btnRows.IconImageSource = new FontImageSource
             {
                 FontFamily = "MaterialOutlined",
-                Glyph = UraniumUI.Icons.MaterialSymbols.MaterialOutlined.Splitscreen_portrait,
+                Glyph = UraniumUI.Icons.MaterialSymbols.MaterialOutlined.Table_rows,
                 Color = Application.Current.RequestedTheme == AppTheme.Dark
                         ? (Color)Application.Current.Resources["Primary"]
                         : (Color)Application.Current.Resources["PrimaryDark"]
@@ -145,19 +144,6 @@ public partial class LoadPDFPages : UraniumContentPage
     private void OnSizeChanged(object sender, EventArgs e)
     {
         UpdateSpan();
-    }
-
-    private void UpdateSpan()
-    {
-        if (MinSize != 1)
-        {
-            double screenWidth = this.Width;
-            double imageWidth = Settings.PlanPreviewSize; // Mindestbreite in Pixeln
-            DynamicSpan = Math.Max(MinSize, (int)(screenWidth / imageWidth));
-            DynamicSize = (int)(screenWidth / DynamicSpan);
-        }
-        OnPropertyChanged(nameof(DynamicSpan));
-        OnPropertyChanged(nameof(DynamicSize));
     }
 
     private void AddPdfImages()
@@ -221,6 +207,18 @@ public partial class LoadPDFPages : UraniumContentPage
             File.Delete(cacheFile);
         }
 
+
         Shell.Current.GoToAsync("..");
+    }
+
+    private void UpdateSpan()
+    {
+        if (MinSize != 1)
+        {
+            double screenWidth = this.Width;
+            double imageWidth = Settings.PlanPreviewSize; // Mindestbreite in Pixeln
+            DynamicSpan = Math.Max(MinSize, (int)(screenWidth / imageWidth));
+        }
+        OnPropertyChanged(nameof(DynamicSpan));
     }
 }

@@ -16,11 +16,12 @@
     <ContentPage.ToolbarItems>
         <ToolbarItem
             x:Name="btnRows"
-            IconImageSource="{FontImageSource FontFamily=MaterialOutlined, Color={DynamicResource PrimaryDark}, Glyph={x:Static m:MaterialOutlined.Splitscreen_landscape}}"
+            IconImageSource="{FontImageSource FontFamily=MaterialOutlined, Color={DynamicResource PrimaryDark}, Glyph={x:Static m:MaterialOutlined.Grid_on}}"
             Text="Liste"
             Clicked="OnChangeRowsClicked"/>
     </ContentPage.ToolbarItems>
-    <ScrollView>
+    
+    <ScrollView Margin="10">
         <CollectionView x:Name="IconCollectionView"
                         ItemsSource="{Binding Icons}"
                         SelectionMode="Single">
@@ -28,16 +29,24 @@
                 <GridItemsLayout Orientation="Vertical" Span="{Binding DynamicSpan}" />
             </CollectionView.ItemsLayout>
             <CollectionView.ItemTemplate>
-                <DataTemplate x:DataType="local:IconItem">
+                <DataTemplate>
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="64" />
                             <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
-                        <Image Grid.Column="0" Source="{Binding FileName}" Aspect="AspectFill" HeightRequest="64" WidthRequest="64" />
+
+                        <Grid.GestureRecognizers x:DataType="views:IconGallery">
+                            <TapGestureRecognizer 
+                            Command="{Binding Source={RelativeSource AncestorType={x:Type views:IconGallery}}, Path=BindingContext.IconTappedCommand}"
+                            CommandParameter="{Binding .}" />
+                        </Grid.GestureRecognizers>
+
+                        <Image Grid.Column="0" Source="{Binding FileName}" Aspect="AspectFill" Margin="6,6,6,6"/>
                         <Label Grid.Column="1" Text="{Binding DisplayName}"
                                IsVisible="{Binding IsListMode}"
-                               VerticalOptions="Center" Margin="16,0,0,0"/>
+                               VerticalOptions="Center"
+                               Margin="16,0,0,0"/>
                     </Grid>
                 </DataTemplate>
             </CollectionView.ItemTemplate>

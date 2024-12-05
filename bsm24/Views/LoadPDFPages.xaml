@@ -12,6 +12,14 @@
              x:Class="bsm24.Views.LoadPDFPages"
              Title="PDF Seiten hinzufügen">
 
+    <ContentPage.ToolbarItems>
+        <ToolbarItem
+            x:Name="btnRows"
+            IconImageSource="{FontImageSource FontFamily=MaterialOutlined, Color={DynamicResource PrimaryDark}, Glyph={x:Static m:MaterialOutlined.Grid_on}}"
+            Text="Liste"
+            Clicked="OnChangeRowsClicked"/>
+    </ContentPage.ToolbarItems>
+    
     <Grid>
         <Grid>
             <Grid.RowDefinitions>
@@ -50,7 +58,6 @@
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="60" />
                 </Grid.ColumnDefinitions>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="60" />
@@ -65,12 +72,6 @@
                         BackgroundColor="{AppThemeBinding Light={DynamicResource Primary}, Dark={DynamicResource PrimaryDark}}"
                         TextColor="{AppThemeBinding Light={DynamicResource PrimaryDarkText}, Dark={DynamicResource PrimaryText}}"
                         Clicked="OnPagesAddClicked"/>
-                <Button Grid.Column="3"
-                        x:Name="btnRows"
-                        BackgroundColor="{AppThemeBinding Light={DynamicResource Primary}, Dark={DynamicResource PrimaryDark}}"
-                        TextColor="{AppThemeBinding Light={DynamicResource PrimaryDarkText}, Dark={DynamicResource PrimaryText}}"
-                        ImageSource="{FontImageSource FontFamily=MaterialOutlined, Color={AppThemeBinding Light={DynamicResource PrimaryDarkText}, Dark={DynamicResource PrimaryText}}, Glyph={x:Static m:MaterialOutlined.Splitscreen_landscape}}"
-                        Clicked="OnChangeRowsClicked"/>
             </Grid>
         </Grid>
         <!-- Overlay für Busy-Indikator -->

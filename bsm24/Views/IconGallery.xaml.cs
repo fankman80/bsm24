@@ -11,19 +11,22 @@ namespace bsm24.Views;
 
 public partial class IconGallery : UraniumContentPage, IQueryAttributable
 {
+    public ObservableCollection<IconItem> Icons { get; set; }
+    public Command<IconItem> IconTappedCommand { get; }
     public string PlanId { get; set; }
     public string PinId { get; set; }
-    public ObservableCollection<IconItem> Icons { get; set; }
-    public int DynamicSpan { get; set; } = 5; // Standardwert
-    public int DynamicSize { get; set; }
-    public int MinSize = 2;
+    public int DynamicSpan { get; set; }
+    public int MinSize;
     public bool IsListMode { get; set; }
 
     public IconGallery()
     {
         InitializeComponent();
-        UpdateSpan();
         SizeChanged += OnSizeChanged;
+        Icons = new ObservableCollection<IconItem>(Settings.PinData);
+        IconTappedCommand = new Command<IconItem>(OnIconTapped);
+        BindingContext = this;
+        OnChangeRowsClicked(null,null);
     }
 
     public void ApplyQueryAttributes(IDictionary<string, object> query)
@@ -32,10 +35,6 @@ public partial class IconGallery : UraniumContentPage, IQueryAttributable
             PlanId = value1 as string;
         if (query.TryGetValue("pinId", out object value2))
             PinId = value2 as string;
-
-        IsListMode = true;  // Standardmäßig Rasteransicht
-        Icons = new ObservableCollection<IconItem>(Settings.PinData);
-        BindingContext = this;
     }
 
     private void OnSizeChanged(object sender, EventArgs e)
@@ -43,10 +42,10 @@ public partial class IconGallery : UraniumContentPage, IQueryAttributable
         UpdateSpan();
     }
 
-    private async void OnImageTapped(object sender, EventArgs e)
+    private async void OnIconTapped(IconItem tappedIcon)
     {
-        var tappedImage = sender as CachedImage;
-        var fileName = ((FileImageSource)tappedImage.Source).File;
+        var tappedImage = tappedIcon; //sender as CachedImage;
+        var fileName = tappedImage.FileName;
 
         GlobalJson.Data.Plans[PlanId].Pins[PinId].PinIcon = fileName;
 
@@ -70,43 +69,44 @@ public partial class IconGallery : UraniumContentPage, IQueryAttributable
     {
         if (btnRows.Text == "Liste")
         {
-            MinSize = 5;
             btnRows.Text = "Raster";
+            MinSize = 3;
             btnRows.IconImageSource = new FontImageSource
             {
                 FontFamily = "MaterialOutlined",
-                Glyph = UraniumUI.Icons.MaterialSymbols.MaterialOutlined.Splitscreen_landscape,
+                Glyph = UraniumUI.Icons.MaterialSymbols.MaterialOutlined.Grid_on,
                 Color = Application.Current.RequestedTheme == AppTheme.Dark
                         ? (Color)Application.Current.Resources["Primary"]
                         : (Color)Application.Current.Resources["PrimaryDark"]   
             };
-            //IconCollectionView.ItemsLayout = new GridItemsLayout(1, ItemsLayoutOrientation.Vertical);
-            IsListMode = true;
+            IsListMode = false;
         }
         else
         {
-            MinSize = 1;
             btnRows.Text = "Liste";
+            MinSize = 1;
             DynamicSpan = 1;
             btnRows.IconImageSource = new FontImageSource
             {
                 FontFamily = "MaterialOutlined",
-                Glyph = UraniumUI.Icons.MaterialSymbols.MaterialOutlined.Splitscreen_portrait,
+                Glyph = UraniumUI.Icons.MaterialSymbols.MaterialOutlined.Table_rows,
                 Color = Application.Current.RequestedTheme == AppTheme.Dark
                         ? (Color)Application.Current.Resources["Primary"]
                         : (Color)Application.Current.Resources["PrimaryDark"]
             };
-            //IconCollectionView.ItemsLayout = new GridItemsLayout(3, ItemsLayoutOrientation.Vertical);
-            IsListMode = false;
+            IsListMode = true;
         }
         UpdateSpan();
     }
 
     private void UpdateSpan()
     {
-        double screenWidth = this.Width;
-        double iconWidth = 64; // Mindestbreite der Icons in Pixeln
-        DynamicSpan = Math.Max(5, (int)(screenWidth / iconWidth));
+        if (btnRows.Text == "Raster")
+        {
+            double screenWidth = this.Width;
+            double imageWidth = 64; // Mindestbreite in Pixeln
+            DynamicSpan = Math.Max(MinSize, (int)(screenWidth / imageWidth));
+        }
         OnPropertyChanged(nameof(DynamicSpan));
         OnPropertyChanged(nameof(IsListMode));
     }
