@@ -404,29 +404,3 @@ public partial class NewPage: IQueryAttributable
         planContainer.AnchorY = 1 / PlanContainer.Height * ((this.Height / 2) - PlanContainer.TranslationY);
     }
 }
-
-public class PinSizeWithFactorConverter : IValueConverter
-{
-    // Dynamischer Faktor, den du im Converter ändern kannst
-    public double AdditionalFactor { get; set; } = 1.0;
-
-    public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-    {
-        if (value is double pinSize)
-        {
-            // PinSize mit dem zusätzlichen Faktor multiplizieren oder addieren
-            return pinSize * AdditionalFactor;
-        }
-        return value;
-    }
-
-    public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-    {
-        // Falls du bidirektionale Bindungen verwenden möchtest
-        if (value is double newValue)
-        {
-            return newValue / AdditionalFactor;
-        }
-        return value;
-    }
-}
