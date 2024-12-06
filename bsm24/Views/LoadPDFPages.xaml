@@ -38,8 +38,8 @@
                                 Padding="16">
                             <Grid>
                                 <ff:CachedImage Source="{Binding ImagePath}"
-                                                Aspect="AspectFill"
-                                                CacheType="Memory"/>
+                                                CacheType="Memory"
+                                                Aspect="AspectFill"/>
                                 <CheckBox IsChecked="{Binding IsChecked}"
                                         Color="{DynamicResource Primary}"
                                         VerticalOptions="End"

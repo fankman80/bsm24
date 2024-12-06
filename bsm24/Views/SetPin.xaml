@@ -39,6 +39,7 @@
                     <Grid>
                         <views:SquareView Margin="4">
                             <ff:CachedImage Source="{Binding ImagePath}"
+                                            CacheType="Memory"
                                             Aspect="AspectFill">
                                 <ff:CachedImage.GestureRecognizers>
                                     <TapGestureRecognizer Tapped="OnImageTapped" />

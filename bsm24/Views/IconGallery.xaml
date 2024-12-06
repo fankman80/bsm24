@@ -24,10 +24,10 @@
     <Grid>
         <Grid Margin="10">
             <CollectionView x:Name="IconCollectionView"
-                            ItemsSource="{Binding Icons}"
+                            ItemsSource="{Binding Icons, Mode=OneWay}"
                             SelectionMode="Single">
                 <CollectionView.ItemsLayout>
-                    <GridItemsLayout Orientation="Vertical" Span="{Binding DynamicSpan}" />
+                    <GridItemsLayout Orientation="Vertical" Span="{Binding DynamicSpan, Mode=OneWay}" />
                 </CollectionView.ItemsLayout>
                 <CollectionView.ItemTemplate>
                     <DataTemplate>
@@ -36,15 +36,19 @@
                                 <ColumnDefinition Width="64" />
                                 <ColumnDefinition Width="*" />
                             </Grid.ColumnDefinitions>
-                            <Image Grid.Column="0" Source="{Binding FileName}" Aspect="AspectFill" Margin="6,6,6,6"/>
-                            <Label Grid.Column="1" Text="{Binding DisplayName}"
+                            <ff:CachedImage Grid.Column="0"
+                                            Source="{Binding FileName, Mode=OneWay}"
+                                            CacheType="Memory"
+                                            Aspect="AspectFill"
+                                            Margin="6,6,6,6"/>
+                            <Label Grid.Column="1" Text="{Binding DisplayName, Mode=OneWay}"
                                    IsVisible="{Binding IsListMode}"
                                    VerticalOptions="Center"
                                    Margin="16,0,0,0"
                                    LineBreakMode="WordWrap"
                                    HorizontalOptions="FillAndExpand"/>
                             <Button Grid.ColumnSpan="2"
-                                    AutomationId = "{Binding FileName}"
+                                    AutomationId = "{Binding FileName, Mode=OneWay}"
                                     Background="Transparent"
                                     Clicked="OnIconClicked"
                                     HorizontalOptions="FillAndExpand"/>
