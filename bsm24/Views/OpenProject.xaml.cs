@@ -193,7 +193,6 @@ public partial class OpenProject : UraniumContentPage
         }
     }
 
-
     private async void OnDeleteClicked(object sender, EventArgs e)
     {
         var popup = new PopupDualResponse("Wollen Sie dieses Projekt wirklich löschen?");
@@ -224,6 +223,13 @@ public partial class OpenProject : UraniumContentPage
                 Directory.Delete(Path.GetDirectoryName(item.FilePath));
             }
         }
+    }
+
+    private async void OnEditClicked(object sender, EventArgs e)
+    {
+        var popup1 = new PopupEditPlan(GlobalJson.Data.Plans[PlanId].Name);
+        await MopupService.Instance.PushAsync(popup1);
+        var result = await popup1.PopupDismissedTask; //Item1=String Item2=Rotation Integer
     }
 
     private static void HeaderUpdate()
