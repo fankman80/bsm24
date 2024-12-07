@@ -230,6 +230,11 @@ public partial class OpenProject : UraniumContentPage
         var popup= new PopupEntry("Projekt umbenennen...");
         await MopupService.Instance.PushAsync(popup);
         var result = await popup.PopupDismissedTask;
+
+        if (ressult != null)
+        {
+        
+        }
     }
 
     private static void HeaderUpdate()
