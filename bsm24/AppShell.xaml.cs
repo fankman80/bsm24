@@ -26,7 +26,7 @@ public partial class AppShell : Shell
 
     private async void OnNewClicked(object sender, EventArgs e)
     {
-        var popup = new PopupEntry("Neues Projekt anlegen?", "Erstellen");
+        var popup = new PopupEntry("Neues Projekt eröffnen...", "Erstellen");
         await MopupService.Instance.PushAsync(popup);
         var result = await popup.PopupDismissedTask;
         if (result != null)
