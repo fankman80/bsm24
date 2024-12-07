@@ -227,7 +227,7 @@ public partial class OpenProject : UraniumContentPage
 
     private async void OnEditClicked(object sender, EventArgs e)
     {
-        var popup= new PopupEntry(GlobalJson.Data.Plans[PlanId].Name);
+        var popup= new PopupEntry("Projekt umbenennen...");
         await MopupService.Instance.PushAsync(popup);
         var result = await popup.PopupDismissedTask;
     }
