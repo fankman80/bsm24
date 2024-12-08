@@ -14,8 +14,8 @@ public Task<string> PopupDismissedTask => _taskCompletionSource.Task;
 public string ReturnValue { get; set; }
 
     public PopupEditPlan(string inputTxt = "")
-	{
-		InitializeComponent();
+    {
+	InitializeComponent();
         ReturnValue = inputTxt;
         plan_rename.Text = inputTxt;
     }
