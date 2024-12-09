@@ -27,7 +27,7 @@ public partial class ExportReport
             {"${pin_posImage}", "${pin_posImage}"}, //bereinige splitted runs
             {"${pin_fotoList}", "${pin_fotoList}"}, //bereinige splitted runs
             {"${pin_info}", "${pin_info}"},         //bereinige splitted runs
-            {"${pin_pin_desc}", "${pin_pin_desc}"}  //bereinige splitted runs
+            {"${pin_desc}", "${pin_desc}"}  //bereinige splitted runs
         };
 
         // Eine Kopie der Vorlage im MemoryStream öffnen, um das Original nicht zu verändern
@@ -169,7 +169,7 @@ public partial class ExportReport
                                             newRow.Append(new D.TableCell(new D.Paragraph(new D.Run(new D.Text(GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].InfoTxt)))));
                                             break;
 
-                                        case "${pin_pin_desc}":
+                                        case "${pin_desc}":
                                             newRow.Append(new D.TableCell(new D.Paragraph(new D.Run(new D.Text(GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].PinTxt)))));
                                             break;
 
@@ -291,7 +291,7 @@ public partial class ExportReport
             "${pin_posImage}",
             "${pin_fotoList}",
             "${pin_info}",
-            "${pin_pin_desc}"
+            "${pin_desc}"
         ];
 
         List<(int, string)> columnList = [];
