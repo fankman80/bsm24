@@ -214,7 +214,7 @@ public partial class ExportReport
                                     {
                                         var _img = await XmlImage.GenerateImage(mainPart,
                                                                                 new FileResult(imgPath),
-                                                                                1,
+                                                                                0.5,
                                                                                 heightMilimeters: SettingsService.Instance.TitleExportSize,
                                                                                 imageQuality: SettingsService.Instance.ImageExportQuality);
                                         run.Append(_img);
