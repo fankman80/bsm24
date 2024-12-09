@@ -237,6 +237,20 @@ public partial class SettingsService : INotifyPropertyChanged
         }
     }
 
+    private int _titleExportSize = 100;
+    public int TitleExportSize
+    {
+        get => _titleExportSize;
+        set
+        {
+            if (_titleExportSize != value)
+            {
+                _titleExportSize = value;
+                OnPropertyChanged(nameof(TitleExportSize));
+            }
+        }
+    }
+
     private double _imageExportScale = 0.1;
     public double ImageExportScale
     {
@@ -265,7 +279,7 @@ public partial class SettingsService : INotifyPropertyChanged
         }
     }
 
-    private int _pinPosExportSize = 30;
+    private int _pinPosExportSize = 25;
     public int PinPosExportSize
     {
         get => _pinPosExportSize;
@@ -279,7 +293,7 @@ public partial class SettingsService : INotifyPropertyChanged
         }
     }
 
-    private int _pinPosCropExportSize = 400;
+    private int _pinPosCropExportSize = 300;
     public int PinPosCropExportSize
     {
         get => _pinPosCropExportSize;

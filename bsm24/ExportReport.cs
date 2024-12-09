@@ -9,27 +9,33 @@ namespace bsm24;
 
 public partial class ExportReport
 {
+    private static readonly Dictionary<string, string> placeholders_single = new()
+    {
+        {"${client_name}", GlobalJson.Data.Client_name},
+        {"${object_address}", GlobalJson.Data.Object_address},
+        {"${working_title}", GlobalJson.Data.Working_title},
+        {"${object_name}", GlobalJson.Data.Object_name},
+        {"${creation_date}", GlobalJson.Data.Creation_date.Date.ToString("D")},
+        {"${project_manager}", GlobalJson.Data.Project_manager},
+    };
+    private static readonly Dictionary<string, string> placeholders_lists = new()
+    {
+        {"${plan_indexes}", "${plan_indexes}"}, //bereinige splitted runs
+        {"${plan_images}", "${plan_images}"},   //bereinige splitted runs  
+        {"${title_image}", "${title_image}"},   //bereinige splitted runs
+    };
+    private static readonly Dictionary<string, string> placeholders_table = new()
+    {
+        {"${pin_nr}", "${pin_nr}"},             //bereinige splitted runs
+        {"${pin_planName}", "${pin_planName}"}, //bereinige splitted runs
+        {"${pin_posImage}", "${pin_posImage}"}, //bereinige splitted runs
+        {"${pin_fotoList}", "${pin_fotoList}"}, //bereinige splitted runs
+        {"${pin_info}", "${pin_info}"},         //bereinige splitted runs
+        {"${pin_desc}", "${pin_desc}"},         //bereinige splitted runs
+    };
+
     public static async Task DocX(string templateDoc, string savePath)
     {
-        var placeholders = new Dictionary<string, string>
-        {
-            {"${client_name}", GlobalJson.Data.Client_name},
-            {"${object_address}", GlobalJson.Data.Object_address},
-            {"${working_title}", GlobalJson.Data.Working_title},
-            {"${object_name}", GlobalJson.Data.Object_name},
-            {"${creation_date}", GlobalJson.Data.Creation_date.Date.ToString("D")},
-            {"${project_manager}", GlobalJson.Data.Project_manager},
-            {"${plan_indexes}", "${plan_indexes}"}, //bereinige splitted runs
-            {"${plan_images}", "${plan_images}"},   //bereinige splitted runs
-            {"${title_image}", "${title_image}"},   //bereinige splitted runs
-            {"${pin_nr}", "${pin_nr}"},             //bereinige splitted runs
-            {"${pin_planName}", "${pin_planName}"}, //bereinige splitted runs
-            {"${pin_posImage}", "${pin_posImage}"}, //bereinige splitted runs
-            {"${pin_fotoList}", "${pin_fotoList}"}, //bereinige splitted runs
-            {"${pin_info}", "${pin_info}"},         //bereinige splitted runs
-            {"${pin_desc}", "${pin_desc}"}  //bereinige splitted runs
-        };
-
         // Eine Kopie der Vorlage im MemoryStream öffnen, um das Original nicht zu verändern
         using MemoryStream memoryStream = new();
 
@@ -44,7 +50,13 @@ public partial class ExportReport
         using (WordprocessingDocument wordDoc = WordprocessingDocument.Open(memoryStream, true))
         {
             // Platzhalter durch die entsprechenden Werte ersetzen
-            foreach (var placeholder in placeholders)
+            foreach (var placeholder in placeholders_single)
+                if (placeholder.Value != "")
+                    TextReplacer.SearchAndReplace(wordDoc, placeholder.Key, placeholder.Value, true);
+            foreach (var placeholder in placeholders_lists)
+                if (placeholder.Value != "")
+                    TextReplacer.SearchAndReplace(wordDoc, placeholder.Key, placeholder.Value, true);
+            foreach (var placeholder in placeholders_table)
                 if (placeholder.Value != "")
                     TextReplacer.SearchAndReplace(wordDoc, placeholder.Key, placeholder.Value, true);
 
@@ -113,14 +125,11 @@ public partial class ExportReport
                                                 var pinList = new List<(string, SKPoint, string, SKPoint)>();
                                                 if (SettingsService.Instance.IsPinIconExport)
                                                 {
-                                                    pinList =
-                                                    [
-                                                        (pinImage,
-                                                        new SKPoint(0.5f, 0.5f),
-                                                        "",
-                                                        new SKPoint((float)GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].Anchor.X,
-                                                        (float)GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].Anchor.Y))
-                                                    ];
+                                                    pinList = [(pinImage,
+                                                            new SKPoint(0.5f, 0.5f),
+                                                            "",
+                                                            new SKPoint((float)GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].Anchor.X,
+                                                                        (float)GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].Anchor.Y))];
                                                 }
                                                 else
                                                     pinList = null;
@@ -181,6 +190,36 @@ public partial class ExportReport
                                 // Füge die neue Zeile der Tabelle hinzu
                                 table.Append(newRow);
                                 i += 1;
+                            }
+                        }
+                    }
+                }
+
+
+                // Add Title Image
+                if (mainPart?.Document?.Body != null)
+                {
+                    foreach (var paragraph in mainPart.Document.Body.Elements<D.Paragraph>())
+                    {
+                        var run = paragraph.Elements<D.Run>().FirstOrDefault(r => r.InnerText.Contains("${title_image"));
+                        if (run != null)
+                        {
+                            foreach (var text in run.Elements<D.Text>())
+                            {
+                                if (text.Text.Contains("${title_image"))
+                                {
+                                    text.Text = ""; // Lösche den Platzhaltertext
+                                    var imgPath = Path.Combine(FileSystem.AppDataDirectory, GlobalJson.Data.ImagePath, "title_thumbnail.jpg");
+                                    if (File.Exists(imgPath))
+                                    {
+                                        var _img = await XmlImage.GenerateImage(mainPart,
+                                                                                new FileResult(imgPath),
+                                                                                1,
+                                                                                heightMilimeters: SettingsService.Instance.TitleExportSize,
+                                                                                imageQuality: SettingsService.Instance.ImageExportQuality);
+                                        run.Append(_img);
+                                    }
+                                }
                             }
                         }
                     }
@@ -272,7 +311,8 @@ public partial class ExportReport
                         }
                     }
                 }
-                wordDoc.Save(); // Änderungen im MemoryStream speichern            
+
+                wordDoc.Save(); // Änderungen im MemoryStream speichern
             }
         }
 
@@ -284,16 +324,6 @@ public partial class ExportReport
 
     private static List<(int, string)> SearchTableColumns(D.Table table)
     {
-        string[] placeholders =
-        [
-            "${pin_nr}",
-            "${pin_planName}",
-            "${pin_posImage}",
-            "${pin_fotoList}",
-            "${pin_info}",
-            "${pin_desc}"
-        ];
-
         List<(int, string)> columnList = [];
 
         foreach (var row in table.Elements<D.TableRow>())
@@ -303,10 +333,25 @@ public partial class ExportReport
             {
                 foreach (var paragraph in cell.Elements<D.Paragraph>())
                 {
-                    foreach (var placeholder in placeholders)
+                    foreach (var placeholder in placeholders_table)
                     {
-                        if (paragraph.InnerText.Contains(placeholder))
-                            columnList.Add((columnIndex, placeholder));
+                        if (paragraph.InnerText.Contains(placeholder.Key))
+                        {
+                            columnList.Add((columnIndex, placeholder.Key));
+
+                            // Platzhalter aus dem Paragraphen entfernen
+                            var run = paragraph.Elements<D.Run>().FirstOrDefault(r => r.InnerText.Contains(placeholder.Key));
+                            if (run != null)
+                            {
+                                foreach (var text in run.Elements<D.Text>())
+                                {
+                                    if (text.Text.Contains(placeholder.Key))
+                                    {
+                                        text.Text = text.Text.Replace(placeholder.Key, ""); // Platzhalter entfernen
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
                 columnIndex++; // Spaltenzähler erhöhen
