@@ -75,8 +75,17 @@ public partial class OpenProject : UraniumContentPage
         var result = await popup.PopupDismissedTask;
         if (result != null)
         {
-            string projectPath = result + "_" + DateTime.Now.ToString("yyyyMMdd_HHmmss");
-            string filePath = Path.Combine(FileSystem.AppDataDirectory, projectPath, result + ".json");
+            // Prüfe, ob die Datei existiert und hänge fortlaufend eine Nummer an
+            int counter = 1;
+            string _result = result;
+            while (Directory.Exists(Path.Combine(FileSystem.AppDataDirectory, _result)))
+            {
+                _result = Path.Combine($"{result} ({counter})");
+                counter++;
+            }
+            result = _result;
+
+            string filePath = Path.Combine(FileSystem.AppDataDirectory, result, result + ".json");
 
             LoadDataToView.ResetFlyoutItems();
             LoadDataToView.ResetData();
@@ -88,12 +97,12 @@ public partial class OpenProject : UraniumContentPage
             GlobalJson.Data.Object_name = "";
             GlobalJson.Data.Creation_date = DateTime.Now;
             GlobalJson.Data.Project_manager = "";
-            GlobalJson.Data.ProjectPath = Path.Combine(projectPath);
-            GlobalJson.Data.JsonFile = Path.Combine(projectPath, result + ".json");
-            GlobalJson.Data.PlanPath = Path.Combine(projectPath, "plans");
-            GlobalJson.Data.ImagePath = Path.Combine(projectPath, "images");
-            GlobalJson.Data.ImageOverlayPath = Path.Combine(projectPath, "images", "originals");
-            GlobalJson.Data.ThumbnailPath = Path.Combine(projectPath, "thumbnails");
+            GlobalJson.Data.ProjectPath = Path.Combine(result);
+            GlobalJson.Data.JsonFile = Path.Combine(result, result + ".json");
+            GlobalJson.Data.PlanPath = Path.Combine(result, "plans");
+            GlobalJson.Data.ImagePath = Path.Combine(result, "images");
+            GlobalJson.Data.ImageOverlayPath = Path.Combine(result, "images", "originals");
+            GlobalJson.Data.ThumbnailPath = Path.Combine(result, "thumbnails");
 
             // save data to file
             GlobalJson.SaveToFile();
@@ -177,10 +186,7 @@ public partial class OpenProject : UraniumContentPage
             using var zipOutputStream = new ZipOutputStream(fsOut);
             zipOutputStream.SetLevel(9); // Set compression level (0-9)
 
-            string folderName = Path.GetFileName(sourceDirectory);
-            string baseDirectory = Path.GetDirectoryName(sourceDirectory) ?? "";
-
-            OpenProject.CompressFolder(sourceDirectory, zipOutputStream, baseDirectory.Length + 1);
+            OpenProject.CompressFolder(sourceDirectory, zipOutputStream, sourceDirectory.Length + 1);
 
             zipOutputStream.Finish();
         }
