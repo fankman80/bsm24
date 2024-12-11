@@ -87,9 +87,7 @@ public partial class LoadPDFPages : UraniumContentPage
 
             var cacheDir = Path.Combine(FileSystem.AppDataDirectory, "cache");
             if (!Directory.Exists(cacheDir))
-            {
                 Directory.CreateDirectory(cacheDir);
-            }
 
             for (int i = 0; i < pagecount; i++)
             {
@@ -125,7 +123,6 @@ public partial class LoadPDFPages : UraniumContentPage
         }
         catch (Exception ex)
         {
-            // Fehlerbehandlung (z.B. wenn der Benutzer den Picker abbricht)
             Console.WriteLine($"Fehler beim Auswählen der Datei: {ex.Message}");
         }
         return null; // Kein PDF ausgewählt
