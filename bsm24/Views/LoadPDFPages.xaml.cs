@@ -44,9 +44,7 @@ public partial class LoadPDFPages : UraniumContentPage
 
                 var cacheDir = Path.Combine(FileSystem.AppDataDirectory, "cache");
                 if (!Directory.Exists(cacheDir))
-                {
                     Directory.CreateDirectory(cacheDir);
-                }
 
                 for (int i = 0; i < pagecount; i++)
                 {
@@ -244,7 +242,6 @@ public partial class LoadPDFPages : UraniumContentPage
         {
             File.Delete(cacheFile);
         }
-
         await Shell.Current.GoToAsync("..");
     }
 

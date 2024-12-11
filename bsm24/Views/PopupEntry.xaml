@@ -23,15 +23,14 @@
         VerticalOptions="Center">
 
         <VerticalStackLayout>
-            <Label
-                HorizontalOptions="Start"
-                x:Name="titleText"
-                Text=""/>
+            <Label x:Name="titleText"
+                   HorizontalOptions="Start"
+                   Text=""/>
 
             <material:TextField x:Name="text_entry"
                                 TextColor="{AppThemeBinding Light={DynamicResource PrimaryText}, Dark={DynamicResource PrimaryDarkText}}"
                                 BorderColor="{AppThemeBinding Light={DynamicResource SecondaryBackground}, Dark={DynamicResource SecondaryBackground}}"
-                                AccentColor="{AppThemeBinding Light={DynamicResource Secondary}, Dark={DynamicResource SecondaryDark}}"
+                                AccentColor="{AppThemeBinding Light={DynamicResource PrimaryAccent}, Dark={DynamicResource SecondaryDark}}"
                                 AllowClear="True"/>
             <Grid>
                 <Grid.ColumnDefinitions>
@@ -39,17 +38,17 @@
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
                 <Button Grid.Column="0"
-                    x:Name="cancelButtonText"
-                    Text="Abbrechen"
-                    BackgroundColor="{AppThemeBinding Light={DynamicResource Primary}, Dark={DynamicResource PrimaryDark}}"
-                    TextColor="{AppThemeBinding Light={DynamicResource PrimaryDarkText}, Dark={DynamicResource PrimaryText}}"                       
-                    Clicked="OnCancelClicked" />
+                        x:Name="cancelButtonText"
+                        Text="Abbrechen"
+                        BackgroundColor="{AppThemeBinding Light={DynamicResource Primary}, Dark={DynamicResource PrimaryDark}}"
+                        TextColor="{AppThemeBinding Light={DynamicResource PrimaryDarkText}, Dark={DynamicResource PrimaryText}}"                       
+                        Clicked="OnCancelClicked" />
                 <Button Grid.Column="1"
-                    x:Name="okButtonText"
-                    Text="Ok"
-                    BackgroundColor="{AppThemeBinding Light={DynamicResource Primary}, Dark={DynamicResource PrimaryDark}}"
-                    TextColor="{AppThemeBinding Light={DynamicResource PrimaryDarkText}, Dark={DynamicResource PrimaryText}}"                     
-                    Clicked="OnOkClicked" />
+                        x:Name="okButtonText"
+                        Text="Ok"
+                        BackgroundColor="{AppThemeBinding Light={DynamicResource Primary}, Dark={DynamicResource PrimaryDark}}"
+                        TextColor="{AppThemeBinding Light={DynamicResource PrimaryDarkText}, Dark={DynamicResource PrimaryText}}"                     
+                        Clicked="OnOkClicked" />
             </Grid>
         </VerticalStackLayout>
     </Border>

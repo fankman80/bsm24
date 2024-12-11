@@ -3,11 +3,10 @@
 using CommunityToolkit.Maui.Alerts;
 using CommunityToolkit.Maui.Storage;
 using ICSharpCode.SharpZipLib.Zip;
-using MetadataExtractor.Util;
-using Microsoft.Maui.Storage;
 using Mopups.Services;
 using System.Globalization;
 using UraniumUI.Pages;
+using bsm24.Services;
 
 
 namespace bsm24.Views;
@@ -386,13 +385,15 @@ public partial class OpenProject : UraniumContentPage
     private static void HeaderUpdate()
     {
         // aktualisiere den Header Text
-        Services.SettingsService.Instance.FlyoutHeaderTitle = GlobalJson.Data.Object_name;
-        Services.SettingsService.Instance.FlyoutHeaderDesc = GlobalJson.Data.Client_name;
+        SettingsService.Instance.FlyoutHeaderTitle = GlobalJson.Data.Object_name;
+        SettingsService.Instance.FlyoutHeaderDesc = GlobalJson.Data.Client_name;
+
+        SettingsService.Instance.FlyoutHeaderImage = null;
 
         // aktualisiere das Thumbnail Bild
         if (File.Exists(Path.Combine(FileSystem.AppDataDirectory, GlobalJson.Data.ProjectPath, "title_thumbnail.jpg")))
-            Services.SettingsService.Instance.FlyoutHeaderImage = Path.Combine(FileSystem.AppDataDirectory, GlobalJson.Data.ProjectPath, "title_thumbnail.jpg");
+            SettingsService.Instance.FlyoutHeaderImage = Path.Combine(FileSystem.AppDataDirectory, GlobalJson.Data.ProjectPath, "title_thumbnail.jpg");
         else
-            Services.SettingsService.Instance.FlyoutHeaderImage = "banner_thumbnail.png";
+            SettingsService.Instance.FlyoutHeaderImage = "banner_thumbnail.png";
     }
 }

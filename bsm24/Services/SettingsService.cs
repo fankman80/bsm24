@@ -356,71 +356,85 @@ public partial class SettingsService : INotifyPropertyChanged
                     case "EBBE":
                         App.Current.Resources["Primary"] = Color.FromArgb("#000000");
                         App.Current.Resources["PrimaryText"] = Color.FromArgb("#000000");
+                        App.Current.Resources["PrimaryAccent"] = Color.FromArgb("#000000");
                         App.Current.Resources["PrimaryDark"] = Color.FromArgb("#ededed");
                         App.Current.Resources["PrimaryDarkText"] = Color.FromArgb("#ffffff");
                         App.Current.Resources["PrimaryBackground"] = Color.FromArgb("#ffffff");
-                        App.Current.Resources["Secondary"] = Color.FromArgb("#404040");
+                        App.Current.Resources["Secondary"] = Color.FromArgb("#949494");
                         App.Current.Resources["SecondaryDark"] = Color.FromArgb("#ffffff");
+                        App.Current.Resources["SecondaryAccent"] = Color.FromArgb("#000000");
                         break;
 
                     case "Lachs":
                         App.Current.Resources["Primary"] = Color.FromArgb("#9c4e38");
                         App.Current.Resources["PrimaryText"] = Color.FromArgb("#000000");
-                        App.Current.Resources["PrimaryDark"] = Color.FromArgb("#c9a59b");
+                        App.Current.Resources["PrimaryAccent"] = Color.FromArgb("#9c4e38");
+                        App.Current.Resources["PrimaryDark"] = Color.FromArgb("#e6c3ba");
                         App.Current.Resources["PrimaryDarkText"] = Color.FromArgb("#ffffff");
                         App.Current.Resources["PrimaryBackground"] = Color.FromArgb("#ffffff");
-                        App.Current.Resources["Secondary"] = Color.FromArgb("#c9a59b");
+                        App.Current.Resources["Secondary"] = Color.FromArgb("#e6c3ba");
                         App.Current.Resources["SecondaryDark"] = Color.FromArgb("#ffffff");
+                        App.Current.Resources["SecondaryAccent"] = Color.FromArgb("#9c4e38");
                         break;
 
                     case "Gras":
                         App.Current.Resources["Primary"] = Color.FromArgb("#32a852");
                         App.Current.Resources["PrimaryText"] = Color.FromArgb("#000000");
-                        App.Current.Resources["PrimaryDark"] = Color.FromArgb("#73b572");
+                        App.Current.Resources["PrimaryAccent"] = Color.FromArgb("#32a852");
+                        App.Current.Resources["PrimaryDark"] = Color.FromArgb("#c1e8c1");
                         App.Current.Resources["PrimaryDarkText"] = Color.FromArgb("#ffffff");
                         App.Current.Resources["PrimaryBackground"] = Color.FromArgb("#ffffff");
-                        App.Current.Resources["Secondary"] = Color.FromArgb("#73b572");
+                        App.Current.Resources["Secondary"] = Color.FromArgb("#c1e8c1");
                         App.Current.Resources["SecondaryDark"] = Color.FromArgb("#ffffff");
+                        App.Current.Resources["SecondaryAccent"] = Color.FromArgb("#32a852");
                         break;
 
                     case "Ozean":
                         App.Current.Resources["Primary"] = Color.FromArgb("#5e75ad");
                         App.Current.Resources["PrimaryText"] = Color.FromArgb("#000000");
-                        App.Current.Resources["PrimaryDark"] = Color.FromArgb("#9caedb");
+                        App.Current.Resources["PrimaryAccent"] = Color.FromArgb("#5e75ad");
+                        App.Current.Resources["PrimaryDark"] = Color.FromArgb("#c7d3f2");
                         App.Current.Resources["PrimaryDarkText"] = Color.FromArgb("#ffffff");
                         App.Current.Resources["PrimaryBackground"] = Color.FromArgb("#ffffff");
-                        App.Current.Resources["Secondary"] = Color.FromArgb("#9caedb");
+                        App.Current.Resources["Secondary"] = Color.FromArgb("#c7d3f2");
                         App.Current.Resources["SecondaryDark"] = Color.FromArgb("#ffffff");
+                        App.Current.Resources["SecondaryAccent"] = Color.FromArgb("#5e75ad");
                         break;
 
                     case "Feuer":
                         App.Current.Resources["Primary"] = Color.FromArgb("#e07a2d");
                         App.Current.Resources["PrimaryText"] = Color.FromArgb("#000000");
-                        App.Current.Resources["PrimaryDark"] = Color.FromArgb("#edba93");
+                        App.Current.Resources["PrimaryAccent"] = Color.FromArgb("#e07a2d");
+                        App.Current.Resources["PrimaryDark"] = Color.FromArgb("#f2cdb1");
                         App.Current.Resources["PrimaryDarkText"] = Color.FromArgb("#ffffff");
                         App.Current.Resources["PrimaryBackground"] = Color.FromArgb("#ffffff");
-                        App.Current.Resources["Secondary"] = Color.FromArgb("#edba93");
+                        App.Current.Resources["Secondary"] = Color.FromArgb("#f2cdb1");
                         App.Current.Resources["SecondaryDark"] = Color.FromArgb("#ffffff");
+                        App.Current.Resources["SecondaryAccent"] = Color.FromArgb("#e07a2d");
                         break;
 
                     case "Flower":
                         App.Current.Resources["Primary"] = Color.FromArgb("#9f4bcc");
                         App.Current.Resources["PrimaryText"] = Color.FromArgb("#000000");
+                        App.Current.Resources["PrimaryAccent"] = Color.FromArgb("#9f4bcc");
                         App.Current.Resources["PrimaryDark"] = Color.FromArgb("#e5befa");
                         App.Current.Resources["PrimaryDarkText"] = Color.FromArgb("#ffffff");
                         App.Current.Resources["PrimaryBackground"] = Color.FromArgb("#ffffff");
                         App.Current.Resources["Secondary"] = Color.FromArgb("#e5befa");
                         App.Current.Resources["SecondaryDark"] = Color.FromArgb("#ffffff");
+                        App.Current.Resources["SecondaryAccent"] = Color.FromArgb("#9f4bcc");
                         break;
 
                     case "Barbie":
                         App.Current.Resources["Primary"] = Color.FromArgb("#fc03df");
                         App.Current.Resources["PrimaryText"] = Color.FromArgb("#000000");
-                        App.Current.Resources["PrimaryDark"] = Color.FromArgb("#e5befa");
+                        App.Current.Resources["PrimaryAccent"] = Color.FromArgb("#fc03df");
+                        App.Current.Resources["PrimaryDark"] = Color.FromArgb("#eed5f2");
                         App.Current.Resources["PrimaryDarkText"] = Color.FromArgb("#ffffff");
                         App.Current.Resources["PrimaryBackground"] = Color.FromArgb("#ffffff");
-                        App.Current.Resources["Secondary"] = Color.FromArgb("#f2a7ea");
+                        App.Current.Resources["Secondary"] = Color.FromArgb("#eed5f2");
                         App.Current.Resources["SecondaryDark"] = Color.FromArgb("#ffffff");
+                        App.Current.Resources["SecondaryAccent"] = Color.FromArgb("#fc03df");
                         break;
 
                     default:

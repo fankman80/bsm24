@@ -1,6 +1,7 @@
 ﻿#nullable disable
 
 using UraniumUI.Pages;
+using bsm24.Services;
 
 namespace bsm24.Views;
 
@@ -63,11 +64,50 @@ public partial class ProjectDetails : UraniumContentPage
         await Shell.Current.GoToAsync("//homescreen");
     }
 
-    private async void OnThumbCaptureClicked(object sender, EventArgs e)
+    private async void OnTitleCaptureClicked(object sender, EventArgs e)
     {
         await CapturePicture.Capture(GlobalJson.Data.ImagePath, GlobalJson.Data.ProjectPath, "title_thumbnail.jpg");
 
         HeaderUpdate();
+    }
+
+    private async void OnTitleOpenClicked(object sender, EventArgs e)
+    {
+        try
+        {
+            var fileResult = await FilePicker.Default.PickAsync(new PickOptions
+            {
+                PickerTitle = "Bitte wähle ein Bild aus...",
+                FileTypes = FilePickerFileType.Jpeg
+            });
+            
+            string sourceFilePath = fileResult.FullPath;
+            var destinationPath = Path.Combine(FileSystem.AppDataDirectory, GlobalJson.Data.ImagePath, "title_thumbnail.jpg");
+            var destinationThumbPath = Path.Combine(FileSystem.AppDataDirectory, GlobalJson.Data.ProjectPath, "title_thumbnail.jpg");
+
+
+            if (fileResult != null)
+            {
+                if (File.Exists(destinationPath))
+                    File.Delete(destinationPath);
+                if (File.Exists(destinationThumbPath))
+                    File.Delete(destinationThumbPath);
+
+                using (FileStream sourceStream = new(sourceFilePath, FileMode.OpenOrCreate))
+                using (FileStream destinationStream = new(destinationPath, FileMode.Create))
+                {
+                    sourceStream.CopyTo(destinationStream);
+                }
+
+                Thumbnail.Generate(sourceFilePath, destinationThumbPath);
+
+                HeaderUpdate();
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Fehler beim Auswählen der Datei: {ex.Message}");
+        }
     }
 
     private async void OnAddPdfClicked(object sender, EventArgs e)
@@ -90,13 +130,16 @@ public partial class ProjectDetails : UraniumContentPage
     private static void HeaderUpdate()
     {
         // aktualisiere den Header Text
-        Services.SettingsService.Instance.FlyoutHeaderTitle = GlobalJson.Data.Object_name;
-        Services.SettingsService.Instance.FlyoutHeaderDesc = GlobalJson.Data.Client_name;
+        SettingsService.Instance.FlyoutHeaderTitle = GlobalJson.Data.Object_name;
+        SettingsService.Instance.FlyoutHeaderDesc = GlobalJson.Data.Client_name;
+
+        SettingsService.Instance.FlyoutHeaderImage = null;
 
         // aktualisiere das Thumbnail Bild
         if (File.Exists(Path.Combine(FileSystem.AppDataDirectory, GlobalJson.Data.ProjectPath, "title_thumbnail.jpg")))
-            Services.SettingsService.Instance.FlyoutHeaderImage = Path.Combine(FileSystem.AppDataDirectory, GlobalJson.Data.ProjectPath, "title_thumbnail.jpg");
+            SettingsService.Instance.FlyoutHeaderImage = Path.Combine(FileSystem.AppDataDirectory, GlobalJson.Data.ProjectPath, "title_thumbnail.jpg");
         else
-            Services.SettingsService.Instance.FlyoutHeaderImage = "banner_thumbnail.png";
+            SettingsService.Instance.FlyoutHeaderImage = "banner_thumbnail.png";
+
     }
 }

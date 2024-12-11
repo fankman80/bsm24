@@ -29,23 +29,36 @@
                 </Grid.ColumnDefinitions>
 
                 <Border Grid.Column="0"
-                        WidthRequest="100"
-                        HeightRequest="100"
+                        WidthRequest="200"
+                        HeightRequest="120"
                         Stroke="Grey"
                         StrokeThickness="1"
                         BackgroundColor="White"
                         StrokeShape="RoundRectangle 8">
                         <Image Source="{Binding FlyoutHeaderImage}" Aspect="AspectFill"/>
                 </Border>
-                <ImageButton Grid.Column="0"
-                             BackgroundColor="Transparent"
-                             HeightRequest="70"
-                             WidthRequest="70"                                     
-                             Source="{FontImageSource FontFamily=MaterialOutlined, Color=White, Size=50, Glyph={x:Static m:MaterialOutlined.Photo_camera}}"
-                             Clicked="OnThumbCaptureClicked"/>
+                <Grid Grid.Column="0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <ImageButton Grid.Column="0"
+                                 BackgroundColor="Transparent"
+                                 HeightRequest="70"
+                                 WidthRequest="70"                                     
+                                 Source="{FontImageSource FontFamily=MaterialOutlined, Color=White, Size=50, Glyph={x:Static m:MaterialOutlined.Photo_camera}}"
+                                 Clicked="OnTitleCaptureClicked"/>
+
+                    <ImageButton Grid.Column="1"
+                                 BackgroundColor="Transparent"
+                                 HeightRequest="70"
+                                 WidthRequest="70"                                     
+                                 Source="{FontImageSource FontFamily=MaterialOutlined, Color=White, Size=50, Glyph={x:Static m:MaterialOutlined.Image_search}}"
+                                 Clicked="OnTitleOpenClicked"/>
+                </Grid>
                 <Button Grid.Column="1"
-                        WidthRequest="100"
-                        HeightRequest="100"
+                        WidthRequest="120"
+                        HeightRequest="120"
                         BackgroundColor="{AppThemeBinding Light={DynamicResource Primary}, Dark={DynamicResource PrimaryDark}}"
                         TextColor="{AppThemeBinding Light={DynamicResource PrimaryDarkText}, Dark={DynamicResource PrimaryText}}"                         
                         ImageSource="{FontImageSource FontFamily=MaterialOutlined, Size=50, Color={AppThemeBinding Light={DynamicResource PrimaryDarkText}, Dark={DynamicResource PrimaryText}}, Glyph={x:Static m:MaterialOutlined.Picture_as_pdf}}"
@@ -58,48 +71,52 @@
                         x:Name="client_name"
                         TextColor="{AppThemeBinding Light={DynamicResource PrimaryText}, Dark={DynamicResource PrimaryDarkText}}"
                         BorderColor="{AppThemeBinding Light={DynamicResource SecondaryBackground}, Dark={DynamicResource SecondaryBackground}}"
-                        AccentColor="{AppThemeBinding Light={DynamicResource Secondary}, Dark={DynamicResource SecondaryDark}}"
+                        AccentColor="{AppThemeBinding Light={DynamicResource PrimaryAccent}, Dark={DynamicResource SecondaryDark}}"
+                        AllowClear="True"
                         Title="Kunde/Bauherrschaft"
-                        Icon="{FontImageSource FontFamily=MaterialOutlined, Color={AppThemeBinding Light={DynamicResource Primary}, Dark={DynamicResource PrimaryDark}}, Glyph={x:Static m:MaterialOutlined.Person}}" />
+                        Icon="{FontImageSource FontFamily=MaterialOutlined, Color={AppThemeBinding Light={DynamicResource SecondaryAccent}, Dark={DynamicResource PrimaryDark}}, Glyph={x:Static m:MaterialOutlined.Person}}" />
 
                     <material:TextField
                         x:Name="object_name"
                         TextColor="{AppThemeBinding Light={DynamicResource PrimaryText}, Dark={DynamicResource PrimaryDarkText}}"
                         BorderColor="{AppThemeBinding Light={DynamicResource SecondaryBackground}, Dark={DynamicResource SecondaryBackground}}"
-                        AccentColor="{AppThemeBinding Light={DynamicResource Secondary}, Dark={DynamicResource SecondaryDark}}"
+                        AccentColor="{AppThemeBinding Light={DynamicResource PrimaryAccent}, Dark={DynamicResource SecondaryDark}}"
+                        AllowClear="True"
                         Title="Objektbezeichnung"
-                        Icon="{FontImageSource FontFamily=MaterialOutlined, Color={AppThemeBinding Light={DynamicResource Primary}, Dark={DynamicResource PrimaryDark}}, Glyph={x:Static m:MaterialOutlined.Home_work}}" />
+                        Icon="{FontImageSource FontFamily=MaterialOutlined, Color={AppThemeBinding Light={DynamicResource SecondaryAccent}, Dark={DynamicResource PrimaryDark}}, Glyph={x:Static m:MaterialOutlined.Home_work}}" />
 
                     <material:EditorField
                         x:Name="object_address"
                         TextColor="{AppThemeBinding Light={DynamicResource PrimaryText}, Dark={DynamicResource PrimaryDarkText}}"
                         BorderColor="{AppThemeBinding Light={DynamicResource SecondaryBackground}, Dark={DynamicResource SecondaryBackground}}"
-                        AccentColor="{AppThemeBinding Light={DynamicResource Secondary}, Dark={DynamicResource SecondaryDark}}"
+                        AccentColor="{AppThemeBinding Light={DynamicResource PrimaryAccent}, Dark={DynamicResource SecondaryDark}}"
                         Title="Adresse"
-                        Icon="{FontImageSource FontFamily=MaterialOutlined, Color={AppThemeBinding Light={DynamicResource Primary}, Dark={DynamicResource PrimaryDark}}, Glyph={x:Static m:MaterialOutlined.Home}}" />
+                        Icon="{FontImageSource FontFamily=MaterialOutlined, Color={AppThemeBinding Light={DynamicResource SecondaryAccent}, Dark={DynamicResource PrimaryDark}}, Glyph={x:Static m:MaterialOutlined.Home}}" />
 
                     <material:TextField
                         x:Name="working_title"
                         TextColor="{AppThemeBinding Light={DynamicResource PrimaryText}, Dark={DynamicResource PrimaryDarkText}}"
                         BorderColor="{AppThemeBinding Light={DynamicResource SecondaryBackground}, Dark={DynamicResource SecondaryBackground}}"
-                        AccentColor="{AppThemeBinding Light={DynamicResource Secondary}, Dark={DynamicResource SecondaryDark}}"
+                        AccentColor="{AppThemeBinding Light={DynamicResource PrimaryAccent}, Dark={DynamicResource SecondaryDark}}"
+                        AllowClear="True"
                         Title="Projektvorgang"
-                        Icon="{FontImageSource FontFamily=MaterialOutlined, Color={AppThemeBinding Light={DynamicResource Primary}, Dark={DynamicResource PrimaryDark}}, Glyph={x:Static m:MaterialOutlined.Receipt_long}}" />
+                        Icon="{FontImageSource FontFamily=MaterialOutlined, Color={AppThemeBinding Light={DynamicResource SecondaryAccent}, Dark={DynamicResource PrimaryDark}}, Glyph={x:Static m:MaterialOutlined.Receipt_long}}" />
 
                     <material:TextField
                         x:Name="project_manager"
                         TextColor="{AppThemeBinding Light={DynamicResource PrimaryText}, Dark={DynamicResource PrimaryDarkText}}"
                         BorderColor="{AppThemeBinding Light={DynamicResource SecondaryBackground}, Dark={DynamicResource SecondaryBackground}}"
-                        AccentColor="{AppThemeBinding Light={DynamicResource Secondary}, Dark={DynamicResource SecondaryDark}}"
+                        AccentColor="{AppThemeBinding Light={DynamicResource PrimaryAccent}, Dark={DynamicResource SecondaryDark}}"
+                        AllowClear="True"
                         Title="Projektleiter"
-                        Icon="{FontImageSource FontFamily=MaterialOutlined, Color={AppThemeBinding Light={DynamicResource Primary}, Dark={DynamicResource PrimaryDark}}, Glyph={x:Static m:MaterialOutlined.Badge}}" />
+                        Icon="{FontImageSource FontFamily=MaterialOutlined, Color={AppThemeBinding Light={DynamicResource SecondaryAccent}, Dark={DynamicResource PrimaryDark}}, Glyph={x:Static m:MaterialOutlined.Badge}}" />
 
                     <material:DatePickerField x:Name="creation_date"
-                            TextColor="{AppThemeBinding Light={DynamicResource PrimaryText}, Dark={DynamicResource PrimaryDarkText}}"
-                            BorderColor="{AppThemeBinding Light={DynamicResource SecondaryBackground}, Dark={DynamicResource SecondaryBackground}}"
-                            AccentColor="{AppThemeBinding Light={DynamicResource Secondary}, Dark={DynamicResource SecondaryDark}}"
-                            Title="Datum"
-                            Icon="{FontImageSource FontFamily=MaterialOutlined, Color={AppThemeBinding Light={DynamicResource Primary}, Dark={DynamicResource PrimaryDark}}, Glyph={x:Static m:MaterialOutlined.Calendar_month}}" />
+                        TextColor="{AppThemeBinding Light={DynamicResource PrimaryText}, Dark={DynamicResource PrimaryDarkText}}"
+                        BorderColor="{AppThemeBinding Light={DynamicResource SecondaryBackground}, Dark={DynamicResource SecondaryBackground}}"
+                        AccentColor="{AppThemeBinding Light={DynamicResource PrimaryAccent}, Dark={DynamicResource SecondaryDark}}"
+                        Title="Datum"
+                        Icon="{FontImageSource FontFamily=MaterialOutlined, Color={AppThemeBinding Light={DynamicResource SecondaryAccent}, Dark={DynamicResource PrimaryDark}}, Glyph={x:Static m:MaterialOutlined.Calendar_month}}" />
                </VerticalStackLayout>
             </ScrollView>
 

@@ -56,8 +56,8 @@
             <material:PickerField
                 x:Name="darkModePicker"
                 Title="Dark-Mode:"
-                AccentColor="{DynamicResource Primary}"
-                TitleColor="{AppThemeBinding Light={DynamicResource PrimaryText}, Dark={DynamicResource PrimaryDarkText}}"
+                BorderColor="{AppThemeBinding Light={DynamicResource SecondaryBackground}, Dark={DynamicResource SecondaryBackground}}"
+                AccentColor="{AppThemeBinding Light={DynamicResource PrimaryAccent}, Dark={DynamicResource SecondaryDark}}"
                 ItemsSource="{Binding DarkMode}"
                 SelectedItem="{Binding SelectedDarkMode}">
             </material:PickerField>
@@ -65,8 +65,8 @@
             <material:PickerField
                 x:Name="colorThemePicker"
                 Title="Farbthema:"
-                AccentColor="{DynamicResource Primary}"
-                TitleColor="{AppThemeBinding Light={DynamicResource PrimaryText}, Dark={DynamicResource PrimaryDarkText}}"
+                BorderColor="{AppThemeBinding Light={DynamicResource SecondaryBackground}, Dark={DynamicResource SecondaryBackground}}"
+                AccentColor="{AppThemeBinding Light={DynamicResource PrimaryAccent}, Dark={DynamicResource SecondaryDark}}"
                 ItemsSource="{Binding Themes}"
                 SelectedItem="{Binding SelectedTheme}"
                 BindingContextChanged="OnSelectedValueChanged">
