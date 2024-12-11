@@ -8,7 +8,6 @@ using System.Globalization;
 using UraniumUI.Pages;
 using bsm24.Services;
 
-
 namespace bsm24.Views;
 public partial class OpenProject : UraniumContentPage
 {
@@ -381,20 +380,5 @@ public partial class OpenProject : UraniumContentPage
                 Directory.Delete(Path.GetDirectoryName(item.FilePath));
             }
         }
-    }
-
-    private static void HeaderUpdate()
-    {
-        // aktualisiere den Header Text
-        SettingsService.Instance.FlyoutHeaderTitle = GlobalJson.Data.Object_name;
-        SettingsService.Instance.FlyoutHeaderDesc = GlobalJson.Data.Client_name;
-
-        SettingsService.Instance.FlyoutHeaderImage = null;
-
-        // aktualisiere das Thumbnail Bild
-        if (File.Exists(Path.Combine(FileSystem.AppDataDirectory, GlobalJson.Data.ProjectPath, "title_thumbnail.jpg")))
-            SettingsService.Instance.FlyoutHeaderImage = Path.Combine(FileSystem.AppDataDirectory, GlobalJson.Data.ProjectPath, "title_thumbnail.jpg");
-        else
-            SettingsService.Instance.FlyoutHeaderImage = "banner_thumbnail.png";
-    }
+    } 
 }
