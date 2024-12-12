@@ -14,27 +14,19 @@
              Shell.TitleColor="{DynamicResource PrimaryDark}"
              Title="Pin auswählen">
 
-    <ContentPage.ToolbarItems>
-        <ToolbarItem
-            x:Name="btnRows"
-            IconImageSource="{FontImageSource FontFamily=MaterialOutlined, Color={DynamicResource PrimaryDark}, Glyph={x:Static m:MaterialOutlined.Table_rows}}"
-            Text="Liste"
-            Clicked="OnChangeRowsClicked"/>
-    </ContentPage.ToolbarItems>
-
     <Grid>
         <Grid Margin="10">
             <CollectionView x:Name="IconCollectionView"
                             ItemsSource="{Binding Icons}"
                             SelectionMode="Single">
                 <CollectionView.ItemsLayout>
-                    <GridItemsLayout Orientation="Vertical" Span="{Binding DynamicSpan}" />
+                    <GridItemsLayout Orientation="Vertical" />
                 </CollectionView.ItemsLayout>
                 <CollectionView.ItemTemplate>
                     <DataTemplate>
-                        <Grid x:DataType="local:IconItem">
+                        <Grid x:DataType="local:IconItem" HeightRequest="48">
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="64" />
+                                <ColumnDefinition Width="Auto" />
                                 <ColumnDefinition Width="*" />
                             </Grid.ColumnDefinitions>
                             <ff:CachedImage Grid.Column="0"
@@ -42,8 +34,8 @@
                                             CacheType="Memory"
                                             Aspect="AspectFill"
                                             Margin="6,6,6,6"/>
-                            <Label Grid.Column="1" Text="{Binding DisplayName}"
-                                   IsVisible="{Binding IsListMode}"
+                            <Label Grid.Column="1"
+                                   Text="{Binding DisplayName}"
                                    VerticalOptions="Center"
                                    Margin="16,0,0,0"
                                    LineBreakMode="WordWrap"
@@ -57,7 +49,7 @@
                     </DataTemplate>
                 </CollectionView.ItemTemplate>
             </CollectionView>
-        </Grid>            
+        </Grid>
 
         <!-- Overlay für Busy-Indikator -->
         <Grid x:Name="busyOverlay"

@@ -165,6 +165,9 @@
 	  <MauiXaml Update="AppShell.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
+	  <MauiXaml Update="Views\PinList.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
 	  <MauiXaml Update="Views\LoadPDFPages.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
@@ -204,6 +207,9 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <Compile Update="Views\PinList.xaml.cs">
+	    <DependentUpon>PinList.xaml</DependentUpon>
+	  </Compile>
 	  <Compile Update="Views\LoadPDFPages.xaml.cs">
 	    <DependentUpon>LoadPDFPages.xaml</DependentUpon>
 	  </Compile>

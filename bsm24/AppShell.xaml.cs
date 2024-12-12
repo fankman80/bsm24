@@ -22,11 +22,20 @@ public partial class AppShell : Shell
         Routing.RegisterRoute("imageview", typeof(ImageViewPage));
         Routing.RegisterRoute("project_details", typeof(ProjectDetails));
         Routing.RegisterRoute("loadPdfImages", typeof(LoadPDFPages));
+        Routing.RegisterRoute("pinList", typeof(PinList));
     }
 
     private async void OnProjectDetailsClicked(object sender, EventArgs e)
     {
         await Shell.Current.GoToAsync("project_details");
+#if ANDROID
+        Shell.Current.FlyoutIsPresented = false;
+#endif
+    }
+
+    private async void OnPinListClicked(object sender, EventArgs e)
+    {
+        await Shell.Current.GoToAsync("pinList");
 #if ANDROID
         Shell.Current.FlyoutIsPresented = false;
 #endif

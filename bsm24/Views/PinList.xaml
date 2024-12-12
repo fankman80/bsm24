@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<uranium:UraniumContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:ff="clr-namespace:FFImageLoading.Maui;assembly=FFImageLoading.Maui" 
+             xmlns:views="clr-namespace:bsm24.Views"
+             xmlns:uranium="http://schemas.enisn-projects.io/dotnet/maui/uraniumui"
+             xmlns:material="http://schemas.enisn-projects.io/dotnet/maui/uraniumui/material"
+             xmlns:m="clr-namespace:UraniumUI.Icons.MaterialSymbols;assembly=UraniumUI.Icons.MaterialSymbols"            
+             xmlns:local="clr-namespace:bsm24"
+             xmlns:models="clr-namespace:bsm24.Models" 
+              x:DataType="models:Pin"
+             x:Name="PinListPage"
+             x:Class="bsm24.Views.PinList"
+             BackgroundColor="White" 
+             Shell.TitleColor="{DynamicResource PrimaryDark}"
+             Title="Pinliste">
+
+    <Grid>
+        <Grid Margin="10">
+            <CollectionView x:Name="pinListView" SelectionMode="Single">
+                <CollectionView.ItemsLayout>
+                    <GridItemsLayout Orientation="Vertical" VerticalItemSpacing="4"/>
+                </CollectionView.ItemsLayout>
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="96" />
+                                <ColumnDefinition Width="1*" />
+                                <ColumnDefinition Width="3*" />
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="50"/>
+                                <RowDefinition Height="50"/>
+                            </Grid.RowDefinitions>
+                            
+                            <ff:CachedImage Grid.Column="0" Grid.RowSpan="2"
+                                            Source="{Binding PinIcon}"
+                                            CacheType="Memory"
+                                            Aspect="AspectFit"
+                                            Margin="16"/>
+                            <Label Grid.Column="1" Grid.Row="0"
+                                   Text="Plan"/>
+                            <Label Grid.Column="1" Grid.Row="1"
+                                   Text="{Binding PinLocation}"/>
+                            <Label Grid.Column="2" Grid.Row="0"
+                                   Text="{Binding PinDesc}"/>
+                            <Label Grid.Column="2" Grid.Row="1"
+                                   Text="{Binding PinName}"/>
+                            <Button Grid.ColumnSpan="3" Grid.RowSpan="2"
+                                    BorderWidth="1"
+                                    BorderColor="Black"
+                                    AutomationId = "{Binding PinIcon}"
+                                    Background="Transparent"
+                                    Clicked="OnPinClicked"/>
+                        </Grid>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+        </Grid>
+
+        <!-- Overlay für Busy-Indikator -->
+        <Grid x:Name="busyOverlay"
+              BackgroundColor="Black"
+              Opacity="0.7"
+              IsVisible="False"
+              VerticalOptions="FillAndExpand"
+              HorizontalOptions="FillAndExpand"
+              ZIndex="10">
+            <StackLayout VerticalOptions="Center" HorizontalOptions="Center">
+                <ActivityIndicator x:Name="activityIndicator"
+                                   IsRunning="True"
+                                   VerticalOptions="Center"
+                                   HorizontalOptions="Center"
+                                   Color="White" />
+                <Label x:Name="busyText"
+                       Text="Bitte warten..."
+                       TextColor="White"
+                       FontSize="Medium"
+                       HorizontalOptions="Center" />
+            </StackLayout>
+        </Grid>
+    </Grid>
+</uranium:UraniumContentPage>
