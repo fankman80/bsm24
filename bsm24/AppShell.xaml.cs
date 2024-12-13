@@ -35,7 +35,15 @@ public partial class AppShell : Shell
 
     private async void OnPinListClicked(object sender, EventArgs e)
     {
-        await Shell.Current.GoToAsync("pinList");
+        if (GlobalJson.Data.Plans != null)
+        {
+            await Shell.Current.GoToAsync("pinList");
+        }
+        else
+        {
+            var popup = new PopupAlert("Keine Pläne vorhanden!");
+            await MopupService.Instance.PushAsync(popup);
+        }
 #if ANDROID
         Shell.Current.FlyoutIsPresented = false;
 #endif
@@ -59,6 +67,5 @@ public partial class AppShell : Shell
             var popup = new PopupAlert("Keine Pläne vorhanden!");
             await MopupService.Instance.PushAsync(popup);
         }
-
     }
 }

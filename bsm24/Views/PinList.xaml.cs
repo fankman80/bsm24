@@ -30,40 +30,32 @@ public partial class PinList : UraniumContentPage
     {
         int pincounter = 0;
 
-        if (GlobalJson.Data.Plans != null)
+        List<Pin> pinItems = [];
+        foreach (var plan in GlobalJson.Data.Plans)
         {
-            List<Pin> pinItems = [];
-            foreach (var plan in GlobalJson.Data.Plans)
+            if (GlobalJson.Data.Plans[plan.Key].Pins != null)
             {
-                if (GlobalJson.Data.Plans[plan.Key].Pins != null)
+                foreach (var pin in GlobalJson.Data.Plans[plan.Key].Pins)
                 {
-                    foreach (var pin in GlobalJson.Data.Plans[plan.Key].Pins)
+                    pinItems.Add(new Pin
                     {
-                        pinItems.Add(new Pin
-                        {
-                            PinDesc = GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].PinDesc,
-                            PinIcon = GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].PinIcon,
-                            PinName = GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].PinName,
-                            PinLocation = GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].PinLocation,
-                            OnPlanName = GlobalJson.Data.Plans[plan.Key].Name,
-                            OnPlanId = plan.Key,
-                            SelfId = pin.Key
-                        });
-                        pincounter++;
-                    }
+                        PinDesc = GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].PinDesc,
+                        PinIcon = GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].PinIcon,
+                        PinName = GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].PinName,
+                        PinLocation = GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].PinLocation,
+                        OnPlanName = GlobalJson.Data.Plans[plan.Key].Name,
+                        OnPlanId = plan.Key,
+                        SelfId = pin.Key
+                    });
+                    pincounter++;
                 }
-                else
-                {
-                    var popup = new PopupAlert("Keine Pins vorhanden!");
-                    await MopupService.Instance.PushAsync(popup);
-                }
+                pinListView.ItemsSource = pinItems;
             }
-            pinListView.ItemsSource = pinItems;
-        }
-        else
-        {
-            var popup = new PopupAlert("Keine Pläne vorhanden!");
-            await MopupService.Instance.PushAsync(popup);
+            else
+            {
+                var popup = new PopupAlert("Keine Pins vorhanden!");
+                await MopupService.Instance.PushAsync(popup);
+            }
         }
         pinListView.Footer = "Pins: " + pincounter;
     }
