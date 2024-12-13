@@ -6,14 +6,14 @@ public static class Settings
     public static string CacheDirectory { get => cacheDirectory; set => cacheDirectory = value; }
     public static int ThumbSize { get => thumbSize; set => thumbSize = value; }
     public static int PlanPreviewSize { get => planPreviewSize; set => planPreviewSize = value; }
+    public static double DefaultPinZoom { get => defaultPinZoom; set => defaultPinZoom = value; }
     public static IconItem[] PinData { get => pinData; set => pinData = value; }
 
-    private static int thumbSize = 150;
-
-    private static int planPreviewSize = 250;
 
     private static string cacheDirectory = Path.Combine(FileSystem.AppDataDirectory, "cache");
-
+    private static int thumbSize = 150;
+    private static int planPreviewSize = 250;
+    private static double defaultPinZoom = 3;
     private static IconItem[] pinData =
     [
         new("a_pin_blue.png", "", new Point(0.0625, 0.9375), new Size(64,64), false),

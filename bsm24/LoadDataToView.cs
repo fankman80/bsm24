@@ -19,7 +19,7 @@ public partial class LoadDataToView
                     var newPage = new Views.NewPage(planId)
                     {
                         Title = planTitle,
-                        AutomationId = planId,
+                        AutomationId = planId
                     };
 
                     // Create a new FlyoutItem

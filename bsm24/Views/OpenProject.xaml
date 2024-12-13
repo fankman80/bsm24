@@ -41,20 +41,19 @@
                             </Grid.RowDefinitions>
                             <Label Grid.Column="1" Grid.Row="0"
                                     VerticalTextAlignment="End"
-                                    TextColor="{AppThemeBinding Light={DynamicResource Primary}, Dark={DynamicResource PrimaryDark}}"
+                                    TextColor="{AppThemeBinding Light={DynamicResource PrimaryText}, Dark={DynamicResource PrimaryDarkText}}"
                                     FontSize="14"
                                     Text="{Binding FileName}"/>
                             <Label Grid.Column="1" Grid.Row="1"
                                     FontSize="12"
                                     Text="{Binding FileDate}"/>
-                            <Button Grid.Column="0" Grid.ColumnSpan="2" Grid.RowSpan="2"
-                                    BorderColor="Transparent"
-                                    BorderWidth="0"
-                                    Background="Transparent"
-                                    Clicked="OnProjectClicked"/>
+
                             <Image Grid.Column="0" Grid.RowSpan="2"
                                     Source="{Binding ImagePath}"
                                     Aspect="AspectFill"/>
+                            <Button Grid.Column="0" Grid.ColumnSpan="2" Grid.RowSpan="2"
+                                    Background="Transparent"
+                                    Clicked="OnProjectClicked"/>
                             <Button Grid.Column="2" Grid.RowSpan="2"
                                     Padding="6"
                                     Background="Transparent"

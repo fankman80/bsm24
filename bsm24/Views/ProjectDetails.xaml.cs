@@ -89,7 +89,7 @@ public partial class ProjectDetails : UraniumContentPage
                 PickerTitle = "Bitte wähle ein Bild aus...",
                 FileTypes = FilePickerFileType.Jpeg
             });
-            
+
             if (fileResult != null)
             {
                 string thumbFileName = $"title_{DateTime.Now.Ticks}.jpg";

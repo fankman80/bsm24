@@ -1,7 +1,8 @@
 ﻿#nullable disable
 
-using UraniumUI.Pages;
 using bsm24.Models;
+using Mopups.Services;
+using UraniumUI.Pages;
 
 namespace bsm24.Views;
 
@@ -25,34 +26,65 @@ public partial class PinList : UraniumContentPage
         UpdateSpan();
     }
 
-    private void LoadPins()
+    private async void LoadPins()
     {
-        List<Pin> pinItems = [];
+        int pincounter = 0;
 
-        foreach (var plan in GlobalJson.Data.Plans)
+        if (GlobalJson.Data.Plans != null)
         {
-            if (GlobalJson.Data.Plans[plan.Key].Pins != null)
+            List<Pin> pinItems = [];
+            foreach (var plan in GlobalJson.Data.Plans)
             {
-                foreach (var pin in GlobalJson.Data.Plans[plan.Key].Pins)
+                if (GlobalJson.Data.Plans[plan.Key].Pins != null)
                 {
-                    pinItems.Add(new Pin
+                    foreach (var pin in GlobalJson.Data.Plans[plan.Key].Pins)
                     {
-                        PinDesc = GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].PinDesc,
-                        PinIcon = GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].PinIcon,
-                        PinName = GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].PinName,
-                        PinLocation = GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].PinLocation
-                    });
+                        pinItems.Add(new Pin
+                        {
+                            PinDesc = GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].PinDesc,
+                            PinIcon = GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].PinIcon,
+                            PinName = GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].PinName,
+                            PinLocation = GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].PinLocation,
+                            OnPlanName = GlobalJson.Data.Plans[plan.Key].Name,
+                            OnPlanId = plan.Key,
+                            SelfId = pin.Key
+                        });
+                        pincounter++;
+                    }
+                }
+                else
+                {
+                    var popup = new PopupAlert("Keine Pins vorhanden!");
+                    await MopupService.Instance.PushAsync(popup);
                 }
             }
+            pinListView.ItemsSource = pinItems;
         }
-        pinListView.ItemsSource = pinItems;
-        pinListView.Footer = "";
+        else
+        {
+            var popup = new PopupAlert("Keine Pläne vorhanden!");
+            await MopupService.Instance.PushAsync(popup);
+        }
+        pinListView.Footer = "Pins: " + pincounter;
     }
 
     private async void OnPinClicked(object sender, EventArgs e)
     {
         var button = sender as Button;
-        var fileName = button.AutomationId;
+        string planId = button.AutomationId;
+        string pinId = button.ClassId;
+
+        var newPage = new Views.NewPage(planId, pinId)
+        {
+            Title = GlobalJson.Data.Plans[planId].Name,
+            AutomationId = planId
+        };
+
+        // Entferne die aktuelle Seite aus dem Stack
+        var currentPage = Shell.Current.CurrentPage;
+        Shell.Current.Navigation.RemovePage(currentPage);
+
+        await Shell.Current.Navigation.PushAsync(newPage);
     }
 
     private async void UpdateSpan()

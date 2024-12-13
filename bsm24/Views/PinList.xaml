@@ -1,56 +1,70 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <uranium:UraniumContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
-             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             xmlns:ff="clr-namespace:FFImageLoading.Maui;assembly=FFImageLoading.Maui" 
-             xmlns:views="clr-namespace:bsm24.Views"
-             xmlns:uranium="http://schemas.enisn-projects.io/dotnet/maui/uraniumui"
-             xmlns:material="http://schemas.enisn-projects.io/dotnet/maui/uraniumui/material"
-             xmlns:m="clr-namespace:UraniumUI.Icons.MaterialSymbols;assembly=UraniumUI.Icons.MaterialSymbols"            
-             xmlns:local="clr-namespace:bsm24"
-             xmlns:models="clr-namespace:bsm24.Models" 
-              x:DataType="models:Pin"
-             x:Name="PinListPage"
-             x:Class="bsm24.Views.PinList"
-             BackgroundColor="White" 
-             Shell.TitleColor="{DynamicResource PrimaryDark}"
-             Title="Pinliste">
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:ff="clr-namespace:FFImageLoading.Maui;assembly=FFImageLoading.Maui" 
+    xmlns:views="clr-namespace:bsm24.Views"
+    xmlns:uranium="http://schemas.enisn-projects.io/dotnet/maui/uraniumui"
+    xmlns:material="http://schemas.enisn-projects.io/dotnet/maui/uraniumui/material"
+    xmlns:m="clr-namespace:UraniumUI.Icons.MaterialSymbols;assembly=UraniumUI.Icons.MaterialSymbols"  
+    Shell.TitleColor="{DynamicResource PrimaryDark}"
+    BackgroundColor="{AppThemeBinding Light={DynamicResource PrimaryBackground}, Dark={DynamicResource PrimaryBackgroundDark}}"
+    xmlns:local="clr-namespace:bsm24"
+    xmlns:models="clr-namespace:bsm24.Models" 
+    x:Name="PinListPage"
+    x:Class="bsm24.Views.PinList"
+    Title="Pinliste">
 
     <Grid>
-        <Grid Margin="10">
-            <CollectionView x:Name="pinListView" SelectionMode="Single">
+        <Grid>
+            <CollectionView x:Name="pinListView" SelectionMode="Single" Margin="10">
                 <CollectionView.ItemsLayout>
                     <GridItemsLayout Orientation="Vertical" VerticalItemSpacing="4"/>
                 </CollectionView.ItemsLayout>
                 <CollectionView.ItemTemplate>
-                    <DataTemplate>
+                    <DataTemplate x:DataType="models:Pin">
                         <Grid>
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="96" />
-                                <ColumnDefinition Width="1*" />
-                                <ColumnDefinition Width="3*" />
+                                <ColumnDefinition Width="64" />
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
                             </Grid.ColumnDefinitions>
                             <Grid.RowDefinitions>
-                                <RowDefinition Height="50"/>
-                                <RowDefinition Height="50"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="*"/>
                             </Grid.RowDefinitions>
                             
-                            <ff:CachedImage Grid.Column="0" Grid.RowSpan="2"
+                            <Label Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="2"
+                                   TextDecorations="Underline"
+                                   Margin="6,6,6,0"
+                                   Text="{Binding OnPlanName}"/>
+
+                            <Label Grid.Column="2" Grid.Row="0" Grid.ColumnSpan="2"
+                                   Margin="6,6,6,0"
+                                   Text="{Binding PinLocation}"/>
+                            
+                            <Label Grid.Column="1" Grid.Row="1" Grid.ColumnSpan="3"
+                                   Margin="0,6,6,0"
+                                   LineBreakMode="TailTruncation"
+                                   Text="{Binding PinName}"/>
+
+                            <ff:CachedImage Grid.Column="0" Grid.Row="1" Grid.RowSpan="2"
                                             Source="{Binding PinIcon}"
                                             CacheType="Memory"
                                             Aspect="AspectFit"
-                                            Margin="16"/>
-                            <Label Grid.Column="1" Grid.Row="0"
-                                   Text="Plan"/>
-                            <Label Grid.Column="1" Grid.Row="1"
-                                   Text="{Binding PinLocation}"/>
-                            <Label Grid.Column="2" Grid.Row="0"
+                                            Margin="10"/>
+
+                            <Label Grid.Column="1" Grid.Row="2" Grid.ColumnSpan="3"
+                                   Margin="0,6,6,0"
+                                   LineBreakMode="TailTruncation"
                                    Text="{Binding PinDesc}"/>
-                            <Label Grid.Column="2" Grid.Row="1"
-                                   Text="{Binding PinName}"/>
-                            <Button Grid.ColumnSpan="3" Grid.RowSpan="2"
+                            
+                            <Button Grid.ColumnSpan="4" Grid.RowSpan="3"
+                                    ClassId="{Binding SelfId}"
                                     BorderWidth="1"
-                                    BorderColor="Black"
-                                    AutomationId = "{Binding PinIcon}"
+                                    BorderColor="{AppThemeBinding Light={DynamicResource PrimaryText}, Dark={DynamicResource PrimaryDark}}"
+                                    AutomationId = "{Binding OnPlanId}"
                                     Background="Transparent"
                                     Clicked="OnPinClicked"/>
                         </Grid>

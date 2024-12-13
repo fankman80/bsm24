@@ -49,7 +49,16 @@ public partial class AppShell : Shell
 
     public async void OnExportClicked(object sender, EventArgs e)
     {
-        var popup = new PopupExportSettings();
-        await MopupService.Instance.PushAsync(popup);
+        if (GlobalJson.Data.Plans != null)
+        {
+            var popup = new PopupExportSettings();
+            await MopupService.Instance.PushAsync(popup);
+        }
+        else
+        {
+            var popup = new PopupAlert("Keine Pläne vorhanden!");
+            await MopupService.Instance.PushAsync(popup);
+        }
+
     }
 }

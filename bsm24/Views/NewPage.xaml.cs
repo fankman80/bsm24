@@ -11,32 +11,41 @@ namespace bsm24.Views;
 [QueryProperty(nameof(PinUpdate), "pinUpdate")]
 [QueryProperty(nameof(PinDelete), "pinDelete")]
 
-public partial class NewPage: IQueryAttributable
+public partial class NewPage : IQueryAttributable
 {
     public string PinUpdate { get; set; }
     public string PlanId { get; set; }
     public string PinDelete { get; set; }
     public string PageTitle { get; set; } = "";
-
+    public string PinZoom;
     private MR.Gestures.Image activePin;
-
     private double densityX, densityY;
-
     private bool isFirstLoad = true;
-
     private Point mousePos;
-
     private readonly TransformViewModel planContainer;
 
-    public NewPage(string planId)
+    public NewPage(string planId, string zoomToPin = null)
     {
         InitializeComponent();
         BindingContext = new TransformViewModel();
         PlanId = planId;
+        PinZoom = zoomToPin;
         PageTitle = GlobalJson.Data.Plans[PlanId].Name;
-        OnPropertyChanged(nameof(PageTitle));
         planContainer = (TransformViewModel)PlanContainer.BindingContext;
     }
+
+    protected override void OnAppearing()
+    {
+        base.OnAppearing();
+
+        if (isFirstLoad)
+        {
+            AddPlan();
+            // Verfolge Änderungen an den Eigenschaften Width und Height des PlanImage
+            PlanImage.PropertyChanged += PlanImage_PropertyChanged;
+        }
+    }
+
 
     public void ApplyQueryAttributes(IDictionary<string, object> query)
     {
@@ -50,7 +59,7 @@ public partial class NewPage: IQueryAttributable
             {
                 image.AnchorX = GlobalJson.Data.Plans[PlanId].Pins[PinUpdate].Anchor.X;
                 image.AnchorY = GlobalJson.Data.Plans[PlanId].Pins[PinUpdate].Anchor.Y;
-                image.Source = GlobalJson.Data.Plans[PlanId].Pins[PinUpdate].PinIcon;  // Bildquelle ändern
+                image.Source = GlobalJson.Data.Plans[PlanId].Pins[PinUpdate].PinIcon;
                 if (GlobalJson.Data.Plans[PlanId].Pins[PinUpdate].IsLocked == true)
                     image.Opacity = .3;
                 else
@@ -208,18 +217,6 @@ public partial class NewPage: IQueryAttributable
         image.TranslationY = (_planSize.Height * _originPos.Y / densityY) - (_originAnchor.Y * image.Height);
     }
 
-    protected override void OnAppearing()
-    {
-        base.OnAppearing();
-
-        if (isFirstLoad)
-        {
-            AddPlan();
-            // Verfolge Änderungen an den Eigenschaften Width und Height des PlanImage
-            PlanImage.PropertyChanged += PlanImage_PropertyChanged;
-        }
-    }
-
     private void PlanImage_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
     {
         if (isFirstLoad)
@@ -239,6 +236,10 @@ public partial class NewPage: IQueryAttributable
                     // Rufe AddPins auf, wenn die Berechnung abgeschlossen ist
                     isFirstLoad = false;
                     AddPins();
+                    if (PinZoom != null)
+                    {
+                        ZoomToPin(PinZoom);
+                    }
                 }
             }
         }
@@ -385,6 +386,16 @@ public partial class NewPage: IQueryAttributable
             // save data to file
             GlobalJson.SaveToFile();
         }
+    }
+
+    private void ZoomToPin(string pinId)
+    {
+        var pos = GlobalJson.Data.Plans[PlanId].Pins[pinId].Pos;
+        planContainer.AnchorX = pos.X;
+        planContainer.AnchorY = pos.Y;
+        planContainer.TranslationX = (this.Width / 2) - (PlanContainer.Width * pos.X);
+        planContainer.TranslationY = (this.Height / 2) - (PlanContainer.Height * pos.Y);
+        planContainer.Scale = Settings.DefaultPinZoom;
     }
 
     private void ImageFit()
