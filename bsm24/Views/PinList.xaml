@@ -12,7 +12,7 @@
     xmlns:models="clr-namespace:bsm24.Models" 
     x:Name="PinListPage"
     x:Class="bsm24.Views.PinList"
-    Title="Pinliste">
+    Title="Pin Liste">
 
     <Grid>
         <Grid>
