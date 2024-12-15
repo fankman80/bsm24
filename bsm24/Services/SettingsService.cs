@@ -127,7 +127,7 @@ public partial class SettingsService : INotifyPropertyChanged
         }
     }
 
-    private int _planLabelSize = 64;
+    private int _planLabelSize = 32;
     public int PlanLabelSize
     {
         get => _planLabelSize;

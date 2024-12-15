@@ -25,10 +25,7 @@ public partial class OpenProject : UraniumContentPage
     {
         // Hauptverzeichnis, in dem die Suche beginnen soll (z.B. das App-Datenverzeichnis)
         string rootDirectory = FileSystem.AppDataDirectory;
-
-        // Liste zum Speichern der gefundenen Dateien
         List<FileItem> foundFiles = [];
-
         string searchPattern = "*.json"; // Alle JSON-Dateien suchen
 
         // Alle Unterverzeichnisse und das Hauptverzeichnis durchsuchen

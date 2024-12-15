@@ -5,6 +5,7 @@ using bsm24.Services;
 using bsm24.ViewModels;
 using Mopups.Services;
 using MR.Gestures;
+using SkiaSharp;
 
 namespace bsm24.Views;
 
@@ -305,7 +306,8 @@ public partial class NewPage : IQueryAttributable
                 PinDesc = "",
                 PinLocation = "",
                 PinIcon = newPin,
-                Fotos = []
+                Fotos = [],
+                PinColor = SKColors.Red
             };
 
             // Sicherstellen, dass der Plan existiert

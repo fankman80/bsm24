@@ -2,6 +2,7 @@
 
 using System.Collections.ObjectModel;
 using UraniumUI.Pages;
+using SkiaSharp;
 
 namespace bsm24.Views;
 
@@ -51,6 +52,7 @@ public partial class IconGallery : UraniumContentPage, IQueryAttributable
             GlobalJson.Data.Plans[PlanId].Pins[PinId].Anchor = iconItem.AnchorPoint;
             GlobalJson.Data.Plans[PlanId].Pins[PinId].Size = iconItem.IconSize;
             GlobalJson.Data.Plans[PlanId].Pins[PinId].IsLockRotate = iconItem.IsRotationLocked;
+            GlobalJson.Data.Plans[PlanId].Pins[PinId].PinColor = iconItem.PinColor;
         }
 
         // save data to file

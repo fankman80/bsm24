@@ -1,4 +1,5 @@
 ﻿#nullable disable
+using SkiaSharp;
 
 namespace bsm24.Models;
 
@@ -49,6 +50,7 @@ public class Pin
     public string OnPlanName { get; set; }
     public string OnPlanId { get; set; }
     public string SelfId { get; set; }
+    public SKColor PinColor { get; set; }
 }
 
 public class Foto

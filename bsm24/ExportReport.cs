@@ -137,14 +137,15 @@ public partial class ExportReport
                                                         var pinImage = GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].PinIcon;
 
                                                         // Pin-Icon ein/ausblenden
-                                                        var pinList = new List<(string, SKPoint, string, SKPoint)>();
+                                                        var pinList = new List<(string, SKPoint, string, SKPoint, SKColor)>();
                                                         if (SettingsService.Instance.IsPinIconExport)
                                                         {
                                                             pinList = [(pinImage,
                                                                     new SKPoint(0.5f, 0.5f),
                                                                     "",
                                                                     new SKPoint((float)GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].Anchor.X,
-                                                                                (float)GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].Anchor.Y))];
+                                                                                (float)GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].Anchor.Y),
+                                                                                GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].PinColor)];
                                                         }
                                                         else
                                                             pinList = null;
@@ -294,7 +295,7 @@ public partial class ExportReport
                                             var imgPath = Path.Combine(FileSystem.AppDataDirectory, GlobalJson.Data.PlanPath, imgName);
 
                                             // generate Pin-Image-List
-                                            var pinList = new List<(string, SKPoint, string, SKPoint)>();
+                                            var pinList = new List<(string, SKPoint, string, SKPoint, SKColor)>();
                                             if (GlobalJson.Data.Plans[plan.Key].Pins != null)
                                             {
                                                 foreach (var pin in GlobalJson.Data.Plans[plan.Key].Pins)
@@ -302,7 +303,8 @@ public partial class ExportReport
                                                     pinList.Add((GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].PinIcon,
                                                                 new SKPoint((float)GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].Pos.X, (float)GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].Pos.Y),
                                                                 SettingsService.Instance.PlanLabelPrefix + i.ToString(),
-                                                                new SKPoint((float)GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].Anchor.X, (float)GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].Anchor.Y)));
+                                                                new SKPoint((float)GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].Anchor.X, (float)GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].Anchor.Y),
+                                                                GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].PinColor));
                                                     i += 1;
                                                 }
                                             }
