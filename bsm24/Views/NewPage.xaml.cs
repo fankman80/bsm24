@@ -140,6 +140,13 @@ public partial class NewPage : IQueryAttributable
         Size _planSize = GlobalJson.Data.Plans[PlanId].ImageSize;
         Size _pinSize = GlobalJson.Data.Plans[PlanId].Pins[pinId].Size;
 
+        var scale = 1 / planContainer.Scale;
+        var scaleLimit = SettingsService.Instance.PinScaleLimit / 100;
+        if (scale < scaleLimit)
+            scale = 1 / planContainer.Scale;
+        else
+            scale = scaleLimit;
+
         // berechne Anchor-Koordinaten
         var smallImage = new MR.Gestures.Image
         {
@@ -151,15 +158,9 @@ public partial class NewPage : IQueryAttributable
             AnchorY = GlobalJson.Data.Plans[PlanId].Pins[pinId].Anchor.Y,
             TranslationX = (_planSize.Width * _originPos.X / densityX) - (_originAnchor.X * _pinSize.Width),
             TranslationY = (_planSize.Height * _originPos.Y / densityY) - (_originAnchor.Y * _pinSize.Height),
-            Rotation = PlanContainer.Rotation * -1
+            Rotation = PlanContainer.Rotation * -1,
+            Scale = scale
         };
-
-        var scale = 1 / PlanContainer.Scale;
-        var scaleLimit = SettingsService.Instance.PinScaleLimit / 100;
-        if (scale < scaleLimit)
-            smallImage.Scale = scale;
-        else
-            smallImage.Scale = PlanContainer.Scale;
 
         smallImage.Down += (s, e) =>
         {
@@ -236,11 +237,13 @@ public partial class NewPage : IQueryAttributable
 
                     // Rufe AddPins auf, wenn die Berechnung abgeschlossen ist
                     isFirstLoad = false;
-                    AddPins();
+
                     if (PinZoom != null)
-                    {
                         ZoomToPin(PinZoom);
-                    }
+                    else
+                        ImageFit();
+
+                    AddPins();
                 }
             }
         }
@@ -401,9 +404,8 @@ public partial class NewPage : IQueryAttributable
 
     private void ImageFit()
     {
-        var scale = Math.Min(this.Width / PlanContainer.Width, this.Height / PlanContainer.Height);
         planContainer.Rotation = 0;
-        planContainer.Scale = scale;
+        planContainer.Scale = Math.Min(this.Width / PlanContainer.Width, this.Height / PlanContainer.Height);
         planContainer.TranslationX = (this.Width - PlanContainer.Width) / 2;
         planContainer.TranslationY = (this.Height - PlanContainer.Height) / 2;
         planContainer.AnchorX = 1 / PlanContainer.Width * ((this.Width / 2) - PlanContainer.TranslationX);
