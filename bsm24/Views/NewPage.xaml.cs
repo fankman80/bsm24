@@ -113,6 +113,8 @@ public partial class NewPage : IQueryAttributable
                         // this may cause performance issues !!!
                         if (scale < scaleLimit)
                             img.Scale = scale;
+                        else if (scale < Settings.MinPinScaleLimit)
+                            img.Scale = Settings.MinPinScaleLimit;
 
                         if (!GlobalJson.Data.Plans[PlanId].Pins[img.AutomationId].IsLockRotate)
                             img.Rotation = PlanContainer.Rotation * -1;
