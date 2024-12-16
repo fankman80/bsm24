@@ -1,5 +1,4 @@
-﻿
-using SkiaSharp;
+﻿using SkiaSharp;
 
 namespace bsm24;
 
@@ -11,6 +10,7 @@ public static class Settings
     public static int PlanPreviewSize { get => planPreviewSize; set => planPreviewSize = value; }
     public static double DefaultPinZoom { get => defaultPinZoom; set => defaultPinZoom = value; }
     public static int PinTextPadding { get => pinTextPadding; set => pinTextPadding = value; }
+    public static int PinTextDistance { get => pinTextDistance; set => pinTextDistance = value; }
     public static IconItem[] PinData { get => pinData; set => pinData = value; }
 
 
@@ -20,6 +20,7 @@ public static class Settings
     private static int planPreviewSize = 250;
     private static double defaultPinZoom = 3;
     private static int pinTextPadding = 6;
+    private static int pinTextDistance = 6;
     private static IconItem[] pinData =
     [
         new("a_pin_blue.png", "", new Point(0.297, 0.97), new Size(64,64), false, new SKColor(0,50,204)),  // PinSet1 Anchor Point(0.0625, 0.9375)
