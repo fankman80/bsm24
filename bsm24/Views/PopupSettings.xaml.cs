@@ -20,6 +20,12 @@ public partial class PopupSettings : PopupPage
     protected override void OnAppearing()
     {
         base.OnAppearing();
+
+        darkModePicker.ItemsSource = SettingsService.Instance.DarkMode;
+        colorThemePicker.ItemsSource = SettingsService.Instance.Themes;
+        darkModePicker.SelectedItem = SettingsService.Instance.SelectedDarkMode;
+        colorThemePicker.SelectedItem = SettingsService.Instance.SelectedTheme;
+
         _taskCompletionSource = new TaskCompletionSource<string>();
     }
 

@@ -1,7 +1,9 @@
 ﻿#nullable disable
 
 using bsm24.Models;
+using SkiaSharp;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace bsm24;
 
@@ -23,17 +25,23 @@ public static class GlobalJson
 
     public static JsonSerializerOptions GetOptions()
     {
-        return new() { WriteIndented = true };
+        return new JsonSerializerOptions
+        {
+            WriteIndented = true,
+            Converters = { new SKColorConverter() }
+        };
     }
 
-    public static string ToJson(JsonSerializerOptions options)
+    public static string ToJson()
     {
+        var options = GetOptions();
         return JsonSerializer.Serialize(_userData, options);
     }
 
     public static void FromJson(string json)
     {
-        _userData = JsonSerializer.Deserialize<JsonDataModel>(json);
+        var options = GetOptions();
+        _userData = JsonSerializer.Deserialize<JsonDataModel>(json, options);
     }
 
     public static void SaveToFile()
@@ -46,10 +54,10 @@ public static class GlobalJson
 
         try
         {
-            string json = ToJson(GetOptions());
+            string json = ToJson(); // Serialisiere mit den Optionen
             json = json.Replace("\r\n", "\n").Replace("\r", "\n"); // Zeilenumbrüche für Android anpassen
 
-            File.WriteAllText(_filePath, json); // Überschreibt die Datei mit neuen Daten
+            File.WriteAllText(_filePath, json); // Überschreibe die Datei mit den neuen Daten
         }
         catch (Exception ex)
         {
@@ -65,7 +73,7 @@ public static class GlobalJson
             {
                 _filePath = filePath; // Speichere den Dateipfad
                 string json = File.ReadAllText(filePath);
-                FromJson(json);
+                FromJson(json); // Deserialisiere mit den Optionen
             }
             else
             {
@@ -104,5 +112,24 @@ public static class GlobalJson
     public static String GetFilePath()
     {
         return _filePath;
+    }
+}
+
+public class SKColorConverter : JsonConverter<SKColor>
+{
+    public override SKColor Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+    {
+        var colorString = reader.GetString();
+        if (!string.IsNullOrEmpty(colorString))
+        {
+            return SKColor.Parse(colorString); // Hex-String in SKColor umwandeln
+        }
+        return SKColors.Transparent; // Fallback-Wert
+    }
+
+    public override void Write(Utf8JsonWriter writer, SKColor value, JsonSerializerOptions options)
+    {
+        var colorString = value.ToString(); // SKColor in Hex-String umwandeln
+        writer.WriteStringValue(colorString);
     }
 }
