@@ -53,6 +53,7 @@ public partial class IconGallery : UraniumContentPage, IQueryAttributable
             GlobalJson.Data.Plans[PlanId].Pins[PinId].Size = iconItem.IconSize;
             GlobalJson.Data.Plans[PlanId].Pins[PinId].IsLockRotate = iconItem.IsRotationLocked;
             GlobalJson.Data.Plans[PlanId].Pins[PinId].PinColor = iconItem.PinColor;
+            GlobalJson.Data.Plans[PlanId].Pins[PinId].PinScale = iconItem.IconScale;
         }
 
         // save data to file

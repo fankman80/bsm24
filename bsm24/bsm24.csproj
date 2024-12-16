@@ -171,6 +171,9 @@
 	  <MauiXaml Update="Views\LoadPDFPages.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
+	  <MauiXaml Update="Views\PopupSlider.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
 	  <MauiXaml Update="Views\PopupAlert.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
@@ -215,6 +218,9 @@
 	  </Compile>
 	  <Compile Update="Views\LoadPDFPages.xaml.cs">
 	    <DependentUpon>LoadPDFPages.xaml</DependentUpon>
+	  </Compile>
+	  <Compile Update="Views\PopupSlider.xaml.cs">
+	    <DependentUpon>PopupSlider.xaml</DependentUpon>
 	  </Compile>
 	  <Compile Update="Views\PopupAlert.xaml.cs">
 	    <DependentUpon>PopupAlert.xaml</DependentUpon>

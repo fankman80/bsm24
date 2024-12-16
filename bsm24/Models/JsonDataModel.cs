@@ -51,6 +51,7 @@ public class Pin
     public string OnPlanId { get; set; }
     public string SelfId { get; set; }
     public SKColor PinColor { get; set; }
+    public double PinScale { get; set; }
 }
 
 public class Foto

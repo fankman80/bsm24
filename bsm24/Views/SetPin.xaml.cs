@@ -69,6 +69,7 @@ public partial class SetPin : UraniumContentPage, IQueryAttributable
         PinImage.Source = GlobalJson.Data.Plans[PlanId].Pins[PinId].PinIcon;
         LockSwitch.IsToggled = GlobalJson.Data.Plans[PlanId].Pins[PinId].IsLocked;
         LockRotate.IsToggled = GlobalJson.Data.Plans[PlanId].Pins[PinId].IsLockRotate;
+        SizePercentText.Text = Math.Round(GlobalJson.Data.Plans[PlanId].Pins[PinId].PinScale * 100, 0).ToString() + "%";
     }
 
     private async void OnImageTapped(object sender, EventArgs e)
@@ -172,6 +173,19 @@ public partial class SetPin : UraniumContentPage, IQueryAttributable
                 DateTime = DateTime.Now
             });
         }
+    }
+
+    private async void OnResizeClicked(object sender, EventArgs e)
+    {
+        var popup = new PopupSlider(GlobalJson.Data.Plans[PlanId].Pins[PinId].PinScale);
+        await MopupService.Instance.PushAsync(popup);
+        var result = await popup.PopupDismissedTask;
+
+        GlobalJson.Data.Plans[PlanId].Pins[PinId].PinScale = result;
+        SizePercentText.Text = Math.Round(result * 100, 0).ToString() + "%";
+
+        // save data to file
+        GlobalJson.SaveToFile();
     }
 
     private void OnSizeChanged(object sender, EventArgs e)

@@ -57,6 +57,8 @@ public partial class NewPage : IQueryAttributable
                 image.Source = GlobalJson.Data.Plans[PlanId].Pins[PinUpdate].PinIcon;
                 image.AnchorX = GlobalJson.Data.Plans[PlanId].Pins[PinUpdate].Anchor.X;
                 image.AnchorY = GlobalJson.Data.Plans[PlanId].Pins[PinUpdate].Anchor.Y;
+                image.Scale = PinScaling(PinUpdate);
+
                 if (GlobalJson.Data.Plans[PlanId].Pins[PinUpdate].IsLocked == true)
                     image.Opacity = .3;
                 else
@@ -105,12 +107,12 @@ public partial class NewPage : IQueryAttributable
             if (e.PropertyName == "Scale")
             {
                 var scale = 1 / PlanContainer.Scale;
-                var scaleLimit = SettingsService.Instance.PinScaleLimit / 100;
                 foreach (MR.Gestures.Image img in PlanContainer.Children.Cast<MR.Gestures.Image>())
                 {
                     if (img.AutomationId != null)
                     {
                         // this may cause performance issues !!!
+                        var scaleLimit = SettingsService.Instance.PinScaleLimit / 100 * GlobalJson.Data.Plans[PlanId].Pins[img.AutomationId].PinScale;
                         if (scale < scaleLimit)
                             img.Scale = scale;
                         else if (scale < Settings.MinPinScaleLimit)
@@ -143,13 +145,6 @@ public partial class NewPage : IQueryAttributable
         Size _planSize = GlobalJson.Data.Plans[PlanId].ImageSize;
         Size _pinSize = GlobalJson.Data.Plans[PlanId].Pins[pinId].Size;
 
-        var scale = 1 / planContainer.Scale;
-        var scaleLimit = SettingsService.Instance.PinScaleLimit / 100;
-        if (scale < scaleLimit)
-            scale = 1 / planContainer.Scale;
-        else
-            scale = scaleLimit;
-
         // berechne Anchor-Koordinaten
         var smallImage = new MR.Gestures.Image
         {
@@ -162,7 +157,7 @@ public partial class NewPage : IQueryAttributable
             TranslationX = (_planSize.Width * _originPos.X / densityX) - (_originAnchor.X * _pinSize.Width),
             TranslationY = (_planSize.Height * _originPos.Y / densityY) - (_originAnchor.Y * _pinSize.Height),
             Rotation = PlanContainer.Rotation * -1,
-            Scale = scale
+            Scale = PinScaling(pinId)
         };
 
         smallImage.Down += (s, e) =>
@@ -309,7 +304,8 @@ public partial class NewPage : IQueryAttributable
                 PinLocation = "",
                 PinIcon = newPin,
                 Fotos = [],
-                PinColor = SKColors.Red
+                PinColor = SKColors.Red,
+                PinScale = iconItem.IconScale
             };
 
             // Sicherstellen, dass der Plan existiert
@@ -414,5 +410,15 @@ public partial class NewPage : IQueryAttributable
         planContainer.TranslationY = (this.Height - PlanContainer.Height) / 2;
         planContainer.AnchorX = 1 / PlanContainer.Width * ((this.Width / 2) - PlanContainer.TranslationX);
         planContainer.AnchorY = 1 / PlanContainer.Height * ((this.Height / 2) - PlanContainer.TranslationY);
+    }
+
+    private double PinScaling(string pinId)
+    {
+        var scale = 1 / planContainer.Scale;
+        var scaleLimit = SettingsService.Instance.PinScaleLimit / 100 * GlobalJson.Data.Plans[PlanId].Pins[pinId].PinScale;
+        if (scale < scaleLimit)
+            return 1 / planContainer.Scale;
+        else
+            return scaleLimit;
     }
 }
