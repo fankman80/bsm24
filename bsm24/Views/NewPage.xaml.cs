@@ -6,6 +6,11 @@ using bsm24.ViewModels;
 using Mopups.Services;
 using MR.Gestures;
 using SkiaSharp;
+using Microsoft.Maui.Controls;
+
+#if WINDOWS
+using bsm24.Platforms.Windows;
+# endif
 
 namespace bsm24.Views;
 
@@ -21,6 +26,10 @@ public partial class NewPage : IQueryAttributable
     private bool isFirstLoad = true;
     private Point mousePos;
     private readonly TransformViewModel planContainer;
+#if WINDOWS
+    private bool shiftKeyDown = false;
+    private double shiftKeyRotationStart;
+#endif
 
     public NewPage(string planId, string zoomToPin = null)
     {
@@ -104,7 +113,7 @@ public partial class NewPage : IQueryAttributable
 
         PlanContainer.PropertyChanged += (s, e) =>
         {
-            if (e.PropertyName == "Scale")
+            if (e.PropertyName == "Scale" | e.PropertyName == "Rotation")
             {
                 var scale = 1 / PlanContainer.Scale;
                 var scaleLimit = SettingsService.Instance.PinMaxScaleLimit / 100;
@@ -332,6 +341,27 @@ public partial class NewPage : IQueryAttributable
     private void OnMouseMoved(object sender, MouseEventArgs e)
     {
         mousePos = e.Center;
+
+#if WINDOWS
+        if (KeyboardHelper.IsShiftPressed())
+        {
+            double centerX = this.Width / 2;
+            double centerY = this.Height / 2;
+            double deltaX = mousePos.X - centerX;
+            double deltaY = mousePos.Y - centerY;
+            double angleInRadians = Math.Atan2(deltaY, deltaX);
+            double angleInDegrees = angleInRadians * (180 / Math.PI);
+
+            if (shiftKeyDown == false)
+            {
+                shiftKeyDown = true;
+                shiftKeyRotationStart = planContainer.Rotation - angleInDegrees;
+            }
+            planContainer.Rotation =  angleInDegrees + shiftKeyRotationStart;
+        }
+        else
+            shiftKeyDown =  false;
+# endif
     }
 
     private async void OnMouseScroll(object sender, ScrollWheelEventArgs e)

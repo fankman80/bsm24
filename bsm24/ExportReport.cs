@@ -1,9 +1,8 @@
 ﻿using bsm24.Services;
-using Codeuctivity.OpenXmlPowerTools;
+using C = Codeuctivity.OpenXmlPowerTools;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Wordprocessing;
 using SkiaSharp;
-using D = DocumentFormat.OpenXml.Wordprocessing;
 
 namespace bsm24;
 
@@ -53,27 +52,27 @@ public partial class ExportReport
             // Platzhalter durch die entsprechenden Werte ersetzen
             foreach (var placeholder in placeholders_single)
                 if (placeholder.Value != "")
-                    TextReplacer.SearchAndReplace(wordDoc, placeholder.Key, placeholder.Value, true);
+                    C.TextReplacer.SearchAndReplace(wordDoc, placeholder.Key, placeholder.Value, true);
             foreach (var placeholder in placeholders_lists)
                 if (placeholder.Value != "")
-                    TextReplacer.SearchAndReplace(wordDoc, placeholder.Key, placeholder.Value, true);
+                    C.TextReplacer.SearchAndReplace(wordDoc, placeholder.Key, placeholder.Value, true);
             foreach (var placeholder in placeholders_table)
                 if (placeholder.Value != "")
-                    TextReplacer.SearchAndReplace(wordDoc, placeholder.Key, placeholder.Value, true);
+                    C.TextReplacer.SearchAndReplace(wordDoc, placeholder.Key, placeholder.Value, true);
 
             MainDocumentPart? mainPart = wordDoc.MainDocumentPart;
 
             // suche Tabelle mit Namen "PinTable"
             string tableTitle = "Pin_Table";
-            var table = mainPart?.Document?.Body?.Elements<D.Table>()
+            var table = mainPart?.Document?.Body?.Elements<Table>()
             .FirstOrDefault(t =>
             {
                 // Überprüfen, ob die Tabelle Eigenschaften hat
-                var tableProperties = t.GetFirstChild<D.TableProperties>();
+                var tableProperties = t.GetFirstChild<TableProperties>();
                 if (tableProperties != null)
                 {
                     // Überprüfen, ob die Tabelle einen Titel (TableCaption) hat
-                    var tableCaption = tableProperties.GetFirstChild<D.TableCaption>();
+                    var tableCaption = tableProperties.GetFirstChild<TableCaption>();
                     if (tableCaption != null && tableCaption.Val == tableTitle)
                         return true; // Tabelle mit gesuchtem Titel gefunden
                 }
@@ -97,36 +96,36 @@ public partial class ExportReport
                                 {
                                     // Anzahl Spalten ermitteln
                                     int columnCount = 0;
-                                    var firstRow = table.Elements<D.TableRow>().FirstOrDefault();
+                                    var firstRow = table.Elements<TableRow>().FirstOrDefault();
                                     if (firstRow != null)
-                                        columnCount = firstRow.Elements<D.TableCell>().Count();
+                                        columnCount = firstRow.Elements<TableCell>().Count();
                 
-                                    D.TableRow newRow = new();
+                                    TableRow newRow = new();
                                     for (int column = 0; column < columnCount; column++)
                                     {
                                         var _columnPlaceholders = columnList.FindAll(item => item.Item1 == column);
-                                        D.TableCell newTableCell = new();
+                                        TableCell newTableCell = new();
 
                                         if (_columnPlaceholders.Count == 0)
                                         {
                                             // Falls keine Platzhalter vorhanden sind, füge einen leeren Paragraph hinzu
-                                            D.Paragraph emptyParagraph = new();
-                                            emptyParagraph.Append(new D.Run(new D.Text("")));
+                                            Paragraph emptyParagraph = new();
+                                            emptyParagraph.Append(new Run(new Text("")));
                                             newTableCell.Append(emptyParagraph);
                                         }
                                         else
                                         {
                                             foreach (var _placeholder in _columnPlaceholders)
                                             {
-                                                D.Paragraph newParagraph = new();
+                                                Paragraph newParagraph = new();
                                                 switch (_placeholder.Item2)
                                                 {
                                                     case "${pin_nr}":
-                                                        newParagraph.Append(new D.Run(new D.Text(i.ToString())));
+                                                        newParagraph.Append(new Run(new Text(i.ToString())));
                                                         break;
 
                                                     case "${pin_planName}":
-                                                        newParagraph.Append(new D.Run(new D.Text(GlobalJson.Data.Plans[plan.Key].Name)));
+                                                        newParagraph.Append(new Run(new Text(GlobalJson.Data.Plans[plan.Key].Name)));
                                                         break;
 
                                                     case "${pin_posImage}":
@@ -162,12 +161,12 @@ public partial class ExportReport
                                                                                                         imageQuality: SettingsService.Instance.ImageExportQuality,
                                                                                                         overlayImages: pinList);
 
-                                                            newParagraph.Append(new D.Run(_imgPlan));
+                                                            newParagraph.Append(new Run(_imgPlan));
                                                         }
                                                         break;
 
                                                     case "${pin_fotoList}":
-                                                        D.Run newRun = new();
+                                                        Run newRun = new();
                                                         if (SettingsService.Instance.IsImageExport)
                                                         {
                                                             // add Pictures
@@ -192,19 +191,19 @@ public partial class ExportReport
                                                         break;
 
                                                     case "${pin_name}":
-                                                        newParagraph.Append(new D.Run(new D.Text(GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].PinName)));
+                                                        newParagraph.Append(new Run(new Text(GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].PinName)));
                                                         break;
 
                                                     case "${pin_desc}":
-                                                        newParagraph.Append(new D.Run(new D.Text(GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].PinDesc)));
+                                                        newParagraph.Append(new Run(new Text(GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].PinDesc)));
                                                         break;
 
                                                     case "${pin_location}":
-                                                        newParagraph.Append(new D.Run(new D.Text(GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].PinLocation)));
+                                                        newParagraph.Append(new Run(new Text(GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].PinLocation)));
                                                         break;
 
                                                     default:
-                                                        newParagraph.Append(new D.Run(new D.Text("")));
+                                                        newParagraph.Append(new Run(new Text("")));
                                                         break;
                                                 }
                                                 newTableCell.Append(newParagraph);
@@ -224,12 +223,12 @@ public partial class ExportReport
                 // Add Title Image
                 if (mainPart?.Document?.Body != null)
                 {
-                    foreach (var paragraph in mainPart.Document.Body.Elements<D.Paragraph>())
+                    foreach (var paragraph in mainPart.Document.Body.Elements<Paragraph>())
                     {
-                        var run = paragraph.Elements<D.Run>().FirstOrDefault(r => r.InnerText.Contains("${title_image"));
+                        var run = paragraph.Elements<Run>().FirstOrDefault(r => r.InnerText.Contains("${title_image"));
                         if (run != null)
                         {
-                            foreach (var text in run.Elements<D.Text>())
+                            foreach (var text in run.Elements<Text>())
                             {
                                 if (text.Text.Contains("${title_image"))
                                 {
@@ -256,19 +255,19 @@ public partial class ExportReport
                     // create Plan Index
                     if (mainPart?.Document?.Body != null)
                     {
-                        foreach (var paragraph in mainPart.Document.Body.Elements<D.Paragraph>())
+                        foreach (var paragraph in mainPart.Document.Body.Elements<Paragraph>())
                         {
-                            var run = paragraph.Elements<D.Run>().FirstOrDefault(r => r.InnerText.Contains("${plan_indexes}"));
+                            var run = paragraph.Elements<Run>().FirstOrDefault(r => r.InnerText.Contains("${plan_indexes}"));
                             if (run != null)
                             {
-                                foreach (var text in run.Elements<D.Text>())
+                                foreach (var text in run.Elements<Text>())
                                 {
                                     if (text.Text.Contains("${plan_indexes}"))
                                     {
                                         text.Text = ""; // Lösche den Platzhaltertext
                                         foreach (var plan in GlobalJson.Data.Plans)
                                         {
-                                            run.Append(new D.Text("- " + GlobalJson.Data.Plans[plan.Key].Name));
+                                            run.Append(new Text("- " + GlobalJson.Data.Plans[plan.Key].Name));
                                             run.Append(new Break() { Type = BreakValues.TextWrapping });
                                         }
                                     }
@@ -281,12 +280,12 @@ public partial class ExportReport
                     if (mainPart?.Document?.Body != null)
                     {
                         // add Plan Images
-                        foreach (var paragraph in mainPart.Document.Body.Elements<D.Paragraph>())
+                        foreach (var paragraph in mainPart.Document.Body.Elements<Paragraph>())
                         {
-                            var run = paragraph.Elements<D.Run>().FirstOrDefault(r => r.InnerText.Contains("${plan_images}"));
+                            var run = paragraph.Elements<Run>().FirstOrDefault(r => r.InnerText.Contains("${plan_images}"));
                             if (run != null)
                             {
-                                foreach (var text in run.Elements<D.Text>())
+                                foreach (var text in run.Elements<Text>())
                                 {
                                     if (text.Text.Contains("${plan_images}"))
                                     {
@@ -325,11 +324,11 @@ public partial class ExportReport
                                                                                     imageQuality: SettingsService.Instance.ImageExportQuality,
                                                                                     overlayImages: pinList);
 
-                                            var runProperties = new D.RunProperties(); // definiere Schriftgrösse
-                                            var fontSize = new D.FontSize() { Val = "32" }; // 16pt Schriftgröße
+                                            var runProperties = new RunProperties(); // definiere Schriftgrösse
+                                            var fontSize = new DocumentFormat.OpenXml.Wordprocessing.FontSize() { Val = "32" }; // 16pt Schriftgröße
                                             runProperties.Append(fontSize);
                                             run.PrependChild(runProperties); // weise Schrift-Property zu
-                                            run.Append(new D.Text(GlobalJson.Data.Plans[plan.Key].Name));
+                                            run.Append(new Text(GlobalJson.Data.Plans[plan.Key].Name));
                                             run.Append(new Break() { Type = BreakValues.TextWrapping });
                                             run.Append(_img);
                                             if (i < GlobalJson.Data.Plans.Count - 1) run.Append(new Break() { Type = BreakValues.Page });  // letzter Seitenumbruch nicht einfügen
@@ -340,7 +339,6 @@ public partial class ExportReport
                         }
                     }
                 }
-
                 wordDoc.Save(); // Änderungen im MemoryStream speichern
             }
         }
@@ -351,16 +349,16 @@ public partial class ExportReport
         memoryStream.CopyTo(outputFileStream);
     }
 
-    private static List<(int, string)> SearchTableColumns(D.Table table, Dictionary<string, string> placeholders_table)
+    private static List<(int, string)> SearchTableColumns(Table table, Dictionary<string, string> placeholders_table)
     {
         List<(int, string)> columnList = [];
 
-        foreach (var row in table.Elements<D.TableRow>())
+        foreach (var row in table.Elements<TableRow>())
         {
             int columnIndex = 0; // Spaltenzähler
-            foreach (var cell in row.Elements<D.TableCell>())
+            foreach (var cell in row.Elements<TableCell>())
             {
-                foreach (var paragraph in cell.Elements<D.Paragraph>())
+                foreach (var paragraph in cell.Elements<Paragraph>())
                 {
                     foreach (var placeholder in placeholders_table)
                     {
@@ -369,10 +367,10 @@ public partial class ExportReport
                             columnList.Add((columnIndex, placeholder.Key));
 
                             // Platzhalter aus dem Paragraphen entfernen
-                            var run = paragraph.Elements<D.Run>().FirstOrDefault(r => r.InnerText.Contains(placeholder.Key));
+                            var run = paragraph.Elements<Run>().FirstOrDefault(r => r.InnerText.Contains(placeholder.Key));
                             if (run != null)
                             {
-                                foreach (var text in run.Elements<D.Text>())
+                                foreach (var text in run.Elements<Text>())
                                 {
                                     if (text.Text.Contains(placeholder.Key))
                                         text.Text = text.Text.Replace(placeholder.Key, ""); // Platzhalter entfernen

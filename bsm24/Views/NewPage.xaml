@@ -65,25 +65,25 @@
             </AbsoluteLayout>
         </mr:ContentView>
         <Button ImageSource="{FontImageSource FontFamily=MaterialOutlined, Glyph={x:Static m:MaterialOutlined.Add_location_alt}}"
-            BackgroundColor="{DynamicResource Primary}"
-            TextColor="{DynamicResource PrimaryDarkText}"                
-            Margin="0,0,20,20"
-            WidthRequest="60"
-            HeightRequest="60"
-            CornerRadius="30"
-            AbsoluteLayout.LayoutBounds="1, 1, AutoSize, AutoSize"
-            AbsoluteLayout.LayoutFlags="PositionProportional"
-            Clicked="SetPinClicked"/>
+                BackgroundColor="{DynamicResource Primary}"
+                TextColor="{DynamicResource PrimaryDarkText}"                
+                Margin="0,0,20,20"
+                WidthRequest="60"
+                HeightRequest="60"
+                CornerRadius="30"
+                AbsoluteLayout.LayoutBounds="1, 1, AutoSize, AutoSize"
+                AbsoluteLayout.LayoutFlags="PositionProportional"
+                Clicked="SetPinClicked"/>
         
         <Button ImageSource="{FontImageSource FontFamily=MaterialOutlined, Glyph={x:Static m:MaterialOutlined.Screenshot_region}}"
-            BackgroundColor="{DynamicResource Primary}"
-            TextColor="{DynamicResource PrimaryDarkText}"                
-            Margin="0,0,100,20"
-            WidthRequest="60"
-            HeightRequest="60"
-            CornerRadius="30"
-            AbsoluteLayout.LayoutBounds="1, 1, AutoSize, AutoSize"
-            AbsoluteLayout.LayoutFlags="PositionProportional"
+                BackgroundColor="{DynamicResource Primary}"
+                TextColor="{DynamicResource PrimaryDarkText}"                
+                Margin="0,0,100,20"
+                WidthRequest="60"
+                HeightRequest="60"
+                CornerRadius="30"
+                AbsoluteLayout.LayoutBounds="1, 1, AutoSize, AutoSize"
+                AbsoluteLayout.LayoutFlags="PositionProportional"
             Clicked="SetRegionClicked"/>        
     </AbsoluteLayout>
 </mr:ContentPage>
