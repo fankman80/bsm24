@@ -6,8 +6,10 @@ using DW = DocumentFormat.OpenXml.Drawing.Wordprocessing;
 using C = Codeuctivity.OpenXmlPowerTools;
 using SkiaSharp;
 using OXML = DocumentFormat.OpenXml;
-using VML = DocumentFormat.OpenXml.Vml;
-using VMLW = DocumentFormat.OpenXml.Vml.Wordprocessing;
+using DocumentFormat.OpenXml.Vml.Office;
+using DocumentFormat.OpenXml.Vml.Wordprocessing;
+using DocumentFormat.OpenXml.Vml;
+using DocumentFormat.OpenXml;
 
 namespace bsm24;
 
@@ -84,9 +86,9 @@ public partial class ExportReport
                 return false;
             });
 
-            // Insert Pins in Doc-Table
             if (mainPart != null)
             {
+                // Insert Pins in Doc-Table
                 if (table != null)
                 {
                     List<(int, string)> columnList = SearchTableColumns(table, placeholders_table); // Suche SpaltenNummern
@@ -138,7 +140,7 @@ public partial class ExportReport
                                                         {
                                                             // add Part of Plan Image
                                                             var planName = GlobalJson.Data.Plans[plan.Key].File;
-                                                            var planPath = Path.Combine(FileSystem.AppDataDirectory, GlobalJson.Data.PlanPath, planName);
+                                                            var planPath = System.IO.Path.Combine(FileSystem.AppDataDirectory, GlobalJson.Data.PlanPath, planName);
                                                             var pinPos = GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].Pos;
                                                             var pinImage = GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].PinIcon;
 
@@ -180,9 +182,9 @@ public partial class ExportReport
                                                                 if (GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].Fotos[img.Key].IsChecked)
                                                                 {
                                                                     var imgName = GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].Fotos[img.Key].File;
-                                                                    var imgPath = Path.Combine(FileSystem.AppDataDirectory, GlobalJson.Data.ImagePath, imgName);
-                                                                    var overlayFile = Path.GetFileNameWithoutExtension(imgName) + ".png";
-                                                                    var overlayDrawingPath = Path.Combine(FileSystem.AppDataDirectory, GlobalJson.Data.ImageOverlayPath, overlayFile);
+                                                                    var imgPath = System.IO.Path.Combine(FileSystem.AppDataDirectory, GlobalJson.Data.ImagePath, imgName);
+                                                                    var overlayFile = System.IO.Path.GetFileNameWithoutExtension(imgName) + ".png";
+                                                                    var overlayDrawingPath = System.IO.Path.Combine(FileSystem.AppDataDirectory, GlobalJson.Data.ImageOverlayPath, overlayFile);
                                                                     var _img = await XmlImage.GenerateImage(mainPart,
                                                                                                             new FileResult(imgPath),
                                                                                                             SettingsService.Instance.ImageExportScale,
@@ -224,7 +226,6 @@ public partial class ExportReport
                     }
                 }
 
-
                 // Add Title Image
                 if (mainPart?.Document?.Body != null)
                 {
@@ -238,7 +239,7 @@ public partial class ExportReport
                                 if (text.Text.Contains("${title_image"))
                                 {
                                     text.Text = ""; // Lösche den Platzhaltertext
-                                    var imgPath = Path.Combine(FileSystem.AppDataDirectory, GlobalJson.Data.ImagePath, GlobalJson.Data.TitleImage);
+                                    var imgPath = System.IO.Path.Combine(FileSystem.AppDataDirectory, GlobalJson.Data.ImagePath, GlobalJson.Data.TitleImage);
                                     if (File.Exists(imgPath))
                                     {
                                         var _img = await XmlImage.GenerateImage(mainPart,
@@ -284,7 +285,7 @@ public partial class ExportReport
                     // Extrahiere die einzigartigen PinIcons
                     //List<string> uniquePinIcons = GetUniquePinIcons(GlobalJson.Data);
 
-                    var cacheDir = Path.Combine(FileSystem.AppDataDirectory, "pincache");
+                    var cacheDir = System.IO.Path.Combine(FileSystem.AppDataDirectory, "pincache");
                     //if (!Directory.Exists(cacheDir))
                     //    Directory.CreateDirectory(cacheDir);
 
@@ -313,7 +314,7 @@ public partial class ExportReport
                                             var runProperties = new RunProperties(); // definiere Schriftgrösse
                                             var fontSize = new DocumentFormat.OpenXml.Wordprocessing.FontSize() { Val = "32" }; // 16pt Schriftgröße
                                             var imgName = GlobalJson.Data.Plans[plan.Key].File;
-                                            var planImage = Path.Combine(FileSystem.AppDataDirectory, GlobalJson.Data.PlanPath, imgName);
+                                            var planImage = System.IO.Path.Combine(FileSystem.AppDataDirectory, GlobalJson.Data.PlanPath, imgName);
                                             var planSize = GlobalJson.Data.Plans[plan.Key].ImageSize;
 
                                             runProperties.Append(fontSize);
@@ -328,14 +329,17 @@ public partial class ExportReport
                                                 {
                                                     if (GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].AllowExport)
                                                     {
-                                                        string pinImage = Path.Combine(cacheDir, GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].PinIcon);
+                                                        string pinImage = System.IO.Path.Combine(cacheDir, GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].PinIcon);
                                                         var pinPos = GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].Pos;
                                                         var pinAnchor = GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].Anchor;
                                                         var pinSize = GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].Size;
+                                                        var pinColor = GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].PinColor;
                                                         var posOnPlan = new Point((pinPos.X * 200) - (pinAnchor.X * pinSize.Width / 20),
                                                                                   (pinPos.Y * 200 * planSize.Height / planSize.Width) - (pinAnchor.Y * pinSize.Height / 20));
-
                                                         run.Append(GetImageElement(mainPart, pinImage, new Size(pinSize.Width / 20, pinSize.Height / 20), posOnPlan));
+
+                                                        run.Append(CreateTextBoxWithShape(SettingsService.Instance.PlanLabelPrefix + i.ToString(), posOnPlan, 12, pinColor.ToString()[3..]));
+
                                                         i += 1;
                                                     }
                                                 }
@@ -356,42 +360,6 @@ public partial class ExportReport
         using FileStream outputFileStream = new(savePath, FileMode.Create, FileAccess.Write);
         memoryStream.Position = 0; // Zurück zum Anfang des MemoryStreams, bevor du ihn schreibst
         memoryStream.CopyTo(outputFileStream);
-    }
-
-    private static List<(int, string)> SearchTableColumns(Table table, Dictionary<string, string> placeholders_table)
-    {
-        List<(int, string)> columnList = [];
-
-        foreach (var row in table.Elements<TableRow>())
-        {
-            int columnIndex = 0; // Spaltenzähler
-            foreach (var cell in row.Elements<TableCell>())
-            {
-                foreach (var paragraph in cell.Elements<Paragraph>())
-                {
-                    foreach (var placeholder in placeholders_table)
-                    {
-                        if (paragraph.InnerText.Contains(placeholder.Key))
-                        {
-                            columnList.Add((columnIndex, placeholder.Key));
-
-                            // Platzhalter aus dem Paragraphen entfernen
-                            var run = paragraph.Elements<Run>().FirstOrDefault(r => r.InnerText.Contains(placeholder.Key));
-                            if (run != null)
-                            {
-                                foreach (var text in run.Elements<Text>())
-                                {
-                                    if (text.Text.Contains(placeholder.Key))
-                                        text.Text = text.Text.Replace(placeholder.Key, ""); // Platzhalter entfernen
-                                }
-                            }
-                        }
-                    }
-                }
-                columnIndex++; // Spaltenzähler erhöhen
-            }
-        }
-        return columnList;
     }
 
     private static Drawing GetImageElement(MainDocumentPart mainPart, string imgPath, Size size, Point pos)
@@ -575,7 +543,7 @@ public partial class ExportReport
 
     public static long MillimetersToEMU(double millimeters)
     {
-        return Convert.ToInt64((millimeters * 914400) / 25.4);
+        return Convert.ToInt64(millimeters * 36000);
     }
 
     public static List<string> GetUniquePinIcons(JsonDataModel jsonDataModel)
@@ -596,5 +564,82 @@ public partial class ExportReport
 
         // Rückgabe der eindeutigen PinIcons als Liste
         return [.. uniquePinIcons];
+    }
+
+    private static List<(int, string)> SearchTableColumns(Table table, Dictionary<string, string> placeholders_table)
+    {
+        List<(int, string)> columnList = [];
+
+        foreach (var row in table.Elements<TableRow>())
+        {
+            int columnIndex = 0; // Spaltenzähler
+            foreach (var cell in row.Elements<TableCell>())
+            {
+                foreach (var paragraph in cell.Elements<Paragraph>())
+                {
+                    foreach (var placeholder in placeholders_table)
+                    {
+                        if (paragraph.InnerText.Contains(placeholder.Key))
+                        {
+                            columnList.Add((columnIndex, placeholder.Key));
+
+                            // Platzhalter aus dem Paragraphen entfernen
+                            var run = paragraph.Elements<Run>().FirstOrDefault(r => r.InnerText.Contains(placeholder.Key));
+                            if (run != null)
+                            {
+                                foreach (var text in run.Elements<Text>())
+                                {
+                                    if (text.Text.Contains(placeholder.Key))
+                                        text.Text = text.Text.Replace(placeholder.Key, ""); // Platzhalter entfernen
+                                }
+                            }
+                        }
+                    }
+                }
+                columnIndex++; // Spaltenzähler erhöhen
+            }
+        }
+        return columnList;
+    }
+
+    private static Picture CreateTextBoxWithShape(string text, Point coordinateMM, double fontSizePt, string fontColorHex)
+    {
+        double xCoordinatePt = coordinateMM.X * 2.83465;
+        double yCoordinatePt = coordinateMM.Y * 2.83465;
+
+        Picture picture1 = new();
+
+        Shape shape1 = new()
+        {
+            Id = "TextBoxShape",
+            Style = $"position:absolute;margin-left:{xCoordinatePt}pt;margin-top:{yCoordinatePt}pt;mso-fit-shape-to-text:t;",
+        };
+
+        Fill fill1 = new() { Color = "#FFFFFF" };
+        Stroke stroke1 = new() { Color = fontColorHex, Weight = "1pt" };
+        TextBox textBox1 = new() { Style = "mso-fit-shape-to-text:t" };
+        TextBoxContent textBoxContent1 = new();
+        Paragraph paragraph2 = new();
+        Run run2 = new();
+
+        RunProperties runProperties = new()
+        {
+            FontSize = new DocumentFormat.OpenXml.Wordprocessing.FontSize() { Val = fontSizePt.ToString() },
+            Color = new OXML.Wordprocessing.Color() { Val = fontColorHex } // Textfarbe im Hex-Format (z. B. "#FF5733")
+        };
+
+        Text text2 = new() { Text = text };
+
+        run2.Append(runProperties);
+        run2.Append(text2);
+        paragraph2.Append(run2);
+        textBoxContent1.Append(paragraph2);
+        textBox1.Append(textBoxContent1);
+        shape1.Append(textBox1);
+        shape1.Append(fill1);
+        shape1.Append(stroke1);
+        picture1.Append(shape1);
+
+        return picture1;
     }
 }
