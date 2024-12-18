@@ -1,8 +1,11 @@
-﻿using bsm24.Services;
-using C = Codeuctivity.OpenXmlPowerTools;
+﻿using bsm24.Models;
+using bsm24.Services;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Wordprocessing;
+using DW = DocumentFormat.OpenXml.Drawing.Wordprocessing;
+using C = Codeuctivity.OpenXmlPowerTools;
 using SkiaSharp;
+using OXML = DocumentFormat.OpenXml;
 
 namespace bsm24;
 
@@ -99,7 +102,7 @@ public partial class ExportReport
                                     var firstRow = table.Elements<TableRow>().FirstOrDefault();
                                     if (firstRow != null)
                                         columnCount = firstRow.Elements<TableCell>().Count();
-                
+
                                     TableRow newRow = new();
                                     for (int column = 0; column < columnCount; column++)
                                     {
@@ -264,7 +267,7 @@ public partial class ExportReport
                                 {
                                     if (text.Text.Contains("${plan_indexes}"))
                                     {
-                                        text.Text = ""; // Lösche den Platzhaltertext
+                                        text.Remove(); // Lösche den Platzhaltertext
                                         foreach (var plan in GlobalJson.Data.Plans)
                                         {
                                             run.Append(new Text("- " + GlobalJson.Data.Plans[plan.Key].Name));
@@ -275,6 +278,18 @@ public partial class ExportReport
                             }
                         }
                     }
+
+                    // Extrahiere die einzigartigen PinIcons
+                    //List<string> uniquePinIcons = GetUniquePinIcons(GlobalJson.Data);
+
+                    var cacheDir = Path.Combine(FileSystem.AppDataDirectory, "pincache");
+                    //if (!Directory.Exists(cacheDir))
+                    //    Directory.CreateDirectory(cacheDir);
+
+                    //foreach (var icon in uniquePinIcons)
+                    //{
+                        //File.Move(icon, Path.Combine(cacheDir, icon));
+                    //}
 
 
                     if (mainPart?.Document?.Body != null)
@@ -290,47 +305,39 @@ public partial class ExportReport
                                     if (text.Text.Contains("${plan_images}"))
                                     {
                                         int i = 1;
-                                        text.Text = ""; // Lösche den Platzhaltertext
+                                        text.Remove(); // Lösche den Platzhaltertext
                                         foreach (var plan in GlobalJson.Data.Plans)
                                         {
+                                            var runProperties = new RunProperties(); // definiere Schriftgrösse
+                                            var fontSize = new DocumentFormat.OpenXml.Wordprocessing.FontSize() { Val = "32" }; // 16pt Schriftgröße
                                             var imgName = GlobalJson.Data.Plans[plan.Key].File;
-                                            var imgPath = Path.Combine(FileSystem.AppDataDirectory, GlobalJson.Data.PlanPath, imgName);
+                                            var planImage = Path.Combine(FileSystem.AppDataDirectory, GlobalJson.Data.PlanPath, imgName);
+                                            var planSize = GlobalJson.Data.Plans[plan.Key].ImageSize;
 
-                                            // generate Pin-Image-List
-                                            var pinList = new List<(string, SKPoint, string, SKPoint, SKColor)>();
+                                            runProperties.Append(fontSize);
+                                            run.PrependChild(runProperties); // weise Schrift-Property zu
+                                            run.Append(new Text(GlobalJson.Data.Plans[plan.Key].Name));
+                                            //run.Append(new Break() { Type = BreakValues.Column });
+                                            run.Append(GetImageElement(mainPart, planImage, new Size(200, 200 * planSize.Height / planSize.Width), new Point(0, 0)));
+
                                             if (GlobalJson.Data.Plans[plan.Key].Pins != null)
                                             {
                                                 foreach (var pin in GlobalJson.Data.Plans[plan.Key].Pins)
                                                 {
                                                     if (GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].AllowExport)
                                                     {
-                                                        pinList.Add((GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].PinIcon,
-                                                                    new SKPoint((float)GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].Pos.X, (float)GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].Pos.Y),
-                                                                    SettingsService.Instance.PlanLabelPrefix + i.ToString(),
-                                                                    new SKPoint((float)GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].Anchor.X, (float)GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].Anchor.Y),
-                                                                    GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].PinColor));
+                                                        string pinImage = Path.Combine(cacheDir, GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].PinIcon);
+                                                        var pinPos = GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].Pos;
+                                                        var pinAnchor = GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].Anchor;
+                                                        var pinSize = GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].Size;
+                                                        var posOnPlan = new Point((pinPos.X * 200) - (pinAnchor.X * pinSize.Width / 20),
+                                                                                  (pinPos.Y * 200 * planSize.Height / planSize.Width) - (pinAnchor.Y * pinSize.Height / 20));
+
+                                                        run.Append(GetImageElement(mainPart, pinImage, new Size(pinSize.Width / 20, pinSize.Height / 20), posOnPlan));
                                                         i += 1;
                                                     }
                                                 }
                                             }
-                                            else
-                                            {
-                                                pinList = null;
-                                            }
-                                            var _img = await XmlImage.GenerateImage(mainPart,
-                                                                                    new FileResult(imgPath),
-                                                                                    0.5,
-                                                                                    heightMilimeters: SettingsService.Instance.PlanExportSize,
-                                                                                    imageQuality: SettingsService.Instance.ImageExportQuality,
-                                                                                    overlayImages: pinList);
-
-                                            var runProperties = new RunProperties(); // definiere Schriftgrösse
-                                            var fontSize = new DocumentFormat.OpenXml.Wordprocessing.FontSize() { Val = "32" }; // 16pt Schriftgröße
-                                            runProperties.Append(fontSize);
-                                            run.PrependChild(runProperties); // weise Schrift-Property zu
-                                            run.Append(new Text(GlobalJson.Data.Plans[plan.Key].Name));
-                                            run.Append(new Break() { Type = BreakValues.TextWrapping });
-                                            run.Append(_img);
                                             if (i < GlobalJson.Data.Plans.Count - 1) run.Append(new Break() { Type = BreakValues.Page });  // letzter Seitenumbruch nicht einfügen
                                         }
                                     }
@@ -383,5 +390,209 @@ public partial class ExportReport
             }
         }
         return columnList;
+    }
+
+    private static Drawing GetImageElement(MainDocumentPart mainPart, string imgPath, Size size, Point pos)
+    {
+        ImagePart imagePart = mainPart.AddImagePart(ImagePartType.Jpeg);
+        using (FileStream stream = new(imgPath, FileMode.Open))
+        {
+            imagePart.FeedData(stream);
+        }
+        Drawing element = GetAnchorPicture(mainPart.GetIdOfPart(imagePart), size, pos);
+
+        return element;
+    }
+
+    private static Drawing GetAnchorPicture(String imagePartId, Size size, Point pos, string name="")
+    {
+        Drawing _drawing = new();
+        DW.Anchor _anchor = new()
+        {
+            DistanceFromTop = (OXML.UInt32Value)0U,
+            DistanceFromBottom = (OXML.UInt32Value)0U,
+            DistanceFromLeft = (OXML.UInt32Value)0U,
+            DistanceFromRight = (OXML.UInt32Value)0U,
+            SimplePos = false,
+            RelativeHeight = (OXML.UInt32Value)0U,
+            BehindDoc = true,
+            Locked = false,
+            LayoutInCell = true,
+            AllowOverlap = true,
+            EditId = "44CEF5E4",
+            AnchorId = "44803ED1"
+        };
+        DW.SimplePosition _spos = new()
+        {
+            X = MillimetersToEMU(pos.X),
+            Y = MillimetersToEMU(pos.Y)
+        };
+
+        DW.HorizontalPosition _hp = new()
+        {
+            RelativeFrom = DW.HorizontalRelativePositionValues.Column
+        };
+        DW.PositionOffset _hPO = new()
+        {
+            Text = MillimetersToEMU(pos.X).ToString()
+        };
+        _hp.Append(_hPO);
+
+        DW.VerticalPosition _vp = new()
+        {
+            RelativeFrom = DW.VerticalRelativePositionValues.Paragraph
+        };
+        DW.PositionOffset _vPO = new()
+        {
+            Text = MillimetersToEMU(pos.Y).ToString()
+        };
+        _vp.Append(_vPO);
+
+        DW.Extent _e = new()
+        {
+            Cx = MillimetersToEMU(size.Width),
+            Cy = MillimetersToEMU(size.Height)
+        };
+
+        DW.EffectExtent _ee = new()
+        {
+            LeftEdge = 0L,
+            TopEdge = 0L,
+            RightEdge = 0L,
+            BottomEdge = 0L
+        };
+
+        DW.WrapTight _wp = new()
+        {
+            WrapText = DW.WrapTextValues.BothSides
+        };
+
+        DW.WrapPolygon _wpp = new()
+        {
+            Edited = false
+        };
+        DW.StartPoint _sp = new()
+        {
+            X = 0L,
+            Y = 0L
+        };
+
+        DW.LineTo _l1 = new() { X = 0L, Y = 0L };
+        DW.LineTo _l2 = new() { X = 0L, Y = 0L };
+        DW.LineTo _l3 = new() { X = 0L, Y = 0L };
+        DW.LineTo _l4 = new() { X = 0L, Y = 0L };
+
+        _wpp.Append(_sp);
+        _wpp.Append(_l1);
+        _wpp.Append(_l2);
+        _wpp.Append(_l3);
+        _wpp.Append(_l4);
+
+        _wp.Append(_wpp);
+
+        DW.DocProperties _dp = new()
+        {
+            Id = 1U,
+            Name = name
+        };
+
+        OXML.Drawing.Graphic _g = new();
+        OXML.Drawing.GraphicData _gd = new() { Uri = "http://schemas.openxmlformats.org/drawingml/2006/picture" };
+        OXML.Drawing.Pictures.Picture _pic = new();
+
+        OXML.Drawing.Pictures.NonVisualPictureProperties _nvpp = new();
+        OXML.Drawing.Pictures.NonVisualDrawingProperties _nvdp = new()
+        {
+            Id = 0,
+            Name = "Picture"
+        };
+        OXML.Drawing.Pictures.NonVisualPictureDrawingProperties _nvpdp = new();
+        _nvpp.Append(_nvdp);
+        _nvpp.Append(_nvpdp);
+
+
+        OXML.Drawing.Pictures.BlipFill _bf = new();
+        OXML.Drawing.Blip _b = new()
+        {
+            Embed = imagePartId,
+            CompressionState = OXML.Drawing.BlipCompressionValues.Print
+        };
+        _bf.Append(_b);
+
+        OXML.Drawing.Stretch _str = new();
+        OXML.Drawing.FillRectangle _fr = new();
+        _str.Append(_fr);
+        _bf.Append(_str);
+
+        OXML.Drawing.Pictures.ShapeProperties _shp = new();
+        OXML.Drawing.Transform2D _t2d = new();
+        OXML.Drawing.Offset _os = new()
+        {
+            X = 0L,
+            Y = 0L
+        };
+        OXML.Drawing.Extents _ex = new()
+        {
+            Cx = MillimetersToEMU(size.Width),
+            Cy = MillimetersToEMU(size.Height)
+        };
+
+        _t2d.Append(_os);
+        _t2d.Append(_ex);
+
+        OXML.Drawing.PresetGeometry _preGeo = new()
+        {
+            Preset = OXML.Drawing.ShapeTypeValues.Rectangle
+        };
+        OXML.Drawing.AdjustValueList _adl = new();
+        _preGeo.Append(_adl);
+
+        _shp.Append(_t2d);
+        _shp.Append(_preGeo);
+
+        _pic.Append(_nvpp);
+        _pic.Append(_bf);
+        _pic.Append(_shp);
+
+        _gd.Append(_pic);
+        _g.Append(_gd);
+
+        _anchor.Append(_spos);
+        _anchor.Append(_hp);
+        _anchor.Append(_vp);
+        _anchor.Append(_e);
+        _anchor.Append(_ee);
+        _anchor.Append(_wp);
+        _anchor.Append(_dp);
+        _anchor.Append(_g);
+
+        _drawing.Append(_anchor);
+
+        return _drawing;
+    }
+
+    public static long MillimetersToEMU(double millimeters)
+    {
+        return Convert.ToInt64((millimeters * 914400) / 25.4);
+    }
+
+    public static List<string> GetUniquePinIcons(JsonDataModel jsonDataModel)
+    {
+        // HashSet für einzigartige PinIcons
+        HashSet<string> uniquePinIcons = [];
+
+        // Durchlaufe alle Plans im JsonDataModel
+        foreach (var plan in jsonDataModel.Plans.Values)
+        {
+            // Durchlaufe alle Pins im Plan
+            foreach (var pin in plan.Pins.Values)
+            {
+                if (!string.IsNullOrEmpty(pin.PinIcon))
+                    uniquePinIcons.Add(pin.PinIcon);
+            }
+        }
+
+        // Rückgabe der eindeutigen PinIcons als Liste
+        return [.. uniquePinIcons];
     }
 }
