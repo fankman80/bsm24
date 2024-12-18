@@ -6,6 +6,8 @@ using DW = DocumentFormat.OpenXml.Drawing.Wordprocessing;
 using C = Codeuctivity.OpenXmlPowerTools;
 using SkiaSharp;
 using OXML = DocumentFormat.OpenXml;
+using VML = DocumentFormat.OpenXml.Vml;
+using VMLW = DocumentFormat.OpenXml.Vml.Wordprocessing;
 
 namespace bsm24;
 
