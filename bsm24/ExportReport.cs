@@ -692,11 +692,20 @@ public partial class ExportReport
         return picture1;
     }
 
-    public static double GetTextWidthInPoints(string text, string fontName, double fontSizePt, double dpi)
+    private static double GetTextWidthInPoints(string text, string fontName, double fontSizePt, double dpi)
     {
         using SKFont font = new(SKTypeface.FromFamilyName(fontName), (float)fontSizePt);
         float textWidthInPixels = font.MeasureText(text);
         double textWidthInPoints = textWidthInPixels * 72 / dpi;
         return textWidthInPoints;
     }
+
+    private static Size GetAspectRatioSize(Size inputSize, double maxLenght)
+    {
+        var ratio = Math.Max(inputSize.Width, inputSize.Height) /
+                    Math.Min(inputSize.Width, inputSize.Height);
+        var w = 
+        return size
+    }
+    
 }
