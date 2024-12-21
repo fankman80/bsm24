@@ -269,7 +269,7 @@ public partial class SettingsService : INotifyPropertyChanged
         {
             if (_pinExportSize != value)
             {
-                _pinExportSize = value;
+                _pinExportSize = Math.Round(value, 1);
                 OnPropertyChanged(nameof(PinExportSize));
             }
         }

@@ -1,17 +1,14 @@
 ﻿using bsm24.Models;
 using bsm24.Services;
 using DocumentFormat.OpenXml.Packaging;
-using DocumentFormat.OpenXml.Wordprocessing;
-using DW = DocumentFormat.OpenXml.Drawing.Wordprocessing;
-using C = Codeuctivity.OpenXmlPowerTools;
-using SkiaSharp;
-using OXML = DocumentFormat.OpenXml;
-using DocumentFormat.OpenXml.Vml.Office;
-using DocumentFormat.OpenXml.Vml.Wordprocessing;
 using DocumentFormat.OpenXml.Vml;
-using DocumentFormat.OpenXml;
-using System.Text.RegularExpressions;
+using DocumentFormat.OpenXml.Wordprocessing;
 using Microsoft.Maui;
+using SkiaSharp;
+using System.Text.RegularExpressions;
+using C = Codeuctivity.OpenXmlPowerTools;
+using DW = DocumentFormat.OpenXml.Drawing.Wordprocessing;
+using OXML = DocumentFormat.OpenXml;
 
 namespace bsm24;
 
@@ -292,7 +289,7 @@ public partial class ExportReport
 
                     //foreach (var icon in uniquePinIcons)
                     //{
-                        //File.Move(icon, Path.Combine(cacheDir, icon));
+                    //File.Move(icon, Path.Combine(cacheDir, icon));
                     //}
 
 
@@ -300,76 +297,80 @@ public partial class ExportReport
                     {
                         // add Plan Images
                         foreach (var paragraph in mainPart.Document.Body.Elements<Paragraph>())
-                        {                            
+                        {
                             if (paragraph.InnerText.Contains("${plan_images/"))
                             {
                                 var planMaxSize = ExtractDimensions(paragraph.InnerText.ToString());
-                                var replaceString = planMaxSize.Width.ToString() + "/" + planMaxSize.Height.ToString() + "}";
-                                foreach (var run in paragraph.Elements<Run>())
+                                var replaceText = "${plan_images/" + planMaxSize.Width.ToString() + "/" + planMaxSize.Height.ToString() + "}";
+
+                                string? fontSizeVal = "28";
+                                var firstRun = paragraph.Elements<Run>().FirstOrDefault();
+                                var existingFontSize = firstRun?.RunProperties?.FontSize;
+                                if (existingFontSize != null)
+                                    fontSizeVal = existingFontSize.Val;
+
+                                //var _run = paragraph.Elements<Run>().FirstOrDefault(r => r.InnerText.Contains(replaceText));
+
+                                int i = 1;
+                                foreach (var plan in GlobalJson.Data.Plans)
                                 {
-                                    if (run.InnerText.Contains(replaceString))                                    
-                                        run.Elements<Text>().FirstOrDefault(r => r.InnerText.Contains(replaceString)).Remove();                                                                            
+                                    // Erster Paragraph für den Plan-Namen
+                                    var textParagraph = new Paragraph();
+                                    var runProperties = new RunProperties(); // definiere Schriftgrösse
 
-                                    if (run.InnerText.Contains("${plan_images/"))
+                                    var fontSize = new DocumentFormat.OpenXml.Wordprocessing.FontSize() { Val = fontSizeVal }; // 16pt Schriftgröße
+                                    runProperties.Append(fontSize);
+
+                                    var run = new Run();
+                                    run.PrependChild(runProperties);
+                                    run.Append(new Text(GlobalJson.Data.Plans[plan.Key].Name));
+                                    textParagraph.Append(run);
+
+                                    // Füge den Paragraph (Plan-Namen) hinzu
+                                    paragraph.Append(textParagraph);
+
+                                    // Zweiter Paragraph für das Plan-Image und Pins (ohne manuelles Break)
+                                    var imageAndPinsParagraph = new Paragraph();
+                                    var planImage = System.IO.Path.Combine(FileSystem.AppDataDirectory, GlobalJson.Data.PlanPath, GlobalJson.Data.Plans[plan.Key].File);
+                                    var planSize = GlobalJson.Data.Plans[plan.Key].ImageSize;
+                                    var scaledPlanSize = ScaleToFit(planSize, planMaxSize);
+
+                                    run = new Run();
+                                    run.Append(GetImageElement(mainPart, planImage, scaledPlanSize, new Point(0, 0)));
+
+                                    if (GlobalJson.Data.Plans[plan.Key].Pins != null)
                                     {
-                                        int i = 1;
-                                        run.Elements<Text>().FirstOrDefault(r => r.InnerText.Contains("${plan_images/")).Remove();
-
-                                        foreach (var plan in GlobalJson.Data.Plans)
+                                        foreach (var pin in GlobalJson.Data.Plans[plan.Key].Pins)
                                         {
-                                            var runProperties = new RunProperties(); // definiere Schriftgrösse
-                                            var fontSize = new DocumentFormat.OpenXml.Wordprocessing.FontSize() { Val = "32" }; // 16pt Schriftgröße
-                                            var imgName = GlobalJson.Data.Plans[plan.Key].File;
-                                            var planImage = System.IO.Path.Combine(FileSystem.AppDataDirectory, GlobalJson.Data.PlanPath, imgName);
-                                            var planSize = GlobalJson.Data.Plans[plan.Key].ImageSize;
-                                            var scaledPlanSize = ScaleToFit(planSize, planMaxSize);
-
-                                            runProperties.Append(fontSize);
-                                            run.PrependChild(runProperties);
-                                            run.Append(new Text(GlobalJson.Data.Plans[plan.Key].Name));
-
-                                            run.Append(GetImageElement(mainPart, planImage, scaledPlanSize, new Point(0, 0)));
-
-                                            if (GlobalJson.Data.Plans[plan.Key].Pins != null)
+                                            if (GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].AllowExport)
                                             {
-                                                foreach (var pin in GlobalJson.Data.Plans[plan.Key].Pins)
-                                                {
-                                                    if (GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].AllowExport)
-                                                    {
-                                                        string pinImage = System.IO.Path.Combine(cacheDir, GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].PinIcon);
-                                                        var pinPos = GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].Pos;
-                                                        var pinAnchor = GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].Anchor;
-                                                        var pinSize = GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].Size;
-                                                        var pinColor = GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].PinColor;
-                                                        var scaledPinSize = ScaleToFit(pinSize, new Size(0, SettingsService.Instance.PinExportSize));
-                                                        var posOnPlan = new Point((pinPos.X * scaledPlanSize.Width) - (pinAnchor.X * scaledPinSize.Width),
-                                                                                  (pinPos.Y * scaledPlanSize.Height) - (pinAnchor.Y * scaledPinSize.Height));
+                                                string pinImage = System.IO.Path.Combine(cacheDir, GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].PinIcon);
+                                                var pinPos = GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].Pos;
+                                                var pinAnchor = GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].Anchor;
+                                                var pinSize = GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].Size;
+                                                var pinColor = GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].PinColor;
+                                                var scaledPinSize = ScaleToFit(pinSize, new Size(0, SettingsService.Instance.PinExportSize));
+                                                var posOnPlan = new Point((pinPos.X * scaledPlanSize.Width) - (pinAnchor.X * scaledPinSize.Width),
+                                                                          (pinPos.Y * scaledPlanSize.Height) - (pinAnchor.Y * scaledPinSize.Height));
 
-                                                        run.Append(GetImageElement(mainPart, pinImage, new Size(scaledPinSize.Width, scaledPinSize.Height), posOnPlan));
+                                                run.Append(GetImageElement(mainPart, pinImage, new Size(scaledPinSize.Width, scaledPinSize.Height), posOnPlan));
 
-                                                        run.Append(CreateTextBoxWithShape(SettingsService.Instance.PlanLabelPrefix + i.ToString(),
-                                                                                          new Point(posOnPlan.X + scaledPinSize.Width, posOnPlan.Y - scaledPinSize.Height),
-                                                                                          SettingsService.Instance.PlanLabelFontSize,
-                                                                                          pinColor.ToString()[3..]));
-                                                        i += 1;
-                                                    }
-                                                }
+                                                run.Append(CreateTextBoxWithShape(SettingsService.Instance.PlanLabelPrefix + i.ToString(),
+                                                                                    new Point(posOnPlan.X + scaledPinSize.Width, posOnPlan.Y - scaledPinSize.Height),
+                                                                                    SettingsService.Instance.PlanLabelFontSize,
+                                                                                    pinColor.ToString()[3..]));
+                                                i += 1;
                                             }
-
-                                            // Erstelle einen neuen Paragraph und Run für den nächsten Plan auf der neuen Seite
-                                            var pageBreakParagraph = new Paragraph(new Run(new Break() { Type = BreakValues.Page }));
-                                            mainPart.Document.Body.AppendChild(pageBreakParagraph);
-
-                                            // Füge einen neuen Paragraph und Run für den nächsten Plan hinzu
-                                            var nextPlanParagraph = new Paragraph();
-                                            var nextPlanRun = new Run();
-                                            mainPart.Document.Body.AppendChild(nextPlanParagraph);
-                                            nextPlanParagraph.Append(nextPlanRun);
-
-                                            // Setze den `run` auf den neu erstellten `nextPlanRun`, um den nächsten Plan einzufügen
-                                            run = nextPlanRun;
                                         }
                                     }
+
+                                    // Füge das Plan-Image und die Pins zum Paragraph hinzu
+                                    imageAndPinsParagraph.Append(run);
+                                    paragraph.Append(imageAndPinsParagraph);
+
+                                    // Erstelle einen neuen Paragraph mit einem Seitenumbruch
+                                    var pageBreakParagraph = new Paragraph(new Run(new Break() { Type = BreakValues.Page }));
+                                    paragraph.Append(pageBreakParagraph);
                                 }
                             }
                         }
@@ -729,19 +730,15 @@ public partial class ExportReport
     
     private static Size ExtractDimensions(string input)
     {
-        // Regex für die Struktur ${plan_images/Wert1/Wert2}
         var regex = new Regex(@"\$\{plan_images/(\d+)/(\d+)\}");
         var match = regex.Match(input);
 
         if (match.Success)
         {
-            // Extrahiere die beiden Werte und konvertiere sie in Integer
             int width = int.Parse(match.Groups[1].Value);
             int height = int.Parse(match.Groups[2].Value);
             return new Size(width, height);
         }
-
-        // Gib null zurück, wenn kein Match gefunden wurde
         return new Size(250, 140);
     }
 }

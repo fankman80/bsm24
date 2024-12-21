@@ -100,8 +100,8 @@
                                 AccentColor="{AppThemeBinding Light={DynamicResource PrimaryAccent}, Dark={DynamicResource SecondaryDark}}" />
                         </Grid>
 
-                        <Label Text="{Binding ImageExportSize, StringFormat='Pin-Grösse: {0:0.##} mm'}" Margin="0, 0, 0, -12"/>
-                        <Slider Maximum="100"
+                        <Label Text="{Binding PinExportSize, StringFormat='Pin-Grösse: {0:0.##} mm'}" Margin="0, 0, 0, -12"/>
+                        <Slider Maximum="50"
                                 Minimum="1"
                                 ThumbColor="{DynamicResource Primary}"
                                 MinimumTrackColor="{DynamicResource Primary}"
