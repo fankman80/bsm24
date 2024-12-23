@@ -32,7 +32,7 @@
 				TranslationY="{Binding TranslationY}"
                 AnchorX="{Binding AnchorX}"
 				AnchorY="{Binding AnchorY}">
-                <ff:CachedImage x:Name="ImageView" />
+                <ff:CachedImage x:Name="ImageView" CacheType="Memory"/>
                 <mct:DrawingView
                     x:Name="DrawView"
                     BackgroundColor="Transparent"

@@ -44,9 +44,9 @@ public partial class PinList : UraniumContentPage
                         PinIcon = GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].PinIcon,
                         PinName = GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].PinName,
                         PinLocation = GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].PinLocation,
-                        OnPlanName = GlobalJson.Data.Plans[plan.Key].Name,
-                        OnPlanId = plan.Key,
-                        SelfId = pin.Key,
+                        OnPlanName = GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].OnPlanName,
+                        OnPlanId = GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].OnPlanId,
+                        SelfId = GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].SelfId,
                         AllowExport = GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].AllowExport,
                     };
 

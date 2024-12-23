@@ -61,8 +61,6 @@ public partial class ImageViewPage : IQueryAttributable
         {
             ImgSource = value4 as string;
             var imgPath = Path.Combine(FileSystem.AppDataDirectory, GlobalJson.Data.ImagePath, ImgSource);
-
-            // Formatierte Ausgabe im europäischen Format
             var dateTime = GlobalJson.Data.Plans[PlanId].Pins[PinId].Fotos[ImgSource].DateTime;
             string formattedDate = dateTime.ToString("d") + " / " + dateTime.ToString("HH:mm");
             this.Title = formattedDate;
@@ -88,16 +86,17 @@ public partial class ImageViewPage : IQueryAttributable
 
     public void OnPanning(object sender, PanEventArgs e)
     {
-        var scaleSpeed = 1 / ImageViewContainer.Scale;
-        double angle = ImageViewContainer.Rotation * Math.PI / 180.0;
-        double deltaX = e.DeltaDistance.X * Math.Cos(angle) - -e.DeltaDistance.Y * Math.Sin(angle);
-        double deltaY = -e.DeltaDistance.X * Math.Sin(angle) + e.DeltaDistance.Y * Math.Cos(angle);
-
-        imageViewContainer.TranslationX += deltaX * scaleSpeed;
-        imageViewContainer.TranslationY += deltaY * scaleSpeed;
-
-        imageViewContainer.AnchorX = 1 / ImageViewContainer.Width * ((this.Width / 2) - ImageViewContainer.TranslationX);
-        imageViewContainer.AnchorY = 1 / ImageViewContainer.Height * ((this.Height / 2) - ImageViewContainer.TranslationY);
+        if (imageViewContainer.IsPanningEnabled)
+        {
+            var scaleSpeed = 1 / ImageViewContainer.Scale;
+            double angle = ImageViewContainer.Rotation * Math.PI / 180.0;
+            double deltaX = e.DeltaDistance.X * Math.Cos(angle) - -e.DeltaDistance.Y * Math.Sin(angle);
+            double deltaY = -e.DeltaDistance.X * Math.Sin(angle) + e.DeltaDistance.Y * Math.Cos(angle);
+            imageViewContainer.TranslationX += deltaX * scaleSpeed;
+            imageViewContainer.TranslationY += deltaY * scaleSpeed;
+            imageViewContainer.AnchorX = 1 / ImageViewContainer.Width * ((this.Width / 2) - ImageViewContainer.TranslationX);
+            imageViewContainer.AnchorY = 1 / ImageViewContainer.Height * ((this.Height / 2) - ImageViewContainer.TranslationY);
+        }
     }
 
     private void ImageFit()
@@ -165,6 +164,9 @@ public partial class ImageViewPage : IQueryAttributable
         }
         else
         {
+            if (!Directory.Exists(Path.Combine(FileSystem.AppDataDirectory, GlobalJson.Data.ImagePath, "originals")))
+                Directory.CreateDirectory(Path.Combine(FileSystem.AppDataDirectory, GlobalJson.Data.ImagePath, "originals"));
+
             if (!File.Exists(origPath))
                 File.Copy(imgPath, origPath);
             _ = SaveDrawingView(imgPath);
@@ -177,12 +179,15 @@ public partial class ImageViewPage : IQueryAttributable
 
     private void EraseClicked(object sender, EventArgs e)
     {
-        isCleared = true;
-        ImageView.Source = Path.Combine(FileSystem.AppDataDirectory, GlobalJson.Data.ImagePath, "originals", ImgSource);
-        DrawView.Clear();
-        GlobalJson.Data.Plans[PlanId].Pins[PinId].Fotos[ImgSource].HasOverlay = false;
-        // save data to file
-        GlobalJson.SaveToFile();
+        if (GlobalJson.Data.Plans[PlanId].Pins[PinId].Fotos[ImgSource].HasOverlay)
+        {
+            isCleared = true;
+            ImageView.Source = Path.Combine(FileSystem.AppDataDirectory, GlobalJson.Data.ImagePath, "originals", ImgSource);
+            DrawView.Clear();
+            GlobalJson.Data.Plans[PlanId].Pins[PinId].Fotos[ImgSource].HasOverlay = false;
+            // save data to file
+            GlobalJson.SaveToFile();
+        }
     }
 
     private void OnSliderValueChanged(object sender, ValueChangedEventArgs e)
@@ -242,36 +247,29 @@ public partial class ImageViewPage : IQueryAttributable
                                                             cts.Token);
         if (draw_stream != null)
         {
-            // Konvertiere den Stream zu einem SKBitmap für die Bearbeitung
             using var dwStream = new SKManagedStream(draw_stream);
             using var dwBitmap = SKBitmap.Decode(dwStream);
-
             using var origStream = File.OpenRead(filePath);
             using var origBitmap = SKBitmap.Decode(origStream);
+            double scaleFaktorW = (double)origBitmap.Width / dwBitmap.Width;
+            double scaleFaktorH = (double)origBitmap.Height / dwBitmap.Height;
+            var destRect = new SKRect(0, 0, (int)origBitmap.Width, (int)origBitmap.Height);
 
-            // Zuschneiden mit SKBitmap
-            using var croppedBitmap = new SKBitmap((int)ImageViewContainer.Width, (int)ImageViewContainer.Height);
+            using var croppedBitmap = new SKBitmap((int)(origBitmap.Width), (int)(origBitmap.Height));
             using var canvas = new SKCanvas(croppedBitmap);
-
-            var sourceRect = new SKRect((dwBitmap.Width - (int)DrawView.Width) / 2,
-                                        (dwBitmap.Height - (int)DrawView.Height) / 2,
-                                        (dwBitmap.Width - (int)DrawView.Width) / 2 + (int)DrawView.Width,
-                                        (dwBitmap.Height - (int)DrawView.Height) / 2 + (int)DrawView.Height);
-            var destRect = new SKRect(0, 0, (int)DrawView.Width, (int)DrawView.Height);
-            canvas.DrawBitmap(origBitmap, sourceRect, destRect);
-            canvas.DrawBitmap(dwBitmap, sourceRect, destRect);
+            canvas.DrawBitmap(origBitmap, new SKPoint(0,0));
+            canvas.DrawBitmap(dwBitmap, destRect);
             canvas.Flush();
-
-            // Speichere das zugeschnittene Bild
-            using var image = SKImage.FromBitmap(croppedBitmap);
-            using var data = image.Encode(SKEncodedImageFormat.Jpeg, 90);
 
             if (File.Exists(filePath))
                 File.Delete(filePath);
 
-            using var fileStream = new FileStream(filePath, FileMode.Create, FileAccess.Write);
-            data.SaveTo(fileStream);
-            fileStream.Close();
+            // Speichere das Bild als JPEG
+            var image = SKImage.FromBitmap(croppedBitmap);
+            var data = image.Encode(SKEncodedImageFormat.Jpeg, 90);
+            var newStream = File.Create(filePath);
+            data.SaveTo(newStream);
+            newStream.Close();
 
             var thumbPath = Path.Combine(FileSystem.AppDataDirectory, GlobalJson.Data.ThumbnailPath, ImgSource);
             Thumbnail.Generate(filePath, thumbPath);

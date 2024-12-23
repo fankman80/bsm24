@@ -75,7 +75,7 @@
                 AbsoluteLayout.LayoutFlags="PositionProportional"
                 Clicked="SetPinClicked"/>
         
-        <Button ImageSource="{FontImageSource FontFamily=MaterialOutlined, Glyph={x:Static m:MaterialOutlined.Screenshot_region}}"
+        <!--<Button ImageSource="{FontImageSource FontFamily=MaterialOutlined, Glyph={x:Static m:MaterialOutlined.Screenshot_region}}"
                 BackgroundColor="{DynamicResource Primary}"
                 TextColor="{DynamicResource PrimaryDarkText}"                
                 Margin="0,0,100,20"
@@ -84,6 +84,6 @@
                 CornerRadius="30"
                 AbsoluteLayout.LayoutBounds="1, 1, AutoSize, AutoSize"
                 AbsoluteLayout.LayoutFlags="PositionProportional"
-            Clicked="SetRegionClicked"/>        
+            Clicked="SetRegionClicked"/>  -->       
     </AbsoluteLayout>
 </mr:ContentPage>

@@ -63,24 +63,16 @@ public partial class SetPin : UraniumContentPage, IQueryAttributable
         ImageGallery.ItemsSource = null; // Temporär die ItemsSource auf null setzen
         ImageGallery.ItemsSource = Images; // Dann wieder auf die Collection setzen
 
-        priorityPicker.ItemsSource = Settings.PriorityItems.Keys.ToList();
+        priorityPicker.ItemsSource = Settings.PriorityItems.Select(item => item.Key).ToList();
 
-        if (GlobalJson.Data.Plans[PlanId].Pins[PinId].PinPriority != "" &
-            GlobalJson.Data.Plans[PlanId].Pins[PinId].PinPriority != null)
-        {
-            String fillColor = "#FFFFFF";
-            if (Settings.PriorityItems.TryGetValue(GlobalJson.Data.Plans[PlanId].Pins[PinId].PinPriority, out String color))
-                fillColor = color;
-            priorityPicker.BorderColor = Color.FromArgb(fillColor);
-            priorityPicker.AccentColor = Color.FromArgb(fillColor);
-            priorityPicker.TextColor = Color.FromArgb(fillColor);
-            priorityPicker.Icon = new FontImageSource
-            {
-                FontFamily = "MaterialOutlined",
-                Glyph = UraniumUI.Icons.MaterialSymbols.MaterialOutlined.Priority_high,
-                Color = Color.FromArgb(fillColor)
-            };
-        }
+        //if (GlobalJson.Data.Plans[PlanId].Pins[PinId].PinPriority != 0 &
+        //    GlobalJson.Data.Plans[PlanId].Pins[PinId].PinPriority != null)
+        //{
+        //
+        //    String fillColor = "#FFFFFF";
+        //    if (Settings.PriorityItems.TryGetValue(GlobalJson.Data.Plans[PlanId].Pins[PinId].PinPriority, out String color))
+        //        fillColor = color;
+        //}
 
         // read data
         this.Title = GlobalJson.Data.Plans[PlanId].Pins[PinId].PinName;
@@ -91,7 +83,7 @@ public partial class SetPin : UraniumContentPage, IQueryAttributable
         LockRotate.IsToggled = GlobalJson.Data.Plans[PlanId].Pins[PinId].IsLockRotate;
         AllowExport.IsToggled = GlobalJson.Data.Plans[PlanId].Pins[PinId].AllowExport;
         SizePercentText.Text = Math.Round(GlobalJson.Data.Plans[PlanId].Pins[PinId].PinScale * 100, 0).ToString() + "%";
-        priorityPicker.SelectedItem = GlobalJson.Data.Plans[PlanId].Pins[PinId].PinPriority;
+        priorityPicker.SelectedIndex = GlobalJson.Data.Plans[PlanId].Pins[PinId].PinPriority;
     }
 
     private async void OnImageTapped(object sender, EventArgs e)
@@ -162,7 +154,7 @@ public partial class SetPin : UraniumContentPage, IQueryAttributable
         GlobalJson.Data.Plans[PlanId].Pins[PinId].IsLocked = LockSwitch.IsToggled;
         GlobalJson.Data.Plans[PlanId].Pins[PinId].IsLockRotate = LockRotate.IsToggled;
         GlobalJson.Data.Plans[PlanId].Pins[PinId].AllowExport = AllowExport.IsToggled;
-        GlobalJson.Data.Plans[PlanId].Pins[PinId].PinPriority = priorityPicker.SelectedItem.ToString();
+        GlobalJson.Data.Plans[PlanId].Pins[PinId].PinPriority = priorityPicker.SelectedIndex;
 
         // save data to file
         GlobalJson.SaveToFile();
@@ -231,22 +223,8 @@ public partial class SetPin : UraniumContentPage, IQueryAttributable
     {
         if (sender is Picker picker)
         {
-            var selectedValue = picker.SelectedItem;  // Dies ist das ausgewählte Item
-            if (selectedValue != null)
-            {
-                String fillColor = "#FFFFFF";
-                if (Settings.PriorityItems.TryGetValue(selectedValue.ToString(), out String color))
-                    fillColor = color;
-                priorityPicker.BorderColor = Color.FromArgb(fillColor);
-                priorityPicker.AccentColor = Color.FromArgb(fillColor);
-                priorityPicker.TextColor = Color.FromArgb(fillColor);
-                priorityPicker.Icon = new FontImageSource
-                {
-                    FontFamily = "MaterialOutlined",
-                    Glyph = UraniumUI.Icons.MaterialSymbols.MaterialOutlined.Priority_high,
-                    Color = Color.FromArgb(fillColor)
-                };
-            }
+            var selectedIndex = picker.SelectedIndex;
+            priorityPicker.TextColor = Color.FromArgb(Settings.PriorityItems[selectedIndex].Color);
         }
     }
 }

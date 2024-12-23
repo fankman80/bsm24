@@ -233,6 +233,20 @@ public partial class SettingsService : INotifyPropertyChanged
         }
     }
 
+    private bool _isFotoOverlayExport = true;
+    public bool IsFotoOverlayExport
+    {
+        get => _isFotoOverlayExport;
+        set
+        {
+            if (_isFotoOverlayExport != value)
+            {
+                _isFotoOverlayExport = value;
+                OnPropertyChanged(nameof(IsFotoOverlayExport));
+            }
+        }
+    }
+
     private int _imageExportSize = 40;
     public int ImageExportSize
     {

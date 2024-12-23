@@ -191,8 +191,11 @@ public partial class ExportReport
                                                                 {
                                                                     var imgName = GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].Fotos[img.Key].File;
                                                                     var imgPath = System.IO.Path.Combine(FileSystem.AppDataDirectory, GlobalJson.Data.ImagePath, imgName);
-                                                                    var overlayFile = System.IO.Path.GetFileNameWithoutExtension(imgName) + ".png";
-                                                                    var overlayDrawingPath = System.IO.Path.Combine(FileSystem.AppDataDirectory, GlobalJson.Data.ImageOverlayPath, overlayFile);
+                                                                    if (!SettingsService.Instance.IsFotoOverlayExport)
+                                                                        if (GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].Fotos[img.Key].HasOverlay)
+                                                                            imgPath = System.IO.Path.Combine(FileSystem.AppDataDirectory, GlobalJson.Data.ImagePath, "originals", imgName);
+                                                                    //var overlayFile = System.IO.Path.GetFileNameWithoutExtension(imgName) + ".png";
+                                                                    //var overlayDrawingPath = System.IO.Path.Combine(FileSystem.AppDataDirectory, GlobalJson.Data.ImageOverlayPath, overlayFile);
                                                                     var _img = XmlImage.GenerateImage(mainPart,
                                                                                                             new FileResult(imgPath),
                                                                                                             SettingsService.Instance.ImageExportScale,
@@ -218,16 +221,13 @@ public partial class ExportReport
                                                         break;
 
                                                     case "${pin_priority}":
-                                                        if (GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].PinPriority != "" &
-                                                            GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].PinPriority != null)
+                                                        if (GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].PinPriority != 0)
                                                         {
-                                                            String fillColor = "#FFFFFF";
-                                                            if (Settings.PriorityItems.TryGetValue(GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].PinPriority, out String color))
-                                                                fillColor = color;
+                                                            var fillColor = Settings.PriorityItems[GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].PinPriority].Color;
                                                             var cellColor = new TableCellProperties( new Shading() { Fill = fillColor.Replace("#","") });
                                                             newTableCell.Append(cellColor);
                                                         }
-                                                        newParagraph.Append(new Run(new Text(GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].PinPriority)));
+                                                        newParagraph.Append(new Run(new Text(Settings.PriorityItems[GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].PinPriority].Key)));
                                                         break;
 
                                                     default:
@@ -264,10 +264,10 @@ public partial class ExportReport
                                     if (File.Exists(imgPath))
                                     {
                                         var _img = XmlImage.GenerateImage(mainPart,
-                                                                                new FileResult(imgPath),
-                                                                                0.5,
-                                                                                heightMilimeters: SettingsService.Instance.TitleExportSize,
-                                                                                imageQuality: SettingsService.Instance.ImageExportQuality);
+                                                                        new FileResult(imgPath),
+                                                                        0.5,
+                                                                        heightMilimeters: SettingsService.Instance.TitleExportSize,
+                                                                        imageQuality: SettingsService.Instance.ImageExportQuality);
                                         run.Append(_img);
                                     }
                                 }
