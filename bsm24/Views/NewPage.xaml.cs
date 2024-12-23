@@ -381,6 +381,14 @@ public partial class NewPage : IQueryAttributable
         planContainer.Scale = targetScale;
     }
 
+    private async void OnGrayscaleClick(object sender, EventArgs e)
+    {
+        using var originalStream = File.OpenRead(PlanImage.Source);
+        using var originalBitmap = SKBitmap.Decode(originalStream);
+        var grayBitmap = Helper.ConvertToGrayscale(originalBitmap);
+        PlanImage.Source = Helper.SKBitmapToImageSource(grayBitmap);
+    }
+
     private async void OnEditClick(object sender, EventArgs e)
     {
         var popup = new PopupEntry(title: "Plan umbenennen...", inputTxt: GlobalJson.Data.Plans[PlanId].Name);
