@@ -128,7 +128,7 @@
                 Margin="-120,0,0,280"
                 Minimum="5"
                 Maximum="40"
-                Value="10"
+                Value="15"
                 WidthRequest="360"
                 Rotation="270"
                 IsVisible="False"
