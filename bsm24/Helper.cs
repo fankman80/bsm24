@@ -103,5 +103,17 @@ public class Helper
         canvas.Flush();
 
         return grayBitmap;
-     }
+    }
+
+    public ImageSource SKBitmapToImageSource(SKBitmap bitmap)
+    {
+        using var image = SKImage.FromBitmap(bitmap);
+        using var data = image.Encode(SKEncodedImageFormat.Png, 100); // Du kannst PNG oder JPEG verwenden
+
+        using var stream = new MemoryStream();
+        data.SaveTo(stream);
+        stream.Seek(0, SeekOrigin.Begin); // Stream zurücksetzen
+
+        return ImageSource.FromStream(() => stream);
+    }
 }
