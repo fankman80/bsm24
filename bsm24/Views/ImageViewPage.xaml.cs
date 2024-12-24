@@ -32,6 +32,7 @@ public partial class ImageViewPage : IQueryAttributable
         base.OnAppearing();
 
         ImageViewContainer.PropertyChanged += ImageView_PropertyChanged;
+        DrawView.LineWidth = (int)e.Value;
     }
 
     private void ImageView_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
@@ -109,13 +110,6 @@ public partial class ImageViewPage : IQueryAttributable
         imageViewContainer.AnchorY = 1 / ImageViewContainer.Height * ((this.Height / 2) - ImageViewContainer.TranslationY);
     }
 
-    //private async void DrawingView_DrawingLineCompleted(object sender, CommunityToolkit.Maui.Core.DrawingLineCompletedEventArgs e)
-    //{
-    //var stream = await DrawView.GetImageStream(200, 200);
-
-    //imageView.Source = ImageSource.FromStream(() => stream);
-    //}
-
     private void OnDrawing(object sender, EventArgs e)
     {
         isCleared = false;
@@ -172,6 +166,7 @@ public partial class ImageViewPage : IQueryAttributable
             _ = SaveDrawingView(imgPath);
 
             GlobalJson.Data.Plans[PlanId].Pins[PinId].Fotos[ImgSource].HasOverlay = true;
+            
             // save data to file
             GlobalJson.SaveToFile();
         }
