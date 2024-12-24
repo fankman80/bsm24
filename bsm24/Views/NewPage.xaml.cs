@@ -438,6 +438,8 @@ public partial class NewPage : IQueryAttributable
         // save data to file
         GlobalJson.SaveToFile();
 
+        isFirstLoad = true;
+
         PlanImage.Source = Path.Combine(FileSystem.AppDataDirectory, GlobalJson.Data.PlanPath, GlobalJson.Data.Plans[PlanId].File);
     }
 
