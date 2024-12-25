@@ -39,17 +39,14 @@
                     </DataTemplate>
                 </CollectionView.ItemTemplate>
             </CollectionView>
-        </VerticalStackLayout>
-
-
-        <VerticalStackLayout>
+        
             <Label x:Name="sliderText"
                    HorizontalOptions="Start"
                    Text=""/>
-            <Slider x:Name="PinSizeSlider"
-                    Maximum="100"
-                    Minimum="1"
-                    Value="100"
+            <Slider x:Name="LineWidthSlider"
+                    Maximum="50"
+                    Minimum="5"
+                    Value="15"
                     ThumbColor="{DynamicResource Primary}"
                     MinimumTrackColor="{DynamicResource Primary}"
                     MaximumTrackColor="{DynamicResource PrimaryDark}"
