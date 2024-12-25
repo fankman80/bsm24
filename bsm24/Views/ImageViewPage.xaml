@@ -103,11 +103,11 @@
                 AbsoluteLayout.LayoutFlags="PositionProportional"
                 BackgroundColor="{DynamicResource Primary}"
                 TextColor="{DynamicResource PrimaryDarkText}"
-                Margin="0"
+                Margin="20"
                 WidthRequest="60"
                 HeightRequest="60"
                 CornerRadius="30"
-                IsVisible="False"
+                IsVisible="True"
                 Clicked="PenSettingsClicked"/>
 
         <Button x:Name="DrawBtn" ImageSource="{FontImageSource FontFamily=MaterialOutlined, Glyph={x:Static m:MaterialOutlined.Draw}}"

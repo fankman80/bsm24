@@ -10,7 +10,6 @@ public partial class PopupSlider : PopupPage
     TaskCompletionSource<double> _taskCompletionSource;
     public Task<double> PopupDismissedTask => _taskCompletionSource.Task;
     public double ReturnValue { get; set; }
-
     private readonly double ScaleValue;
 
     public PopupSlider(double scaleValue, string okText = "Ok")

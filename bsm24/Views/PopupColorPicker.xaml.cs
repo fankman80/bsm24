@@ -2,13 +2,14 @@
 
 using Mopups.Pages;
 using Mopups.Services;
+using System.Collections.ObjectModel;
 
 namespace bsm24.Views;
 
 public partial class PopupColorPicker : PopupPage
 {
     TaskCompletionSource<int> _taskCompletionSource;
-    public Task<int> PopupDissmissedTask => _taskCompletionSource.Task;
+    public Task<int> PopupDismissedTask => _taskCompletionSource.Task;
     public int ReturnValue { get; set; }
     private readonly int LineWidth;
     public ObservableCollection<Color> Colors { get; set; }
@@ -19,25 +20,20 @@ public partial class PopupColorPicker : PopupPage
         okButtonText.Text = okText;
         LineWidth = lineWidth;
 
-        Colors = new ObservableCollection<Color>
-        {
-            Colors.Red, Colors.Green, Colors.Blue, Colors.Yellow, Colors.Orange,
-            Colors.Purple, Colors.Pink, Colors.Brown, Colors.Gray, Colors.Black,
+        Colors =
+        [
+            Color.FromRgb(255,0,0), Color.FromRgb(255,255,0), Color.FromRgb(0,255,255), Color.FromRgb(0,0,255), Color.FromRgb(0,255,255),
+            Color.FromRgb(255,0,255), Color.FromRgb(255,0,0), Color.FromRgb(255,0,0), Color.FromRgb(255,0,0), Color.FromRgb(255,0,0),
                 // ... füge hier weitere Farben hinzu
-        };
+        ];
         BindingContext = this;
     }
-
-    public Command SelectColorCommand => new Command((color) =>
-    {
-        Close(color);  // Schließt das Popup und gibt die ausgewählte Farbe zurück
-    });
 
     protected override void OnAppearing()
     {
         base.OnAppearing();
 
-        sliderText.Text = "Pindelgrösse: " + LineWidth.ToString();
+        sliderText.Text = "Pinselgrösse: " + LineWidth.ToString();
         LineWidthSlider.Value = LineWidth;
 
         _taskCompletionSource = new TaskCompletionSource<int>();

@@ -21,28 +21,24 @@
         HorizontalOptions="Center"
         VerticalOptions="Center">
 
-        <VerticalStackLayout Padding="10">
-            <Label Text="Wähle eine Farbe" FontSize="Medium" HorizontalOptions="Center" />
+        <VerticalStackLayout>
+            <Label Text="Pinselfarbe:" HorizontalOptions="Center" />
 
             <CollectionView ItemsSource="{Binding Colors}" SelectionMode="Single" SelectedItem="{Binding SelectedColor, Mode=TwoWay}">
                 <CollectionView.ItemsLayout>
                     <GridItemsLayout Orientation="Vertical" Span="5" />
                 </CollectionView.ItemsLayout>
-            
                 <CollectionView.ItemTemplate>
                     <DataTemplate>
-                        <Frame Padding="0" Margin="5" CornerRadius="10" HasShadow="False" BackgroundColor="{Binding}">
-                            <Frame.GestureRecognizers>
-                                <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type toolkit:Popup}}, Path=BindingContext.SelectColorCommand}" CommandParameter="{Binding}" />
-                            </Frame.GestureRecognizers>
-                        </Frame>
+                        <Button CornerRadius="10" BackgroundColor="{Binding}">
+                        </Button>
                     </DataTemplate>
                 </CollectionView.ItemTemplate>
             </CollectionView>
         
             <Label x:Name="sliderText"
                    HorizontalOptions="Start"
-                   Text=""/>
+                   Text="Pinselgrösse: 15"/>
             <Slider x:Name="LineWidthSlider"
                     Maximum="50"
                     Minimum="5"

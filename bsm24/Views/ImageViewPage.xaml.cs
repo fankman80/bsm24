@@ -115,7 +115,7 @@ public partial class ImageViewPage : IQueryAttributable
         isCleared = false;
     }
 
-    private void PenSettingsClicked(object sender, EventArgs e)
+    private async void PenSettingsClicked(object sender, EventArgs e)
     {
         var popup = new PopupColorPicker(LineWidth);
         await MopupService.Instance.PushAsync(popup);
