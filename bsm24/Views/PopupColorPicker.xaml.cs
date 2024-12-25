@@ -7,26 +7,40 @@ namespace bsm24.Views;
 
 public partial class PopupColorPicker : PopupPage
 {
-    TaskCompletionSource<double> _taskCompletionSource;
-    public Task<double> PopupDismissedTask => _taskCompletionSource.Task;
-    public double ReturnValue { get; set; }
-    private readonly double ScaleValue;
+    TaskCompletionSource<int> _taskCompletionSource;
+    public Task<int> PopupDissmissedTask => _taskCompletionSource.Task;
+    public int ReturnValue { get; set; }
+    private readonly int LineWidth;
+    public ObservableCollection<Color> Colors { get; set; }
 
-    public PopupColorPicker(double scaleValue, string okText = "Ok")
+    public PopupColorPicker(int lineWidth, string okText = "Ok")
     {
 	InitializeComponent();
         okButtonText.Text = okText;
-        ScaleValue = scaleValue;
+        LineWidth = lineWidth;
+
+        Colors = new ObservableCollection<Color>
+        {
+            Colors.Red, Colors.Green, Colors.Blue, Colors.Yellow, Colors.Orange,
+            Colors.Purple, Colors.Pink, Colors.Brown, Colors.Gray, Colors.Black,
+                // ... füge hier weitere Farben hinzu
+        };
+        BindingContext = this;
     }
+
+    public Command SelectColorCommand => new Command((color) =>
+    {
+        Close(color);  // Schließt das Popup und gibt die ausgewählte Farbe zurück
+    });
 
     protected override void OnAppearing()
     {
         base.OnAppearing();
 
-        sliderText.Text = "Skalierung: " + Math.Round(ScaleValue * 100, 0).ToString() + "%";
-        PinSizeSlider.Value = ScaleValue * 100;
+        sliderText.Text = "Pindelgrösse: " + LineWidth.ToString();
+        LineWidthSlider.Value = LineWidth;
 
-        _taskCompletionSource = new TaskCompletionSource<double>();
+        _taskCompletionSource = new TaskCompletionSource<int>();
     }
 
     protected override void OnDisappearing()
@@ -37,19 +51,19 @@ public partial class PopupColorPicker : PopupPage
 
     private async void PopupPage_BackgroundClicked(object sender, EventArgs e)
     {
-        ReturnValue = ScaleValue;
+        ReturnValue = LineWidth;
         await MopupService.Instance.PopAsync();
     }
 
     private async void OnOkClicked(object sender, EventArgs e)
     {
-        ReturnValue = PinSizeSlider.Value / 100;
+        ReturnValue = (int)LineWidthSlider.Value;
         await MopupService.Instance.PopAsync();
     }
 
     private async void OnCancelClicked(object sender, EventArgs e)
     {
-        ReturnValue = ScaleValue;
+        ReturnValue = LineWidth;
         await MopupService.Instance.PopAsync();
     }
 
