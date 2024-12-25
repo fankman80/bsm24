@@ -115,6 +115,11 @@ public partial class ImageViewPage : IQueryAttributable
         isCleared = false;
     }
 
+    private void PenSettingsClicked(object sender, EventArgs e)
+    {
+        
+    }
+
     private void DrawClicked(object sender, EventArgs e)
     {
         imageViewContainer.IsPanningEnabled = false;
