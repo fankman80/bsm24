@@ -30,14 +30,7 @@ public partial class PopupSlider : PopupPage
     protected override void OnDisappearing()
     {
         base.OnDisappearing();
-	ReturnValue = ScaleValue;
         _taskCompletionSource.SetResult(ReturnValue);
-    }
-
-    private async void PopupPage_BackgroundClicked(object sender, EventArgs e)
-    {
-        ReturnValue = ScaleValue;
-        await MopupService.Instance.PopAsync();
     }
 
     private async void OnOkClicked(object sender, EventArgs e)
@@ -56,6 +49,13 @@ public partial class PopupSlider : PopupPage
     {
         var sliderValue = ((Slider)sender).Value;
         sliderText.Text = "Skalierung: " + Math.Round(sliderValue, 0).ToString() + "%";
+    }
+
+    protected override bool OnBackgroundClicked()
+    {
+        ReturnValue = ScaleValue;
+        MopupService.Instance.PopAsync();
+        return true;
     }
 
 }

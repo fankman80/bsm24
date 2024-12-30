@@ -12,9 +12,9 @@
        x:Class="bsm24.AppShell"
        x:Name="shell"
        FlyoutBackgroundColor="{AppThemeBinding Light={DynamicResource PrimaryBackground}, Dark={DynamicResource SecondaryBackgroundDark}}"
-       Shell.ForegroundColor="{DynamicResource PrimaryDark}"
        FlyoutBackgroundImageAspect="AspectFill"
        FlyoutHeaderBehavior="Fixed"
+       Shell.ForegroundColor="{DynamicResource PrimaryDark}"       
        Shell.FlyoutBehavior="{OnIdiom Desktop=Locked, Default=Flyout}">
 
     <Shell.FlyoutHeaderTemplate>

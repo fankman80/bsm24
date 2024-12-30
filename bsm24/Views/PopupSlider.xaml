@@ -8,7 +8,6 @@
              xmlns:m="clr-namespace:UraniumUI.Icons.MaterialSymbols;assembly=UraniumUI.Icons.MaterialSymbols"   
              x:Class="bsm24.Views.PopupSlider"
              BackgroundInputTransparent="False"
-             CloseWhenBackgroundIsClicked="True"
              HasSystemPadding="False"
              BackgroundColor="#60000000"
              Title="Slider">

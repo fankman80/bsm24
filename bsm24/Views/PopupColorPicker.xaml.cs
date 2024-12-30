@@ -1,6 +1,5 @@
 #nullable disable
 
-using DocumentFormat.OpenXml.Presentation;
 using Mopups.Pages;
 using Mopups.Services;
 using System.Collections.ObjectModel;
@@ -16,6 +15,7 @@ public partial class PopupColorPicker : PopupPage
     private int LineWidth { get; set; }
     private Color SelectedColor { get; set; }
     public ObservableCollection<ColorItem> Colors { get; set; }
+    private Color borderColor = Microsoft.Maui.Graphics.Colors.Black;
 
     public PopupColorPicker(int lineWidth, Color selectedColor, string okText = "Ok")
     {
@@ -23,7 +23,7 @@ public partial class PopupColorPicker : PopupPage
         okButtonText.Text = okText;
         LineWidth = lineWidth;
         SelectedColor = selectedColor;
-        Colors = new ObservableCollection<ColorItem>(Settings.ColorData.Select(c => new ColorItem { BackgroundColor = c, StrokeColor = c }));
+        Colors = new ObservableCollection<ColorItem>(Settings.ColorData.Select(c => new ColorItem { BackgroundColor = c, StrokeColor = popupBorder.BackgroundColor }));
         BindingContext = this;
     }
 
@@ -31,9 +31,16 @@ public partial class PopupColorPicker : PopupPage
     {
         base.OnAppearing();
 
+        var currentTheme = Application.Current.RequestedTheme;
+        if (currentTheme == AppTheme.Light)
+            borderColor = Microsoft.Maui.Graphics.Colors.Black;
+        else if (currentTheme == AppTheme.Dark)
+            borderColor = Microsoft.Maui.Graphics.Colors.White;
+
         foreach (var colorItem in Colors)
             if (colorItem.BackgroundColor.Equals(SelectedColor))
-                colorItem.StrokeColor = Microsoft.Maui.Graphics.Colors.Black;
+                colorItem.StrokeColor = borderColor;
+
         sliderText.Text = "Pinselgrösse: " + LineWidth.ToString();
         LineWidthSlider.Value = LineWidth;
         _taskCompletionSource = new TaskCompletionSource<(Color, int)>();
@@ -45,8 +52,8 @@ public partial class PopupColorPicker : PopupPage
         if (sender is Border border && border.BindingContext is ColorItem selectedItem)
         {
             foreach (var item in Colors)
-                item.StrokeColor = item.BackgroundColor;
-            selectedItem.StrokeColor = Microsoft.Maui.Graphics.Colors.Black;
+                item.StrokeColor = popupBorder.BackgroundColor;
+            selectedItem.StrokeColor = borderColor;
             SelectedColor = selectedItem.BackgroundColor;
         }
     }

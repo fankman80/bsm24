@@ -32,9 +32,8 @@
                         <Grid RowSpacing="0">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="64" />
-                                <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition Width="Auto" />
                                 <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
                             </Grid.ColumnDefinitions>
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto"/>
@@ -43,25 +42,30 @@
                                 <RowDefinition Height="Auto"/>
                             </Grid.RowDefinitions>
 
+                            <HorizontalStackLayout Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="2">
+                                <Label Margin="10,4,6,0"
+                                       FontSize="12"
+                                       Text="{Binding OnPlanName}"/>
+                                <Label Margin="10,4,6,0"
+                                       FontSize="12"
+                                       Text=" / "/>
+                                <Label Margin="0,4,6,0"
+                                       FontSize="12"
+                                       LineBreakMode="TailTruncation"
+                                       Text="{Binding PinLocation}"/>
+                            </HorizontalStackLayout>
 
-                            <Label Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="2"
-                                   Margin="10,6,6,0"
-                                   Text="{Binding OnPlanName}"/>
-
-                            <Label Grid.Column="2" Grid.Row="0" Grid.ColumnSpan="2"
-                                   Margin="0,6,6,0"
-                                   Text="{Binding PinLocation}"/>
-
-                            <Label Grid.Column="0" Grid.Row="1" Grid.ColumnSpan="3"
-                                   Margin="10,6,6,0"
+                            <Label Grid.Column="0" Grid.Row="1" Grid.ColumnSpan="2"
+                                   Margin="10,4,6,0"
+                                   FontSize="12"
                                    LineBreakMode="TailTruncation"
                                    Text="{Binding PinName}"/>
 
-                            <BoxView Grid.Column="0" Grid.Row="2" Grid.ColumnSpan="4"
+                            <BoxView Grid.Column="0" Grid.Row="2" Grid.ColumnSpan="3"
                                      Color="{AppThemeBinding Light={DynamicResource Primary}, Dark={DynamicResource PrimaryDark}}"
                                      HeightRequest="1"
                                      HorizontalOptions="FillAndExpand"
-                                     Margin="6"/>
+                                     Margin="10,2,10,2"/>
 
                             <ff:CachedImage Grid.Column="0" Grid.Row="3"
                                     VerticalOptions="Start"
@@ -70,19 +74,20 @@
                                     Aspect="AspectFit"
                                     Margin="16,20,6,0"/>
 
-                            <Label Grid.Column="1" Grid.Row="3" Grid.ColumnSpan="3"
+                            <Label Grid.Column="1" Grid.Row="3" Grid.ColumnSpan="2"
                                    MaxLines="4"
                                    LineBreakMode="WordWrap"
-                                   MinimumHeightRequest="100"
-                                   Margin="0,6,6,6"
+                                   MinimumHeightRequest="80"
+                                   FontSize="12"
+                                   Margin="0,4,6,4"
                                    Text="{Binding PinDesc}"/>
 
-                            <Border Grid.ColumnSpan="4" Grid.RowSpan="4"
+                            <Border Grid.ColumnSpan="3" Grid.RowSpan="4"
                                     IsVisible="{Binding AllowExport, Converter={StaticResource BooleanInverterConverter}}"
-                                    Opacity="0.5"
+                                    Opacity="0.6"
                                     BackgroundColor="LightGray"/>
 
-                            <Button Grid.ColumnSpan="4" Grid.RowSpan="4"
+                            <Button Grid.ColumnSpan="3" Grid.RowSpan="4"
                                     ClassId="{Binding SelfId}"
                                     BorderWidth="1"
                                     BorderColor="{AppThemeBinding Light={DynamicResource Primary}, Dark={DynamicResource PrimaryDark}}"
@@ -90,7 +95,7 @@
                                     Background="Transparent"
                                     Clicked="OnPinClicked"/>
 
-                            <CheckBox Grid.Column="4" Grid.Row="0"  Grid.RowSpan="2"
+                            <CheckBox Grid.Column="4" Grid.Row="0" Grid.RowSpan="2"
                                       HorizontalOptions="End"
                                       IsChecked="{Binding AllowExport}"
                                       Color="{AppThemeBinding Light={DynamicResource PrimaryText}, Dark={DynamicResource PrimaryDark}}"/>
