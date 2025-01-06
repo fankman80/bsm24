@@ -83,6 +83,7 @@ public partial class LoadDataToView
         GlobalJson.Data.PlanPath = null;
         GlobalJson.Data.ImagePath = null;
         GlobalJson.Data.ThumbnailPath = null;
+        GlobalJson.Data.CustomPinsPath = null;
         GlobalJson.Data.ProjectPath = null;
         GlobalJson.Data.JsonFile = null;
     }

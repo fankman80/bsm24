@@ -98,6 +98,7 @@ public partial class OpenProject : UraniumContentPage
             GlobalJson.Data.ImagePath = Path.Combine(result, "images");
             GlobalJson.Data.ImageOverlayPath = Path.Combine(result, "images", "originals");
             GlobalJson.Data.ThumbnailPath = Path.Combine(result, "thumbnails");
+            GlobalJson.Data.CustomPinsPath = Path.Combine(result, "custompins");
             GlobalJson.Data.TitleImage = "banner_thumbnail.png";
 
             // save data to file
@@ -322,6 +323,7 @@ public partial class OpenProject : UraniumContentPage
                 GlobalJson.Data.ImagePath = Path.Combine(result, "images");
                 GlobalJson.Data.ImageOverlayPath = Path.Combine(result, "images", "originals");
                 GlobalJson.Data.ThumbnailPath = Path.Combine(result, "thumbnails");
+                GlobalJson.Data.CustomPinsPath = Path.Combine(result, "custompins");
                 GlobalJson.SaveToFile();
 
                 // Verzeichnis an die neue Stelle verschieben (umbenennen)
