@@ -31,7 +31,7 @@ public partial class App : Application
             if (window.Handler?.PlatformView is MauiWinUIWindow w)
             {
                 var presenter = (w.AppWindow.Presenter as OverlappedPresenter);
-            }
+           }
         };
 #endif
         return window;

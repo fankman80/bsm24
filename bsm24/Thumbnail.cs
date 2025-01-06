@@ -22,7 +22,8 @@ class Thumbnail
 
         // Erstelle eine neue Bitmap mit den verkleinerten Abmessungen
         var resizedBitmap = new SKBitmap(targetWidth, targetHeight);
-        skBitmap.ScalePixels(resizedBitmap, SKSamplingOptions.Default);
+        var samplingOptions = new SKSamplingOptions(SKFilterMode.Linear);
+        skBitmap.ScalePixels(resizedBitmap, samplingOptions);
 
         // Speichere das verkleinerte Bild als JPEG
         var image = SKImage.FromBitmap(resizedBitmap);

@@ -47,7 +47,8 @@ public partial class OpenProject : UraniumContentPage
                     FileName = Path.GetFileNameWithoutExtension(file),
                     FilePath = file,
                     FileDate = "Geändert am:\n" + File.GetLastWriteTime(file).Date.ToString("d", new CultureInfo("de-DE")),
-                    ImagePath = thumbImg
+                    ImagePath = thumbImg,
+                    ThumbnailPath = thumbImg
                 });
             }
         }

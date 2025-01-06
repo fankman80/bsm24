@@ -15,14 +15,12 @@ public partial class LoadDataToView
                     string planTitle = GlobalJson.Data.Plans[plan.Key].Name;
                     string planId = plan.Key;
 
-                    // Define the new page
                     var newPage = new Views.NewPage(planId)
                     {
                         Title = planTitle,
                         AutomationId = planId
                     };
 
-                    // Create a new FlyoutItem
                     var newFlyoutItem = new FlyoutItem
                     {
                         Title = planTitle,
@@ -40,17 +38,12 @@ public partial class LoadDataToView
                             new ShellContent { Content = newPage }
                         },
                     };
-
-                    // Register the route
                     Routing.RegisterRoute(planId, typeof(Views.NewPage));
-
-                    // Add the new FlyoutItem to the AppShell
                     (Application.Current.Windows[0].Page as AppShell).Items.Add(newFlyoutItem);
                 }
             }
         }
     }
-
 
     public static void ResetFlyoutItems()
     {
@@ -93,13 +86,4 @@ public partial class LoadDataToView
         GlobalJson.Data.ProjectPath = null;
         GlobalJson.Data.JsonFile = null;
     }
-}
-
-public class FileItem
-{
-    public string FileName { get; set; }
-    public string FilePath { get; set; }
-    public string FileDate { get; set; }
-    public string ImagePath { get; set; }
-    public string ThumbnailPath { get; set; }
 }
