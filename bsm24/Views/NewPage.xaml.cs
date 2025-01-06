@@ -10,6 +10,7 @@ using Microsoft.Maui.Layouts;
 using Mopups.Services;
 using MR.Gestures;
 using SkiaSharp;
+using System.Security.AccessControl;
 
 #if WINDOWS
 using bsm24.Platforms.Windows;
@@ -29,6 +30,7 @@ public partial class NewPage : IQueryAttributable
     private bool isFirstLoad = true;
     private Point mousePos;
     private readonly TransformViewModel planContainer;
+    private DrawingView drawingView;
 #if WINDOWS
     private bool shiftKeyDown = false;
     private double shiftKeyRotationStart;
@@ -142,7 +144,7 @@ public partial class NewPage : IQueryAttributable
                             img.Scale = scale * GlobalJson.Data.Plans[PlanId].Pins[img.AutomationId].PinScale;
 
                         if (!GlobalJson.Data.Plans[PlanId].Pins[img.AutomationId].IsLockRotate)
-                            img.Rotation = PlanContainer.Rotation * -1;
+                            img.Rotation = PlanContainer.Rotation * -1 + GlobalJson.Data.Plans[PlanId].Pins[img.AutomationId].PinRotation;
                     }
                 }
             }
@@ -179,8 +181,8 @@ public partial class NewPage : IQueryAttributable
             AnchorY = GlobalJson.Data.Plans[PlanId].Pins[pinId].Anchor.Y,
             TranslationX = (_planSize.Width * _originPos.X / densityX) - (_originAnchor.X * _pinSize.Width),
             TranslationY = (_planSize.Height * _originPos.Y / densityY) - (_originAnchor.Y * _pinSize.Height),
-            Rotation = PlanContainer.Rotation * -1,
-            Scale = PinScaling(pinId)
+            Rotation = GlobalJson.Data.Plans[PlanId].Pins[pinId].PinRotation,
+            Scale = PinScaling(pinId),
         };
 
         smallImage.Down += (s, e) =>
@@ -307,48 +309,12 @@ public partial class NewPage : IQueryAttributable
 
     private void SetPinClicked(object sender, EventArgs e)
     {
-        var currentPage = (NewPage)Shell.Current.CurrentPage;
-        if (currentPage != null)
-        {
-            string currentDateTime = DateTime.Now.ToString("yyyyMMdd_HHmmss");
-            string newPin = "a_pin_red.png";
-            var iconItem = Settings.PinData.FirstOrDefault(item => item.FileName.Equals(newPin, StringComparison.OrdinalIgnoreCase));
-            Pin newPinData = new()
-            {
-                Pos = new(PlanContainer.AnchorX, PlanContainer.AnchorY),
-                Anchor = iconItem.AnchorPoint,
-                Size = iconItem.IconSize,
-                IsLocked = false,
-                IsLockRotate = iconItem.IsRotationLocked,
-                PinName = iconItem.DisplayName,
-                PinDesc = "",
-                PinPriority = 0,
-                PinLocation = "",
-                PinIcon = newPin,
-                Fotos = [],
-                OnPlanName = GlobalJson.Data.Plans[PlanId].Name,
-                OnPlanId = PlanId,
-                SelfId = currentDateTime,
-                PinColor = SKColors.Red,
-                PinScale = iconItem.IconScale,
-                AllowExport = true,
-            };
+        SetPin();
+    }
 
-            // Sicherstellen, dass der Plan existiert
-            if (GlobalJson.Data.Plans.TryGetValue(PlanId, out Plan value))
-            {
-                var plan = value;
-                plan.Pins ??= [];
-                plan.Pins[currentDateTime] = newPinData;
-
-                // save data to file
-                GlobalJson.SaveToFile();
-            }
-            else
-                Console.WriteLine($"Plan mit ID {PlanId} existiert nicht.");
-
-            AddPin(currentDateTime, newPinData.PinIcon);
-        };
+    private void SetRegionClicked(object sender, EventArgs e)
+    {
+        AddDrawingView();
     }
 
     private void SetPin(string customName = null, int customPinSizeWidth = 0, int customPinSizeHeight = 0) 
@@ -359,14 +325,16 @@ public partial class NewPage : IQueryAttributable
             string currentDateTime = DateTime.Now.ToString("yyyyMMdd_HHmmss");
             string newPin = "a_pin_red.png";
             var iconItem = Settings.PinData.FirstOrDefault(item => item.FileName.Equals(newPin, StringComparison.OrdinalIgnoreCase));
-            
+            Double _rotation = planContainer.Rotation * -1;
+
             if (customName != null)
             { 
                 newPin = Path.Combine(FileSystem.AppDataDirectory, GlobalJson.Data.CustomPinsPath, customName);
-                iconItem.AnchorPoint = new Point(0.5, 0.5);
+                iconItem.AnchorPoint = new Point(0, 0);
                 iconItem.IconSize = new Size(customPinSizeWidth, customPinSizeHeight);
                 iconItem.IsRotationLocked = true;
                 iconItem.DisplayName = "";
+                _rotation = planContainer.Rotation;
             }
 
             Pin newPinData = new()
@@ -387,6 +355,7 @@ public partial class NewPage : IQueryAttributable
                 SelfId = currentDateTime,
                 PinColor = SKColors.Red,
                 PinScale = iconItem.IconScale,
+                PinRotation = _rotation,
                 AllowExport = true,
             };
 
@@ -405,11 +374,6 @@ public partial class NewPage : IQueryAttributable
 
             AddPin(currentDateTime, newPinData.PinIcon);
         };
-    }
-
-    private void SetRegionClicked(object sender, EventArgs e)
-    {
-        AddDrawingView();
     }
 
     private void OnMouseMoved(object sender, MouseEventArgs e)
@@ -581,23 +545,36 @@ public partial class NewPage : IQueryAttributable
     {
         planContainer.IsPanningEnabled = false;
 
-        var drawingView = new DrawingView
+        drawingView = new DrawingView
         {
             BackgroundColor = Colors.Transparent,
             IsMultiLineModeEnabled = true,
             LineWidth = 10,
             LineColor = Colors.Red,
             InputTransparent = false,
+            Scale = planContainer.Scale,
+            AnchorX = planContainer.AnchorX,
+            AnchorY = planContainer.AnchorY,
+            TranslationX = planContainer.TranslationX,
+            TranslationY = planContainer.TranslationY,
+            Rotation = planContainer.Rotation,
+            WidthRequest = GlobalJson.Data.Plans[PlanId].ImageSize.Width,
+            HeightRequest = GlobalJson.Data.Plans[PlanId].ImageSize.Height,
         };
 
         // Füge den EventHandler hinzu
         drawingView.DrawingLineCompleted += OnDrawingLineCompleted;
-
-        // Absolutes Layout mit vollen Bildschirmkoordinaten
-        Microsoft.Maui.Controls.AbsoluteLayout.SetLayoutBounds(drawingView, new Rect(0, 0, 1, 1));
-        Microsoft.Maui.Controls.AbsoluteLayout.SetLayoutFlags(drawingView, AbsoluteLayoutFlags.All);
-
         (this.Content as Microsoft.Maui.Controls.AbsoluteLayout)?.Children.Add(drawingView);
+    }
+
+    private void RemoveDrawingView()
+    {
+        if (drawingView != null && (this.Content as Microsoft.Maui.Controls.AbsoluteLayout) != null)
+        {
+            drawingView.DrawingLineCompleted -= OnDrawingLineCompleted;
+            (this.Content as Microsoft.Maui.Controls.AbsoluteLayout)?.Children.Remove(drawingView);
+            drawingView = null;
+        }
     }
 
     private async void OnDrawingLineCompleted(object sender, DrawingLineCompletedEventArgs e)
@@ -609,10 +586,13 @@ public partial class NewPage : IQueryAttributable
         var customPinName = "custompin_" + DateTime.Now.ToString("yyyyMMdd_HHmmss") + ".png";
         string filePath = Path.Combine(customPinPath, customPinName);
 
-        using var imageStream = await drawingView.GetImageStream(1024, 1024);
+        var cts = new CancellationTokenSource(TimeSpan.FromSeconds(5));
+        Stream imageStream = await DrawingView.GetImageStream(drawingView.Lines,
+                                                    new Size(drawingView.Width, drawingView.Height),
+                                                    Colors.Transparent,
+                                                    cts.Token);
         if (imageStream != null)
         {
-            // Speichere das Bild auf der Festplatte
             if (!Directory.Exists(customPinPath))
                 Directory.CreateDirectory(customPinPath);
 
@@ -622,14 +602,15 @@ public partial class NewPage : IQueryAttributable
             }
 
             // Lese die Bildabmessungen direkt aus der gespeicherten Datei
-            using (var file = new SKFileStream(filePath))
-            {
-                using var skBitmap = SKBitmap.Decode(file);
-                int width = skBitmap?.Width ?? 0;
-                int height = skBitmap?.Height ?? 0;
+            using var file = new SKFileStream(filePath);
+            using var skBitmap = SKBitmap.Decode(file);
+            int width = skBitmap?.Width ?? 0;
+            int height = skBitmap?.Height ?? 0;
 
-                SetPin(customPinName, width, height);
-            }
+            SetPin(customPinName, width, height);
+            RemoveDrawingView();
+
+            planContainer.IsPanningEnabled = true;
         }
     }
 }

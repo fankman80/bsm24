@@ -58,6 +58,7 @@ public partial class Pin : INotifyPropertyChanged
     public string SelfId { get; set; }
     public SKColor PinColor { get; set; }
     public double PinScale { get; set; }
+    public double PinRotation { get; set; }
     public bool AllowExport
     {
         get => _allowExport;

@@ -1,7 +1,6 @@
 ﻿#nullable disable
 
 using bsm24.Models;
-using FFImageLoading.Extensions;
 using FFImageLoading.Maui;
 using Mopups.Services;
 using System.Collections.ObjectModel;
