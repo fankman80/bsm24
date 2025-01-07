@@ -44,7 +44,7 @@
                     <Grid>
                         <views:SquareView Margin="4">
                             <ff:CachedImage Source="{Binding ImagePath}"
-                                            CacheType="Memory"
+                                            CacheType="All"
                                             Aspect="AspectFill">
                                 <ff:CachedImage.GestureRecognizers>
                                     <TapGestureRecognizer Tapped="OnImageTapped" />
@@ -52,9 +52,9 @@
                             </ff:CachedImage>
                         </views:SquareView>
 
-                        <BoxView Margin="4" BackgroundColor="White" Opacity="0.7" HeightRequest="36" VerticalOptions="End"/>
+                        <BoxView Margin="4,0,0,4" BackgroundColor="White" Opacity="0.7" HeightRequest="36" VerticalOptions="End"/>
 
-                        <Label Text="{Binding DateTime}" FontSize="12" HeightRequest="40" VerticalTextAlignment="Center" TextColor="{DynamicResource Primary}" VerticalOptions="End" Margin="10,0,0,0"/>
+                        <Label Text="{Binding DateTime}" FontSize="12" HeightRequest="40" VerticalTextAlignment="Center" TextColor="{DynamicResource Primary}" VerticalOptions="End" Margin="10,0,0,2"/>
 
                         <CheckBox IsChecked="{Binding IsChecked}"
                                   Color="{DynamicResource Primary}"

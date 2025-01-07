@@ -67,9 +67,10 @@
 				AnchorX="{Binding AnchorX}"
 				AnchorY="{Binding AnchorY}">
                 <ff:CachedImageView x:Name="PlanImage"
-                                    DownsampleUseDipUnits="False"
-                                    DownsampleToViewSize="True"
-                                    FadeAnimationDuration="0"/>
+                                CacheType="All"
+                                DownsampleUseDipUnits="False"
+                                DownsampleToViewSize="False"
+                                FadeAnimationDuration="0"/>
                 <!--<mr:Image x:Name="testIcon" Source="crosshair.png" Scale="0.5" AutomationId="skip"/>-->
             </AbsoluteLayout>
         </mr:ContentView>

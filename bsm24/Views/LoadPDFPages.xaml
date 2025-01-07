@@ -3,6 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:views="clr-namespace:bsm24.Views"
              xmlns:uranium="http://schemas.enisn-projects.io/dotnet/maui/uraniumui"
+             xmlns:ff="clr-namespace:FFImageLoading.Maui;assembly=FFImageLoading.Maui"
              xmlns:m="clr-namespace:UraniumUI.Icons.MaterialSymbols;assembly=UraniumUI.Icons.MaterialSymbols"
              xmlns:local="clr-namespace:bsm24.Views"
              Shell.TitleColor="{DynamicResource PrimaryDark}"
@@ -36,12 +37,12 @@
                                 StrokeThickness="0"
                                 Padding="16">
                             <Grid>
-                                <Image Source="{Binding PreviewPath}" Aspect="AspectFill"/>
+                                <ff:CachedImage Source="{Binding PreviewPath}" CacheType="All" Aspect="AspectFill"/>
                                 <CheckBox IsChecked="{Binding IsChecked}"
-                                        Color="{DynamicResource Primary}"
-                                        VerticalOptions="End"
-                                        HorizontalOptions="End"
-                                        Margin="8"/>
+                                          Color="{DynamicResource Primary}"
+                                          VerticalOptions="End"
+                                          HorizontalOptions="End"
+                                          Margin="8"/>
                             </Grid>
                         </Border>
                     </DataTemplate>
