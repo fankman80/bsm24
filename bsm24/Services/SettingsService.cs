@@ -76,11 +76,11 @@ public partial class SettingsService : INotifyPropertyChanged
     }
 
 #if WINDOWS
-    private double _pinMinScaleLimit = 20;
+    private double _pinMinScaleLimit = 40;
 #endif
 
 #if ANDROID
-    private double _pinMinScaleLimit = 20;
+    private double _pinMinScaleLimit = 40;
 #endif
 
     public double PinMinScaleLimit
@@ -97,11 +97,11 @@ public partial class SettingsService : INotifyPropertyChanged
     }
 
 #if WINDOWS
-    private double _pinMaxScaleLimit = 100;
+    private double _pinMaxScaleLimit = 80;
 #endif
 
 #if ANDROID
-    private double _pinMaxScaleLimit = 50;
+    private double _pinMaxScaleLimit = 60;
 #endif
 
     public double PinMaxScaleLimit
@@ -117,7 +117,7 @@ public partial class SettingsService : INotifyPropertyChanged
         }
     }
 
-    private int _pdfQuality = 300;
+    private int _pdfQuality = 450;
     public int PdfQuality
     {
         get => _pdfQuality;
@@ -134,7 +134,7 @@ public partial class SettingsService : INotifyPropertyChanged
     #region
     // Export Settings
 
-    private int _imageExportQuality = 90;
+    private int _imageExportQuality = 80;
     public int ImageExportQuality
     {
         get => _imageExportQuality;

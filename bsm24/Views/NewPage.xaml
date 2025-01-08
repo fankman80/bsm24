@@ -76,6 +76,6 @@
                 CornerRadius="30"
                 AbsoluteLayout.LayoutBounds="1, 1, AutoSize, AutoSize"
                 AbsoluteLayout.LayoutFlags="PositionProportional"
-            Clicked="SetRegionClicked"/>-->
+                Clicked="SetRegionClicked"/>-->
     </AbsoluteLayout>
 </mr:ContentPage>
