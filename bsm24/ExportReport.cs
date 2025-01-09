@@ -100,7 +100,7 @@ public partial class ExportReport
                 // Insert Pins in Doc-Table
                 if (table != null)
                 {
-                    List<(int, string)> columnList = SearchTableColumns(table, placeholders_table); // Suche SpaltenNummern
+                    List<(int, int, string)> columnList = SearchTableColumns(table, placeholders_table); // Suche SpaltenNummern
                     int i = 1;
                     foreach (var plan in GlobalJson.Data.Plans)
                     {
@@ -134,14 +134,15 @@ public partial class ExportReport
                                             foreach (var _placeholder in _columnPlaceholders)
                                             {
                                                 Paragraph newParagraph = new();
-                                                switch (_placeholder.Item2)
+                                                String text = "";
+                                                switch (_placeholder.Item3)
                                                 {
                                                     case "${pin_nr}":
-                                                        newParagraph.Append(new Run(new Text(i.ToString())));
+                                                        text = i.ToString();
                                                         break;
 
                                                     case "${pin_planName}":
-                                                        newParagraph.Append(new Run(new Text(GlobalJson.Data.Plans[plan.Key].Name)));
+                                                        text = GlobalJson.Data.Plans[plan.Key].Name;
                                                         break;
 
                                                     case "${pin_posImage}":
@@ -181,9 +182,10 @@ public partial class ExportReport
                                                         break;
 
                                                     case "${pin_fotoList}":
-                                                        Run newRun = new();
+                                                        
                                                         if (SettingsService.Instance.IsImageExport)
                                                         {
+                                                            Run newRun = new();
                                                             // add Pictures
                                                             foreach (var img in GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].Fotos)
                                                             {
@@ -194,8 +196,6 @@ public partial class ExportReport
                                                                     if (!SettingsService.Instance.IsFotoOverlayExport)
                                                                         if (GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].Fotos[img.Key].HasOverlay)
                                                                             imgPath = System.IO.Path.Combine(FileSystem.AppDataDirectory, GlobalJson.Data.ImagePath, "originals", imgName);
-                                                                    //var overlayFile = System.IO.Path.GetFileNameWithoutExtension(imgName) + ".png";
-                                                                    //var overlayDrawingPath = System.IO.Path.Combine(FileSystem.AppDataDirectory, GlobalJson.Data.ImageOverlayPath, overlayFile);
                                                                     var _img = XmlImage.GenerateImage(mainPart,
                                                                                                             new FileResult(imgPath),
                                                                                                             SettingsService.Instance.ImageExportScale,
@@ -204,20 +204,21 @@ public partial class ExportReport
                                                                     newRun.Append(_img);
                                                                 }
                                                             }
+                                                            newParagraph.Append(newRun);
                                                         }
-                                                        newParagraph.Append(newRun);
+                                                        
                                                         break;
 
                                                     case "${pin_name}":
-                                                        newParagraph.Append(new Run(new Text(GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].PinName)));
+                                                        text = GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].PinName;
                                                         break;
 
                                                     case "${pin_desc}":
-                                                        newParagraph.Append(new Run(new Text(GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].PinDesc)));
+                                                        text = GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].PinDesc;
                                                         break;
 
                                                     case "${pin_location}":
-                                                        newParagraph.Append(new Run(new Text(GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].PinLocation)));
+                                                        text = GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].PinLocation;
                                                         break;
 
                                                     case "${pin_priority}":
@@ -229,12 +230,12 @@ public partial class ExportReport
                                                         }
                                                         newParagraph.Append(new Run(new Text(Settings.PriorityItems[GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].PinPriority].Key)));
                                                         break;
-
-                                                    default:
-                                                        newParagraph.Append(new Run(new Text("")));
-                                                        break;
                                                 }
-                                                newTableCell.Append(newParagraph);
+                                                if (!string.IsNullOrEmpty(text))
+                                                    newParagraph.Append(new Run(new Text(text)));
+
+                                                if (newParagraph.Elements<Run>().Any())
+                                                    newTableCell.Append(newParagraph);
                                             }
                                         }
                                         newRow.Append(newTableCell);
@@ -611,10 +612,9 @@ public partial class ExportReport
         return [.. uniquePinIcons];
     }
 
-    private static List<(int, string)> SearchTableColumns(Table table, Dictionary<string, string> placeholders_table)
+    private static List<(int columnIndex, int positionInText, string placeholderKey)> SearchTableColumns(Table table, Dictionary<string, string> placeholders_table)
     {
-        List<(int, string)> columnList = [];
-
+        List<(int, int, string)> columnList = [];
         foreach (var row in table.Elements<TableRow>())
         {
             int columnIndex = 0; // Spaltenzähler
@@ -622,13 +622,13 @@ public partial class ExportReport
             {
                 foreach (var paragraph in cell.Elements<Paragraph>())
                 {
+                    string paragraphText = paragraph.InnerText; // Gesamter Text des Paragraphen
                     foreach (var placeholder in placeholders_table)
                     {
-                        if (paragraph.InnerText.Contains(placeholder.Key))
+                        int position = paragraphText.IndexOf(placeholder.Key);
+                        if (position != -1) // Platzhalter gefunden
                         {
-                            columnList.Add((columnIndex, placeholder.Key));
-
-                            // Platzhalter aus dem Paragraphen entfernen
+                            columnList.Add((columnIndex, position, placeholder.Key));
                             var run = paragraph.Elements<Run>().FirstOrDefault(r => r.InnerText.Contains(placeholder.Key));
                             if (run != null)
                             {
@@ -644,8 +644,20 @@ public partial class ExportReport
                 columnIndex++; // Spaltenzähler erhöhen
             }
         }
+
+        // Sortiere die Liste nach Spalte und Position im Text
+        columnList.Sort((x, y) =>
+        {
+            int result = x.Item1.CompareTo(y.Item1); // Zuerst nach Spalte (Item1) sortieren
+            if (result == 0)
+                result = x.Item2.CompareTo(y.Item2); // Wenn Spalte gleich, nach Position im Text (Item2) sortieren
+            return result;
+        });
+
         return columnList;
     }
+
+
 
     private static Picture CreateTextBoxWithShape(string text, Point coordinateMM, double fontSizePt, string fontColorHex)
     {

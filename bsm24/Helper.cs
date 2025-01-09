@@ -71,6 +71,18 @@ public class Helper
             SettingsService.Instance.FlyoutHeaderImage = "banner_thumbnail.png";
         else
             SettingsService.Instance.FlyoutHeaderImage = Path.Combine(FileSystem.AppDataDirectory, GlobalJson.Data.ProjectPath, GlobalJson.Data.TitleImage);
+
+#if WINDOWS
+        // zwinge das UI zum Aktualisieren
+        var currentWindow = Application.Current.Windows.FirstOrDefault();
+        if (currentWindow != null)
+        {
+            var currentWidth = currentWindow.Width;
+            var currentHeight = currentWindow.Height;
+            currentWindow.Width = currentWidth + 1;  // Erhöht die Breite um 1 Pixel
+            currentWindow.Height = currentHeight + 1;  // Erhöht die Höhe um 1 Pixel
+        }
+#endif
     }
 
     public static SKBitmap ConvertToGrayscale(SKBitmap originalBitmap)

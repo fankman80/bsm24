@@ -309,8 +309,8 @@ public partial class NewPage : IQueryAttributable
             planContainer.TranslationX += deltaX * scaleSpeed;
             planContainer.TranslationY += deltaY * scaleSpeed;
 
-            planContainer.AnchorX = 1 / PlanContainer.Width * ((this.Width / 2) - PlanContainer.TranslationX);
-            planContainer.AnchorY = 1 / PlanContainer.Height * ((this.Height / 2) - PlanContainer.TranslationY);
+            planContainer.AnchorX = 1 / PlanContainer.Width * ((this.Width / 2) - planContainer.TranslationX);
+            planContainer.AnchorY = 1 / PlanContainer.Height * ((this.Height / 2) - planContainer.TranslationY);
         }
     }
 
@@ -409,16 +409,27 @@ public partial class NewPage : IQueryAttributable
 #endif
     }
 
-    private async void OnMouseScroll(object sender, ScrollWheelEventArgs e)
+    private void OnMouseScroll(object sender, ScrollWheelEventArgs e)
     {
-        double zoomFactor = e.ScrollDelta.Y > 0 ? 1.4 : 0.6;
-        double targetScale = PlanContainer.Scale * zoomFactor;
+        // Dynamischer Zoomfaktor basierend auf der aktuellen Skalierung
+        double zoomFactor;
+        if (planContainer.Scale > 2) // Sehr stark vergrößert
+            zoomFactor = e.ScrollDelta.Y > 0 ? 1.05 : 0.95;  // Sehr langsame Zoom-Änderung
+        else if (planContainer.Scale > 1) // Moderat vergrößert
+            zoomFactor = e.ScrollDelta.Y > 0 ? 1.1 : 0.9;  // Langsame Zoom-Änderung
+        else // Wenig vergrößert oder sehr klein
+            zoomFactor = e.ScrollDelta.Y > 0 ? 1.15 : 0.85;  // Moderate Zoom-Änderung
 
-        planContainer.AnchorX = 1 / PlanContainer.Width * (mousePos.X - PlanContainer.TranslationX);
-        planContainer.AnchorY = 1 / PlanContainer.Height * (mousePos.Y - PlanContainer.TranslationY);
+        double targetScale = PlanContainer.Scale * zoomFactor;;
+        double newAnchorX = 1 / PlanContainer.Width * (mousePos.X - planContainer.TranslationX);
+        double newAnchorY = 1 / PlanContainer.Height * (mousePos.Y - planContainer.TranslationY);
+        double deltaTranslationX = (PlanContainer.Width * (newAnchorX - planContainer.AnchorX)) * (targetScale / planContainer.Scale - 1);
+        double deltaTranslationY = (PlanContainer.Height * (newAnchorY - planContainer.AnchorY)) * (targetScale / planContainer.Scale - 1);
 
-        await PlanContainer.ScaleTo(targetScale, 60, Easing.Linear);
-
+        planContainer.AnchorX = newAnchorX;
+        planContainer.AnchorY = newAnchorY;
+        planContainer.TranslationX -= deltaTranslationX;
+        planContainer.TranslationY -= deltaTranslationY;
         planContainer.Scale = targetScale;
     }
 
@@ -482,10 +493,7 @@ public partial class NewPage : IQueryAttributable
 
         if (result != null)
         {
-            // ändert das dazugehörige Menü-Item
             (Application.Current.Windows[0].Page as AppShell).Items.FirstOrDefault(i => i.AutomationId == PlanId).Title = result;
-
-            // ändert Titel vom View
             Title = result;
 
             GlobalJson.Data.Plans[PlanId].Name = result;

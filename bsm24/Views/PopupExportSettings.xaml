@@ -106,7 +106,7 @@
                         </Grid>
 
                         <Label Text="{Binding PinExportSize, StringFormat='Pin-Grösse: {0:0.##} mm'}" Margin="0, 0, 0, -12"/>
-                        <Slider Maximum="50"
+                        <Slider Maximum="20"
                                 Minimum="1"
                                 ThumbColor="{DynamicResource Primary}"
                                 MinimumTrackColor="{DynamicResource Primary}"

@@ -275,7 +275,7 @@ public partial class SettingsService : INotifyPropertyChanged
         }
     }
 
-    private int _titleExportSize = 100;
+    private int _titleExportSize = 90;
     public int TitleExportSize
     {
         get => _titleExportSize;

@@ -1,7 +1,6 @@
 ﻿#nullable disable
 
 using bsm24.Models;
-using Mopups.Services;
 using System.ComponentModel;
 using UraniumUI.Pages;
 
@@ -85,8 +84,27 @@ public partial class PinList : UraniumContentPage
             AutomationId = planId
         };
 
-        await Shell.Current.Navigation.PushAsync(newPage);
+        // Methode zur Vermeidung eines zu grossen Navigations-Stacks
+        var navigationStack = Shell.Current.Navigation.NavigationStack;
+        Page existingPage = null;
+        for (int i = 0; i < navigationStack.Count; i++)
+        {
+            var page = navigationStack[i];
+            if (page != null && page.AutomationId == planId)
+            {
+                existingPage = page;
+                break;
+            }
+        }
+        if (existingPage != null)
+        {
+            while (navigationStack[navigationStack.Count - 1] != existingPage)
+                await Shell.Current.Navigation.PopAsync(false); // false -> Keine Animation
+        }
+        else
+            await Shell.Current.Navigation.PushAsync(newPage);
     }
+
 
     private async void UpdateSpan()
     {
