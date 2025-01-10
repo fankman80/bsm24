@@ -128,7 +128,7 @@ public partial class NewPage : IQueryAttributable
             };
         }
 
-        //calculate aspectratio, resolution and imagesize
+        //calculate aspect-ratio, resolution and imagesize
         if (GlobalJson.Data.Plans[PlanId].ImageSize.Width > 7168 || GlobalJson.Data.Plans[PlanId].ImageSize.Height > 7168)
         {
             PlanImage.DownsampleToViewSize = true;
@@ -598,8 +598,8 @@ public partial class NewPage : IQueryAttributable
             TranslationX = planContainer.TranslationX,
             TranslationY = planContainer.TranslationY,
             Rotation = planContainer.Rotation,
-            WidthRequest = GlobalJson.Data.Plans[PlanId].ImageSize.Width,
-            HeightRequest = GlobalJson.Data.Plans[PlanId].ImageSize.Height,
+            WidthRequest = PlanImage.Width,
+            HeightRequest = PlanImage.Height,
         };
 
         // Füge den EventHandler hinzu
