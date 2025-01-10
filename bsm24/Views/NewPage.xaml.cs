@@ -5,9 +5,13 @@ using bsm24.Services;
 using bsm24.ViewModels;
 using CommunityToolkit.Maui.Core;
 using CommunityToolkit.Maui.Views;
+using FFImageLoading;
 using Mopups.Services;
 using MR.Gestures;
 using SkiaSharp;
+#if ANDROID
+using SubsamplingScaleImageViewBinding;
+#endif
 
 #if WINDOWS
 using bsm24.Platforms.Windows;
@@ -124,25 +128,43 @@ public partial class NewPage : IQueryAttributable
             };
         }
 
-        PlanImage.WidthRequest = GlobalJson.Data.Plans[PlanId].ImageSize.Width;
-        PlanImage.HeightRequest = GlobalJson.Data.Plans[PlanId].ImageSize.Height;
-        PlanImage.DownsampleWidth = 8192;
-        PlanImage.DownsampleHeight = 8192;
-
-        if (GlobalJson.Data.Plans[PlanId].ImageSize.Width > 8192 | GlobalJson.Data.Plans[PlanId].ImageSize.Height > 8192)
+        //calculate aspectratio, resolution and imagesize
+        if (GlobalJson.Data.Plans[PlanId].ImageSize.Width > 7168 || GlobalJson.Data.Plans[PlanId].ImageSize.Height > 7168)
+        {
             PlanImage.DownsampleToViewSize = true;
+            PlanImage.DownsampleWidth = 7168;
+            PlanImage.DownsampleHeight = 7168;
 
+            var scaleFac = Math.Min(GlobalJson.Data.Plans[PlanId].ImageSize.Width, GlobalJson.Data.Plans[PlanId].ImageSize.Height) /
+                           Math.Max(GlobalJson.Data.Plans[PlanId].ImageSize.Width, GlobalJson.Data.Plans[PlanId].ImageSize.Height);
+
+            if (GlobalJson.Data.Plans[PlanId].ImageSize.Width > GlobalJson.Data.Plans[PlanId].ImageSize.Height)
+            {
+                PlanImage.WidthRequest = 7168;
+                PlanImage.HeightRequest = 7168 * scaleFac;
+            }
+            else
+            {
+                PlanImage.WidthRequest = 7168 * scaleFac;
+                PlanImage.HeightRequest = 7168;
+            }
+        }
+        else
+        {
+            PlanImage.WidthRequest = GlobalJson.Data.Plans[PlanId].ImageSize.Width;
+            PlanImage.HeightRequest = GlobalJson.Data.Plans[PlanId].ImageSize.Height;
+        }
         PlanImage.Source = Path.Combine(FileSystem.AppDataDirectory, GlobalJson.Data.PlanPath, GlobalJson.Data.Plans[PlanId].File);
 
         PlanContainer.PropertyChanged += (s, e) =>
         {
-            if (e.PropertyName == "Scale" | e.PropertyName == "Rotation")
+            if (e.PropertyName == "Scale" || e.PropertyName == "Rotation")
             {
                 var scale = 1 / PlanContainer.Scale;
                 var scaleLimit = SettingsService.Instance.PinMaxScaleLimit / 100;
                 foreach (MR.Gestures.Image img in PlanContainer.Children.OfType<MR.Gestures.Image>())
                 {
-                    if (img.AutomationId != null)
+                    if (img.AutomationId != null & GlobalJson.Data.Plans[PlanId].Pins[img.AutomationId].IsCustomPin != true)
                     {
                         // this may cause performance issues !!!
                         if (scale < scaleLimit & scale > SettingsService.Instance.PinMinScaleLimit / 100)
@@ -175,7 +197,8 @@ public partial class NewPage : IQueryAttributable
         Size _planSize = GlobalJson.Data.Plans[PlanId].ImageSize;
         Size _pinSize = GlobalJson.Data.Plans[PlanId].Pins[pinId].Size;
 
-
+        if (GlobalJson.Data.Plans[PlanId].Pins[pinId].IsCustomPin) // Add Path for Custom Pin-Image
+            pinIcon = Path.Combine(FileSystem.AppDataDirectory, GlobalJson.Data.CustomPinsPath, pinIcon);
 
         // berechne Anchor-Koordinaten
         var smallImage = new MR.Gestures.Image
@@ -336,10 +359,11 @@ public partial class NewPage : IQueryAttributable
 
             if (customName != null)
             { 
-                newPin = Path.Combine(FileSystem.AppDataDirectory, GlobalJson.Data.CustomPinsPath, customName);
+                newPin = customName;
                 iconItem.AnchorPoint = new Point(0, 0);
                 iconItem.IconSize = new Size(customPinSizeWidth, customPinSizeHeight);
                 iconItem.IsRotationLocked = true;
+                iconItem.IsCustomPin = true;
                 iconItem.DisplayName = "";
                 _rotation = planContainer.Rotation;
             }
@@ -351,6 +375,7 @@ public partial class NewPage : IQueryAttributable
                 Size = iconItem.IconSize,
                 IsLocked = false,
                 IsLockRotate = iconItem.IsRotationLocked,
+                IsCustomPin = iconItem.IsCustomPin,
                 PinName = iconItem.DisplayName,
                 PinDesc = "",
                 PinPriority = 0,
@@ -482,7 +507,7 @@ public partial class NewPage : IQueryAttributable
 
         isFirstLoad = true;
 
-        PlanImage.Source = Path.Combine(FileSystem.AppDataDirectory, GlobalJson.Data.PlanPath, GlobalJson.Data.Plans[PlanId].File);
+        //PlanImage.Source = Path.Combine(FileSystem.AppDataDirectory, GlobalJson.Data.PlanPath, GlobalJson.Data.Plans[PlanId].File);
     }
 
     private async void OnEditClick(object sender, EventArgs e)

@@ -38,7 +38,7 @@
                                 Padding="16">
                             <Grid>
                                 <ff:CachedImage Source="{Binding PreviewPath}"
-                                                CacheType="All"
+                                                CacheType="Memory"
                                                 FadeAnimationEnabled ="False"
                                                 FadeAnimationForCachedImages ="False"
                                                 Aspect="AspectFill"/>

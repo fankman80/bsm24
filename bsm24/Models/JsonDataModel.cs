@@ -47,6 +47,7 @@ public partial class Pin : INotifyPropertyChanged
     public Size Size { get; set; }
     public bool IsLocked { get; set; }
     public bool IsLockRotate { get; set; }
+    public bool IsCustomPin { get; set; }
     public string PinName { get; set; }
     public string PinDesc { get; set; }
     public string PinLocation { get; set; }

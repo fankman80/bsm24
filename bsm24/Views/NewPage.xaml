@@ -47,13 +47,13 @@
 				            TranslationY="{Binding TranslationY}"
 				            AnchorX="{Binding AnchorX}"
 				            AnchorY="{Binding AnchorY}">
-                            <ff:CachedImageView x:Name="PlanImage"
-                                                CacheType="All"
-                                                DownsampleUseDipUnits="False"
-                                                DownsampleToViewSize="False"
-                                                FadeAnimationEnabled ="False"
-                                                FadeAnimationForCachedImages ="False"
-                                                LoadingDelay="0"/>
+                <ff:CachedImageView x:Name="PlanImage"
+                                    CacheType="All"
+                                    DownsampleUseDipUnits="False"
+                                    DownsampleToViewSize="False"
+                                    FadeAnimationEnabled ="False"
+                                    FadeAnimationForCachedImages ="False"
+                                    LoadingDelay="0"/>
             </AbsoluteLayout>
         </mr:ContentView>
         <Button ImageSource="{FontImageSource FontFamily=MaterialOutlined, Glyph={x:Static m:MaterialOutlined.Add_location_alt}}"
@@ -66,8 +66,8 @@
                 AbsoluteLayout.LayoutBounds="1, 1, AutoSize, AutoSize"
                 AbsoluteLayout.LayoutFlags="PositionProportional"
                 Clicked="SetPinClicked"/>
-        
-        <!--<Button ImageSource="{FontImageSource FontFamily=MaterialOutlined, Glyph={x:Static m:MaterialOutlined.Screenshot_region}}"
+
+        <Button ImageSource="{FontImageSource FontFamily=MaterialOutlined, Glyph={x:Static m:MaterialOutlined.Screenshot_region}}"
                 BackgroundColor="{DynamicResource Primary}"
                 TextColor="{DynamicResource PrimaryDarkText}"                
                 Margin="0,0,100,20"
@@ -76,6 +76,6 @@
                 CornerRadius="30"
                 AbsoluteLayout.LayoutBounds="1, 1, AutoSize, AutoSize"
                 AbsoluteLayout.LayoutFlags="PositionProportional"
-                Clicked="SetRegionClicked"/>-->
+                Clicked="SetRegionClicked"/>
     </AbsoluteLayout>
 </mr:ContentPage>

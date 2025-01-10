@@ -44,7 +44,7 @@
                     <Grid>
                         <views:SquareView Margin="4">
                             <ff:CachedImage Source="{Binding ImagePath}"
-                                            CacheType="All"
+                                            CacheType="Memory"
                                             FadeAnimationEnabled ="False"
                                             FadeAnimationForCachedImages ="False"
                                             Aspect="AspectFill">
