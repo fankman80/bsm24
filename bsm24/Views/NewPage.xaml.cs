@@ -5,13 +5,9 @@ using bsm24.Services;
 using bsm24.ViewModels;
 using CommunityToolkit.Maui.Core;
 using CommunityToolkit.Maui.Views;
-using FFImageLoading;
 using Mopups.Services;
 using MR.Gestures;
 using SkiaSharp;
-#if ANDROID
-using SubsamplingScaleImageViewBinding;
-#endif
 
 #if WINDOWS
 using bsm24.Platforms.Windows;
@@ -507,7 +503,7 @@ public partial class NewPage : IQueryAttributable
 
         isFirstLoad = true;
 
-        //PlanImage.Source = Path.Combine(FileSystem.AppDataDirectory, GlobalJson.Data.PlanPath, GlobalJson.Data.Plans[PlanId].File);
+        PlanImage.Source = Path.Combine(FileSystem.AppDataDirectory, GlobalJson.Data.PlanPath, GlobalJson.Data.Plans[PlanId].File);
     }
 
     private async void OnEditClick(object sender, EventArgs e)
@@ -625,12 +621,11 @@ public partial class NewPage : IQueryAttributable
         var customPinPath = Path.Combine(FileSystem.AppDataDirectory, GlobalJson.Data.CustomPinsPath);
         var customPinName = "custompin_" + DateTime.Now.ToString("yyyyMMdd_HHmmss") + ".png";
         string filePath = Path.Combine(customPinPath, customPinName);
-
         var cts = new CancellationTokenSource(TimeSpan.FromSeconds(5));
         Stream imageStream = await DrawingView.GetImageStream(drawingView.Lines,
-                                                    new Size(drawingView.Width, drawingView.Height),
-                                                    Colors.Transparent,
-                                                    cts.Token);
+                                                            new Size(drawingView.Width, drawingView.Height),
+                                                            Colors.Transparent,
+                                                            cts.Token);
         if (imageStream != null)
         {
             if (!Directory.Exists(customPinPath))

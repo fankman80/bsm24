@@ -248,21 +248,20 @@ public partial class ImageViewPage : IQueryAttributable
             using var dwBitmap = SKBitmap.Decode(dwStream);
             using var origStream = File.OpenRead(filePath);
             using var origBitmap = SKBitmap.Decode(origStream);
-            double scaleFaktorW = (double)origBitmap.Width / dwBitmap.Width;
-            double scaleFaktorH = (double)origBitmap.Height / dwBitmap.Height;
             var destRect = new SKRect(0, 0, (int)origBitmap.Width, (int)origBitmap.Height);
 
-            using var croppedBitmap = new SKBitmap((int)(origBitmap.Width), (int)(origBitmap.Height));
-            using var canvas = new SKCanvas(croppedBitmap);
+            using var mergedBitmap = new SKBitmap((int)(origBitmap.Width), (int)(origBitmap.Height));
+            using var canvas = new SKCanvas(mergedBitmap);
             canvas.DrawBitmap(origBitmap, new SKPoint(0,0));
             canvas.DrawBitmap(dwBitmap, destRect);
+
             canvas.Flush();
 
             if (File.Exists(filePath))
                 File.Delete(filePath);
 
             // Speichere das Bild als JPEG
-            var image = SKImage.FromBitmap(croppedBitmap);
+            var image = SKImage.FromBitmap(mergedBitmap);
             var data = image.Encode(SKEncodedImageFormat.Jpeg, 90);
             var newStream = File.Create(filePath);
             data.SaveTo(newStream);

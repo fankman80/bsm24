@@ -14,6 +14,11 @@ public partial class App : Application
 
         System.Globalization.CultureInfo.CurrentCulture = new System.Globalization.CultureInfo("de-DE");
         System.Globalization.CultureInfo.CurrentUICulture = new System.Globalization.CultureInfo("de-DE");
+    }
+
+    protected override void OnStart()
+    {
+        base.OnStart();
 
         SettingsService.Instance.LoadSettings();
     }

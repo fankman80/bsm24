@@ -49,6 +49,24 @@
 		<HoursBetweenUpdateChecks>0</HoursBetweenUpdateChecks>
 	</PropertyGroup>
 
+	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net9.0-android35.0|AnyCPU'">
+		<AndroidKeyStore>True</AndroidKeyStore>
+		<AndroidSigningKeyStore>C:\Users\fankhauser\Desktop\bsm24\bsm24.keystore</AndroidSigningKeyStore>
+		<AndroidSigningStorePass>p0Ny05jY</AndroidSigningStorePass>
+		<AndroidSigningKeyAlias>bsm24</AndroidSigningKeyAlias>
+		<AndroidSigningKeyPass>p0Ny05jY</AndroidSigningKeyPass>
+		<AndroidPackageFormat>apk</AndroidPackageFormat>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net9.0-android35.0|AnyCPU'">
+		<AndroidKeyStore>True</AndroidKeyStore>
+		<AndroidSigningKeyStore>C:\Users\fankhauser\Desktop\bsm24\bsm24.keystore</AndroidSigningKeyStore>
+		<AndroidSigningStorePass>p0Ny05jY</AndroidSigningStorePass>
+		<AndroidSigningKeyAlias>bsm24</AndroidSigningKeyAlias>
+		<AndroidSigningKeyPass>p0Ny05jY</AndroidSigningKeyPass>
+		<AndroidPackageFormat>apk</AndroidPackageFormat>
+	</PropertyGroup>
+	
 	<ItemGroup>
 		<!-- App Icon -->
 		<MauiIcon Include="Resources\AppIcon\ic_background.png" ForegroundFile="Resources\AppIcon\ic_foreground.png" />
@@ -260,12 +278,6 @@
 
 	<ItemGroup>
 	  <None Update="Resources\AppIcon\icon.png" ForegroundScale="0.66" />
-	</ItemGroup>
-
-	<ItemGroup Condition="'$(TargetFramework)' == 'net9.0-android35.0'">
-	  <PackageReference Include="SubsamplingScaleImageViewBinding">
-	    <Version>3.10.0.1</Version>
-	  </PackageReference>
 	</ItemGroup>
 
 </Project>
