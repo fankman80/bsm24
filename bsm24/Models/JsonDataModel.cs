@@ -41,7 +41,6 @@ public class Plan
 public partial class Pin : INotifyPropertyChanged
 {
     private bool _allowExport;
-
     public Point Pos { get; set; }
     public Point Anchor { get; set; }
     public Size Size { get; set; }
@@ -60,6 +59,7 @@ public partial class Pin : INotifyPropertyChanged
     public SKColor PinColor { get; set; }
     public double PinScale { get; set; }
     public double PinRotation { get; set; }
+    public GeoLocData GeoLocation { get; set; }
     public bool AllowExport
     {
         get => _allowExport;
@@ -87,6 +87,12 @@ public class Foto
     public bool HasOverlay { get; set; }
     public bool IsChecked { get; set; }
     public DateTime DateTime { get; set; }
+}
+
+public class GeoLocData
+{
+    public Point WGS84 { get; set; }
+    public Point CH1903 { get; set; }
 }
 
 public class Position
