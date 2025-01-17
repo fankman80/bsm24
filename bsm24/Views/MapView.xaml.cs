@@ -35,13 +35,10 @@ public partial class MapView
             string formattedEasting = swissEasting.ToString(System.Globalization.CultureInfo.InvariantCulture);
             string formattedNorthing = swissNorthing.ToString(System.Globalization.CultureInfo.InvariantCulture);
             string geoAdminUrl = $"https://map.geo.admin.ch/#/map?lang=de&center={formattedEasting},{formattedNorthing}&z=12";
-
             GeoAdminWebView.Source = geoAdminUrl;
         }
         else
-        {
             GeoAdminWebView.Source = "https://map.geo.admin.ch";
-        }
     }
 
     public async Task<Location> GetCurrentLocationAsync()
@@ -49,7 +46,6 @@ public partial class MapView
         try
         {
             var location = await Geolocation.GetLastKnownLocationAsync();
-
             if (location == null)
             {
                 location = await Geolocation.GetLocationAsync(new GeolocationRequest
@@ -58,12 +54,10 @@ public partial class MapView
                     Timeout = TimeSpan.FromSeconds(30)
                 });
             }
-
             return location;
         }
         catch (Exception ex)
         {
-            // Fehlerbehandlung
             Console.WriteLine($"Unable to get location: {ex.Message}");
             return null;
         }
@@ -79,14 +73,9 @@ internal class MyWebChromeClient : WebChromeClient
         if (status == PermissionStatus.Granted)
             return status;
         if (status == PermissionStatus.Denied && DeviceInfo.Platform == DevicePlatform.iOS)
-        {
-            // Prompt the user to turn on in settings
             return status;
-        }
         if (Permissions.ShouldShowRationale<Permissions.LocationWhenInUse>())
-        {
             // Prompt the user with additional information as to why the permission is needed
-        }
         status = await Permissions.RequestAsync<Permissions.LocationWhenInUse>();
         return status;
     }
