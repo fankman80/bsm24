@@ -87,39 +87,32 @@ public class Helper
 
     public static SKBitmap ConvertToGrayscale(SKBitmap originalBitmap)
     {
-        // Graustufen-ColorMatrix erstellen
-        float[] grayscaleMatrix =
-        [
-            0.45f, 0.45f, 0.45f, 0, 0,   // Red: leicht angehoben
-            0.45f, 0.45f, 0.45f, 0, 0,   // Green: leicht angehoben
-            0.45f, 0.45f, 0.45f, 0, 0,   // Blue: leicht angehoben
-            0,     0,     0,     1, 0    // Alpha unverändert
-        ];
+        // Graustufen-ColorMatrix erstellen basierend auf Luminanz
+        float[] grayscaleMatrix = [
+        0.299f, 0.587f, 0.114f, 0, 0,
+        0.299f, 0.587f, 0.114f, 0, 0,
+        0.299f, 0.587f, 0.114f, 0, 0,
+        0,      0,      0,      1, 0];
 
-        // ColorFilter erstellen
         using var colorFilter = SKColorFilter.CreateColorMatrix(grayscaleMatrix);
-
-         // Neues Bitmap für Graustufenbild erstellen
-         var grayBitmap = new SKBitmap(originalBitmap.Width, originalBitmap.Height);
-
-        // Canvas zum Zeichnen mit dem Filter erstellen
+        var grayBitmap = new SKBitmap(originalBitmap.Width, originalBitmap.Height);
         using var canvas = new SKCanvas(grayBitmap);
         var paint = new SKPaint
         {
             ColorFilter = colorFilter
         };
 
-        // Das Originalbild mit dem Graustufenfilter zeichnen
         canvas.DrawBitmap(originalBitmap, 0, 0, paint);
         canvas.Flush();
 
         return grayBitmap;
     }
 
+
     public static ImageSource SKBitmapToImageSource(SKBitmap bitmap)
     {
         using var image = SKImage.FromBitmap(bitmap);
-        using var data = image.Encode(SKEncodedImageFormat.Png, 100); // Du kannst PNG oder JPEG verwenden
+        using var data = image.Encode(SKEncodedImageFormat.Png, 90); // Du kannst PNG oder JPEG verwenden
 
         using var stream = new MemoryStream();
         data.SaveTo(stream);

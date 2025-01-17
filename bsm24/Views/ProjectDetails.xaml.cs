@@ -58,11 +58,6 @@ public partial class ProjectDetails : UraniumContentPage
 #endif
     }
 
-    private async void OnCancelClicked(object sender, EventArgs e)
-    {
-        await Shell.Current.GoToAsync("//homescreen");
-    }
-
     private async void OnTitleCaptureClicked(object sender, EventArgs e)
     {
         string thumbFileName = $"title_{DateTime.Now.Ticks}.jpg";
