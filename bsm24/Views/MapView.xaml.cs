@@ -1,7 +1,9 @@
 ﻿#nullable disable
 
-using System.ComponentModel;
 using Location = Microsoft.Maui.Devices.Sensors.Location;
+#if ANDROID
+using Android.Webkit;
+#endif
 
 namespace bsm24.Views;
 
@@ -11,6 +13,16 @@ public partial class MapView
     {
         InitializeComponent();
         ShowCurrentLocationOnMap();
+
+        Microsoft.Maui.Handlers.WebViewHandler.Mapper.AppendToMapping("MyCustomization", (handler, view) =>
+        {
+#if ANDROID
+            handler.PlatformView.Settings.SetGeolocationEnabled(true);
+            handler.PlatformView.Settings.JavaScriptCanOpenWindowsAutomatically = true;
+            handler.PlatformView.Settings.JavaScriptEnabled = true;
+            handler.PlatformView.SetWebChromeClient(new MyWebChromeClient());
+#endif
+        });
     }
 
     private async void ShowCurrentLocationOnMap()
@@ -57,3 +69,35 @@ public partial class MapView
         }
     }
 }
+
+#if ANDROID
+internal class MyWebChromeClient : WebChromeClient
+{
+    public async Task<PermissionStatus> CheckAndRequestLocationPermission()
+    {
+        PermissionStatus status = await Permissions.CheckStatusAsync<Permissions.LocationWhenInUse>();
+        if (status == PermissionStatus.Granted)
+            return status;
+        if (status == PermissionStatus.Denied && DeviceInfo.Platform == DevicePlatform.iOS)
+        {
+            // Prompt the user to turn on in settings
+            return status;
+        }
+        if (Permissions.ShouldShowRationale<Permissions.LocationWhenInUse>())
+        {
+            // Prompt the user with additional information as to why the permission is needed
+        }
+        status = await Permissions.RequestAsync<Permissions.LocationWhenInUse>();
+        return status;
+    }
+
+
+    public override async void OnGeolocationPermissionsShowPrompt(string origin, GeolocationPermissions.ICallback callback)
+    {
+
+        PermissionStatus permissionStatus = await CheckAndRequestLocationPermission();
+        base.OnGeolocationPermissionsShowPrompt(origin, callback);
+        callback.Invoke(origin, true, false);
+    }
+}
+#endif
