@@ -120,4 +120,27 @@ public class Helper
 
         return ImageSource.FromStream(() => stream);
     }
+
+    public static async Task<Location> GetCurrentLocationAsync()
+    {
+        try
+        {
+            var location = await Geolocation.GetLastKnownLocationAsync();
+            if (location != null)
+            {
+                return location;
+            }
+            location = await Geolocation.GetLocationAsync(new GeolocationRequest
+            {
+                DesiredAccuracy = GeolocationAccuracy.Best,
+                Timeout = TimeSpan.FromSeconds(10)
+            });
+            return location;
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Unable to get location: {ex.Message}");
+            return null;
+        }
+    }
 }

@@ -91,8 +91,33 @@ public class Foto
 
 public class GeoLocData
 {
-    public Point WGS84 { get; set; }
-    public Point CH1903 { get; set; }
+    private Location _wsg84;
+
+    public Location WGS84
+    {
+        get
+        {
+            return _wsg84;
+        }
+        set
+        {
+            _wsg84 = value;
+        }
+    }
+
+    public Point CH1903
+    {
+        get
+        {
+            if (_wsg84 != null)
+            {
+                Functions.LLtoSwissGrid(_wsg84.Latitude, _wsg84.Longitude, out double swissEasting, out double swissNorthing);
+                return new Point(swissEasting, swissNorthing);
+            }
+            else
+                return new Point(0, 0);
+        }
+    }
 }
 
 public class Position

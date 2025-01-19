@@ -27,7 +27,7 @@ public partial class MapView
 
     private async void ShowCurrentLocationOnMap()
     {
-        var location = await GetCurrentLocationAsync();
+        var location = await Helper.GetCurrentLocationAsync();
 
         if (location != null)
         {
@@ -40,34 +40,12 @@ public partial class MapView
         else
             GeoAdminWebView.Source = "https://map.geo.admin.ch";
     }
-
-    public async Task<Location> GetCurrentLocationAsync()
-    {
-        try
-        {
-            var location = await Geolocation.GetLastKnownLocationAsync();
-            if (location == null)
-            {
-                location = await Geolocation.GetLocationAsync(new GeolocationRequest
-                {
-                    DesiredAccuracy = GeolocationAccuracy.Best,
-                    Timeout = TimeSpan.FromSeconds(30)
-                });
-            }
-            return location;
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"Unable to get location: {ex.Message}");
-            return null;
-        }
-    }
 }
 
 #if ANDROID
 internal class MyWebChromeClient : WebChromeClient
 {
-    public async Task<PermissionStatus> CheckAndRequestLocationPermission()
+    public static async Task<PermissionStatus> CheckAndRequestLocationPermission()
     {
         PermissionStatus status = await Permissions.CheckStatusAsync<Permissions.LocationWhenInUse>();
         if (status == PermissionStatus.Granted)
@@ -81,10 +59,9 @@ internal class MyWebChromeClient : WebChromeClient
     }
 
 
-    public override async void OnGeolocationPermissionsShowPrompt(string origin, GeolocationPermissions.ICallback callback)
+    public override void OnGeolocationPermissionsShowPrompt(string origin, GeolocationPermissions.ICallback callback)
     {
-
-        PermissionStatus permissionStatus = await CheckAndRequestLocationPermission();
+        //PermissionStatus permissionStatus = await CheckAndRequestLocationPermission();
         base.OnGeolocationPermissionsShowPrompt(origin, callback);
         callback.Invoke(origin, true, false);
     }

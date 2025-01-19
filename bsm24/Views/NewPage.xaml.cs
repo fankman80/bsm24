@@ -343,7 +343,7 @@ public partial class NewPage : IQueryAttributable
         AddDrawingView();
     }
 
-    private void SetPin(string customName = null, int customPinSizeWidth = 0, int customPinSizeHeight = 0) 
+    private async void SetPin(string customName = null, int customPinSizeWidth = 0, int customPinSizeHeight = 0) 
     {
         var currentPage = (NewPage)Shell.Current.CurrentPage;
         if (currentPage != null)
@@ -384,6 +384,7 @@ public partial class NewPage : IQueryAttributable
                 PinColor = SKColors.Red,
                 PinScale = iconItem.IconScale,
                 PinRotation = _rotation,
+                GeoLocation = new GeoLocData { WGS84 = await Helper.GetCurrentLocationAsync() },
                 AllowExport = true,
             };
 
