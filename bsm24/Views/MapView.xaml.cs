@@ -1,6 +1,5 @@
 ﻿#nullable disable
 
-using Location = Microsoft.Maui.Devices.Sensors.Location;
 #if ANDROID
 using Android.Webkit;
 #endif
@@ -61,7 +60,6 @@ internal class MyWebChromeClient : WebChromeClient
 
     public override void OnGeolocationPermissionsShowPrompt(string origin, GeolocationPermissions.ICallback callback)
     {
-        //PermissionStatus permissionStatus = await CheckAndRequestLocationPermission();
         base.OnGeolocationPermissionsShowPrompt(origin, callback);
         callback.Invoke(origin, true, false);
     }

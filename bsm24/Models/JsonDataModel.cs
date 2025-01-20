@@ -105,17 +105,17 @@ public class GeoLocData
         }
     }
 
-    public Point CH1903
+    public LocationCH1903 CH1903
     {
         get
         {
             if (_wsg84 != null)
             {
                 Functions.LLtoSwissGrid(_wsg84.Latitude, _wsg84.Longitude, out double swissEasting, out double swissNorthing);
-                return new Point(swissEasting, swissNorthing);
+                return new LocationCH1903(_wsg84.Timestamp, swissEasting, swissNorthing, (double)_wsg84.Altitude, (double)_wsg84.Accuracy);
             }
             else
-                return new Point(0, 0);
+                return null;
         }
     }
 }
@@ -124,4 +124,21 @@ public class Position
 {
     public float X { get; set; }
     public float Y { get; set; }
+}
+
+public class LocationCH1903
+{
+    public DateTimeOffset Timestamp { get; set; }
+    public double X { get; set; }
+    public double Y { get; set; }
+    public double Altitude { get; set; }
+    public double Accuracy { get; set; }
+    public LocationCH1903(DateTimeOffset timestamp, double x, double y, double altitude, double accuracy)
+    {
+        Timestamp = timestamp;
+        X = x;
+        Y = y;
+        Altitude = altitude;
+        Accuracy = accuracy;
+    }
 }
