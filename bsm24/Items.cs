@@ -1,4 +1,6 @@
-﻿using SkiaSharp;
+﻿#nullable disable
+
+using SkiaSharp;
 using System.ComponentModel;
 
 namespace bsm24

@@ -152,6 +152,11 @@ public partial class SetPin : UraniumContentPage, IQueryAttributable
         await Shell.Current.GoToAsync($"..?pinUpdate={PinId}");
     }
 
+    private async void ShowGeoLoc(object sender, EventArgs e)
+    {
+        await Shell.Current.GoToAsync("////map_view");
+    }
+
     private async void TakePhoto(object sender, EventArgs e)
     {
         FileResult path = await CapturePicture.Capture(GlobalJson.Data.ImagePath, GlobalJson.Data.ThumbnailPath);
