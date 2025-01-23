@@ -48,23 +48,18 @@ public partial class ExportReport
             {"${pin_geolocCH1903}", "${pin_geolocCH1903}"}, //bereinige splitted runs
         };
 
-        // Kopiere die benötigten Icons aus den Ressourcen in den Cache
         var cacheDir = System.IO.Path.Combine(FileSystem.AppDataDirectory, "imagecache");
         List<string> uniquePinIcons = GetUniquePinIcons(GlobalJson.Data);
         foreach (var icon in uniquePinIcons)
             await CopyImageToDirectoryAsync(cacheDir, icon);
 
-        // Eine Kopie der Vorlage im MemoryStream öffnen, um das Original nicht zu verändern
         using MemoryStream memoryStream = new();
-
-        // Das Vorlagendokument in den MemoryStream kopieren
         using (Stream fileStream = await FileSystem.OpenAppPackageFileAsync(templateDoc))
         {
             fileStream.CopyTo(memoryStream);
         }
         memoryStream.Position = 0; // Sicherstellen, dass der Stream auf den Anfang gesetzt ist
 
-        // Das Dokument aus dem MemoryStream öffnen
         using (WordprocessingDocument wordDoc = WordprocessingDocument.Open(memoryStream, true))
         {
             // Platzhalter durch die entsprechenden Werte ersetzen
@@ -80,7 +75,7 @@ public partial class ExportReport
 
             MainDocumentPart mainPart = wordDoc.MainDocumentPart;
 
-            // suche Tabelle mit Namen "PinTable"
+            // suche Tabelle mit Namen "Pin_Table"
             string tableTitle = "Pin_Table";
             var table = mainPart?.Document?.Body?.Elements<Table>()
             .FirstOrDefault(t =>
@@ -92,14 +87,13 @@ public partial class ExportReport
                     // Überprüfen, ob die Tabelle einen Titel (TableCaption) hat
                     var tableCaption = tableProperties.GetFirstChild<TableCaption>();
                     if (tableCaption != null && tableCaption.Val == tableTitle)
-                        return true; // Tabelle mit gesuchtem Titel gefunden
+                        return true;
                 }
                 return false;
             });
 
             if (mainPart != null)
             {
-                // Insert Pins in Doc-Table
                 if (table != null)
                 {
                     List<(int, int, string)> columnList = SearchTableColumns(table, placeholders_table); // Suche SpaltenNummern
@@ -240,9 +234,13 @@ public partial class ExportReport
                                                     case "${pin_geolocCH1903}":
                                                         text = GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].GeoLocation.CH1903.ToString();
                                                         break;
+
+                                                    default:
+                                                        text = "";
+                                                        break;
                                                 }
-                                                if (!string.IsNullOrEmpty(text))
-                                                    newParagraph.Append(new Run(new Text(text)));
+
+                                                newParagraph.Append(new Run(new Text(text)));
 
                                                 if (newParagraph.Elements<Run>().Any())
                                                     newTableCell.Append(newParagraph);

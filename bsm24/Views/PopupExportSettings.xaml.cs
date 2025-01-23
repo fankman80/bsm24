@@ -51,17 +51,24 @@ public partial class PopupExportSettings : PopupPage
         activityIndicator.IsRunning = false;
         busyOverlay.IsVisible = false;
 
-        CancellationToken cancellationToken = new();
         try
         {
             await ShareFileAsync(outputPath);
-            await Toast.Make($"Bericht wurde geteilt").Show(cancellationToken);
+            if (DeviceInfo.Platform == DevicePlatform.WinUI)
+                await Application.Current.Windows[0].Page.DisplayAlert("", "Bericht wurde geteilt", "OK");
+            else
+                await Toast.Make($"Bericht wurde geteilt").Show();
         }
         catch
         {
-            await Toast.Make($"Bericht wurde nicht geteilt").Show(cancellationToken);
+            if (DeviceInfo.Platform == DevicePlatform.WinUI)
+                await Application.Current.Windows[0].Page.DisplayAlert("", "Bericht wurde nicht geteilt", "OK");
+            else
+                await Toast.Make($"Bericht wurde nicht geteilt").Show();
         }
-        File.Delete(outputPath);
+
+        if (File.Exists(outputPath))
+            File.Delete(outputPath);
 
         await MopupService.Instance.PopAsync();
     }
@@ -82,15 +89,26 @@ public partial class PopupExportSettings : PopupPage
         activityIndicator.IsRunning = false;
         busyOverlay.IsVisible = false;
 
-        CancellationToken cancellationToken = new();
         var saveStream = File.Open(outputPath, FileMode.Open);
-        var fileSaveResult = await FileSaver.Default.SaveAsync(GlobalJson.Data.ProjectPath + ".docx", saveStream, cancellationToken);
+        var fileSaveResult = await FileSaver.Default.SaveAsync(GlobalJson.Data.ProjectPath + ".docx", saveStream);
         if (fileSaveResult.IsSuccessful)
-            await Toast.Make($"Bericht wurde gespeichert").Show(cancellationToken);
+        {
+            if (DeviceInfo.Platform == DevicePlatform.WinUI)
+                await Application.Current.Windows[0].Page.DisplayAlert("", "Bericht wurde gespeichert", "OK");
+            else
+                await Toast.Make($"Bericht wurde gespeichert").Show();
+        }
         else
-            await Toast.Make($"Bericht wurde nicht gespeichert").Show(cancellationToken);
+        {
+            if (DeviceInfo.Platform == DevicePlatform.WinUI)
+                await Application.Current.Windows[0].Page.DisplayAlert("", "Bericht wurde nicht gespeichert", "OK");
+            else
+                await Toast.Make($"Bericht wurde nicht gespeichert").Show();
+        }
         saveStream.Close();
-        File.Delete(outputPath);
+
+        if (File.Exists(outputPath))
+            File.Delete(outputPath);
 
         await MopupService.Instance.PopAsync();
     }

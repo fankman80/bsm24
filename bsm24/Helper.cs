@@ -4,6 +4,7 @@
 using System.Reflection;
 using bsm24.Services;
 using SkiaSharp;
+using System.IO.Compression;
 
 namespace bsm24;
 
@@ -142,5 +143,24 @@ public class Helper
             Console.WriteLine($"Unable to get location: {ex.Message}");
             return null;
         }
+    }
+
+    public static void PackDirectory(string sourceDirectory, string destinationZipFile)
+    {
+        if (!Directory.Exists(sourceDirectory))
+            throw new DirectoryNotFoundException($"Das Quellverzeichnis '{sourceDirectory}' wurde nicht gefunden.");
+
+        if (File.Exists(destinationZipFile))
+            File.Delete(destinationZipFile);
+
+        ZipFile.CreateFromDirectory(sourceDirectory, destinationZipFile, CompressionLevel.Optimal, includeBaseDirectory: true);
+    }
+
+    public static void UnpackDirectory(string zipFilePath, string extractPath)
+    {
+        if (!File.Exists(zipFilePath))
+            throw new FileNotFoundException($"Die Zip-Datei '{zipFilePath}' wurde nicht gefunden.");
+
+        ZipFile.ExtractToDirectory(zipFilePath, extractPath);
     }
 }

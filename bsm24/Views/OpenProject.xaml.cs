@@ -2,7 +2,6 @@
 
 using CommunityToolkit.Maui.Alerts;
 using CommunityToolkit.Maui.Storage;
-using ICSharpCode.SharpZipLib.Zip;
 using Mopups.Services;
 using System.Globalization;
 using UraniumUI.Pages;
@@ -128,10 +127,10 @@ public partial class OpenProject : UraniumContentPage
                 activityIndicator.IsRunning = true;
                 busyText.Text = "Projekt wird importiert...";
                 // Hintergrundoperation (nicht UI-Operationen)
-                await Task.Run(() => { UnzipToDirectory(fileResult.FullPath, targetDirectory); });
+                await Task.Run(() => { Helper.UnpackDirectory(fileResult.FullPath, targetDirectory); });
                 activityIndicator.IsRunning = false;
                 busyOverlay.IsVisible = false;
-                
+
                 LoadJsonFiles();
             }
         }
@@ -139,7 +138,7 @@ public partial class OpenProject : UraniumContentPage
         {
             // Fehlerbehandlung (z.B. wenn der Benutzer den Picker abbricht)
             Console.WriteLine($"Fehler beim Auswählen der Datei: {ex.Message}");
-        }  
+        }
     }
 
     private async void OnProjectClicked(object sender, EventArgs e)
@@ -173,131 +172,6 @@ public partial class OpenProject : UraniumContentPage
         });
         activityIndicator.IsRunning = false;
         busyOverlay.IsVisible = false;
-    }
-
-    public static void ZipDirectory(string sourceDirectory, string zipFilePath)
-    {
-        try
-        {
-            using var fsOut = File.Create(zipFilePath);
-            using var zipOutputStream = new ZipOutputStream(fsOut);
-            zipOutputStream.SetLevel(9); // Set compression level (0-9)
-
-            // Name des Ordners, der gezippt wird
-            string folderName = Path.GetFileName(sourceDirectory);
-
-            // Übergeordnetes Verzeichnis bestimmen, um den Ordner selbst in das Zip einzuschließen
-            string baseDirectory = Path.GetDirectoryName(sourceDirectory) ?? "";
-
-            // Den Ordner und dessen Inhalte komprimieren
-            OpenProject.CompressFolder(sourceDirectory, zipOutputStream, baseDirectory.Length + 1);
-
-            zipOutputStream.Flush();  // Sicherstellen, dass alle Daten geschrieben sind
-            zipOutputStream.Close();  // Schließe den Stream und beende die Komprimierung
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"Error zipping directory: {ex.Message}");
-        }
-    }
-
-    public static void UnzipToDirectory(string zipFilePath, string targetDirectory)
-    {
-        try
-        {
-            using var fsInput = File.OpenRead(zipFilePath);
-            using var zipInputStream = new ZipInputStream(fsInput);
-
-            ZipEntry entry;
-
-            while ((entry = zipInputStream.GetNextEntry()) != null)
-            {
-                // Normalisieren der Pfade, Schrägstriche am Ende entfernen
-                string entryName = entry.Name.TrimEnd('/'); // Entfernt nur den Schrägstrich am Ende
-                string filePath = Path.Combine(targetDirectory, entryName);
-
-                // Überprüfen, ob das Entry ein Verzeichnis ist
-                if (entry.IsDirectory)
-                {
-                    // Falls es sich um ein Verzeichnis handelt, sicherstellen, dass das Verzeichnis existiert
-                    if (!Directory.Exists(filePath))
-                    {
-                        Console.WriteLine($"Creating directory: {filePath}");
-                        Directory.CreateDirectory(filePath);
-                    }
-                }
-                else
-                {
-                    // Falls es eine Datei ist, das Verzeichnis extrahieren und die Datei erstellen
-                    var directoryName = Path.GetDirectoryName(filePath);
-                    if (!string.IsNullOrEmpty(directoryName) && !Directory.Exists(directoryName))
-                    {
-                        Console.WriteLine($"Creating directory for file: {directoryName}");
-                        Directory.CreateDirectory(directoryName);
-                    }
-
-                    // Datei entpacken
-                    Console.WriteLine($"Extracting file: {filePath}");
-                    using var fileStream = File.Create(filePath);
-                    zipInputStream.CopyTo(fileStream);
-                }
-            }
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"Error unzipping file: {ex.Message}");
-            Console.WriteLine(ex.StackTrace);
-        }
-    }
-
-    private static void CompressFolder(string path, ZipOutputStream zipStream, int folderOffset)
-    {
-        var files = Directory.GetFiles(path);
-
-        foreach (var filename in files)
-        {
-            var fileInfo = new FileInfo(filename);
-
-            // Calculate the relative path within the zip file
-            string entryName = filename[folderOffset..];
-            entryName = ZipEntry.CleanName(entryName); // Clean the entry name
-
-            var newEntry = new ZipEntry(entryName)
-            {
-                DateTime = fileInfo.LastWriteTime, // Use the file's last write time
-                Size = fileInfo.Length
-            };
-
-            zipStream.PutNextEntry(newEntry);
-
-            try
-            {
-                using var fileStream = new FileStream(filename, FileMode.Open, FileAccess.Read, FileShare.Read, bufferSize: 81920);
-                fileStream.CopyTo(zipStream); // Write the file to the zip stream
-            }
-            catch (IOException ex)
-            {
-                Console.WriteLine($"Error reading file {filename}: {ex.Message}");
-            }
-
-            zipStream.CloseEntry();
-        }
-
-        // Get directories within this folder and recurse
-        var folders = Directory.GetDirectories(path);
-        foreach (var folder in folders)
-        {
-            OpenProject.CompressFolder(folder, zipStream, folderOffset);
-        }
-
-        // Handle empty directories (optional)
-        if (files.Length == 0 && folders.Length == 0)
-        {
-            string entryName = path[folderOffset..] + "/";
-            var emptyDirEntry = new ZipEntry(ZipEntry.CleanName(entryName));
-            zipStream.PutNextEntry(emptyDirEntry);
-            zipStream.CloseEntry();
-        }
     }
 
     private async void OnEditClicked(object sender, EventArgs e)
@@ -354,12 +228,13 @@ public partial class OpenProject : UraniumContentPage
         var popup = new PopupDualResponse("Wollen Sie dieses Projekt wirklich als Zip exportieren?");
         await MopupService.Instance.PushAsync(popup);
         var result = await popup.PopupDismissedTask;
+
         if (result != null)
         {
             var button = sender as Button;
             if (button.BindingContext is FileItem item)
             {
-                string sourceDirectory = Path.GetDirectoryName(item.FilePath); // Pfad zum zu zippenden Ordner
+                string sourceDirectory = Path.GetDirectoryName(item.FilePath);
                 string outputPath = Path.Combine(FileSystem.AppDataDirectory, Path.GetFileNameWithoutExtension(item.FileName) + ".zip");
 
                 busyOverlay.IsVisible = true;
@@ -367,20 +242,27 @@ public partial class OpenProject : UraniumContentPage
                 busyText.Text = "Daten werden komprimiert...";
 
                 // Hintergrundoperation (nicht UI-Operationen)
-                await Task.Run(() => { ZipDirectory(sourceDirectory, outputPath); });
+                await Task.Run(() => { Helper.PackDirectory(sourceDirectory, outputPath); });
 
                 activityIndicator.IsRunning = false;
                 busyOverlay.IsVisible = false;
 
-                CancellationToken cancellationToken = new();
                 var saveStream = File.Open(outputPath, FileMode.Open);
-                var fileSaveResult = await FileSaver.Default.SaveAsync(Path.GetFileNameWithoutExtension(item.FileName) + ".zip", saveStream, cancellationToken);
-                if (fileSaveResult.IsSuccessful)
-                    await Toast.Make($"Zip wurde exportiert").Show(cancellationToken);
-                else
-                    await Toast.Make($"Zip wurde nicht exportiert").Show(cancellationToken);
-                saveStream.Close();
-                File.Delete(outputPath);
+                try
+                {
+                    var fileSaveResult = await FileSaver.Default.SaveAsync(Path.GetFileNameWithoutExtension(item.FileName) + ".zip", saveStream);
+                    if (DeviceInfo.Platform == DevicePlatform.WinUI)
+                        await Application.Current.Windows[0].Page.DisplayAlert("", "Zip wurde exportiert", "OK");
+                    else
+                        await Toast.Make($"Zip wurde exportiert").Show();
+                }
+                finally
+                {
+                    saveStream.Close();  // Schließt den Stream sicher
+                }
+
+                if (File.Exists(outputPath))
+                    File.Delete(outputPath);
             }
         }
     }

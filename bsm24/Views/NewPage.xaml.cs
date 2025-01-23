@@ -622,11 +622,9 @@ public partial class NewPage : IQueryAttributable
         var customPinPath = Path.Combine(FileSystem.AppDataDirectory, GlobalJson.Data.CustomPinsPath);
         var customPinName = "custompin_" + DateTime.Now.ToString("yyyyMMdd_HHmmss") + ".png";
         string filePath = Path.Combine(customPinPath, customPinName);
-        var cts = new CancellationTokenSource(TimeSpan.FromSeconds(5));
         Stream imageStream = await DrawingView.GetImageStream(drawingView.Lines,
                                                             new Size(drawingView.Width, drawingView.Height),
-                                                            Colors.Transparent,
-                                                            cts.Token);
+                                                            Colors.Transparent);
         if (imageStream != null)
         {
             if (!Directory.Exists(customPinPath))

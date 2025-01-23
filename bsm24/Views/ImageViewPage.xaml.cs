@@ -237,11 +237,9 @@ public partial class ImageViewPage : IQueryAttributable
             LineWidth = 1f
         };
         DrawView.Lines.Add(boundingBox);
-        var cts = new CancellationTokenSource(TimeSpan.FromSeconds(5));
         Stream draw_stream = await DrawingView.GetImageStream(DrawView.Lines,
                                                             new Size(DrawView.Width, DrawView.Height),
-                                                            Colors.Transparent,
-                                                            cts.Token);
+                                                            Colors.Transparent);
         if (draw_stream != null)
         {
             using var dwStream = new SKManagedStream(draw_stream);
