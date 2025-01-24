@@ -161,7 +161,7 @@ public partial class ExportReport
                                                                         new SKPoint(0.5f, 0.5f),
                                                                         new SKPoint((float)GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].Anchor.X,
                                                                                     (float)GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].Anchor.Y),
-                                                                                    GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].PinColor)];
+                                                                                    GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].PinScale)];
                                                             }
                                                             else
                                                                 pinList = null;
