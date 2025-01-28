@@ -11,6 +11,6 @@
 
     <WebView x:Name="GeoAdminWebView"
              VerticalOptions="FillAndExpand"
-             HorizontalOptions="FillAndExpand" />
+             HorizontalOptions="FillAndExpand"/>
     
 </ContentPage>

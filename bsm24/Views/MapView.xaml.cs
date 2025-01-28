@@ -2,10 +2,8 @@
 
 #if ANDROID
 using Android.Webkit;
-#endif
-
 using Microsoft.Maui.Platform;
-using System.Text;
+#endif
 
 namespace bsm24.Views;
 
@@ -14,6 +12,12 @@ public partial class MapView
     public MapView()
     {
         InitializeComponent();
+    }
+
+    protected override void OnAppearing()
+    {
+        base.OnAppearing();
+
         ShowCurrentLocationOnMap();
 
         Microsoft.Maui.Handlers.WebViewHandler.Mapper.AppendToMapping("MyCustomization", (handler, view) =>
@@ -25,13 +29,48 @@ public partial class MapView
             handler.PlatformView.SetWebChromeClient(new MyWebChromeClient());
 #endif
         });
+
+        string baseUrl;
+
+#if ANDROID
+        baseUrl = "file:///android_asset/";
+#elif IOS
+    baseUrl = NSBundle.MainBundle.BundlePath + "/";
+#elif WINDOWS
+    baseUrl = "ms-appx-web:///Assets/";
+#else
+    baseUrl = string.Empty; // Fallback
+#endif
+
+        // HTML-Datei von Ressourcen laden
+        var htmlSource = new HtmlWebViewSource
+        {
+            BaseUrl = baseUrl,
+            Html = LoadHtmlFromFile()
+        };
+
+        GeoAdminWebView.Source = htmlSource;
+
+        SetMarkerPosition(7.299142, 47.070331);
     }
 
+    private static string LoadHtmlFromFile()
+    {
+        var assembly = typeof(MapView).Assembly;
+        using var stream = assembly.GetManifestResourceStream("bsm24.Resources.Raw.map.html");
+        using var reader = new StreamReader(stream);
+        return reader.ReadToEnd();
+    }
+
+    private void SetMarkerPosition(double longitude, double latitude)
+    {
+        string script = $"setMarkerPosition({longitude}, {latitude});";
+        GeoAdminWebView.Eval(script);
+    }
 
     private async void ShowCurrentLocationOnMap()
     {
         var location = await Helper.GetCurrentLocationAsync();
-
         if (location != null)
         {
             Functions.LLtoSwissGrid(location.Latitude, location.Longitude, out double swissEasting, out double swissNorthing);
@@ -60,7 +99,6 @@ internal class MyWebChromeClient : WebChromeClient
         status = await Permissions.RequestAsync<Permissions.LocationWhenInUse>();
         return status;
     }
-
 
     public override void OnGeolocationPermissionsShowPrompt(string origin, GeolocationPermissions.ICallback callback)
     {
