@@ -163,4 +163,20 @@ public class Helper
 
         ZipFile.ExtractToDirectory(zipFilePath, extractPath);
     }
+
+    public static async Task CopyFileFromResourcesAsync(string fileName, string destinationPath)
+    {
+        using (var stream = await FileSystem.OpenAppPackageFileAsync(fileName))
+        {
+            if (stream == null)
+            {
+                return;
+            }
+
+            using (var fileStream = new FileStream(destinationPath, FileMode.Create, FileAccess.Write))
+            {
+                await stream.CopyToAsync(fileStream);
+            }
+        }
+    }
 }

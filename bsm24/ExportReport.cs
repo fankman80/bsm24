@@ -5,7 +5,6 @@ using bsm24.Services;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Vml;
 using DocumentFormat.OpenXml.Wordprocessing;
-using D=DocumentFormat.OpenXml.Drawing;
 using SkiaSharp;
 using System.Text.RegularExpressions;
 using DW = DocumentFormat.OpenXml.Drawing.Wordprocessing;
@@ -57,7 +56,6 @@ public partial class ExportReport
             await CopyImageToDirectoryAsync(cacheDir, icon);
 
         using MemoryStream memoryStream = new();
-        //using (Stream fileStream = await FileSystem.OpenAppPackageFileAsync(templateDoc)) //open from Ressource-Package
         using (Stream fileStream = new FileStream(templateDoc, FileMode.Open, FileAccess.Read))
         {
             fileStream.CopyTo(memoryStream);

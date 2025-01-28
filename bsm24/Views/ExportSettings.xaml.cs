@@ -1,26 +1,22 @@
-#nullable disable
+ï»¿#nullable disable
 
+using bsm24.Services;
 using CommunityToolkit.Maui.Alerts;
 using CommunityToolkit.Maui.Storage;
-using Mopups.Pages;
 using Mopups.Services;
-using bsm24.Services;
+using UraniumUI.Pages;
 
 namespace bsm24.Views;
 
-public partial class PopupExportSettings : PopupPage
+public partial class ExportSettings : UraniumContentPage
 {
-    TaskCompletionSource<string> _taskCompletionSource;
-    public Task<string> PopupDismissedTask => _taskCompletionSource.Task;
-    public string ReturnValue { get; set; }
-
     private static readonly string[] iOSFileTypes = ["com.microsoft.word.doc", "org.openxmlformats.wordprocessingml.document"];
     private static readonly string[] AndroidFileTypes = ["application/msword", "application/vnd.openxmlformats-officedocument.wordprocessingml.document"];
     private static readonly string[] WinUIFileTypes = [".doc", ".docx"];
 
-    public PopupExportSettings()
-	{
-		InitializeComponent();
+    public ExportSettings()
+    {
+        InitializeComponent();
     }
 
     protected override void OnAppearing()
@@ -31,20 +27,6 @@ public partial class PopupExportSettings : PopupPage
 
         if (SettingsService.Instance.SelectedTemplate == null)
             SettingsService.Instance.SelectedTemplate = SettingsService.Instance.Templates.First();
-
-        _taskCompletionSource = new TaskCompletionSource<string>();
-    }
-
-    protected override void OnDisappearing()
-    {
-        base.OnDisappearing();
-        _taskCompletionSource.SetResult(ReturnValue);
-    }
-
-    private async void PopupPage_BackgroundClicked(object sender, EventArgs e)
-    {
-        ReturnValue = null;
-        await MopupService.Instance.PopAsync();
     }
 
     private async void OnShareClicked(object sender, EventArgs e)
@@ -82,7 +64,7 @@ public partial class PopupExportSettings : PopupPage
         if (File.Exists(outputPath))
             File.Delete(outputPath);
 
-        await MopupService.Instance.PopAsync();
+        await Shell.Current.GoToAsync("..", true);
     }
 
     private async void OnSaveClicked(object sender, EventArgs e)
@@ -122,7 +104,7 @@ public partial class PopupExportSettings : PopupPage
         if (File.Exists(outputPath))
             File.Delete(outputPath);
 
-        await MopupService.Instance.PopAsync();
+        await Shell.Current.GoToAsync("..", true);
     }
 
     private void OnColorPickClicked(object sender, EventArgs e)
@@ -142,8 +124,7 @@ public partial class PopupExportSettings : PopupPage
 
     private async void OnCancelClicked(object sender, EventArgs e)
     {
-        ReturnValue = null;
-        await MopupService.Instance.PopAsync();
+        await Shell.Current.GoToAsync("..", true);
     }
 
     private static void LoadDocuments()
@@ -160,14 +141,14 @@ public partial class PopupExportSettings : PopupPage
     {
         var customFileType = new FilePickerFileType(new Dictionary<DevicePlatform, IEnumerable<string>>
         {
-            { DevicePlatform.iOS, iOSFileTypes },          // Verwende das readonly Array für iOS
-            { DevicePlatform.Android, AndroidFileTypes },  // Verwende das readonly Array für Android
-            { DevicePlatform.WinUI, WinUIFileTypes }       // Verwende das readonly Array für WinUI
+            { DevicePlatform.iOS, iOSFileTypes },          // Verwende das readonly Array fÃ¼r iOS
+            { DevicePlatform.Android, AndroidFileTypes },  // Verwende das readonly Array fÃ¼r Android
+            { DevicePlatform.WinUI, WinUIFileTypes }       // Verwende das readonly Array fÃ¼r WinUI
         });
 
         var result = await FilePicker.Default.PickAsync(new PickOptions
         {
-            PickerTitle = "Wähle ein Word-Dokument",
+            PickerTitle = "WÃ¤hle ein Word-Dokument",
             FileTypes = customFileType
         });
 

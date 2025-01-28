@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <uranium:UraniumContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
-             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             xmlns:ff="clr-namespace:FFImageLoading.Maui;assembly=FFImageLoading.Maui"                             
-             xmlns:views="clr-namespace:bsm24.Views"
-             xmlns:uranium="http://schemas.enisn-projects.io/dotnet/maui/uraniumui"
-             xmlns:material="http://schemas.enisn-projects.io/dotnet/maui/uraniumui/material"
-             xmlns:m="clr-namespace:UraniumUI.Icons.MaterialSymbols;assembly=UraniumUI.Icons.MaterialSymbols"
-             Shell.TitleColor="{DynamicResource PrimaryDark}"
-             BackgroundColor="{AppThemeBinding Light={DynamicResource PrimaryBackground}, Dark={DynamicResource PrimaryBackgroundDark}}"
-             xmlns:local="clr-namespace:bsm24.Views"  
-             xmlns:services="clr-namespace:bsm24.Services"
-             x:DataType="views:SetPin"
-             x:Class="bsm24.Views.SetPin"
-             Title="Pin bearbeiten">
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:ff="clr-namespace:FFImageLoading.Maui;assembly=FFImageLoading.Maui"                             
+    xmlns:views="clr-namespace:bsm24.Views"
+    xmlns:uranium="http://schemas.enisn-projects.io/dotnet/maui/uraniumui"
+    xmlns:material="http://schemas.enisn-projects.io/dotnet/maui/uraniumui/material"
+    xmlns:m="clr-namespace:UraniumUI.Icons.MaterialSymbols;assembly=UraniumUI.Icons.MaterialSymbols"
+    Shell.TitleColor="{DynamicResource PrimaryDark}"
+    BackgroundColor="{AppThemeBinding Light={DynamicResource PrimaryBackground}, Dark={DynamicResource PrimaryBackgroundDark}}"
+    xmlns:local="clr-namespace:bsm24.Views"  
+    xmlns:services="clr-namespace:bsm24.Services"
+    x:DataType="views:SetPin"
+    x:Class="bsm24.Views.SetPin"
+    Title="Pin bearbeiten">
 
     <ContentPage.ToolbarItems>
         <ToolbarItem
@@ -137,8 +137,6 @@
                         ThumbColor="{AppThemeBinding Light={DynamicResource Primary}, Dark={DynamicResource PrimaryDarkAccent}}"
                         OnColor="{DynamicResource Secondary}"/>
                 
-
-                
                 <Button Grid.Column="2" Grid.Row="0" Grid.RowSpan="3"
                         VerticalOptions="Fill"                        
                         BackgroundColor="{AppThemeBinding Light={DynamicResource Primary}, Dark={DynamicResource PrimaryDark}}"
@@ -190,6 +188,7 @@
                         Clicked="OnOkayClick"/>
                 <Button Grid.Column="2"
                         Text="Foto"
+                        Padding="16,0,16,0"
                         BackgroundColor="{AppThemeBinding Light={DynamicResource Primary}, Dark={DynamicResource PrimaryDark}}"
                         TextColor="{AppThemeBinding Light={DynamicResource PrimaryDarkText}, Dark={DynamicResource PrimaryText}}"
                         ImageSource="{FontImageSource FontFamily=MaterialOutlined, Color={AppThemeBinding Light={DynamicResource PrimaryDarkText}, Dark={DynamicResource PrimaryText}}, Glyph={x:Static m:MaterialOutlined.Photo_camera}}"

@@ -23,6 +23,7 @@ public partial class AppShell : Shell
         Routing.RegisterRoute("project_details", typeof(ProjectDetails));
         Routing.RegisterRoute("loadPdfImages", typeof(LoadPDFPages));
         Routing.RegisterRoute("pinList", typeof(PinList));
+        Routing.RegisterRoute("exportSettings", typeof(ExportSettings));
     }
 
     private async void OnProjectDetailsClicked(object sender, EventArgs e)
@@ -59,13 +60,15 @@ public partial class AppShell : Shell
     {
         if (GlobalJson.Data.Plans != null)
         {
-            var popup = new PopupExportSettings();
-            await MopupService.Instance.PushAsync(popup);
+            await Shell.Current.GoToAsync("exportSettings");
         }
         else
         {
             var popup = new PopupAlert("Keine Pläne vorhanden!");
             await MopupService.Instance.PushAsync(popup);
         }
+#if ANDROID
+        Shell.Current.FlyoutIsPresented = false;
+#endif
     }
 }

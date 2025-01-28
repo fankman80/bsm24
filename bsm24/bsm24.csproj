@@ -194,6 +194,9 @@
 	  <MauiXaml Update="Views\MapView.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
+	  <MauiXaml Update="Views\ExportSettings.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
 	  <MauiXaml Update="Views\PinList.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
@@ -207,9 +210,6 @@
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	  <MauiXaml Update="Views\PopupDualResponse.xaml">
-	    <Generator>MSBuild:Compile</Generator>
-	  </MauiXaml>
-	  <MauiXaml Update="Views\PopupExportSettings.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	  <MauiXaml Update="Views\PopupSettings.xaml">
@@ -245,6 +245,9 @@
 	  <Compile Update="Views\MapView.xaml.cs">
 	    <DependentUpon>MapView.xaml</DependentUpon>
 	  </Compile>
+	  <Compile Update="Views\ExportSettings.xaml.cs">
+	    <DependentUpon>ExportSettings.xaml</DependentUpon>
+	  </Compile>
 	  <Compile Update="Views\PinList.xaml.cs">
 	    <DependentUpon>PinList.xaml</DependentUpon>
 	  </Compile>
@@ -259,9 +262,6 @@
 	  </Compile>
 	  <Compile Update="Views\PopupDualResponse.xaml.cs">
 	    <DependentUpon>PopupDualResponse.xaml</DependentUpon>
-	  </Compile>
-	  <Compile Update="Views\PopupExportSettings.xaml.cs">
-	    <DependentUpon>PopupExportSettings.xaml</DependentUpon>
 	  </Compile>
 	  <Compile Update="Views\PopupSettings.xaml.cs">
 	    <DependentUpon>PopupSettings.xaml</DependentUpon>

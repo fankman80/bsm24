@@ -1,5 +1,6 @@
 ﻿using UraniumUI;
 using bsm24.Services;
+using System.IO;
 #if WINDOWS
 using Microsoft.UI.Windowing;
 #endif
@@ -22,7 +23,10 @@ public partial class App : Application
         SettingsService.Instance.LoadSettings();
 
         if (!Directory.Exists(Settings.TemplateDirectory))
+        {
             Directory.CreateDirectory(Settings.TemplateDirectory);
+            _ = Helper.CopyFileFromResourcesAsync("template_ebbe.docx", Path.Combine(Settings.TemplateDirectory, "template_ebbe.docx"));
+        }
     }
 
     protected override Window CreateWindow(IActivationState? activationState)
@@ -43,4 +47,6 @@ public partial class App : Application
 #endif
         return window;
     }
+
+
 }

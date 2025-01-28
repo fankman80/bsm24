@@ -99,7 +99,7 @@ public partial class PinList : UraniumContentPage
         if (existingPage != null)
         {
             while (navigationStack[navigationStack.Count - 1] != existingPage)
-                await Shell.Current.Navigation.PopAsync(false); // false -> Keine Animation
+                await Shell.Current.Navigation.PopAsync(false);
         }
         else
             await Shell.Current.Navigation.PushAsync(newPage);
@@ -120,5 +120,4 @@ public partial class PinList : UraniumContentPage
         activityIndicator.IsRunning = false;
         busyOverlay.IsVisible = false;
     }
-
 }
