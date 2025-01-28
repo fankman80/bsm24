@@ -82,8 +82,8 @@ public partial class SetPin : UraniumContentPage, IQueryAttributable
                 FontFamily = "MaterialOutlined",
                 Glyph = UraniumUI.Icons.MaterialSymbols.MaterialOutlined.Where_to_vote,
                 Color = Application.Current.RequestedTheme == AppTheme.Dark
-                        ? (Color)Application.Current.Resources["Primary"]
-                        : (Color)Application.Current.Resources["PrimaryDark"]
+                        ? (Color)Application.Current.Resources["PrimaryDark"]
+                        : (Color)Application.Current.Resources["Primary"]
             };
         }
     }
