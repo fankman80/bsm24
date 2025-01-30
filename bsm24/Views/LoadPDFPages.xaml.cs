@@ -49,7 +49,14 @@ public partial class LoadPDFPages : UraniumContentPage
                 {
                     string imgPath = Path.Combine(FileSystem.AppDataDirectory, Settings.CacheDirectory, "plan_" + i + ".jpg");
                     string previewPath = Path.Combine(FileSystem.AppDataDirectory, Settings.CacheDirectory, "preview_" + i + ".jpg");
-                    Conversion.SaveJpeg(previewPath, bytearray, i, options: new RenderOptions(Dpi: 50));
+                    var renderOptions = new RenderOptions()
+                    {
+                        AntiAliasing = PdfAntiAliasing.None,
+                        Dpi = 72,
+                        WithAnnotations = false,
+                        WithFormFill = false,
+                    };
+                    Conversion.SaveJpeg(previewPath, bytearray, i, options: renderOptions);
 
                     var stream = File.OpenRead(previewPath);
                     var skBitmap = SKBitmap.Decode(stream);
@@ -91,7 +98,14 @@ public partial class LoadPDFPages : UraniumContentPage
             {
                 string imgPath = Path.Combine(FileSystem.AppDataDirectory, Settings.CacheDirectory, "plan_" + i + ".jpg");
                 string previewImgPath = Path.Combine(FileSystem.AppDataDirectory, Settings.CacheDirectory, "preview_" + i + ".jpg");
-                Conversion.SaveJpeg(imgPath, bytearray, i, options: new RenderOptions(SettingsService.Instance.PdfQuality));
+                var renderOptions = new RenderOptions()
+                {
+                    AntiAliasing = PdfAntiAliasing.All,
+                    Dpi = SettingsService.Instance.PdfQuality,
+                    WithAnnotations = true,
+                    WithFormFill = true,
+                };
+                Conversion.SaveJpeg(imgPath, bytearray, i, options: renderOptions);
 
                 var stream = File.OpenRead(imgPath);
                 var skBitmap = SKBitmap.Decode(stream);
