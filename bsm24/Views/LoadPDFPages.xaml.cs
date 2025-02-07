@@ -104,6 +104,7 @@ public partial class LoadPDFPages : UraniumContentPage
                     Dpi = SettingsService.Instance.PdfQuality,
                     WithAnnotations = true,
                     WithFormFill = true,
+                    UseTiling = true,
                 };
                 Conversion.SaveJpeg(imgPath, bytearray, i, options: renderOptions);
 
