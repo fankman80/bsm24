@@ -50,9 +50,9 @@ public partial class ExportReport
             {"${pin_geolocCH1903}", "${pin_geolocCH1903}"}, //bereinige splitted runs
         };
 
-        var cacheDir = System.IO.Path.Combine(FileSystem.AppDataDirectory, "imagecache");
+        string cacheDir = System.IO.Path.Combine(FileSystem.AppDataDirectory, "imagecache");
         List<string> uniquePinIcons = GetUniquePinIcons(GlobalJson.Data);
-        foreach (var icon in uniquePinIcons)
+        foreach (string icon in uniquePinIcons)
             await CopyImageToDirectoryAsync(cacheDir, icon);
 
         using MemoryStream memoryStream = new();
@@ -65,13 +65,13 @@ public partial class ExportReport
         using (WordprocessingDocument wordDoc = WordprocessingDocument.Open(memoryStream, true))
         {
             // Platzhalter durch die entsprechenden Werte ersetzen
-            foreach (var placeholder in placeholders_single)
+            foreach (KeyValuePair<string, string> placeholder in placeholders_single)
                 if (placeholder.Value != "")
                     Codeuctivity.OpenXmlPowerTools.TextReplacer.SearchAndReplace(wordDoc, placeholder.Key, placeholder.Value, true);
-            foreach (var placeholder in placeholders_lists)
+            foreach (KeyValuePair<string, string> placeholder in placeholders_lists)
                 if (placeholder.Value != "")
                     Codeuctivity.OpenXmlPowerTools.TextReplacer.SearchAndReplace(wordDoc, placeholder.Key, placeholder.Value, true);
-            foreach (var placeholder in placeholders_table)
+            foreach (KeyValuePair<string, string> placeholder in placeholders_table)
                 if (placeholder.Value != "")
                     Codeuctivity.OpenXmlPowerTools.TextReplacer.SearchAndReplace(wordDoc, placeholder.Key, placeholder.Value, true);
 
@@ -79,15 +79,15 @@ public partial class ExportReport
 
             // suche Tabelle mit Namen "Pin_Table"
             string tableTitle = "Pin_Table";
-            var table = mainPart?.Document?.Body?.Elements<Table>()
+            Table table = mainPart?.Document?.Body?.Elements<Table>()
             .FirstOrDefault(t =>
             {
                 // Überprüfen, ob die Tabelle Eigenschaften hat
-                var tableProperties = t.GetFirstChild<TableProperties>();
+                TableProperties tableProperties = t.GetFirstChild<TableProperties>();
                 if (tableProperties != null)
                 {
                     // Überprüfen, ob die Tabelle einen Titel (TableCaption) hat
-                    var tableCaption = tableProperties.GetFirstChild<TableCaption>();
+                    TableCaption tableCaption = tableProperties.GetFirstChild<TableCaption>();
                     if (tableCaption != null && tableCaption.Val == tableTitle)
                         return true;
                 }
@@ -100,24 +100,24 @@ public partial class ExportReport
                 {
                     List<(int, int, string)> columnList = SearchTableColumns(table, placeholders_table); // Suche SpaltenNummern
                     int i = 1;
-                    foreach (var plan in GlobalJson.Data.Plans)
+                    foreach (KeyValuePair<string, Plan> plan in GlobalJson.Data.Plans)
                     {
                         if (GlobalJson.Data.Plans[plan.Key].Pins != null)
                         {
-                            foreach (var pin in GlobalJson.Data.Plans[plan.Key].Pins)
+                            foreach (KeyValuePair<string, Pin> pin in GlobalJson.Data.Plans[plan.Key].Pins)
                             {
                                 if (GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].AllowExport)
                                 {
                                     // Anzahl Spalten ermitteln
                                     int columnCount = 0;
-                                    var firstRow = table.Elements<TableRow>().FirstOrDefault();
+                                    TableRow firstRow = table.Elements<TableRow>().FirstOrDefault();
                                     if (firstRow != null)
                                         columnCount = firstRow.Elements<TableCell>().Count();
 
                                     TableRow newRow = new();
                                     for (int column = 0; column < columnCount; column++)
                                     {
-                                        var _columnPlaceholders = columnList.FindAll(item => item.Item1 == column);
+                                        List<(int, int, string)> _columnPlaceholders = columnList.FindAll(item => item.Item1 == column);
                                         TableCell newTableCell = new();
 
                                         if (_columnPlaceholders.Count == 0)
@@ -129,7 +129,7 @@ public partial class ExportReport
                                         }
                                         else
                                         {
-                                            foreach (var _placeholder in _columnPlaceholders)
+                                            foreach ((int, int, string) _placeholder in _columnPlaceholders)
                                             {
                                                 Paragraph newParagraph = new();
                                                 String text = "";
@@ -147,13 +147,13 @@ public partial class ExportReport
                                                         if (SettingsService.Instance.IsPosImageExport)
                                                         {
                                                             // add Part of Plan Image
-                                                            var planName = GlobalJson.Data.Plans[plan.Key].File;
-                                                            var planPath = System.IO.Path.Combine(FileSystem.AppDataDirectory, GlobalJson.Data.PlanPath, planName);
-                                                            var pinPos = GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].Pos;
-                                                            var pinImage = GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].PinIcon;
+                                                            string planName = GlobalJson.Data.Plans[plan.Key].File;
+                                                            string planPath = System.IO.Path.Combine(FileSystem.AppDataDirectory, GlobalJson.Data.PlanPath, planName);
+                                                            Point pinPos = GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].Pos;
+                                                            string pinImage = GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].PinIcon;
 
                                                             // Pin-Icon ein/ausblenden
-                                                            var pinList = new List<(string, SKPoint, SKPoint, float)>();
+                                                            List<(string, SKPoint, SKPoint, float)> pinList = [];
                                                             if (SettingsService.Instance.IsPinIconExport)
                                                             {
                                                                 pinList = [(pinImage,
@@ -165,7 +165,7 @@ public partial class ExportReport
                                                             else
                                                                 pinList = null;
 
-                                                            var _imgPlan = XmlImage.GenerateImage(mainPart,
+                                                            Drawing _imgPlan = XmlImage.GenerateImage(mainPart,
                                                                                                 new FileResult(planPath),
                                                                                                 SettingsService.Instance.PosImageExportScale,
                                                                                                 new SKPoint((float)pinPos.X,
@@ -184,16 +184,16 @@ public partial class ExportReport
                                                         {
                                                             Run newRun = new();
                                                             // add Pictures
-                                                            foreach (var img in GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].Fotos)
+                                                            foreach (KeyValuePair<string, Foto> img in GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].Fotos)
                                                             {
                                                                 if (GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].Fotos[img.Key].IsChecked)
                                                                 {
-                                                                    var imgName = GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].Fotos[img.Key].File;
-                                                                    var imgPath = System.IO.Path.Combine(FileSystem.AppDataDirectory, GlobalJson.Data.ImagePath, imgName);
+                                                                    string imgName = GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].Fotos[img.Key].File;
+                                                                    string imgPath = System.IO.Path.Combine(FileSystem.AppDataDirectory, GlobalJson.Data.ImagePath, imgName);
                                                                     if (!SettingsService.Instance.IsFotoOverlayExport)
                                                                         if (GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].Fotos[img.Key].HasOverlay)
                                                                             imgPath = System.IO.Path.Combine(FileSystem.AppDataDirectory, GlobalJson.Data.ImagePath, "originals", imgName);
-                                                                    var _img = XmlImage.GenerateImage(mainPart,
+                                                                    Drawing _img = XmlImage.GenerateImage(mainPart,
                                                                                                     new FileResult(imgPath),
                                                                                                     SettingsService.Instance.ImageExportScale,
                                                                                                     widthMilimeters: SettingsService.Instance.ImageExportSize,
@@ -221,8 +221,8 @@ public partial class ExportReport
                                                     case "${pin_priority}":
                                                         if (GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].PinPriority != 0)
                                                         {
-                                                            var fillColor = Settings.PriorityItems[GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].PinPriority].Color;
-                                                            var cellColor = new TableCellProperties( new Shading() { Fill = fillColor.Replace("#","") });
+                                                            string fillColor = Settings.PriorityItems[GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].PinPriority].Color;
+                                                            TableCellProperties cellColor = new(new Shading() { Fill = fillColor.Replace("#", "") });
                                                             newTableCell.Append(cellColor);
                                                         }
                                                         newParagraph.Append(new Run(new Text(Settings.PriorityItems[GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].PinPriority].Key)));
@@ -262,20 +262,20 @@ public partial class ExportReport
                 // Add Title Image
                 if (mainPart?.Document?.Body != null)
                 {
-                    foreach (var paragraph in mainPart.Document.Body.Elements<Paragraph>())
+                    foreach (Paragraph paragraph in mainPart.Document.Body.Elements<Paragraph>())
                     {
-                        var run = paragraph.Elements<Run>().FirstOrDefault(r => r.InnerText.Contains("${title_image"));
+                        Run run = paragraph.Elements<Run>().FirstOrDefault(r => r.InnerText.Contains("${title_image"));
                         if (run != null)
                         {
-                            foreach (var text in run.Elements<Text>())
+                            foreach (Text text in run.Elements<Text>())
                             {
                                 if (text.Text.Contains("${title_image"))
                                 {
                                     text.Text = ""; // Lösche den Platzhaltertext
-                                    var imgPath = System.IO.Path.Combine(FileSystem.AppDataDirectory, GlobalJson.Data.ImagePath, GlobalJson.Data.TitleImage);
+                                    string imgPath = System.IO.Path.Combine(FileSystem.AppDataDirectory, GlobalJson.Data.ImagePath, GlobalJson.Data.TitleImage);
                                     if (File.Exists(imgPath))
                                     {
-                                        var _img = XmlImage.GenerateImage(mainPart,
+                                        Drawing _img = XmlImage.GenerateImage(mainPart,
                                                                         new FileResult(imgPath),
                                                                         0.5,
                                                                         heightMilimeters: SettingsService.Instance.TitleExportSize,
@@ -294,17 +294,17 @@ public partial class ExportReport
                     // create Plan Index
                     if (mainPart?.Document?.Body != null)
                     {
-                        foreach (var paragraph in mainPart.Document.Body.Elements<Paragraph>())
+                        foreach (Paragraph paragraph in mainPart.Document.Body.Elements<Paragraph>())
                         {
-                            var run = paragraph.Elements<Run>().FirstOrDefault(r => r.InnerText.Contains("${plan_indexes}"));
+                            Run run = paragraph.Elements<Run>().FirstOrDefault(r => r.InnerText.Contains("${plan_indexes}"));
                             if (run != null)
                             {
-                                foreach (var text in run.Elements<Text>())
+                                foreach (Text text in run.Elements<Text>())
                                 {
                                     if (text.Text.Contains("${plan_indexes}"))
                                     {
                                         text.Remove(); // Lösche den Platzhaltertext
-                                        foreach (var plan in GlobalJson.Data.Plans)
+                                        foreach (KeyValuePair<string, Plan> plan in GlobalJson.Data.Plans)
                                         {
                                             run.Append(new Text("- " + GlobalJson.Data.Plans[plan.Key].Name));
                                             run.Append(new Break() { Type = BreakValues.TextWrapping });
@@ -318,28 +318,28 @@ public partial class ExportReport
                     if (mainPart?.Document?.Body != null)
                     {
                         // add Plan Images
-                        foreach (var paragraph in mainPart.Document.Body.Elements<Paragraph>())
+                        foreach (Paragraph paragraph in mainPart.Document.Body.Elements<Paragraph>())
                         {
                             if (paragraph.InnerText.Contains("${plan_images/"))
                             {
-                                var planMaxSize = ExtractDimensions(paragraph.InnerText.ToString());
-                                var replaceText = "${plan_images/" + planMaxSize.Width.ToString() + "/" + planMaxSize.Height.ToString() + "}";
+                                SizeF planMaxSize = ExtractDimensions(paragraph.InnerText.ToString());
+                                string replaceText = "${plan_images/" + planMaxSize.Width.ToString() + "/" + planMaxSize.Height.ToString() + "}";
                                 string fontSizeVal = "28";
-                                var firstRun = paragraph.Elements<Run>().FirstOrDefault();
+                                Run firstRun = paragraph.Elements<Run>().FirstOrDefault();
                                 var existingFontSize = firstRun?.RunProperties?.FontSize;
                                 if (existingFontSize != null)
                                     fontSizeVal = existingFontSize.Val;
 
                                 int i = 1;
-                                foreach (var plan in GlobalJson.Data.Plans)
+                                foreach (KeyValuePair<string, Plan> plan in GlobalJson.Data.Plans)
                                 {
                                     // Erster Paragraph für den Plan-Namen
-                                    var textParagraph = new Paragraph();
-                                    var runProperties = new RunProperties(); // definiere Schriftgrösse
-                                    var fontSize = new DocumentFormat.OpenXml.Wordprocessing.FontSize() { Val = fontSizeVal }; // 16pt Schriftgröße
+                                    Paragraph textParagraph = new();
+                                    RunProperties runProperties = new(); // definiere Schriftgrösse
+                                    DocumentFormat.OpenXml.Wordprocessing.FontSize fontSize = new() { Val = fontSizeVal }; // 16pt Schriftgröße
                                     runProperties.Append(fontSize);
 
-                                    var run = new Run();
+                                    Run run = new();
                                     run.PrependChild(runProperties);
                                     run.Append(new Text(GlobalJson.Data.Plans[plan.Key].Name));
                                     textParagraph.Append(run);
@@ -348,27 +348,27 @@ public partial class ExportReport
                                     paragraph.Append(textParagraph);
 
                                     // Zweiter Paragraph für das Plan-Image und Pins (ohne manuelles Break)
-                                    var imageAndPinsParagraph = new Paragraph();
-                                    var planImage = System.IO.Path.Combine(FileSystem.AppDataDirectory, GlobalJson.Data.PlanPath, GlobalJson.Data.Plans[plan.Key].File);
-                                    var planSize = GlobalJson.Data.Plans[plan.Key].ImageSize;
-                                    var scaledPlanSize = ScaleToFit(planSize, planMaxSize);
+                                    Paragraph imageAndPinsParagraph = new();
+                                    string planImage = System.IO.Path.Combine(FileSystem.AppDataDirectory, GlobalJson.Data.PlanPath, GlobalJson.Data.Plans[plan.Key].File);
+                                    Size planSize = GlobalJson.Data.Plans[plan.Key].ImageSize;
+                                    SizeF scaledPlanSize = ScaleToFit(planSize, planMaxSize);
 
                                     run = new Run();
                                     run.Append(GetImageElement(mainPart, planImage, scaledPlanSize, new Point(0, 0)));
 
                                     if (GlobalJson.Data.Plans[plan.Key].Pins != null)
                                     {
-                                        foreach (var pin in GlobalJson.Data.Plans[plan.Key].Pins)
+                                        foreach (KeyValuePair<string, Pin> pin in GlobalJson.Data.Plans[plan.Key].Pins)
                                         {
                                             if (GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].AllowExport)
                                             {
                                                 string pinImage = System.IO.Path.Combine(cacheDir, GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].PinIcon);
-                                                var pinPos = GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].Pos;
-                                                var pinAnchor = GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].Anchor;
-                                                var pinSize = GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].Size;
-                                                var pinColor = GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].PinColor;
-                                                var scaledPinSize = ScaleToFit(pinSize, new SizeF(0, (float)SettingsService.Instance.PinExportSize * (float)GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].PinScale));
-                                                var posOnPlan = new Point((pinPos.X * scaledPlanSize.Width) - (pinAnchor.X * scaledPinSize.Width),
+                                                Point pinPos = GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].Pos;
+                                                Point pinAnchor = GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].Anchor;
+                                                Size pinSize = GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].Size;
+                                                SKColor pinColor = GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].PinColor;
+                                                SizeF scaledPinSize = ScaleToFit(pinSize, new SizeF(0, (float)SettingsService.Instance.PinExportSize * (float)GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].PinScale));
+                                                Point posOnPlan = new((pinPos.X * scaledPlanSize.Width) - (pinAnchor.X * scaledPinSize.Width),
                                                                           (pinPos.Y * scaledPlanSize.Height) - (pinAnchor.Y * scaledPinSize.Height));
 
                                                 run.Append(GetImageElement(mainPart, pinImage, new SizeF(scaledPinSize.Width, scaledPinSize.Height), posOnPlan));
@@ -387,7 +387,7 @@ public partial class ExportReport
                                     paragraph.Append(imageAndPinsParagraph);
 
                                     // Erstelle einen neuen Paragraph mit einem Seitenumbruch
-                                    var pageBreakParagraph = new Paragraph(new Run(new Break() { Type = BreakValues.Page }));
+                                    Paragraph pageBreakParagraph = new(new Run(new Break() { Type = BreakValues.Page }));
                                     paragraph.Append(pageBreakParagraph);
                                 }
                             }
@@ -611,12 +611,12 @@ public partial class ExportReport
         // Durchlaufe alle Plans im JsonDataModel
         if (jsonDataModel.Plans != null)
         {
-            foreach (var plan in jsonDataModel.Plans.Values)
+            foreach (Plan plan in jsonDataModel.Plans.Values)
             {
                 // Durchlaufe alle Pins im Plan
                 if (plan.Pins != null)
                 {
-                    foreach (var pin in plan.Pins.Values)
+                    foreach (Pin pin in plan.Pins.Values)
                     {
                         if (!string.IsNullOrEmpty(pin.PinIcon))
                             uniquePinIcons.Add(pin.PinIcon);
@@ -631,24 +631,24 @@ public partial class ExportReport
     private static List<(int columnIndex, int positionInText, string placeholderKey)> SearchTableColumns(Table table, Dictionary<string, string> placeholders_table)
     {
         List<(int, int, string)> columnList = [];
-        foreach (var row in table.Elements<TableRow>())
+        foreach (TableRow row in table.Elements<TableRow>())
         {
             int columnIndex = 0; // Spaltenzähler
-            foreach (var cell in row.Elements<TableCell>())
+            foreach (TableCell cell in row.Elements<TableCell>())
             {
-                foreach (var paragraph in cell.Elements<Paragraph>())
+                foreach (Paragraph paragraph in cell.Elements<Paragraph>())
                 {
                     string paragraphText = paragraph.InnerText; // Gesamter Text des Paragraphen
-                    foreach (var placeholder in placeholders_table)
+                    foreach (KeyValuePair<string, string> placeholder in placeholders_table)
                     {
                         int position = paragraphText.IndexOf(placeholder.Key);
                         if (position != -1) // Platzhalter gefunden
                         {
                             columnList.Add((columnIndex, position, placeholder.Key));
-                            var run = paragraph.Elements<Run>().FirstOrDefault(r => r.InnerText.Contains(placeholder.Key));
+                            Run run = paragraph.Elements<Run>().FirstOrDefault(r => r.InnerText.Contains(placeholder.Key));
                             if (run != null)
                             {
-                                foreach (var text in run.Elements<Text>())
+                                foreach (Text text in run.Elements<Text>())
                                 {
                                     if (text.Text.Contains(placeholder.Key))
                                         text.Text = text.Text.Replace(placeholder.Key, ""); // Platzhalter entfernen
@@ -775,8 +775,8 @@ public partial class ExportReport
 
     private static SizeF ExtractDimensions(string input)
     {
-        var regex = PlanImagesRegex();
-        var match = regex.Match(input);
+        Regex regex = PlanImagesRegex();
+        Match match = regex.Match(input);
 
         if (match.Success)
         {
@@ -827,7 +827,7 @@ public partial class ExportReport
             {
                 try
                 {
-                    var sf = await Windows.Storage.StorageFile.GetFileFromPathAsync(icon);
+                    Windows.Storage.StorageFile sf = await Windows.Storage.StorageFile.GetFileFromPathAsync(icon);
                     if (sf is not null)
                     {
                         stream = await sf.OpenStreamForReadAsync();
@@ -839,13 +839,13 @@ public partial class ExportReport
 
                 if (stream == null && AppInfo.PackagingModel == AppPackagingModel.Packaged)
                 {
-                    var uri = new Uri("ms-appx:///" + icon);
-                    var sf = await Windows.Storage.StorageFile.GetFileFromApplicationUriAsync(uri);
+                    Uri uri = new("ms-appx:///" + icon);
+                    Windows.Storage.StorageFile sf = await Windows.Storage.StorageFile.GetFileFromApplicationUriAsync(uri);
                     stream = await sf.OpenStreamForReadAsync();
                 }
                 else if (stream == null)
                 {
-                    var root = AppContext.BaseDirectory;
+                    string root = AppContext.BaseDirectory;
                     icon = System.IO.Path.Combine(root, icon);
                     if (File.Exists(icon))
                         stream = File.OpenRead(icon);
