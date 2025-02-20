@@ -364,30 +364,36 @@ public partial class NewPage : IQueryAttributable
             string newPin = "a_pin_red.png";
             var iconItem = Settings.PinData.FirstOrDefault(item => item.FileName.Equals(newPin, StringComparison.OrdinalIgnoreCase));
             var location = await Helper.GetCurrentLocationAsync();
+
             Double _rotation = 0;
             Point _pos = new(PlanContainer.AnchorX, PlanContainer.AnchorY);
+            Size _size = iconItem.IconSize;
+            bool _isCustomPin = false;
+            Point _anchorPoint = iconItem.AnchorPoint;
+            bool _isRotationLocked = iconItem.IsRotationLocked;
+            string _displayName = iconItem.DisplayName;
 
             if (customName != null)
             { 
                 newPin = customName;
-                iconItem.AnchorPoint = new Point(0, 0);
-                iconItem.IconSize = new Size(customPinSizeWidth, customPinSizeHeight);
-                iconItem.IsRotationLocked = true;
-                iconItem.IsCustomPin = true;
-                iconItem.DisplayName = "";
+                _displayName = "";
+                _anchorPoint = new Point(0, 0);
+                _isRotationLocked = true;
+                _size = new Size(customPinSizeWidth, customPinSizeHeight);
                 _pos = new Point(customPinX, customPinY);
                 _rotation = planContainer.Rotation;
+                _isCustomPin = true;
             }
 
             Pin newPinData = new()
             {
                 Pos = _pos,
-                Anchor = iconItem.AnchorPoint,
-                Size = iconItem.IconSize,
+                Anchor = _anchorPoint,
+                Size = _size,
                 IsLocked = false,
-                IsLockRotate = iconItem.IsRotationLocked,
-                IsCustomPin = iconItem.IsCustomPin,
-                PinName = iconItem.DisplayName,
+                IsLockRotate = _isRotationLocked,
+                IsCustomPin = _isCustomPin,
+                PinName = _displayName,
                 PinDesc = "",
                 PinPriority = 0,
                 PinLocation = "",
