@@ -67,7 +67,7 @@
                 AbsoluteLayout.LayoutFlags="PositionProportional"
                 Clicked="SetPinClicked"/>
 
-        <!-- <Button ImageSource="{FontImageSource FontFamily=MaterialOutlined, Glyph={x:Static m:MaterialOutlined.Screenshot_region}}"
+        <Button ImageSource="{FontImageSource FontFamily=MaterialOutlined, Glyph={x:Static m:MaterialOutlined.Screenshot_region}}"
                 BackgroundColor="{DynamicResource Primary}"
                 TextColor="{DynamicResource PrimaryDarkText}"                
                 Margin="0,0,100,20"
@@ -76,6 +76,19 @@
                 CornerRadius="30"
                 AbsoluteLayout.LayoutBounds="1, 1, AutoSize, AutoSize"
                 AbsoluteLayout.LayoutFlags="PositionProportional"
-                Clicked="SetRegionClicked"/>-->
+                Clicked="SetRegionClicked"/>
+        
+        <Button x:Name="PenSettingsBtn"
+                ImageSource="{FontImageSource FontFamily=MaterialOutlined, Glyph={x:Static m:MaterialOutlined.Brush}}"
+                BackgroundColor="{DynamicResource Primary}"
+                TextColor="{DynamicResource PrimaryDarkText}" 
+                Margin="0,0,180,20"
+                WidthRequest="60"
+                HeightRequest="60"
+                CornerRadius="30"
+                AbsoluteLayout.LayoutBounds="1, 1, AutoSize, AutoSize"
+                AbsoluteLayout.LayoutFlags="PositionProportional"
+                IsVisible="False"
+                Clicked="PenSettingsClicked"/>        
     </AbsoluteLayout>
 </mr:ContentPage>

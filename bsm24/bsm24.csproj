@@ -53,7 +53,7 @@
 
 	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net9.0-android35.0|AnyCPU'">
 		<AndroidKeyStore>True</AndroidKeyStore>
-		<AndroidSigningKeyStore>C:\Users\mfankhauser\Desktop\bsm24\bsm24.keystore</AndroidSigningKeyStore>
+		<AndroidSigningKeyStore>C:\Users\fankhauser\Desktop\bsm24\bsm24.keystore</AndroidSigningKeyStore>
 		<AndroidSigningStorePass>p0Ny05jY</AndroidSigningStorePass>
 		<AndroidSigningKeyAlias>bsm24</AndroidSigningKeyAlias>
 		<AndroidSigningKeyPass>p0Ny05jY</AndroidSigningKeyPass>
@@ -62,7 +62,7 @@
 
 	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net9.0-android35.0|AnyCPU'">
 		<AndroidKeyStore>True</AndroidKeyStore>
-		<AndroidSigningKeyStore>C:\Users\mfankhauser\Desktop\bsm24\bsm24.keystore</AndroidSigningKeyStore>
+		<AndroidSigningKeyStore>C:\Users\fankhauser\Desktop\bsm24\bsm24.keystore</AndroidSigningKeyStore>
 		<AndroidSigningStorePass>p0Ny05jY</AndroidSigningStorePass>
 		<AndroidSigningKeyAlias>bsm24</AndroidSigningKeyAlias>
 		<AndroidSigningKeyPass>p0Ny05jY</AndroidSigningKeyPass>
@@ -173,9 +173,9 @@
 
 	<ItemGroup>
 		<PackageReference Include="Camera.MAUI" Version="1.5.1" />
-		<PackageReference Include="Codeuctivity.OpenXmlPowerTools" Version="8.0.292" />
-		<PackageReference Include="CommunityToolkit.Maui" Version="11.0.0" />
-		<PackageReference Include="CommunityToolkit.Maui.Core" Version="11.0.0" />
+		<PackageReference Include="Codeuctivity.OpenXmlPowerTools" Version="8.0.295" />
+		<PackageReference Include="CommunityToolkit.Maui" Version="11.1.0" />
+		<PackageReference Include="CommunityToolkit.Maui.Core" Version="11.1.0" />
 		<PackageReference Include="DocumentFormat.OpenXml" Version="3.2.0" />
 		<PackageReference Include="FFImageLoading.Maui" Version="1.2.7" />
 		<PackageReference Include="MetadataExtractor" Version="2.9.0-rc2" />

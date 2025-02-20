@@ -1,6 +1,7 @@
 ﻿#nullable disable
 
 using bsm24.ViewModels;
+using CommunityToolkit.Maui.Core;
 using CommunityToolkit.Maui.Core.Views;
 using CommunityToolkit.Maui.Views;
 using Mopups.Services;
@@ -237,12 +238,16 @@ public partial class ImageViewPage : IQueryAttributable
             LineWidth = 1f
         };
         DrawView.Lines.Add(boundingBox);
-        Stream draw_stream = await DrawingView.GetImageStream(DrawView.Lines,
-                                                            new Size(DrawView.Width, DrawView.Height),
-                                                            Colors.Transparent);
-        if (draw_stream != null)
+
+        await using var imageStream = await DrawingViewService.GetImageStream(
+                                            ImageLineOptions.FullCanvas(DrawView.Lines,
+                                            new Size(DrawView.Width, DrawView.Height),
+                                            Brush.Transparent,
+                                            new Size(DrawView.Width, DrawView.Height)));
+
+        if (imageStream != null)
         {
-            using var dwStream = new SKManagedStream(draw_stream);
+            using var dwStream = new SKManagedStream(imageStream);
             using var dwBitmap = SKBitmap.Decode(dwStream);
             using var origStream = File.OpenRead(filePath);
             using var origBitmap = SKBitmap.Decode(origStream);

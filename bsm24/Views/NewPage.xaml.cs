@@ -4,10 +4,12 @@ using bsm24.Models;
 using bsm24.Services;
 using bsm24.ViewModels;
 using CommunityToolkit.Maui.Core;
+using CommunityToolkit.Maui.Core.Views;
 using CommunityToolkit.Maui.Views;
 using Mopups.Services;
 using MR.Gestures;
 using SkiaSharp;
+using Application = Microsoft.Maui.Controls.Application;
 
 #if WINDOWS
 using bsm24.Platforms.Windows;
@@ -28,6 +30,10 @@ public partial class NewPage : IQueryAttributable
     private Point mousePos;
     private readonly TransformViewModel planContainer;
     private DrawingView drawingView;
+    private double minX, maxX, minY, maxY;  // Felder für die Grenzwerte
+    private int LineWidth { get; set; } = 15;
+    private Color SelectedColor { get; set; } = new Color(255, 0, 0);
+
 #if WINDOWS
     private bool shiftKeyDown = false;
     private double shiftKeyRotationStart;
@@ -53,7 +59,6 @@ public partial class NewPage : IQueryAttributable
             PlanImage.PropertyChanged += PlanImage_PropertyChanged;
         }
     }
-
 
     public void ApplyQueryAttributes(IDictionary<string, object> query)
     {
@@ -90,12 +95,19 @@ public partial class NewPage : IQueryAttributable
             foreach (var del_image in GlobalJson.Data.Plans[PlanId].Pins[PinDelete].Fotos)
             {
                 string file;
-
                 file = Path.Combine(FileSystem.AppDataDirectory, GlobalJson.Data.ImagePath, GlobalJson.Data.Plans[PlanId].Pins[PinDelete].Fotos[del_image.Key].File);
                 if (File.Exists(file))
                     File.Delete(file);
 
                 file = Path.Combine(FileSystem.AppDataDirectory, GlobalJson.Data.ThumbnailPath, GlobalJson.Data.Plans[PlanId].Pins[PinDelete].Fotos[del_image.Key].File);
+                if (File.Exists(file))
+                    File.Delete(file);
+            }
+
+            // remove custom pin image
+            if (GlobalJson.Data.Plans[PlanId].Pins[PinDelete].IsCustomPin)
+            {
+                String file = Path.Combine(FileSystem.AppDataDirectory, GlobalJson.Data.CustomPinsPath, GlobalJson.Data.Plans[PlanId].Pins[PinDelete].PinIcon);
                 if (File.Exists(file))
                     File.Delete(file);
             }
@@ -343,7 +355,7 @@ public partial class NewPage : IQueryAttributable
         AddDrawingView();
     }
 
-    private async void SetPin(string customName = null, int customPinSizeWidth = 0, int customPinSizeHeight = 0) 
+    private async void SetPin(string customName = null, int customPinSizeWidth = 0, int customPinSizeHeight = 0, double customPinX = 0, double customPinY = 0) 
     {
         var currentPage = (NewPage)Shell.Current.CurrentPage;
         if (currentPage != null)
@@ -353,6 +365,7 @@ public partial class NewPage : IQueryAttributable
             var iconItem = Settings.PinData.FirstOrDefault(item => item.FileName.Equals(newPin, StringComparison.OrdinalIgnoreCase));
             var location = await Helper.GetCurrentLocationAsync();
             Double _rotation = 0;
+            Point _pos = new(PlanContainer.AnchorX, PlanContainer.AnchorY);
 
             if (customName != null)
             { 
@@ -362,12 +375,13 @@ public partial class NewPage : IQueryAttributable
                 iconItem.IsRotationLocked = true;
                 iconItem.IsCustomPin = true;
                 iconItem.DisplayName = "";
+                _pos = new Point(customPinX, customPinY);
                 _rotation = planContainer.Rotation;
             }
 
             Pin newPinData = new()
             {
-                Pos = new(PlanContainer.AnchorX, PlanContainer.AnchorY),
+                Pos = _pos,
                 Anchor = iconItem.AnchorPoint,
                 Size = iconItem.IconSize,
                 IsLocked = false,
@@ -600,9 +614,39 @@ public partial class NewPage : IQueryAttributable
             HeightRequest = PlanImage.Height,
         };
 
+        // Initialisiere die Grenzwerte mit großen/unmöglichen Werten
+        ResetLimits();
+
         // Füge den EventHandler hinzu
         drawingView.DrawingLineCompleted += OnDrawingLineCompleted;
+        drawingView.PointDrawn += OnDrawingLineUpdated;
         (this.Content as Microsoft.Maui.Controls.AbsoluteLayout)?.Children.Add(drawingView);
+
+        PenSettingsBtn.IsVisible = true;
+        PenSettingsBtn.ZIndex = 9999;
+
+    }
+    private void ResetLimits()
+    {
+        minX = double.MaxValue;
+        maxX = double.MinValue;
+        minY = double.MaxValue;
+        maxY = double.MinValue;
+    }
+
+    private void OnDrawingLineUpdated(object sender, PointDrawnEventArgs e)
+    {
+        var x = e.Point.X / GlobalJson.Data.Plans[PlanId].ImageSize.Width * densityX;
+        var y = e.Point.Y / GlobalJson.Data.Plans[PlanId].ImageSize.Height * densityY;
+
+        if (x < minX)
+            minX = x;
+        if (x > maxX)
+            maxX = x;
+        if (y < minY)
+            minY = y;
+        if (y > maxY)
+            maxY = y;
     }
 
     private void RemoveDrawingView()
@@ -623,29 +667,48 @@ public partial class NewPage : IQueryAttributable
         var customPinPath = Path.Combine(FileSystem.AppDataDirectory, GlobalJson.Data.CustomPinsPath);
         var customPinName = "custompin_" + DateTime.Now.ToString("yyyyMMdd_HHmmss") + ".png";
         string filePath = Path.Combine(customPinPath, customPinName);
-        Stream imageStream = await DrawingView.GetImageStream(drawingView.Lines,
-                                                            new Size(drawingView.Width, drawingView.Height),
-                                                            Colors.Transparent);
+
+        await using var imageStream = await DrawingViewService.GetImageStream(
+                                            ImageLineOptions.JustLines(drawingView.Lines,
+                                            new Size((maxX-minX) * GlobalJson.Data.Plans[PlanId].ImageSize.Width + 10, (maxY-minY) * GlobalJson.Data.Plans[PlanId].ImageSize.Height + 10),
+                                            Brush.Transparent));
+
         if (imageStream != null)
         {
             if (!Directory.Exists(customPinPath))
                 Directory.CreateDirectory(customPinPath);
 
+            using var memoryStream = new MemoryStream();
+            await imageStream.CopyToAsync(memoryStream);
+            memoryStream.Seek(0, SeekOrigin.Begin);
+            using var skBitmap_tmp = SKBitmap.Decode(memoryStream);
+            var cropRect = new SKRectI(5, 5, skBitmap_tmp.Width - 5, skBitmap_tmp.Height - 5);
+            using var croppedBitmap = new SKBitmap(cropRect.Width, cropRect.Height);
+            skBitmap_tmp.ExtractSubset(croppedBitmap, cropRect);
+            using var croppedImage = SKImage.FromBitmap(croppedBitmap);
+            using var imageData = croppedImage.Encode(SKEncodedImageFormat.Png, 90); // 90 = Qualität
             using (var fileStream = new FileStream(filePath, FileMode.Create, FileAccess.Write))
             {
-                await imageStream.CopyToAsync(fileStream);
+                imageData.SaveTo(fileStream);
             }
 
-            // Lese die Bildabmessungen direkt aus der gespeicherten Datei
-            using var file = new SKFileStream(filePath);
-            using var skBitmap = SKBitmap.Decode(file);
-            int width = skBitmap?.Width ?? 0;
-            int height = skBitmap?.Height ?? 0;
-
-            SetPin(customPinName, width, height);
+            SetPin(customPinName, skBitmap_tmp.Width, skBitmap_tmp.Height, minX, minY);
             RemoveDrawingView();
-
             planContainer.IsPanningEnabled = true;
+            PenSettingsBtn.IsVisible = false;
         }
+    }
+
+    private async void PenSettingsClicked(object sender, EventArgs e)
+    {
+        var popup = new PopupColorPicker(LineWidth, SelectedColor);
+        await MopupService.Instance.PushAsync(popup);
+        var result = await popup.PopupDismissedTask;
+
+        SelectedColor = result.Item1;
+        LineWidth = result.Item2;
+
+        drawingView.LineColor = result.Item1;
+        drawingView.LineWidth = result.Item2;
     }
 }
