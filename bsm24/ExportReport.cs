@@ -370,7 +370,8 @@ public partial class ExportReport
                                                 Point pinAnchor = GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].Anchor;
                                                 Size pinSize = GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].Size;
                                                 SKColor pinColor = GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].PinColor;
-                                                SizeF scaledPinSize = ScaleToFit(pinSize, new SizeF(0, (float)SettingsService.Instance.PinExportSize * (float)GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].PinScale));
+                                                SizeF scaledPinSize = GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].isCustomPin ?
+                                                                      pinSize : ScaleToFit(pinSize, new SizeF(0, (float)SettingsService.Instance.PinExportSize * (float)GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].PinScale));
                                                 Point posOnPlan = new((pinPos.X * scaledPlanSize.Width) - (pinAnchor.X * scaledPinSize.Width),
                                                                           (pinPos.Y * scaledPlanSize.Height) - (pinAnchor.Y * scaledPinSize.Height));
 
