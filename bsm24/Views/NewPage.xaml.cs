@@ -273,10 +273,13 @@ public partial class NewPage : IQueryAttributable
             PinSizeBorder.IsVisible = true;
         };
 
+        // sort large custom pins on lower z-indexes
+        // and small pins on z=10000
         if (GlobalJson.Data.Plans[PlanId].Pins[pinId].isCustomPin)
-            smallImage.zIndex = 5;
+            smallImage.zIndex = (GlobalJson.Data.Plans[PlanId].Pins[pinId].ImageSize.Width +
+                                 GlobalJson.Data.Plans[PlanId].Pins[pinId].ImageSize.Height) / 2
         else
-            smallImage.zIndex = 100;
+            smallImage.zIndex = 10000;
 
         PlanContainer.Children.Add(smallImage);
         PlanContainer.InvalidateMeasure(); //Aktualisierung forcieren
