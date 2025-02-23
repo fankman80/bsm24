@@ -229,6 +229,7 @@ public partial class NewPage : IQueryAttributable
             TranslationY = (_planSize.Height * _originPos.Y / densityY) - (_originAnchor.Y * _pinSize.Height),
             Rotation = _rotation,
             Scale = PinScaling(pinId),
+            InputTransparent = false
         };
 
         smallImage.Down += (s, e) =>
@@ -274,12 +275,9 @@ public partial class NewPage : IQueryAttributable
         };
 
         // sort large custom pins on lower z-indexes
-        // and small pins on z=10000
-        if (GlobalJson.Data.Plans[PlanId].Pins[pinId].IsCustomPin)
-            smallImage.ZIndex = (int)((GlobalJson.Data.Plans[PlanId].Pins[pinId].Size.Width +
-                                GlobalJson.Data.Plans[PlanId].Pins[pinId].Size.Height) / 2);
-        else
-            smallImage.ZIndex = 10000;
+        // and small pins on higher z-indexes
+        smallImage.ZIndex = 10000 - (int)((GlobalJson.Data.Plans[PlanId].Pins[pinId].Size.Width +
+                                               GlobalJson.Data.Plans[PlanId].Pins[pinId].Size.Height) / 2);
 
         PlanContainer.Children.Add(smallImage);
         PlanContainer.InvalidateMeasure(); //Aktualisierung forcieren

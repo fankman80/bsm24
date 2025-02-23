@@ -355,6 +355,7 @@ public partial class ExportReport
                                     string planImage = System.IO.Path.Combine(FileSystem.AppDataDirectory, GlobalJson.Data.PlanPath, GlobalJson.Data.Plans[plan.Key].File);
                                     Size planSize = GlobalJson.Data.Plans[plan.Key].ImageSize;
                                     SizeF scaledPlanSize = ScaleToFit(planSize, planMaxSize);
+                                    SizeF scaleFactor = new(scaledPlanSize.Width / (float)planSize.Width, scaledPlanSize.Height / (float)planSize.Height);
 
                                     run = new Run();
                                     run.Append(GetImageElement(mainPart, planImage, scaledPlanSize, new Point(0, 0)));
@@ -371,9 +372,10 @@ public partial class ExportReport
                                                 Size pinSize = GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].Size;
                                                 SKColor pinColor = GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].PinColor;
                                                 SizeF scaledPinSize = GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].IsCustomPin ?
-                                                                      pinSize : ScaleToFit(pinSize, new SizeF(0, (float)SettingsService.Instance.PinExportSize * (float)GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].PinScale));
+                                                                      new SizeF((float)pinSize.Width * scaleFactor.Width, (float)pinSize.Height * scaleFactor.Height) :
+                                                                      ScaleToFit(pinSize, new SizeF(0, (float)SettingsService.Instance.PinExportSize * (float)GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].PinScale));
                                                 Point posOnPlan = new((pinPos.X * scaledPlanSize.Width) - (pinAnchor.X * scaledPinSize.Width),
-                                                                          (pinPos.Y * scaledPlanSize.Height) - (pinAnchor.Y * scaledPinSize.Height));
+                                                                      (pinPos.Y * scaledPlanSize.Height) - (pinAnchor.Y * scaledPinSize.Height));
 
                                                 run.Append(GetImageElement(mainPart, pinImage, new SizeF(scaledPinSize.Width, scaledPinSize.Height), posOnPlan));
 
