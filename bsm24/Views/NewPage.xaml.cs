@@ -275,11 +275,11 @@ public partial class NewPage : IQueryAttributable
 
         // sort large custom pins on lower z-indexes
         // and small pins on z=10000
-        if (GlobalJson.Data.Plans[PlanId].Pins[pinId].isCustomPin)
-            smallImage.zIndex = (GlobalJson.Data.Plans[PlanId].Pins[pinId].ImageSize.Width +
-                                 GlobalJson.Data.Plans[PlanId].Pins[pinId].ImageSize.Height) / 2
+        if (GlobalJson.Data.Plans[PlanId].Pins[pinId].IsCustomPin)
+            smallImage.ZIndex = (int)((GlobalJson.Data.Plans[PlanId].Pins[pinId].Size.Width +
+                                GlobalJson.Data.Plans[PlanId].Pins[pinId].Size.Height) / 2);
         else
-            smallImage.zIndex = 10000;
+            smallImage.ZIndex = 10000;
 
         PlanContainer.Children.Add(smallImage);
         PlanContainer.InvalidateMeasure(); //Aktualisierung forcieren
