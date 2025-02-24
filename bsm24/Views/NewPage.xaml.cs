@@ -35,7 +35,7 @@ public partial class NewPage : IQueryAttributable
     private int lineWidth = 15;
     private Color selectedColor = new(255, 0, 0);
     bool isTappedHandled = false;
-    int minX, minY, maxX, maxY;
+    SKRectI pinBound;
 
 #if WINDOWS
     private bool shiftKeyDown = false;
@@ -659,10 +659,10 @@ public partial class NewPage : IQueryAttributable
             HeightRequest = PlanImage.Height,
         };
 
-        minX = int.MaxValue;
-        maxX = int.MinValue;
-        minY = int.MaxValue;
-        maxY = int.MinValue;
+        pinBound.Left = int.MaxValue;
+        pinBound.Right = int.MinValue;
+        pinBound.Top = int.MaxValue;
+        pinBound.Bottom = int.MinValue;
 
         // Füge die EventHandler hinzu
         drawingView.PointDrawn += OnDrawingLineUpdated;
@@ -686,14 +686,60 @@ public partial class NewPage : IQueryAttributable
 
     private void OnDrawingLineUpdated(object sender, PointDrawnEventArgs e)
     {
-        if (e.Point.X < minX)
-            minX = (int)e.Point.X;
-        if (e.Point.X > maxX)
-            maxX = (int)e.Point.X;
-        if (e.Point.Y < minY)
-            minY = (int)e.Point.Y;
-        if (e.Point.Y > maxY)
-            maxY = (int)e.Point.Y;
+        if (e.Point.X < pinBound.Left)
+            pinBound.Left = (int)e.Point.X;
+        if (e.Point.X > pinBound.Right)
+            pinBound.Right = (int)e.Point.X;
+        if (e.Point.Y < pinBound.Top)
+            pinBound.Top = (int)e.Point.Y;
+        if (e.Point.Y > pinBound.Bottom)
+            pinBound.Bottom = (int)e.Point.Y;
+    }
+
+    private async void CheckClicked(object sender, EventArgs e)
+    {
+        if (drawingView.Lines.Count > 0)
+        {
+            var customPinPath = Path.Combine(FileSystem.AppDataDirectory, GlobalJson.Data.CustomPinsPath);
+            var customPinName = "custompin_" + DateTime.Now.ToString("yyyyMMdd_HHmmss") + ".png";
+            string filePath = Path.Combine(customPinPath, customPinName);
+
+            await using var imageStream = await DrawingViewService.GetImageStream(
+                                                ImageLineOptions.JustLines(drawingView.Lines,
+                                                new Size(1, 1),
+                                                Brush.Transparent));
+            if (imageStream != null)
+            {
+                if (!Directory.Exists(customPinPath))
+                    Directory.CreateDirectory(customPinPath);
+
+                using var memoryStream = new MemoryStream();
+                await imageStream.CopyToAsync(memoryStream);
+                memoryStream.Seek(0, SeekOrigin.Begin);
+                using var skBitmap = SKBitmap.Decode(memoryStream);
+
+                var resizedBitmap = new SKBitmap((int)(pinBound.Width + drawingView.LineWidth + 10), (int)(pinBound.Height + drawingView.LineWidth + 10));
+                var samplingOptions = new SKSamplingOptions(SKFilterMode.Linear);
+                skBitmap.ScalePixels(resizedBitmap, samplingOptions);
+
+                using var imageData = resizedBitmap.Encode(SKEncodedImageFormat.Png, 90); // 90 = Qualität
+                using (var fileStream = new FileStream(filePath, FileMode.Create, FileAccess.Write))
+                {
+                    imageData.SaveTo(fileStream);
+                }
+
+                SetPin(customPinName, resizedBitmap.Width, resizedBitmap.Height,
+                      (pinBound.Left + pinBound.Width / 2) / GlobalJson.Data.Plans[PlanId].ImageSize.Width * densityX,
+                      (pinBound.Top + pinBound.Height / 2) / GlobalJson.Data.Plans[PlanId].ImageSize.Height * densityY,
+                      new SKColor(drawingView.LineColor.ToUint()));
+            }
+        }
+        RemoveDrawingView();
+        planContainer.IsPanningEnabled = true;
+        PenSettingsBtn.IsVisible = false;
+        CheckBtn.IsVisible = false;
+        SetPinBtn.IsVisible = true;
+        DrawBtn.IsVisible = true;
     }
 
     private async void PenSettingsClicked(object sender, EventArgs e)
@@ -707,53 +753,6 @@ public partial class NewPage : IQueryAttributable
 
         drawingView.LineColor = result.Item1;
         drawingView.LineWidth = result.Item2;
-    }
-
-    private async void CheckClicked(object sender, EventArgs e)
-    {
-        if (drawingView.Lines.Count > 0)
-        {
-            var customPinPath = Path.Combine(FileSystem.AppDataDirectory, GlobalJson.Data.CustomPinsPath);
-            var customPinName = "custompin_" + DateTime.Now.ToString("yyyyMMdd_HHmmss") + ".png";
-            string filePath = Path.Combine(customPinPath, customPinName);
-
-            await using var imageStream = await DrawingViewService.GetImageStream(
-                                                ImageLineOptions.FullCanvas(drawingView.Lines,
-                                                new Size(GlobalJson.Data.Plans[PlanId].ImageSize.Width, GlobalJson.Data.Plans[PlanId].ImageSize.Height),
-                                                Brush.Transparent,
-                                                new Size(GlobalJson.Data.Plans[PlanId].ImageSize.Width, GlobalJson.Data.Plans[PlanId].ImageSize.Height)));
-            if (imageStream != null)
-            {
-                if (!Directory.Exists(customPinPath))
-                    Directory.CreateDirectory(customPinPath);
-
-                using var memoryStream = new MemoryStream();
-                await imageStream.CopyToAsync(memoryStream);
-                memoryStream.Seek(0, SeekOrigin.Begin);
-                using var skBitmap_tmp = SKBitmap.Decode(memoryStream);
-                var lw = (int)(drawingView.LineWidth / 2);
-                var cropRect = new SKRectI(minX - lw, minY - lw, maxX + lw, maxY + lw);
-                using var croppedBitmap = new SKBitmap(cropRect.Width, cropRect.Height);
-                skBitmap_tmp.ExtractSubset(croppedBitmap, cropRect);
-                using var croppedImage = SKImage.FromBitmap(croppedBitmap);
-                using var imageData = croppedImage.Encode(SKEncodedImageFormat.Png, 90); // 90 = Qualität
-                using (var fileStream = new FileStream(filePath, FileMode.Create, FileAccess.Write))
-                {
-                    imageData.SaveTo(fileStream);
-                }
-
-                SetPin(customPinName, cropRect.Width, cropRect.Height,
-                      (cropRect.Left + cropRect.Width / 2) / GlobalJson.Data.Plans[PlanId].ImageSize.Width * densityX,
-                      (cropRect.Top + cropRect.Height / 2) / GlobalJson.Data.Plans[PlanId].ImageSize.Height * densityY,
-                      new SKColor(drawingView.LineColor.ToUint()));
-            }
-        }
-        RemoveDrawingView();
-        planContainer.IsPanningEnabled = true;
-        PenSettingsBtn.IsVisible = false;
-        CheckBtn.IsVisible = false;
-        SetPinBtn.IsVisible = true;
-        DrawBtn.IsVisible = true;
     }
 
     private void OnSliderValueChanged(object sender, EventArgs e)

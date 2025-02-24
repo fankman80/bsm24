@@ -53,7 +53,7 @@
 
 	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net9.0-android35.0|AnyCPU'">
 		<AndroidKeyStore>True</AndroidKeyStore>
-		<AndroidSigningKeyStore>C:\Users\fankhauser\Desktop\bsm24\bsm24.keystore</AndroidSigningKeyStore>
+		<AndroidSigningKeyStore>C:\Users\mfankhauser\Desktop\bsm24\bsm24.keystore</AndroidSigningKeyStore>
 		<AndroidSigningStorePass>p0Ny05jY</AndroidSigningStorePass>
 		<AndroidSigningKeyAlias>bsm24</AndroidSigningKeyAlias>
 		<AndroidSigningKeyPass>p0Ny05jY</AndroidSigningKeyPass>
@@ -62,7 +62,7 @@
 
 	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net9.0-android35.0|AnyCPU'">
 		<AndroidKeyStore>True</AndroidKeyStore>
-		<AndroidSigningKeyStore>C:\Users\fankhauser\Desktop\bsm24\bsm24.keystore</AndroidSigningKeyStore>
+		<AndroidSigningKeyStore>C:\Users\mfankhauser\Desktop\bsm24\bsm24.keystore</AndroidSigningKeyStore>
 		<AndroidSigningStorePass>p0Ny05jY</AndroidSigningStorePass>
 		<AndroidSigningKeyAlias>bsm24</AndroidSigningKeyAlias>
 		<AndroidSigningKeyPass>p0Ny05jY</AndroidSigningKeyPass>
