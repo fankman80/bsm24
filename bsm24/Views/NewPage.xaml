@@ -112,7 +112,7 @@
                 ImageSource="{FontImageSource FontFamily=MaterialOutlined, Glyph={x:Static m:MaterialOutlined.Brush}}"
                 BackgroundColor="{DynamicResource Primary}"
                 TextColor="{DynamicResource PrimaryDarkText}" 
-                Margin="0,0,20,20"
+                Margin="0,0,100,20"
                 WidthRequest="60"
                 HeightRequest="60"
                 CornerRadius="30"
@@ -120,5 +120,18 @@
                 AbsoluteLayout.LayoutFlags="PositionProportional"
                 IsVisible="False"
                 Clicked="PenSettingsClicked"/>
+
+        <Button x:Name="CheckBtn"
+                IsVisible="False"
+                ImageSource="{FontImageSource FontFamily=MaterialOutlined, Glyph={x:Static m:MaterialOutlined.Check}}"
+                BackgroundColor="{DynamicResource Primary}"
+                TextColor="{DynamicResource PrimaryDarkText}"                
+                Margin="0,0,20,20"
+                WidthRequest="60"
+                HeightRequest="60"
+                CornerRadius="30"
+                AbsoluteLayout.LayoutBounds="1, 1, AutoSize, AutoSize"
+                AbsoluteLayout.LayoutFlags="PositionProportional"
+                Clicked="CheckClicked"/>
     </AbsoluteLayout>
 </mr:ContentPage>
