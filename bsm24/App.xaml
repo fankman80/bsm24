@@ -33,7 +33,7 @@
                 <Setter Property="Shell.ForegroundColor"
                     Value="White" />
                 <Setter Property="Shell.TitleColor"
-                    Value="White"  />
+                    Value="White" />
                 <Setter Property="Shell.DisabledColor"
                     Value="#B4FFFFFF" />
                 <Setter Property="Shell.UnselectedColor"

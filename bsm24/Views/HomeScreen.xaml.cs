@@ -1,12 +1,9 @@
-﻿using System.Windows.Input;
+﻿namespace bsm24.Views;
 
-namespace bsm24.Views
+public partial class HomeScreen : ContentPage
 {
-    public partial class HomeScreen : ContentPage
+    public HomeScreen()
     {
-        public HomeScreen()
-        {
-            InitializeComponent();
-        }
+        InitializeComponent();
     }
 }

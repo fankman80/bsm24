@@ -18,7 +18,7 @@
         <ToolbarItem
             x:Name ="btnPlanFit"
             IconImageSource="{FontImageSource FontFamily=MaterialOutlined, Color={DynamicResource PrimaryDark}, Glyph={x:Static m:MaterialOutlined.Fit_screen}}" 
-            Text="Grösse anpassen"            
+            Text="Grösse anpassen"
             Clicked="ImageFit"/>
         <ToolbarItem
             x:Name ="btnColorSwitch"
@@ -74,8 +74,8 @@
             </Border.StrokeShape>
             <Slider x:Name="PinSizeSlider"
                     Margin="60,15,15,15"
-                    Maximum="180"
-                    Minimum="-180"
+                    Minimum="0"                    
+                    Maximum="360"
                     Value="0"
                     ThumbColor="{DynamicResource PrimaryDarkText}"
                     MinimumTrackColor="{DynamicResource PrimaryDarkText}"
