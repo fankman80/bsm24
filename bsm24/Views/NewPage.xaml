@@ -74,8 +74,8 @@
             </Border.StrokeShape>
             <Slider x:Name="PinSizeSlider"
                     Margin="60,15,15,15"
-                    Maximum="360"
-                    Minimum="0"
+                    Maximum="180"
+                    Minimum="-180"
                     Value="0"
                     ThumbColor="{DynamicResource PrimaryDarkText}"
                     MinimumTrackColor="{DynamicResource PrimaryDarkText}"
