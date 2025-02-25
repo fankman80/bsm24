@@ -283,6 +283,7 @@ public partial class NewPage : IQueryAttributable
             DrawBtn.IsVisible = false;
             SetPinBtn.IsVisible = false;
             PinSizeBorder.IsVisible = true;
+            PinSizeLabel.IsVisible = true;
         };
 
         // sort large custom pins on lower z-indexes
@@ -668,18 +669,13 @@ public partial class NewPage : IQueryAttributable
 
         PenSettingsBtn.IsVisible = true;
         CheckBtn.IsVisible = true;
-        PenSettingsBtn.ZIndex = 10000;
-        CheckBtn.ZIndex = 10000;
+        EraseBtn.IsVisible = true;
     }
 
     private void RemoveDrawingView()
     {
         if (drawingView != null && (this.Content as Microsoft.Maui.Controls.AbsoluteLayout) != null)
-        {
-            drawingView.PointDrawn += OnDrawingLineUpdated;
             (this.Content as Microsoft.Maui.Controls.AbsoluteLayout)?.Children.Remove(drawingView);
-            drawingView = null;
-        }
     }
 
     private void OnDrawingLineUpdated(object sender, PointDrawnEventArgs e)
@@ -737,6 +733,7 @@ public partial class NewPage : IQueryAttributable
         planContainer.IsPanningEnabled = true;
         PenSettingsBtn.IsVisible = false;
         CheckBtn.IsVisible = false;
+        EraseBtn.IsVisible = false;
         SetPinBtn.IsVisible = true;
         DrawBtn.IsVisible = true;
     }
@@ -752,6 +749,11 @@ public partial class NewPage : IQueryAttributable
 
         drawingView.LineColor = result.Item1;
         drawingView.LineWidth = (int)(result.Item2 / densityX);
+    }
+
+    private void EraseClicked(object sender, EventArgs e)
+    {
+        drawingView.Clear();
     }
 
     private void OnSliderValueChanged(object sender, EventArgs e)
@@ -772,6 +774,7 @@ public partial class NewPage : IQueryAttributable
 
         planContainer.IsPanningEnabled = true;
         PinSizeBorder.IsVisible = false;
+        PinSizeLabel.IsVisible = false;
         DrawBtn.IsVisible = true;
         SetPinBtn.IsVisible = true;
         activePin = null;
