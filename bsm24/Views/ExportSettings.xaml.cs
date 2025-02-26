@@ -3,7 +3,6 @@
 using bsm24.Services;
 using CommunityToolkit.Maui.Alerts;
 using CommunityToolkit.Maui.Storage;
-using Mopups.Services;
 using UraniumUI.Pages;
 
 namespace bsm24.Views;

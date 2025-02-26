@@ -14,7 +14,7 @@
     x:Name="PinListPage"
     x:Class="bsm24.Views.PinList"
     Title="Pin Liste">
-
+    
     <uranium:UraniumContentPage.Resources>
         <ResourceDictionary>
             <services:BooleanInverterConverter x:Key="BooleanInverterConverter" />

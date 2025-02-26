@@ -10,7 +10,7 @@
              BackgroundColor="{AppThemeBinding Light={DynamicResource PrimaryBackground}, Dark={DynamicResource PrimaryBackgroundDark}}"
              x:Class="bsm24.Views.OpenProject"
              Title="Projektliste">
-
+   
     <ContentPage.ToolbarItems>
         <ToolbarItem
             IconImageSource="{FontImageSource FontFamily=MaterialOutlined, Color={DynamicResource PrimaryDark}, Glyph={x:Static m:MaterialOutlined.Upload_file}}" 

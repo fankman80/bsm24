@@ -17,7 +17,6 @@ public partial class PinList : UraniumContentPage
         InitializeComponent();
         SizeChanged += OnSizeChanged;
         BindingContext = this;
-
         LoadPins();
     }
 

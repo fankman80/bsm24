@@ -46,8 +46,8 @@ public partial class NewPage : IQueryAttributable
         BindingContext = new TransformViewModel();
         PlanId = planId;
         PinZoom = zoomToPin;
-        PageTitle = GlobalJson.Data.Plans[PlanId].Name;
         planContainer = (TransformViewModel)PlanContainer.BindingContext;
+        PageTitle = GlobalJson.Data.Plans[PlanId].Name;
     }
 
     protected override void OnAppearing()
