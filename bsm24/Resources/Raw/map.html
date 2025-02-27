@@ -56,10 +56,13 @@
 
         function addMarker(lon, lat) {
             var iconStyle = new ol.style.Style({
-                image: new ol.style.Icon({
-                    src: 'https://openlayers.org/en/v6.5.0/examples/data/icon.png',
-                    scale: 1  // Skaliere das Icon, wenn nötig
-                })
+              image: new ol.style.Icon({
+                src: 'https://openlayers.org/en/v6.5.0/examples/data/icon.png',
+                scale: 1,
+                anchor: [0.5, 1],  // Der Ankerpunkt ist die untere Mitte des Icons
+                anchorXUnits: 'fraction',
+                vanchorYUnits: 'fraction'
+              })
             });
 
             var iconFeature = new ol.Feature({
