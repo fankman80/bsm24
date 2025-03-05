@@ -37,7 +37,7 @@
             font-weight: bold;
             font-style: italic;
             margin: 5px;
-            color: #848484;
+            color: {titlecolor};
         }
 
         #popup p {
@@ -58,9 +58,10 @@
         var pendingPositions = [];  // Array für die Positionen, die gesetzt werden sollen, wenn die Karte bereit ist
         var vectorSource;  // Globale Variable für die Vektorquelle
         var vectorLayer;   // Globale Variable für den Vektor-Layer
+        var wmsLayer; // globale Variable
 
         function initMap() {
-            var wmsLayer = new ol.layer.Tile({
+            wmsLayer = new ol.layer.Tile({
                 source: new ol.source.TileWMS({
                     url: 'https://wms.geo.admin.ch/',
                     params: { 'LAYERS': 'ch.swisstopo.pixelkarte-farbe', 'TILED': true },
@@ -159,6 +160,12 @@
         function setMultipleMarkers(positions) {
             positions.forEach(function (position) {
                 setMarkerPosition(position.lon, position.lat, position.pindesc, position.pinlocation, position.pinname);
+            });
+        }
+
+        function changeMapLayer(layer) {
+            wmsLayer.getSource().updateParams({
+                LAYERS: layer
             });
         }
     </script>

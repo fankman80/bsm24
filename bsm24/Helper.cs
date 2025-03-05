@@ -126,14 +126,15 @@ public class Helper
     {
         try
         {
-            var location = await Geolocation.GetLastKnownLocationAsync();
-            if (location != null)
-            {
-                return location;
-            }
-            location = await Geolocation.GetLocationAsync(new GeolocationRequest
+            //var location = await Geolocation.GetLastKnownLocationAsync();
+            //if (location != null)
+            //{
+            //    return location;
+            //}
+            var location = await Geolocation.GetLocationAsync(new GeolocationRequest
             {
                 DesiredAccuracy = GeolocationAccuracy.Best,
+                RequestFullAccuracy = true,
                 Timeout = TimeSpan.FromSeconds(10)
             });
             return location;

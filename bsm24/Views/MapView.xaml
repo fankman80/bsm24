@@ -11,13 +11,56 @@
                 Title="Geo Admin Map">
 
     <ContentPage.ToolbarItems>
-        <ToolbarItem
-            x:Name ="SetPosBtn"
-            IconImageSource="{FontImageSource FontFamily=MaterialOutlined, Color={DynamicResource PrimaryDark}, Glyph={x:Static m:MaterialOutlined.Edit_location_alt}}"             
-            Text="Position aktualisieren"
-            Clicked="SetPosClicked"/>
+        <ToolbarItem x:Name ="SetPosBtn"
+                     IsEnabled="False"
+                     IconImageSource="{FontImageSource FontFamily=MaterialOutlined, Color={DynamicResource PrimaryDark}, Glyph={x:Static m:MaterialOutlined.Edit_location_alt}}"             
+                     Text="Position aktualisieren"
+                     Clicked="SetPosClicked"/>
     </ContentPage.ToolbarItems>
 
-    <WebView x:Name="GeoAdminWebView" />
+    <AbsoluteLayout>
+        <WebView x:Name="GeoAdminWebView" 
+             AbsoluteLayout.LayoutBounds="0,0,1,1"
+             AbsoluteLayout.LayoutFlags="All" />
 
+        <StackLayout Orientation="Horizontal"
+                     Spacing="20"
+                     Padding="20"
+                     AbsoluteLayout.LayoutBounds="1,1,AutoSize,AutoSize"
+                     AbsoluteLayout.LayoutFlags="PositionProportional">
+
+            <Border Grid.Column="0"
+                    WidthRequest="60"
+                    HeightRequest="60"
+                    Stroke="#4d4d4d"
+                    StrokeThickness="3"
+                    BackgroundColor="White"
+                    StrokeShape="RoundRectangle 8">
+                <Image Source="mapcolorbtn.png"/>
+                <Border.GestureRecognizers>
+                    <TapGestureRecognizer Tapped="OnMapLayerColorClicked"/>
+                </Border.GestureRecognizers>
+                <Border.Shadow>
+                    <Shadow Brush="Black" Opacity="0.7" Offset="3,3" Radius="8"/>
+                </Border.Shadow>
+            </Border>
+
+            <Border Grid.Column="0"
+                    WidthRequest="60"
+                    HeightRequest="60"
+                    Stroke="#4d4d4d"
+                    StrokeThickness="3"
+                    BackgroundColor="White"
+                    StrokeShape="RoundRectangle 8">
+                <Image Source="maprealbtn.png"/>
+                <Border.GestureRecognizers>
+                    <TapGestureRecognizer Tapped="OnMapLayerRealClicked"/>
+                </Border.GestureRecognizers>
+                <Border.Shadow>
+                    <Shadow Brush="Black" Opacity="0.7" Offset="3,3" Radius="8"/>
+                </Border.Shadow>
+            </Border>
+        </StackLayout>
+
+    </AbsoluteLayout>
 </ContentPage>

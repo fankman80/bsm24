@@ -4,10 +4,12 @@
 using Android.Webkit;
 #endif
 
-using System.Globalization;
-using bsm24.Services;
 using bsm24.Models;
+using bsm24.Services;
+using Codeuctivity.OpenXmlPowerTools;
 using Mopups.Services;
+using System.Globalization;
+using System.Net.Http;
 
 namespace bsm24.Views;
 
@@ -48,12 +50,14 @@ public partial class MapView : IQueryAttributable
 
         if (PinId != null && GlobalJson.Data.Plans[PlanId].Pins[PinId].GeoLocation != null)
         {
+            SetPosBtn.IsEnabled = true;
             lon = GlobalJson.Data.Plans[PlanId].Pins[PinId].GeoLocation.WGS84.Longitude;
             lat = GlobalJson.Data.Plans[PlanId].Pins[PinId].GeoLocation.WGS84.Latitude;
             zoom = 18;
         }
         else
-        {             
+        {
+            SetPosBtn.IsEnabled = false;
             var location = await Helper.GetCurrentLocationAsync();
             if (location != null)
             {
@@ -108,11 +112,13 @@ public partial class MapView : IQueryAttributable
         // Ersetze die Platzhalter für die Koordinaten im HTML
         string _center_koord = lon.ToString(CultureInfo.InvariantCulture) + ", " + lat.ToString(CultureInfo.InvariantCulture);
         string _zoom = zoom.ToString();
-        
+
+        htmlContent = htmlContent.Replace("{maplayer}", "ch.swisstopo.pixelkarte-farbe");
         htmlContent = htmlContent.Replace("{center_koord}", _center_koord);
         htmlContent = htmlContent.Replace("{mapzoom}", _zoom);
         htmlContent = htmlContent.Replace("{icon}", SettingsService.Instance.IconUrls[SettingsService.Instance.MapIcon]);
         htmlContent = htmlContent.Replace("{iconzoom}", ((double)SettingsService.Instance.MapIconSize / 100).ToString(CultureInfo.InvariantCulture));
+        htmlContent = htmlContent.Replace("{titlecolor}", ((Color)Application.Current.Resources["Primary"]).ToRgbaHex());
 
         return htmlContent;
     }
@@ -152,5 +158,18 @@ public partial class MapView : IQueryAttributable
             GlobalJson.Data.Plans[PlanId].Pins[PinId].GeoLocation = location != null ? new GeoLocData(location) : null;
             GeoAdminWebView.Reload();
         }
+    }
+
+    private void OnMapLayerColorClicked(object sender, EventArgs e)
+    {
+        var layer = "ch.swisstopo.pixelkarte-farbe";   
+        var script = $"changeMapLayer('{layer}');";
+        GeoAdminWebView.EvaluateJavaScriptAsync(script);
+    }
+    private void OnMapLayerRealClicked(object sender, EventArgs e)
+    {
+        var layer = "ch.swisstopo.swissimage";
+        var script = $"changeMapLayer('{layer}');";
+        GeoAdminWebView.EvaluateJavaScriptAsync(script);
     }
 }
