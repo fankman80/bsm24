@@ -20,6 +20,15 @@ public partial class SettingsService : INotifyPropertyChanged
         SelectedDarkMode = DarkMode[0]; // Standardauswahl
     }
 
+    public List<string> IconUrls { get; set; } =
+    [
+        "https://img.icons8.com/?size=50&id=52671&format=png&color=000000",
+        "https://img.icons8.com/?size=50&id=IFhxBaYSUYkJ&format=png&color=000000",
+        "https://img.icons8.com/?size=50&id=13800&format=png&color=000000",
+        "https://img.icons8.com/?size=50&id=Ju3Ck2nsKKej&format=png&color=000000",
+        "https://img.icons8.com/?size=50&id=124191&format=png&color=000000"
+    ];
+
     private string _flyoutHeaderTitle = "";
     public string FlyoutHeaderTitle
     {
@@ -128,6 +137,34 @@ public partial class SettingsService : INotifyPropertyChanged
             {
                 _pdfQuality = (int)(value / 50) * 50; ;
                 OnPropertyChanged(nameof(PdfQuality));
+            }
+        }
+    }
+
+    private int _mapIconSize = 80;
+    public int MapIconSize
+    {
+        get => _mapIconSize;
+        set
+        {
+            if (_mapIconSize != value)
+            {
+                _mapIconSize = value;
+                OnPropertyChanged(nameof(MapIconSize));
+            }
+        }
+    }
+
+    private int _mapIcon = 1;
+    public int MapIcon
+    {
+        get => _mapIcon;
+        set
+        {
+            if (_mapIcon != value)
+            {
+                _mapIcon = value;
+                OnPropertyChanged(nameof(MapIcon));
             }
         }
     }
@@ -520,7 +557,7 @@ public partial class SettingsService : INotifyPropertyChanged
         }
     }
 
-    private ObservableCollection<string> _templates = new();
+    private ObservableCollection<string> _templates = [];
     public ObservableCollection<string> Templates
     {
         get => _templates;
@@ -554,6 +591,8 @@ public partial class SettingsService : INotifyPropertyChanged
         {
             PinMinScaleLimit = this.PinMinScaleLimit,
             PinMaxScaleLimit = this.PinMaxScaleLimit,
+            MapIconSize = this.MapIconSize,
+            MapIcon = this.MapIcon,
             IsPlanRotateLocked = this.IsPlanRotateLocked,
             PdfQuality = this.PdfQuality,
             SelectedTheme = this.SelectedTheme,
@@ -575,6 +614,8 @@ public partial class SettingsService : INotifyPropertyChanged
             {
                 this.PinMinScaleLimit = settings.PinMinScaleLimit;
                 this.PinMaxScaleLimit = settings.PinMaxScaleLimit;
+                this.MapIconSize = settings.MapIconSize;
+                this.MapIcon = settings.MapIcon;
                 this.IsPlanRotateLocked = settings.IsPlanRotateLocked;
                 this.PdfQuality = settings.PdfQuality;
                 this.SelectedTheme = settings.SelectedTheme;

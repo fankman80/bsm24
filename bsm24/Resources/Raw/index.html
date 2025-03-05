@@ -3,13 +3,52 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GeoAdmin Map with MapTiming</title>
+    <title>GeoAdmin Map</title>
     <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+
         #map {
             width: 100%;
             height: 100%;
             margin: 0;
             padding: 0;
+        }
+       
+        #popup {
+            position: absolute;
+            background-color: white;
+            padding: 10px;
+            border-radius: 10px;
+            box-shadow: 6px 6px 6px rgba(0, 0, 0, 0.4);
+            width: 250px;
+            font-family: 'Segoe UI', Tahoma, Geneva, sans-serif;
+            display: none;
+            word-wrap: break-word;
+            max-height: auto;
+            z-index: 9999;
+        }
+
+        #popup h4 {
+            font-size: 14px;
+            font-weight: bold;
+            font-style: italic;
+            margin: 5px;
+            color: #848484;
+        }
+
+        #popup p {
+            font-size: 14px;
+            margin: 5px, 5px, 15px, 5px;
+        }
+
+        .popup-header {
+            font-size: 14px;
+            font-weight: bold;
+            margin: 5px;
         }
     </style>
     <script src="https://cdn.jsdelivr.net/npm/ol@latest/dist/ol.js"></script>
@@ -35,7 +74,7 @@
                 layers: [wmsLayer],
                 view: new ol.View({
                     center: ol.proj.fromLonLat([{center_koord}]),
-                    zoom: {zoom}
+                    zoom: {mapzoom}
                 })
             });
 
@@ -49,7 +88,6 @@
             map.addLayer(vectorLayer); // Füge den Vektorlayer zur Karte hinzu
             mapReady = true;  // Setze den Status auf „bereit“
 
-
             // Wenn Positionen vor dem Laden der Karte übergeben wurden, setze sie jetzt
             if (pendingPositions.length > 0) {
                 pendingPositions.forEach(function (position) {
@@ -57,15 +95,42 @@
                 });
                 pendingPositions = [];  // Lösche die gespeicherten Positionen
             }
+
+            var popup = new ol.Overlay({
+                element: document.getElementById('popup'),
+                positioning: 'bottom-center',
+                stopEvent: false,
+                offset: [30, -50]
+            });
+            map.addOverlay(popup);
+
+            map.on('click', function (evt) {
+                var feature = map.forEachFeatureAtPixel(evt.pixel, function (feature) {
+                    return feature;
+                });
+                if (feature) {
+                    var coordinates = feature.getGeometry().getCoordinates();
+                    popup.setPosition(coordinates);
+                    var popupElement = document.getElementById('popup');
+                    popupElement.innerHTML =
+                        '<h4 class="popup-header">Bezeichnung:</h4><p class="popup-header">' + feature.get('pinname') + '</p>' +
+                        '<h4 class="popup-header">Raum/Ort:</h4><p class="popup-header">' + feature.get('pinlocation') + '</p>' +
+                        '<h4 class="popup-header">Beschreibung:</h4><p class="popup-header">' + feature.get('pindesc') + '</p>';
+                    popupElement.style.display = 'block';
+                } else {
+                    document.getElementById('popup').style.display = 'none';
+                }
+            });
+
         }
 
-        function setMarkerPosition(lon, lat) {
+        function setMarkerPosition(lon, lat, pindesc, pinlocation, pinname) {
             if (mapReady) {
                 // Erstelle das Icon für den Marker
                 var iconStyle = new ol.style.Style({
                     image: new ol.style.Icon({
-                        src: 'https://img.icons8.com/?size=50&id=13800&format=png&color=000000',
-                        scale: 1,  // Skaliere das Icon, wenn nötig
+                        src: '{icon}',
+                        scale: {iconzoom},  // Skaliere das Icon, wenn nötig
                         anchor: [0.5, 1],  // Der Ankerpunkt ist die untere Mitte des Icons
                         anchorXUnits: 'fraction',
                         anchorYUnits: 'fraction'
@@ -74,7 +139,10 @@
 
                 // Erstelle den Marker mit einem benutzerdefinierten Icon
                 var marker = new ol.Feature({
-                    geometry: new ol.geom.Point(ol.proj.fromLonLat([lon, lat]))
+                    geometry: new ol.geom.Point(ol.proj.fromLonLat([lon, lat])),
+                    pinname: pinname,
+                    pinlocation: pinlocation,
+                    pindesc: pindesc
                 });
 
                 // Wende den Icon-Style auf den Marker an
@@ -85,18 +153,26 @@
                 markers.push(marker);  // Füge den Marker zum Array der Marker hinzu
             } else {
                 // Speichere die Position, wenn die Karte noch nicht bereit ist
-                pendingPositions.push({ lon: lon, lat: lat });
+                pendingPositions.push({ lon: lon, lat: lat, pinname: pinname, pinlocation: pinlocation, pindesc: pindesc });
             }
         }
 
         function setMultipleMarkers(positions) {
             positions.forEach(function (position) {
-                setMarkerPosition(position.lon, position.lat);
+                setMarkerPosition(position.lon, position.lat, position.pindesc, position.pinlocation, position.pinname);
             });
         }
     </script>
 </head>
 <body onload="initMap()">
     <div id="map"></div>
+    <div id="popup">
+        <h4>Bezeichnung:</h4>
+        <p id="pinname"></p>
+        <h4>Raum/Ort:</h4>
+        <p id="pinlocation"></p>
+        <h4>Beschreibung:</h4>
+        <p id="pindesc"></p>
+    </div>
 </body>
 </html>

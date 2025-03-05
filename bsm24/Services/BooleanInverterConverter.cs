@@ -25,4 +25,3 @@ namespace bsm24.Services
         }
     }
 }
-

@@ -15,7 +15,6 @@ public static class Settings
     public static IconItem[] PinData { get => pinData; set => pinData = value; }
     public static Color[] ColorData { get => colorData; set => colorData = value; }
 
-
     private static string cacheDirectory = Path.Combine(FileSystem.AppDataDirectory, "cache");
     private static string templateDirectory = Path.Combine(FileSystem.AppDataDirectory, "templates");
     private static int thumbSize = 150;

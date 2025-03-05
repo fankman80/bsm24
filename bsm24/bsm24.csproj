@@ -90,7 +90,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<MauiAsset Remove="Resources\Raw\map.html" />
+		<MauiAsset Remove="Resources\Raw\index.html" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -167,12 +167,12 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<EmbeddedResource Include="Resources\Raw\map.html" />
+		<EmbeddedResource Include="Resources\Raw\index.html" />
 	</ItemGroup>
 
 	<ItemGroup>
 		<PackageReference Include="Camera.MAUI" Version="1.5.1" />
-		<PackageReference Include="Codeuctivity.OpenXmlPowerTools" Version="8.0.310" />
+		<PackageReference Include="Codeuctivity.OpenXmlPowerTools" Version="8.0.314" />
 		<PackageReference Include="CommunityToolkit.Maui" Version="11.1.0" />
 		<PackageReference Include="CommunityToolkit.Maui.Core" Version="11.1.0" />
 		<PackageReference Include="DocumentFormat.OpenXml" Version="3.2.0" />

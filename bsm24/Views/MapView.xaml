@@ -4,12 +4,20 @@
                 xmlns:views="clr-namespace:bsm24.Views"
                 xmlns:mr="clr-namespace:MR.Gestures;assembly=MR.Gestures"
                 xmlns:uranium="http://schemas.enisn-projects.io/dotnet/maui/uraniumui"
-                xmlns:material="http://schemas.enisn-projects.io/dotnet/maui/uraniumui/material"
+                xmlns:material="http://schemas.enisn-projects.io/dotnet/maui/uraniumui/material" 
                 xmlns:m="clr-namespace:UraniumUI.Icons.MaterialSymbols;assembly=UraniumUI.Icons.MaterialSymbols"
                 Shell.TitleColor="{DynamicResource PrimaryDark}"
                 x:Class="bsm24.Views.MapView"
                 Title="Geo Admin Map">
 
+    <ContentPage.ToolbarItems>
+        <ToolbarItem
+            x:Name ="SetPosBtn"
+            IconImageSource="{FontImageSource FontFamily=MaterialOutlined, Color={DynamicResource PrimaryDark}, Glyph={x:Static m:MaterialOutlined.Edit_location_alt}}"             
+            Text="Position aktualisieren"
+            Clicked="SetPosClicked"/>
+    </ContentPage.ToolbarItems>
+
     <WebView x:Name="GeoAdminWebView" />
-    
+
 </ContentPage>
