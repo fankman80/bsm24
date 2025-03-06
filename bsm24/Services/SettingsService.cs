@@ -22,11 +22,11 @@ public partial class SettingsService : INotifyPropertyChanged
 
     public List<string> IconUrls { get; set; } =
     [
-        "https://img.icons8.com/?size=50&id=52671&format=png&color=000000",
-        "https://img.icons8.com/?size=50&id=IFhxBaYSUYkJ&format=png&color=000000",
-        "https://img.icons8.com/?size=50&id=13800&format=png&color=000000",
-        "https://img.icons8.com/?size=50&id=Ju3Ck2nsKKej&format=png&color=000000",
-        "https://img.icons8.com/?size=50&id=124191&format=png&color=000000"
+        "mapPin1.png",
+        "mapPin2.png",
+        "mapPin3.png",
+        "mapPin4.png",
+        "mapPin5.png"
     ];
 
     private string _flyoutHeaderTitle = "";

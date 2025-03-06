@@ -41,7 +41,7 @@
                     <TapGestureRecognizer Tapped="OnMapLayerColorClicked"/>
                 </Border.GestureRecognizers>
                 <Border.Shadow>
-                    <Shadow Brush="Black" Opacity="0.7" Offset="3,3" Radius="8"/>
+                    <Shadow Brush="Black" Opacity="0.5" Offset="3,3" Radius="6"/>
                 </Border.Shadow>
             </Border>
 
@@ -57,7 +57,7 @@
                     <TapGestureRecognizer Tapped="OnMapLayerRealClicked"/>
                 </Border.GestureRecognizers>
                 <Border.Shadow>
-                    <Shadow Brush="Black" Opacity="0.7" Offset="3,3" Radius="8"/>
+                    <Shadow Brush="Black" Opacity="0.5" Offset="3,3" Radius="6"/>
                 </Border.Shadow>
             </Border>
         </StackLayout>

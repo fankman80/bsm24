@@ -126,12 +126,11 @@
 
         function setMarkerPosition(lon, lat, pindesc, pinlocation, pinname) {
             if (mapReady) {
-                // Erstelle das Icon für den Marker
                 var iconStyle = new ol.style.Style({
                     image: new ol.style.Icon({
                         src: '{icon}',
-                        scale: {iconzoom},  // Skaliere das Icon, wenn nötig
-                        anchor: [0.5, 1],  // Der Ankerpunkt ist die untere Mitte des Icons
+                        scale: {iconzoom},
+                        anchor: [0.5, 1],
                         anchorXUnits: 'fraction',
                         anchorYUnits: 'fraction'
                     })

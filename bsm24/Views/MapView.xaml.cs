@@ -6,10 +6,8 @@ using Android.Webkit;
 
 using bsm24.Models;
 using bsm24.Services;
-using Codeuctivity.OpenXmlPowerTools;
 using Mopups.Services;
 using System.Globalization;
-using System.Net.Http;
 
 namespace bsm24.Views;
 
@@ -48,16 +46,34 @@ public partial class MapView : IQueryAttributable
 
         double lon, lat, zoom;
 
-        if (PinId != null && GlobalJson.Data.Plans[PlanId].Pins[PinId].GeoLocation != null)
+        if (PinId != null)
         {
             SetPosBtn.IsEnabled = true;
-            lon = GlobalJson.Data.Plans[PlanId].Pins[PinId].GeoLocation.WGS84.Longitude;
-            lat = GlobalJson.Data.Plans[PlanId].Pins[PinId].GeoLocation.WGS84.Latitude;
-            zoom = 18;
+            if (GlobalJson.Data.Plans[PlanId].Pins[PinId].GeoLocation != null)
+            {
+                lon = GlobalJson.Data.Plans[PlanId].Pins[PinId].GeoLocation.WGS84.Longitude;
+                lat = GlobalJson.Data.Plans[PlanId].Pins[PinId].GeoLocation.WGS84.Latitude;
+                zoom = 18;
+            }
+            else
+            {
+                var location = await Helper.GetCurrentLocationAsync();
+                if (location != null)
+                {
+                    lon = location.Longitude;
+                    lat = location.Latitude;
+                    zoom = 18;
+                }
+                else
+                {
+                    lon = 8.226692;
+                    lat = 46.80121;
+                    zoom = 8;
+                }
+            }
         }
         else
         {
-            SetPosBtn.IsEnabled = false;
             var location = await Helper.GetCurrentLocationAsync();
             if (location != null)
             {
@@ -76,7 +92,6 @@ public partial class MapView : IQueryAttributable
         var htmlSource = new HtmlWebViewSource
         {
             Html = LoadHtmlFromFile(lon, lat, zoom),
-            BaseUrl = "https://"
         };
 
         GeoAdminWebView.Source = htmlSource;
@@ -149,17 +164,24 @@ public partial class MapView : IQueryAttributable
     }
     private async void SetPosClicked(object sender, EventArgs e)
     {
-        var popup = new PopupDualResponse("Sind Sie sicher dass Sie die Positionsdaten überschreiben wollen?");
-        await MopupService.Instance.PushAsync(popup);
-        var result = await popup.PopupDismissedTask;
-        if (result != null)
+        var location = await Helper.GetCurrentLocationAsync();
+        if (location == null)
         {
-            var location = await Helper.GetCurrentLocationAsync();
-            GlobalJson.Data.Plans[PlanId].Pins[PinId].GeoLocation = location != null ? new GeoLocData(location) : null;
-            GeoAdminWebView.Reload();
+            var popup1 = new PopupAlert("Aktivieren Sie zuerst die Ortungsdienste, damit der Standort aktualisiert werden kann?");
+            await MopupService.Instance.PushAsync(popup1);            
+        }
+        else
+        {
+            var popup = new PopupDualResponse("Sind Sie sicher dass Sie die Positionsdaten überschreiben wollen?");
+            await MopupService.Instance.PushAsync(popup);
+            var result = await popup.PopupDismissedTask;
+            if (result != null)
+            {
+                GlobalJson.Data.Plans[PlanId].Pins[PinId].GeoLocation = new GeoLocData(location);
+                GeoAdminWebView.Reload();
+            }
         }
     }
-
     private void OnMapLayerColorClicked(object sender, EventArgs e)
     {
         var layer = "ch.swisstopo.pixelkarte-farbe";   
