@@ -20,13 +20,13 @@ public partial class SettingsService : INotifyPropertyChanged
         SelectedDarkMode = DarkMode[0]; // Standardauswahl
     }
 
-    public List<string> IconUrls { get; set; } =
+    public List<string> MapIcons { get; set; } =
     [
-        "mapPin1.png",
-        "mapPin2.png",
-        "mapPin3.png",
-        "mapPin4.png",
-        "mapPin5.png"
+        "mappin1a.png",
+        "mappin2a.png",
+        "mappin3a.png",
+        "mappin4a.png",
+        "mappin5a.png"
     ];
 
     private string _flyoutHeaderTitle = "";

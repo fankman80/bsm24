@@ -131,7 +131,7 @@ public partial class MapView : IQueryAttributable
         htmlContent = htmlContent.Replace("{maplayer}", "ch.swisstopo.pixelkarte-farbe");
         htmlContent = htmlContent.Replace("{center_koord}", _center_koord);
         htmlContent = htmlContent.Replace("{mapzoom}", _zoom);
-        htmlContent = htmlContent.Replace("{icon}", SettingsService.Instance.IconUrls[SettingsService.Instance.MapIcon]);
+        htmlContent = htmlContent.Replace("{icon}", SettingsService.Instance.MapIcons[SettingsService.Instance.MapIcon]);
         htmlContent = htmlContent.Replace("{iconzoom}", ((double)SettingsService.Instance.MapIconSize / 100).ToString(CultureInfo.InvariantCulture));
         htmlContent = htmlContent.Replace("{titlecolor}", ((Color)Application.Current.Resources["Primary"]).ToRgbaHex());
 

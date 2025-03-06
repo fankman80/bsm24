@@ -34,36 +34,37 @@
         <CollectionView Grid.Row="0"
                         x:Name="ImageGallery"
                         Margin="-4"
-                        ItemsSource="{Binding Images}"
-                        VerticalOptions="FillAndExpand">
+                        ItemsSource="{Binding Images}">
             <CollectionView.ItemsLayout>
                 <GridItemsLayout Orientation="Vertical" Span="{Binding DynamicSpan}" />
             </CollectionView.ItemsLayout>
             <CollectionView.ItemTemplate>
                 <DataTemplate x:DataType="local:ImageItem">
-                    <Grid>
-                        <views:SquareView Margin="4">
-                            <ff:CachedImage Source="{Binding ImagePath}"
-                                            CacheType="Memory"
-                                            FadeAnimationEnabled ="False"
-                                            FadeAnimationForCachedImages ="False"
-                                            Aspect="AspectFill">
-                                <ff:CachedImage.GestureRecognizers>
-                                    <TapGestureRecognizer Tapped="OnImageTapped" />
-                                </ff:CachedImage.GestureRecognizers>
-                            </ff:CachedImage>
-                        </views:SquareView>
-
-                        <BoxView Margin="4,0,0,4" BackgroundColor="White" Opacity="0.7" HeightRequest="36" VerticalOptions="End"/>
-
-                        <Label Text="{Binding DateTime}" FontSize="12" HeightRequest="40" VerticalTextAlignment="Center" TextColor="{DynamicResource Primary}" VerticalOptions="End" Margin="10,0,0,2"/>
-
-                        <CheckBox IsChecked="{Binding IsChecked}"
-                                  Color="{DynamicResource Primary}"
-                                  VerticalOptions="End"
-                                  HorizontalOptions="End"
-                                  CheckedChanged="OnCheckedChanged" />
-                    </Grid>
+                    <VerticalStackLayout>
+                        <Grid>
+                            <views:SquareView Margin="4">
+                                <ff:CachedImage Source="{Binding ImagePath}"
+                                                CacheType="Memory"
+                                                FadeAnimationEnabled ="False"
+                                                FadeAnimationForCachedImages ="False"
+                                                Aspect="AspectFill">
+                                    <ff:CachedImage.GestureRecognizers>
+                                        <TapGestureRecognizer Tapped="OnImageTapped" />
+                                    </ff:CachedImage.GestureRecognizers>
+                                </ff:CachedImage>
+                            </views:SquareView>
+                            <CheckBox IsChecked="{Binding IsChecked}"
+                                      Color="{DynamicResource Primary}"
+                                      VerticalOptions="End"
+                                      HorizontalOptions="End"
+                                      CheckedChanged="OnCheckedChanged" />
+                        </Grid>
+                        <Label Text="{Binding DateTime, StringFormat='{}{0:dd.MM.yy \\/ HH:mm}'}"
+                               FontSize="12"
+                               HorizontalTextAlignment="Center"
+                               TextColor="{DynamicResource Primary}"
+                               Margin="0,-15,0,8"/>
+                    </VerticalStackLayout>
                 </DataTemplate>
             </CollectionView.ItemTemplate>
         </CollectionView>
@@ -143,7 +144,6 @@
                 <Label Grid.Column="2" Grid.Row="0"
                        x:Name="SizePercentText"
                        Margin="0,10,0,0"
-                       VerticalOptions="StartAndExpand"
                        HorizontalTextAlignment="Center"
                        Text="100%"
                        TextColor="{AppThemeBinding Light={DynamicResource PrimaryDarkText}, Dark={DynamicResource PrimaryText}}"/>                  

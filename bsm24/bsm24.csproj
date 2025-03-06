@@ -171,6 +171,14 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <MauiImage Include="Resources\Raw\mappin1a.png" />
+	  <MauiImage Include="Resources\Raw\mappin2a.png" />
+	  <MauiImage Include="Resources\Raw\mappin3a.png" />
+	  <MauiImage Include="Resources\Raw\mappin4a.png" />
+	  <MauiImage Include="Resources\Raw\mappin5a.png" />
+	</ItemGroup>
+
+	<ItemGroup>
 		<PackageReference Include="Camera.MAUI" Version="1.5.1" />
 		<PackageReference Include="Codeuctivity.OpenXmlPowerTools" Version="8.0.314" />
 		<PackageReference Include="CommunityToolkit.Maui" Version="11.1.0" />

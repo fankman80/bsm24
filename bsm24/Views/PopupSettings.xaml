@@ -124,23 +124,23 @@
                 <Image Grid.Column="0" Grid.Row="1"
                        HorizontalOptions="Start"
                        WidthRequest="30"
-                       Source="{Binding Source={x:Static services:SettingsService.Instance}, Path=IconUrls[0]}"/>
+                       Source="{Binding Source={x:Static services:SettingsService.Instance}, Path=MapIcons[0]}"/>
                 <Image Grid.Column="1" Grid.Row="1"
                        HorizontalOptions="Start"
                        WidthRequest="30"
-                       Source="{Binding Source={x:Static services:SettingsService.Instance}, Path=IconUrls[1]}"/>
+                       Source="{Binding Source={x:Static services:SettingsService.Instance}, Path=MapIcons[1]}"/>
                 <Image Grid.Column="2" Grid.Row="1"
                        HorizontalOptions="Start"
                        WidthRequest="30"
-                       Source="{Binding Source={x:Static services:SettingsService.Instance}, Path=IconUrls[2]}"/>
+                       Source="{Binding Source={x:Static services:SettingsService.Instance}, Path=MapIcons[2]}"/>
                 <Image Grid.Column="3" Grid.Row="1"
                        HorizontalOptions="Start"
                        WidthRequest="30"
-                       Source="{Binding Source={x:Static services:SettingsService.Instance}, Path=IconUrls[3]}"/>
+                       Source="{Binding Source={x:Static services:SettingsService.Instance}, Path=MapIcons[3]}"/>
                 <Image Grid.Column="4" Grid.Row="1"
                        HorizontalOptions="Start"
                        WidthRequest="30"
-                       Source="{Binding Source={x:Static services:SettingsService.Instance}, Path=IconUrls[4]}"/>
+                       Source="{Binding Source={x:Static services:SettingsService.Instance}, Path=MapIcons[4]}"/>
             </Grid>
             
 
