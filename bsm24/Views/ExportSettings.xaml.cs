@@ -33,16 +33,16 @@ public partial class ExportSettings : UraniumContentPage
         string outputPath = Path.Combine(FileSystem.AppDataDirectory, GlobalJson.Data.ProjectPath, GlobalJson.Data.ProjectPath + ".docx");
         string templatePath = Path.Combine(FileSystem.AppDataDirectory, "templates", SettingsService.Instance.SelectedTemplate);
 
-        busyOverlay.IsVisible = true;
-        activityIndicator.IsRunning = true;
-        busyText.Text = "Bericht wird geteilt...";
+        busyOverlay.IsOverlayVisible = true;
+        busyOverlay.IsActivityRunning = true;
+        busyOverlay.BusyMessage = "Bericht wird geteilt...";
         // Hintergrundoperation (nicht UI-Operationen)
         await Task.Run(async () =>
         {
             await ExportReport.DocX(templatePath, outputPath);
         });
-        activityIndicator.IsRunning = false;
-        busyOverlay.IsVisible = false;
+        busyOverlay.IsActivityRunning = false;
+        busyOverlay.IsOverlayVisible = false;
 
         try
         {
@@ -71,16 +71,16 @@ public partial class ExportSettings : UraniumContentPage
         string outputPath = Path.Combine(FileSystem.AppDataDirectory, GlobalJson.Data.ProjectPath, GlobalJson.Data.ProjectPath + ".docx");
         string templatePath = Path.Combine(FileSystem.AppDataDirectory, "templates", SettingsService.Instance.SelectedTemplate);
 
-        busyOverlay.IsVisible = true;
-        activityIndicator.IsRunning = true;
-        busyText.Text = "Bericht wird gespeichert...";
+        busyOverlay.IsOverlayVisible = true;
+        busyOverlay.IsActivityRunning = true;
+        busyOverlay.BusyMessage = "Bericht wird gespeichert...";
         // Hintergrundoperation (nicht UI-Operationen)
         await Task.Run(async () =>
         {
             await ExportReport.DocX(templatePath, outputPath);
         });
-        activityIndicator.IsRunning = false;
-        busyOverlay.IsVisible = false;
+        busyOverlay.IsActivityRunning = false;
+        busyOverlay.IsOverlayVisible = false;
 
         var saveStream = File.Open(outputPath, FileMode.Open);
         var fileSaveResult = await FileSaver.Default.SaveAsync(GlobalJson.Data.ProjectPath + ".docx", saveStream);

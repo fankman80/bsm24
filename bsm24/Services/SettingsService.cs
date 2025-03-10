@@ -169,6 +169,34 @@ public partial class SettingsService : INotifyPropertyChanged
         }
     }
 
+    private int _gpsTestTimer = 10;
+    public int GpsTestTimer
+    {
+        get => _gpsTestTimer;
+        set
+        {
+            if (_gpsTestTimer != value)
+            {
+                _gpsTestTimer = value;
+                OnPropertyChanged(nameof(GpsTestTimer));
+            }
+        }
+    }
+
+    private double _gpsAccuracyLimit = 8;
+    public double GpsAccuracyLimit
+    {
+        get => _gpsAccuracyLimit;
+        set
+        {
+            if (_gpsAccuracyLimit != value)
+            {
+                _gpsAccuracyLimit = value;
+                OnPropertyChanged(nameof(GpsAccuracyLimit));
+            }
+        }
+    }
+
     #region
     // Export Settings
 

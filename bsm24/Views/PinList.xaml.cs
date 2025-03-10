@@ -107,16 +107,16 @@ public partial class PinList : UraniumContentPage
 
     private async void UpdateSpan()
     {
-        busyOverlay.IsVisible = true;
-        activityIndicator.IsRunning = true;
-        busyText.Text = "Icons werden geladen...";
+        busyOverlay.IsOverlayVisible = true;
+        busyOverlay.IsActivityRunning = true;
+        busyOverlay.BusyMessage = "Icons werden geladen...";
 
         await Task.Run(() =>
         {
             OnPropertyChanged(nameof(DynamicSpan));
         });
 
-        activityIndicator.IsRunning = false;
-        busyOverlay.IsVisible = false;
+        busyOverlay.IsActivityRunning = false;
+        busyOverlay.IsOverlayVisible = false;
     }
 }

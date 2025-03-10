@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <uranium:UraniumContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
-    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-    xmlns:ff="clr-namespace:FFImageLoading.Maui;assembly=FFImageLoading.Maui" 
-    xmlns:views="clr-namespace:bsm24.Views"
-    xmlns:uranium="http://schemas.enisn-projects.io/dotnet/maui/uraniumui"
-    xmlns:material="http://schemas.enisn-projects.io/dotnet/maui/uraniumui/material"
-    xmlns:m="clr-namespace:UraniumUI.Icons.MaterialSymbols;assembly=UraniumUI.Icons.MaterialSymbols"  
-    Shell.TitleColor="{DynamicResource PrimaryDark}"
-    BackgroundColor="{AppThemeBinding Light={DynamicResource PrimaryBackground}, Dark={DynamicResource PrimaryBackgroundDark}}"
-    xmlns:local="clr-namespace:bsm24"
-    xmlns:models="clr-namespace:bsm24.Models"
-    xmlns:services="clr-namespace:bsm24.Services"
-    x:Name="ExportSettingsPage"
-    x:Class="bsm24.Views.ExportSettings"
-    Title="Bericht exportieren">
+        xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+        xmlns:ff="clr-namespace:FFImageLoading.Maui;assembly=FFImageLoading.Maui" 
+        xmlns:views="clr-namespace:bsm24.Views"
+        xmlns:uranium="http://schemas.enisn-projects.io/dotnet/maui/uraniumui"
+        xmlns:material="http://schemas.enisn-projects.io/dotnet/maui/uraniumui/material"
+        xmlns:m="clr-namespace:UraniumUI.Icons.MaterialSymbols;assembly=UraniumUI.Icons.MaterialSymbols"  
+        Shell.TitleColor="{DynamicResource PrimaryDark}"
+        BackgroundColor="{AppThemeBinding Light={DynamicResource PrimaryBackground}, Dark={DynamicResource PrimaryBackgroundDark}}"
+        xmlns:local="clr-namespace:bsm24"
+        xmlns:models="clr-namespace:bsm24.Models"
+        xmlns:services="clr-namespace:bsm24.Services"
+        x:Name="ExportSettingsPage"
+        x:Class="bsm24.Views.ExportSettings"
+        Title="Bericht exportieren">
 
     <uranium:UraniumContentPage.Resources>
         <ResourceDictionary>
@@ -223,25 +223,8 @@
         </Grid>
 
         <!-- Overlay für Busy-Indikator -->
-        <Grid x:Name="busyOverlay"
-              BackgroundColor="Black"
-              Opacity="0.7"
-              IsVisible="False"
-              VerticalOptions="FillAndExpand"
-              HorizontalOptions="FillAndExpand"
-              ZIndex="10">
-            <StackLayout VerticalOptions="Center" HorizontalOptions="Center">
-                <ActivityIndicator x:Name="activityIndicator"
-                                   IsRunning="True"
-                                   VerticalOptions="Center"
-                                   HorizontalOptions="Center"
-                                   Color="White" />
-                <Label x:Name="busyText"
-                       Text="Bitte warten..."
-                       TextColor="White"
-                       FontSize="Medium"
-                       HorizontalOptions="Center" />
-            </StackLayout>
-        </Grid>
+        <local:BusyOverlayView x:Name="busyOverlay"
+                               AbsoluteLayout.LayoutBounds="0,0,1,1"
+                               AbsoluteLayout.LayoutFlags="All"/>
     </Grid>
 </uranium:UraniumContentPage>

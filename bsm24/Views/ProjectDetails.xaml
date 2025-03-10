@@ -8,6 +8,7 @@
              xmlns:material="http://schemas.enisn-projects.io/dotnet/maui/uraniumui/material"
              xmlns:m="clr-namespace:UraniumUI.Icons.MaterialSymbols;assembly=UraniumUI.Icons.MaterialSymbols"
              xmlns:services="clr-namespace:bsm24.Services"
+             xmlns:local="clr-namespace:bsm24"
              Shell.TitleColor="{DynamicResource PrimaryDark}"
              BackgroundColor="{AppThemeBinding Light={DynamicResource PrimaryBackground}, Dark={DynamicResource PrimaryBackgroundDark}}"
              x:Class="bsm24.Views.ProjectDetails"
@@ -134,27 +135,10 @@
                         Clicked="OnOkayClicked"/>
             </Grid>
         </Grid>
-        
+
         <!-- Overlay für Busy-Indikator -->
-        <Grid x:Name="busyOverlay"
-                BackgroundColor="Black"
-                Opacity="0.7"
-                IsVisible="False"
-                VerticalOptions="FillAndExpand"
-                HorizontalOptions="FillAndExpand"
-                ZIndex="10">
-            <StackLayout VerticalOptions="Center" HorizontalOptions="Center">
-                <ActivityIndicator x:Name="activityIndicator"
-                                    IsRunning="True"
-                                    VerticalOptions="Center"
-                                    HorizontalOptions="Center"
-                                    Color="White" />
-                <Label x:Name="busyText"
-                       Text="Bitte warten..."
-                       TextColor="White"
-                       FontSize="Medium"
-                       HorizontalOptions="Center" />
-            </StackLayout>
-        </Grid>
+        <local:BusyOverlayView x:Name="busyOverlay"
+                               AbsoluteLayout.LayoutBounds="0,0,1,1"
+                               AbsoluteLayout.LayoutFlags="All"/>
     </Grid>
 </uranium:UraniumContentPage>

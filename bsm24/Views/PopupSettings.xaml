@@ -143,6 +143,8 @@
                        Source="{Binding Source={x:Static services:SettingsService.Instance}, Path=MapIcons[4]}"/>
             </Grid>
             
+            
+            
 
             <Label Text="{Binding MapIconSize, StringFormat='Icongrösse: {0:0.##}%'}" />
             <Slider Maximum="100"

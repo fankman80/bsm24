@@ -123,13 +123,13 @@ public partial class OpenProject : UraniumContentPage
             var targetDirectory = FileSystem.AppDataDirectory;
             if (fileResult != null)
             {
-                busyOverlay.IsVisible = true;
-                activityIndicator.IsRunning = true;
-                busyText.Text = "Projekt wird importiert...";
+                busyOverlay.IsOverlayVisible = true;
+                busyOverlay.IsActivityRunning = true;
+                busyOverlay.BusyMessage = "Projekt wird importiert...";
                 // Hintergrundoperation (nicht UI-Operationen)
                 await Task.Run(() => { Helper.UnpackDirectory(fileResult.FullPath, targetDirectory); });
-                activityIndicator.IsRunning = false;
-                busyOverlay.IsVisible = false;
+                busyOverlay.IsActivityRunning = false;
+                busyOverlay.IsOverlayVisible = false;
 
                 LoadJsonFiles();
             }
@@ -143,9 +143,9 @@ public partial class OpenProject : UraniumContentPage
 
     private async void OnProjectClicked(object sender, EventArgs e)
     {
-        busyOverlay.IsVisible = true;
-        activityIndicator.IsRunning = true;
-        busyText.Text = "Projekt wird geladen...";
+        busyOverlay.IsOverlayVisible = true;
+        busyOverlay.IsActivityRunning = true;
+        busyOverlay.BusyMessage = "Projekt wird geladen...";
         // Hintergrundoperation (nicht UI-Operationen)
         await Task.Run(() =>
         {
@@ -170,8 +170,8 @@ public partial class OpenProject : UraniumContentPage
                 });
             }
         });
-        activityIndicator.IsRunning = false;
-        busyOverlay.IsVisible = false;
+        busyOverlay.IsActivityRunning = false;
+        busyOverlay.IsOverlayVisible = false;
     }
 
     private async void OnEditClicked(object sender, EventArgs e)
@@ -237,15 +237,15 @@ public partial class OpenProject : UraniumContentPage
                 string sourceDirectory = Path.GetDirectoryName(item.FilePath);
                 string outputPath = Path.Combine(FileSystem.AppDataDirectory, Path.GetFileNameWithoutExtension(item.FileName) + ".zip");
 
-                busyOverlay.IsVisible = true;
-                activityIndicator.IsRunning = true;
-                busyText.Text = "Daten werden komprimiert...";
+                busyOverlay.IsOverlayVisible = true;
+                busyOverlay.IsActivityRunning = true;
+                busyOverlay.BusyMessage = "Daten werden komprimiert...";
 
                 // Hintergrundoperation (nicht UI-Operationen)
                 await Task.Run(() => { Helper.PackDirectory(sourceDirectory, outputPath); });
 
-                activityIndicator.IsRunning = false;
-                busyOverlay.IsVisible = false;
+                busyOverlay.IsActivityRunning = false;
+                busyOverlay.IsOverlayVisible = false;
 
                 var saveStream = File.Open(outputPath, FileMode.Open);
                 try

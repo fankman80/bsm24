@@ -109,7 +109,6 @@ public class Helper
         return grayBitmap;
     }
 
-
     public static ImageSource SKBitmapToImageSource(SKBitmap bitmap)
     {
         using var image = SKImage.FromBitmap(bitmap);
@@ -122,7 +121,7 @@ public class Helper
         return ImageSource.FromStream(() => stream);
     }
 
-    public static async Task<Location> GetCurrentLocationAsync(double desiredAccuracy = 100, int maxTimeoutSeconds = 30)
+    public static async Task<Location> GetCurrentLocationAsync(double desiredAccuracy, int maxTimeoutSeconds, Action<(double accuracy, int remainingTime)> onUpdate)
     {
         Location bestLocation = null;
         var startTime = DateTime.UtcNow;
@@ -137,11 +136,13 @@ public class Helper
                 if (location != null)
                 {
                     bestLocation = location;
+                    var elapsed = (DateTime.UtcNow - startTime).TotalSeconds;
+                    var remainingTime = maxTimeoutSeconds - (int)elapsed;
 
-                    if (location.Accuracy <= desiredAccuracy)
-                    {
+                    onUpdate((location.Accuracy ?? 9999, remainingTime));
+
+                    if (location.Accuracy.Value <= desiredAccuracy)
                         return location;
-                    }
                 }
             }
             catch (Exception ex)
@@ -154,23 +155,19 @@ public class Helper
             if ((DateTime.UtcNow - startTime).TotalSeconds > maxTimeoutSeconds)
                 break;
         }
-
         return bestLocation;
     }
+
 
     public static async Task<bool> IsLocationEnabledAsync()
     {
         try
         {
-            var location = await Geolocation.GetLastKnownLocationAsync();
-            if (location == null)
-            {
-                location = await Geolocation.GetLocationAsync(new GeolocationRequest
+            var location = await Geolocation.GetLastKnownLocationAsync() ?? await Geolocation.GetLocationAsync(new GeolocationRequest
                 {
                     DesiredAccuracy = GeolocationAccuracy.Medium,
                     Timeout = TimeSpan.FromSeconds(10)
                 });
-            }
             return true;
         }
         catch (FeatureNotEnabledException)

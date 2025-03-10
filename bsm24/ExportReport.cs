@@ -880,7 +880,6 @@ public partial class ExportReport
                 stream = File.OpenRead(icon);
         }
 #endif
-
             if (stream == null)
                 throw new FileNotFoundException($"The file '{icon}' could not be found.");
 

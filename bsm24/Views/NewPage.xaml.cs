@@ -396,7 +396,25 @@ public partial class NewPage : IQueryAttributable
             string _newPin = "a_pin_red.png";
             string currentDateTime = DateTime.Now.ToString("yyyyMMdd_HHmmss");
             var iconItem = Settings.PinData.FirstOrDefault(item => item.FileName.Equals(_newPin, StringComparison.OrdinalIgnoreCase));
-            var location = await Helper.IsLocationEnabledAsync() ? await Helper.GetCurrentLocationAsync(10, 1) : null;
+
+            // Start GPS-Position Task
+            Location location = null;
+            if (await Helper.IsLocationEnabledAsync())
+            {
+                busyOverlay.IsOverlayVisible = true;
+                busyOverlay.IsActivityRunning = true;
+                busyOverlay.BusyMessage = "";
+                location = await Helper.GetCurrentLocationAsync(8, 10, data =>
+                {
+                    this.Dispatcher.Dispatch(() =>
+                    {
+                        busyOverlay.BusyMessage = $"Genauigkeit: {(int)data.accuracy} Meter\nVerbleibende Zeit: {data.remainingTime} Sekunden";
+                    });
+                });
+                busyOverlay.IsActivityRunning = false;
+                busyOverlay.IsOverlayVisible = false;
+            }
+
             pinColor ??= SKColors.Red;
             Point _pos = new(PlanContainer.AnchorX, PlanContainer.AnchorY);
             Point _anchorPoint = iconItem.AnchorPoint;
@@ -453,8 +471,7 @@ public partial class NewPage : IQueryAttributable
                 Console.WriteLine($"Plan mit ID {PlanId} existiert nicht.");
 
             AddPin(currentDateTime, newPinData.PinIcon);
-        }
-        ;
+        };
     }
 
     private void OnMouseMoved(object sender, MouseEventArgs e)

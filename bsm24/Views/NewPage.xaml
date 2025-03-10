@@ -8,6 +8,7 @@
                 xmlns:m="clr-namespace:UraniumUI.Icons.MaterialSymbols;assembly=UraniumUI.Icons.MaterialSymbols"
                 xmlns:ff="clr-namespace:FFImageLoading.Maui;assembly=FFImageLoading.Maui"
                 xmlns:pc="clr-namespace:bsm24.ViewModels"
+                xmlns:local="clr-namespace:bsm24"                
                 BackgroundColor="DimGrey"
                 Shell.TitleColor="{DynamicResource PrimaryDark}"
                 x:Class="bsm24.Views.NewPage"
@@ -35,128 +36,135 @@
             Clicked="OnDeleteClick"/>
     </ContentPage.ToolbarItems>
 
-    <AbsoluteLayout IsClippedToBounds="True" x:DataType="pc:TransformViewModel">
-        <mr:ContentView
-            PinchingCommand="{Binding PinchingCommand}"
-            RotatingCommand="{Binding RotatingCommand}"
-            Panning="OnPanning"
-            Pinching="OnPinching"
-            Pinched="OnPinched"
-            MouseMoved="OnMouseMoved"
-            ScrollWheelChanged="OnMouseScroll">
-            <AbsoluteLayout x:Name="PlanContainer"
-                            Scale="{Binding Scale}"
-				            Rotation="{Binding Rotation}"
-				            TranslationX="{Binding TranslationX}"
-				            TranslationY="{Binding TranslationY}"
-				            AnchorX="{Binding AnchorX}"
-				            AnchorY="{Binding AnchorY}">
-                <ff:CachedImageView x:Name="PlanImage"
-                                    CacheType="All"
-                                    DownsampleUseDipUnits="False"
-                                    DownsampleToViewSize="False"
-                                    FadeAnimationEnabled ="False"
-                                    FadeAnimationForCachedImages ="False"
-                                    LoadingDelay="0"/>
-            </AbsoluteLayout>
-        </mr:ContentView>
+    <Grid>
+        <AbsoluteLayout IsClippedToBounds="True" x:DataType="pc:TransformViewModel">
+            <mr:ContentView
+                PinchingCommand="{Binding PinchingCommand}"
+                RotatingCommand="{Binding RotatingCommand}"
+                Panning="OnPanning"
+                Pinching="OnPinching"
+                Pinched="OnPinched"
+                MouseMoved="OnMouseMoved"
+                ScrollWheelChanged="OnMouseScroll">
+                <AbsoluteLayout x:Name="PlanContainer"
+                                Scale="{Binding Scale}"
+				                Rotation="{Binding Rotation}"
+				                TranslationX="{Binding TranslationX}"
+				                TranslationY="{Binding TranslationY}"
+				                AnchorX="{Binding AnchorX}"
+				                AnchorY="{Binding AnchorY}">
+                    <ff:CachedImageView x:Name="PlanImage"
+                                        CacheType="All"
+                                        DownsampleUseDipUnits="False"
+                                        DownsampleToViewSize="False"
+                                        FadeAnimationEnabled ="False"
+                                        FadeAnimationForCachedImages ="False"
+                                        LoadingDelay="0"/>
+                </AbsoluteLayout>
+            </mr:ContentView>
+
+            <Border x:Name="PinSizeBorder"
+                IsVisible="False"
+                BackgroundColor="{DynamicResource Primary}"
+                StrokeThickness="0"
+                HeightRequest="60"
+                AbsoluteLayout.LayoutBounds="0, 1, 1, AutoSize"
+                AbsoluteLayout.LayoutFlags="PositionProportional, WidthProportional"
+                Margin="20,0,20,20">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="30"/>
+                </Border.StrokeShape>
+                <Slider x:Name="PinSizeSlider"
+                        Margin="60,15,15,15"
+                        Minimum="0"                    
+                        Maximum="360"
+                        Value="0"
+                        ThumbColor="{DynamicResource PrimaryDarkText}"
+                        MinimumTrackColor="{DynamicResource PrimaryDarkText}"
+                        MaximumTrackColor="{DynamicResource PrimaryDarkText}"
+                        ValueChanged="OnSliderValueChanged"
+                        DragCompleted="OnSliderDragCompleted"/>
+            </Border>
+            <Image x:Name="PinSizeLabel"            
+                   IsVisible="False"
+                   Source="{FontImageSource FontFamily=MaterialOutlined, Size=40, Glyph={x:Static m:MaterialOutlined.Rotate_right}}"
+                   HeightRequest="40"
+                   Margin="40,0,0,30"               
+                   AbsoluteLayout.LayoutBounds="0, 1, AutoSize, AutoSize"
+                   AbsoluteLayout.LayoutFlags="PositionProportional"/>
+
+            <Button x:Name="SetPinBtn"
+                    ImageSource="{FontImageSource FontFamily=MaterialOutlined, Glyph={x:Static m:MaterialOutlined.Add_location_alt}}"
+                    BackgroundColor="{DynamicResource Primary}"
+                    TextColor="{DynamicResource PrimaryDarkText}"                
+                    Margin="0,0,20,20"
+                    WidthRequest="60"
+                    HeightRequest="60"
+                    CornerRadius="30"
+                    ZIndex="10000"
+                    AbsoluteLayout.LayoutBounds="1, 1, AutoSize, AutoSize"
+                    AbsoluteLayout.LayoutFlags="PositionProportional"
+                    Clicked="SetPinClicked"/>
+
+            <Button x:Name="CheckBtn"
+                    IsVisible="False"
+                    ImageSource="{FontImageSource FontFamily=MaterialOutlined, Glyph={x:Static m:MaterialOutlined.Check}}"
+                    BackgroundColor="{DynamicResource Primary}"
+                    TextColor="{DynamicResource PrimaryDarkText}"                
+                    Margin="0,0,20,20"
+                    WidthRequest="60"
+                    HeightRequest="60"
+                    CornerRadius="30"
+                    ZIndex="10000"
+                    AbsoluteLayout.LayoutBounds="1, 1, AutoSize, AutoSize"
+                    AbsoluteLayout.LayoutFlags="PositionProportional"
+                    Clicked="CheckClicked"/>
+
+            <Button x:Name="DrawBtn"
+                    ImageSource="{FontImageSource FontFamily=MaterialOutlined, Glyph={x:Static m:MaterialOutlined.Draw}}"
+                    BackgroundColor="{DynamicResource Primary}"
+                    TextColor="{DynamicResource PrimaryDarkText}"                
+                    Margin="0,0,100,20"
+                    WidthRequest="60"
+                    HeightRequest="60"
+                    CornerRadius="30"
+                    ZIndex="10000"
+                    AbsoluteLayout.LayoutBounds="1, 1, AutoSize, AutoSize"
+                    AbsoluteLayout.LayoutFlags="PositionProportional"
+                    Clicked="SetRegionClicked"/>
+
+            <Button x:Name="PenSettingsBtn"
+                    ImageSource="{FontImageSource FontFamily=MaterialOutlined, Glyph={x:Static m:MaterialOutlined.Palette}}"
+                    BackgroundColor="{DynamicResource Primary}"
+                    TextColor="{DynamicResource PrimaryDarkText}" 
+                    Margin="0,0,100,20"
+                    WidthRequest="60"
+                    HeightRequest="60"
+                    CornerRadius="30"
+                    ZIndex="10000"
+                    AbsoluteLayout.LayoutBounds="1, 1, AutoSize, AutoSize"
+                    AbsoluteLayout.LayoutFlags="PositionProportional"
+                    IsVisible="False"
+                    Clicked="PenSettingsClicked"/>
+
+            <Button x:Name="EraseBtn"
+                    IsVisible="False"
+                    ImageSource="{FontImageSource FontFamily=MaterialOutlined, Glyph={x:Static m:MaterialOutlined.Ink_eraser}}"
+                    BackgroundColor="{DynamicResource Primary}"
+                    TextColor="{DynamicResource PrimaryDarkText}"
+                    Margin="0,0,180,20"
+                    WidthRequest="60"
+                    HeightRequest="60"
+                    CornerRadius="30"
+                    ZIndex="10000"
+                    AbsoluteLayout.LayoutBounds="1, 1, AutoSize, AutoSize"
+                    AbsoluteLayout.LayoutFlags="PositionProportional"
+                    Clicked="EraseClicked"/>
+        </AbsoluteLayout>
         
-        <Border x:Name="PinSizeBorder"
-            IsVisible="False"
-            BackgroundColor="{DynamicResource Primary}"
-            StrokeThickness="0"
-            HeightRequest="60"
-            AbsoluteLayout.LayoutBounds="0, 1, 1, AutoSize"
-            AbsoluteLayout.LayoutFlags="PositionProportional, WidthProportional"
-            Margin="20,0,20,20">
-            <Border.StrokeShape>
-                <RoundRectangle CornerRadius="30"/>
-            </Border.StrokeShape>
-            <Slider x:Name="PinSizeSlider"
-                    Margin="60,15,15,15"
-                    Minimum="0"                    
-                    Maximum="360"
-                    Value="0"
-                    ThumbColor="{DynamicResource PrimaryDarkText}"
-                    MinimumTrackColor="{DynamicResource PrimaryDarkText}"
-                    MaximumTrackColor="{DynamicResource PrimaryDarkText}"
-                    ValueChanged="OnSliderValueChanged"
-                    DragCompleted="OnSliderDragCompleted"/>
-        </Border>
-        <Image x:Name="PinSizeLabel"            
-               IsVisible="False"
-               Source="{FontImageSource FontFamily=MaterialOutlined, Size=40, Glyph={x:Static m:MaterialOutlined.Rotate_right}}"
-               HeightRequest="40"
-               Margin="40,0,0,30"               
-               AbsoluteLayout.LayoutBounds="0, 1, AutoSize, AutoSize"
-               AbsoluteLayout.LayoutFlags="PositionProportional"/>
-
-        <Button x:Name="SetPinBtn"
-                ImageSource="{FontImageSource FontFamily=MaterialOutlined, Glyph={x:Static m:MaterialOutlined.Add_location_alt}}"
-                BackgroundColor="{DynamicResource Primary}"
-                TextColor="{DynamicResource PrimaryDarkText}"                
-                Margin="0,0,20,20"
-                WidthRequest="60"
-                HeightRequest="60"
-                CornerRadius="30"
-                ZIndex="10000"
-                AbsoluteLayout.LayoutBounds="1, 1, AutoSize, AutoSize"
-                AbsoluteLayout.LayoutFlags="PositionProportional"
-                Clicked="SetPinClicked"/>
-        
-        <Button x:Name="CheckBtn"
-                IsVisible="False"
-                ImageSource="{FontImageSource FontFamily=MaterialOutlined, Glyph={x:Static m:MaterialOutlined.Check}}"
-                BackgroundColor="{DynamicResource Primary}"
-                TextColor="{DynamicResource PrimaryDarkText}"                
-                Margin="0,0,20,20"
-                WidthRequest="60"
-                HeightRequest="60"
-                CornerRadius="30"
-                ZIndex="10000"
-                AbsoluteLayout.LayoutBounds="1, 1, AutoSize, AutoSize"
-                AbsoluteLayout.LayoutFlags="PositionProportional"
-                Clicked="CheckClicked"/>        
-
-        <Button x:Name="DrawBtn"
-                ImageSource="{FontImageSource FontFamily=MaterialOutlined, Glyph={x:Static m:MaterialOutlined.Draw}}"
-                BackgroundColor="{DynamicResource Primary}"
-                TextColor="{DynamicResource PrimaryDarkText}"                
-                Margin="0,0,100,20"
-                WidthRequest="60"
-                HeightRequest="60"
-                CornerRadius="30"
-                ZIndex="10000"
-                AbsoluteLayout.LayoutBounds="1, 1, AutoSize, AutoSize"
-                AbsoluteLayout.LayoutFlags="PositionProportional"
-                Clicked="SetRegionClicked"/>
-
-        <Button x:Name="PenSettingsBtn"
-                ImageSource="{FontImageSource FontFamily=MaterialOutlined, Glyph={x:Static m:MaterialOutlined.Palette}}"
-                BackgroundColor="{DynamicResource Primary}"
-                TextColor="{DynamicResource PrimaryDarkText}" 
-                Margin="0,0,100,20"
-                WidthRequest="60"
-                HeightRequest="60"
-                CornerRadius="30"
-                ZIndex="10000"
-                AbsoluteLayout.LayoutBounds="1, 1, AutoSize, AutoSize"
-                AbsoluteLayout.LayoutFlags="PositionProportional"
-                IsVisible="False"
-                Clicked="PenSettingsClicked"/>
-
-        <Button x:Name="EraseBtn"
-                IsVisible="False"
-                ImageSource="{FontImageSource FontFamily=MaterialOutlined, Glyph={x:Static m:MaterialOutlined.Ink_eraser}}"
-                BackgroundColor="{DynamicResource Primary}"
-                TextColor="{DynamicResource PrimaryDarkText}"
-                Margin="0,0,180,20"
-                WidthRequest="60"
-                HeightRequest="60"
-                CornerRadius="30"
-                ZIndex="10000"
-                AbsoluteLayout.LayoutBounds="1, 1, AutoSize, AutoSize"
-                AbsoluteLayout.LayoutFlags="PositionProportional"
-                Clicked="EraseClicked"/>
-    </AbsoluteLayout>
+        <!-- Overlay für Busy-Indikator -->
+        <local:BusyOverlayView x:Name="busyOverlay"
+                               AbsoluteLayout.LayoutBounds="0,0,1,1"
+                               AbsoluteLayout.LayoutFlags="All"/>
+    </Grid>
 </mr:ContentPage>

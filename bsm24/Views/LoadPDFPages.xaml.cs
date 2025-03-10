@@ -33,9 +33,9 @@ public partial class LoadPDFPages : UraniumContentPage
         if (result != null)
         {
             List<ImageItem> pdfImages = [];
-            busyOverlay.IsVisible = true;
-            activityIndicator.IsRunning = true;
-            busyText.Text = "Lade PDF Seiten...";
+            busyOverlay.IsOverlayVisible = true;
+            busyOverlay.IsActivityRunning = true;
+            busyOverlay.BusyMessage = "Lade PDF Seiten...";
 
             await Task.Run(() =>
             {
@@ -72,8 +72,8 @@ public partial class LoadPDFPages : UraniumContentPage
             });
 
             fileListView.ItemsSource = pdfImages;
-            activityIndicator.IsRunning = false;
-            busyOverlay.IsVisible = false;
+            busyOverlay.IsActivityRunning = false;
+            busyOverlay.IsOverlayVisible = false;
         }
         else
             await Shell.Current.GoToAsync("..");
@@ -82,9 +82,9 @@ public partial class LoadPDFPages : UraniumContentPage
     private async Task LoadPDFImages()
     {
         List<ImageItem> pdfImages = [];
-        busyOverlay.IsVisible = true;
-        activityIndicator.IsRunning = true;
-        busyText.Text = "PDF wird konvertiert...";
+        busyOverlay.IsOverlayVisible = true;
+        busyOverlay.IsActivityRunning = true;
+        busyOverlay.BusyMessage = "PDF wird konvertiert...";
 
         await Task.Run(() =>
         {
@@ -116,8 +116,8 @@ public partial class LoadPDFPages : UraniumContentPage
             }
         });
 
-        activityIndicator.IsRunning = false;
-        busyOverlay.IsVisible = false;
+        busyOverlay.IsActivityRunning = false;
+        busyOverlay.IsOverlayVisible = false;
     }
 
     public static async Task<FileResult> PickPdfFileAsync()

@@ -205,6 +205,9 @@
 		<MauiXaml Update="AppShell.xaml">
 			<Generator>MSBuild:Compile</Generator>
 		</MauiXaml>
+		<MauiXaml Update="BusyOverlayView.xaml">
+		  <Generator>MSBuild:Compile</Generator>
+		</MauiXaml>
 		<MauiXaml Update="Views\MapView.xaml">
 			<Generator>MSBuild:Compile</Generator>
 		</MauiXaml>

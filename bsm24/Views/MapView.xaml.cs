@@ -60,7 +60,7 @@ public partial class MapView : IQueryAttributable
             {
                 if (await Helper.IsLocationEnabledAsync())
                 {
-                    var location = await Helper.GetCurrentLocationAsync(20, 10);
+                    var location = await Helper.GetCurrentLocationAsync(20, 10, _ => { });
                     lon = location.Longitude;
                     lat = location.Latitude;
                     zoom = 18;
@@ -77,7 +77,7 @@ public partial class MapView : IQueryAttributable
         {
             if (await Helper.IsLocationEnabledAsync())
             {
-                var location = await Helper.GetCurrentLocationAsync(20, 10);
+                var location = await Helper.GetCurrentLocationAsync(20, 10, _ => { });
                 lon = location.Longitude;
                 lat = location.Latitude;
                 zoom = 18;
@@ -97,34 +97,12 @@ public partial class MapView : IQueryAttributable
 
         GeoAdminWebView.Source = htmlSource;
 
-        if (PinId != null)
-        {
-            this.Dispatcher.StartTimer(TimeSpan.FromSeconds(2), () =>
-            {
-                Task.Run(async () =>
-                {
-                    var location = await Helper.GetCurrentLocationAsync(10, 30);
-                    if (location != null)
-                    {
-                        lon = location.Longitude;
-                        lat = location.Latitude;
-                        await GeoAdminWebView.EvaluateJavaScriptAsync($"moveMarker(1, {lon.ToString(CultureInfo.InvariantCulture)}, {lat.ToString(CultureInfo.InvariantCulture)});");
-                    }
-                });
-                return true;
-            });
-        }
-
 #if WINDOWS
         GeoAdminWebView.Navigated += (s, e) =>
         {
             GeoAdminWebView.EvaluateJavaScriptAsync(Generatescript());
         };
 #endif
-
-
-
-
     }
 
 
@@ -196,10 +174,29 @@ public partial class MapView : IQueryAttributable
             var result = await popup.PopupDismissedTask;
             if (result != null)
             {
-                var location = await Helper.GetCurrentLocationAsync(10, 20);
-                GlobalJson.Data.Plans[PlanId].Pins[PinId].GeoLocation = new GeoLocData(location);
+                // Start GPS-Position Task
+                Location location = null;
+                if (await Helper.IsLocationEnabledAsync())
+                {
+                    busyOverlay.IsOverlayVisible = true;
+                    busyOverlay.IsActivityRunning = true;
+                    busyOverlay.BusyMessage = "";
+                    location = await Helper.GetCurrentLocationAsync(8, 10, data =>
+                    {
+                        this.Dispatcher.Dispatch(() =>
+                        {
+                            busyOverlay.BusyMessage = $"Genauigkeit: {(int)data.accuracy} Meter\nVerbleibende Zeit: {data.remainingTime} Sekunden";
+                        });
+                    });
+                    busyOverlay.IsActivityRunning = false;
+                    busyOverlay.IsOverlayVisible = false;
+                }
+
+                if (location != null)
+                    GlobalJson.Data.Plans[PlanId].Pins[PinId].GeoLocation = new GeoLocData(location);
+
                 GeoAdminWebView.Reload();
-            }   
+            }
         }
         else
         {
