@@ -3,6 +3,7 @@
 using bsm24.Services;
 using CommunityToolkit.Maui.Alerts;
 using CommunityToolkit.Maui.Storage;
+using Mopups.Services;
 using UraniumUI.Pages;
 
 namespace bsm24.Views;
@@ -24,12 +25,21 @@ public partial class ExportSettings : UraniumContentPage
 
         LoadDocuments();
 
-        if (SettingsService.Instance.SelectedTemplate == null)
+        if (SettingsService.Instance.SelectedTemplate == null && SettingsService.Instance.Templates.Count > 0)
             SettingsService.Instance.SelectedTemplate = SettingsService.Instance.Templates.First();
     }
 
     private async void OnShareClicked(object sender, EventArgs e)
     {
+        if (SettingsService.Instance.SelectedTemplate == null)
+        {
+            var popup = new PopupDualResponse("Wählen Sie eine Exportvorlage oder importieren Sie eine neue.");
+            await MopupService.Instance.PushAsync(popup);
+            var result = await popup.PopupDismissedTask;
+            if (result != null)
+                return;
+        }
+
         string outputPath = Path.Combine(FileSystem.AppDataDirectory, GlobalJson.Data.ProjectPath, GlobalJson.Data.ProjectPath + ".docx");
         string templatePath = Path.Combine(FileSystem.AppDataDirectory, "templates", SettingsService.Instance.SelectedTemplate);
 
@@ -68,6 +78,15 @@ public partial class ExportSettings : UraniumContentPage
 
     private async void OnSaveClicked(object sender, EventArgs e)
     {
+        if (SettingsService.Instance.SelectedTemplate == null)
+        {
+            var popup = new PopupDualResponse("Wählen Sie eine Exportvorlage oder importieren Sie eine neue.");
+            await MopupService.Instance.PushAsync(popup);
+            var result = await popup.PopupDismissedTask;
+            if (result != null)
+                return;
+        }
+
         string outputPath = Path.Combine(FileSystem.AppDataDirectory, GlobalJson.Data.ProjectPath, GlobalJson.Data.ProjectPath + ".docx");
         string templatePath = Path.Combine(FileSystem.AppDataDirectory, "templates", SettingsService.Instance.SelectedTemplate);
 
@@ -104,11 +123,6 @@ public partial class ExportSettings : UraniumContentPage
             File.Delete(outputPath);
 
         await Shell.Current.GoToAsync("..", true);
-    }
-
-    private void OnColorPickClicked(object sender, EventArgs e)
-    {
-
     }
 
     private static async Task ShareFileAsync(string filePath)

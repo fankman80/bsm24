@@ -37,7 +37,7 @@
                             <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
                         <material:PickerField Grid.Column="0" 
-                                Title="Êxport-Vorlage"
+                                Title="Export-Vorlage"
                                 BorderColor="{AppThemeBinding Light={DynamicResource SecondaryBackground}, Dark={DynamicResource SecondaryBackground}}"
                                 AccentColor="{AppThemeBinding Light={DynamicResource PrimaryAccent}, Dark={DynamicResource SecondaryDark}}"
                                 x:Name="templatePicker" 
