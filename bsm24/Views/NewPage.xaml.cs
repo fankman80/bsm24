@@ -408,7 +408,7 @@ public partial class NewPage : IQueryAttributable
                 {
                     this.Dispatcher.Dispatch(() =>
                     {
-                        busyOverlay.BusyMessage = $"Genauigkeit: {(int)data.accuracy} Meter\nVerbleibende Zeit: {data.remainingTime} Sekunden";
+                        busyOverlay.BusyMessage = $"Ermittle Standort\nGenauigkeit: {(int)data.accuracy} Meter\nVerbleibende Zeit: {data.remainingTime} Sekunden";
                     });
                 });
                 busyOverlay.IsActivityRunning = false;
@@ -672,7 +672,7 @@ public partial class NewPage : IQueryAttributable
             TranslationY = planContainer.TranslationY,
             Rotation = planContainer.Rotation,
             WidthRequest = PlanImage.Width,
-            HeightRequest = PlanImage.Height,
+            HeightRequest = PlanImage.Height
         };
 
         pinBound.Left = int.MaxValue;
@@ -682,7 +682,8 @@ public partial class NewPage : IQueryAttributable
 
         // Füge die EventHandler hinzu
         drawingView.PointDrawn += OnDrawingLineUpdated;
-        (this.Content as Microsoft.Maui.Controls.AbsoluteLayout)?.Children.Add(drawingView);
+        var absoluteLayout = this.FindByName<Microsoft.Maui.Controls.AbsoluteLayout>("PlanView");
+        absoluteLayout.Children.Add(drawingView);
 
         PenSettingsBtn.IsVisible = true;
         CheckBtn.IsVisible = true;
@@ -691,8 +692,9 @@ public partial class NewPage : IQueryAttributable
 
     private void RemoveDrawingView()
     {
-        if (drawingView != null && (this.Content as Microsoft.Maui.Controls.AbsoluteLayout) != null)
-            (this.Content as Microsoft.Maui.Controls.AbsoluteLayout)?.Children.Remove(drawingView);
+        var absoluteLayout = this.FindByName<Microsoft.Maui.Controls.AbsoluteLayout>("PlanView");
+        if (drawingView != null && absoluteLayout != null)      
+            absoluteLayout.Children.Remove(drawingView);
     }
 
     private void OnDrawingLineUpdated(object sender, PointDrawnEventArgs e)

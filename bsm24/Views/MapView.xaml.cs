@@ -182,7 +182,7 @@ public partial class MapView : IQueryAttributable
                     {
                         this.Dispatcher.Dispatch(() =>
                         {
-                            busyOverlay.BusyMessage = $"Genauigkeit: {(int)data.accuracy} Meter\nVerbleibende Zeit: {data.remainingTime} Sekunden";
+                            busyOverlay.BusyMessage = $"Ermittle Standort\nGenauigkeit: {(int)data.accuracy} Meter\nVerbleibende Zeit: {data.remainingTime} Sekunden";
                         });
                     });
                     busyOverlay.IsActivityRunning = false;

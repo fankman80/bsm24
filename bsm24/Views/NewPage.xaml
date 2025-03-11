@@ -37,7 +37,7 @@
     </ContentPage.ToolbarItems>
 
     <Grid>
-        <AbsoluteLayout IsClippedToBounds="True" x:DataType="pc:TransformViewModel">
+        <AbsoluteLayout x:Name="PlanView" IsClippedToBounds="True" x:DataType="pc:TransformViewModel">
             <mr:ContentView
                 PinchingCommand="{Binding PinchingCommand}"
                 RotatingCommand="{Binding RotatingCommand}"

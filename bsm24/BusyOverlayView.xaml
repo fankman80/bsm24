@@ -8,7 +8,7 @@
           BackgroundColor="Black"
           Opacity="0.7"
           IsVisible="False"
-          ZIndex="9999">
+          ZIndex="9998">
         <StackLayout VerticalOptions="Center" HorizontalOptions="Center">
             <ActivityIndicator x:Name="activityIndicator"
                                IsRunning="False"
