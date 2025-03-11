@@ -36,21 +36,23 @@ public partial class PinList : UraniumContentPage
             {
                 foreach (var pin in GlobalJson.Data.Plans[plan.Key].Pins)
                 {
-                    var newPin = new PinItem
+                    if (!GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].IsCustomPin)
                     {
-                        PinDesc = GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].PinDesc,
-                        PinIcon = GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].PinIcon,
-                        PinName = GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].PinName,
-                        PinLocation = GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].PinLocation,
-                        OnPlanName = GlobalJson.Data.Plans[plan.Key].Name,
-                        OnPlanId = GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].OnPlanId,
-                        SelfId = GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].SelfId,
-                        AllowExport = GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].AllowExport,
-                    };
-
-                    newPin.PropertyChanged += Pin_PropertyChanged;
-                    pinItems.Add(newPin);
-                    pincounter++;
+                        var newPin = new PinItem
+                        {
+                            PinDesc = GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].PinDesc,
+                            PinIcon = GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].PinIcon,
+                            PinName = GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].PinName,
+                            PinLocation = GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].PinLocation,
+                            OnPlanName = GlobalJson.Data.Plans[plan.Key].Name,
+                            OnPlanId = GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].OnPlanId,
+                            SelfId = GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].SelfId,
+                            AllowExport = GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].AllowExport,
+                        };
+                        newPin.PropertyChanged += Pin_PropertyChanged;
+                        pinItems.Add(newPin);
+                        pincounter++;
+                    }
                 }     
             }
             pinListView.ItemsSource = pinItems;
