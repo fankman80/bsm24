@@ -47,7 +47,7 @@ public partial class GPSViewModel : INotifyPropertyChanged
     private GPSViewModel()
     {
         ToggleGPSCommand = new Command(OnToggleGPS);
-        GPSButtonText = "GPS Off";
+        GPSButtonText = "GPS aus";
     }
 
     public virtual void OnPropertyChanged([CallerMemberName] string propertyName = "")
@@ -59,7 +59,7 @@ public partial class GPSViewModel : INotifyPropertyChanged
     {
         await Toggle(!IsRunning);
 
-        GPSButtonText = IsRunning ? "GPS On" : "GPS Off";
+        GPSButtonText = IsRunning ? "GPS ein" : "GPS Off";
     }
 
     /// <summary>
