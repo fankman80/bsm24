@@ -62,7 +62,7 @@ public class TextOnlyViewModel : ObservableObject
         text = $"{ThreadInfo} {text}";
         var s = $"{text}\n{Text}";
         if (s.Length > 2000)
-            s = s.Substring(0, 2000);
+            s = s[..2000];
         Text = s;
     }
 

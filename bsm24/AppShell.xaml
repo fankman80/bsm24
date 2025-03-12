@@ -18,13 +18,15 @@
        Shell.ForegroundColor="{DynamicResource PrimaryDark}"       
        Shell.FlyoutBehavior="{OnIdiom Desktop=Locked, Default=Flyout}">
 
-    <Shell.BindingContext>
-        <model:MainShellViewModel/>
-    </Shell.BindingContext>
+    <Shell.Resources>
+        <x:Static Member="services:SettingsService.Instance" x:Key="Settings" />
+        <x:Static Member="model:GPSViewModel.Instance" x:Key="GPSData" />
+    </Shell.Resources>
 
     <Shell.FlyoutHeaderTemplate>
-        <DataTemplate x:DataType="model:MainShellViewModel">
-            <Grid BackgroundColor="{AppThemeBinding Light={DynamicResource SecondaryBackgroundDark}, Dark={DynamicResource PrimaryBackgroundDark}}">
+        <DataTemplate x:DataType="services:SettingsService">
+            <Grid BindingContext="{StaticResource Settings}"
+                  BackgroundColor="{AppThemeBinding Light={DynamicResource SecondaryBackgroundDark}, Dark={DynamicResource PrimaryBackgroundDark}}">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="100" />
                     <ColumnDefinition Width="*" />
@@ -36,10 +38,10 @@
                 <Image Grid.Column="0"
                        Grid.RowSpan="2"
                        Aspect="AspectFill"
-                       Source="{Binding SettingsService.FlyoutHeaderImage}"/>
+                       Source="{Binding FlyoutHeaderImage}"/>
                 <Label Grid.Column="1"
                        Grid.Row="0"
-                       Text="{Binding SettingsService.FlyoutHeaderDesc}"
+                       Text="{Binding FlyoutHeaderDesc}"
                        LineBreakMode="WordWrap"
                        Padding="4,4,4,0"
                        FontSize="18"
@@ -48,7 +50,7 @@
                        HorizontalTextAlignment="Start"/>
                 <Label Grid.Column="1"
                        Grid.Row="1"
-                       Text="{Binding SettingsService.FlyoutHeaderTitle}"
+                       Text="{Binding FlyoutHeaderTitle}"
                        LineBreakMode="WordWrap"
                        Padding="4,0,4,0"
                        FontSize="14"
@@ -59,8 +61,9 @@
     </Shell.FlyoutHeaderTemplate>
 
     <Shell.FlyoutFooterTemplate>
-        <DataTemplate x:DataType="model:MainShellViewModel">
-            <Grid BackgroundColor="{AppThemeBinding Light={DynamicResource Gray050}, Dark={DynamicResource PrimaryBackgroundDark}}">
+        <DataTemplate x:DataType="model:GPSViewModel">
+            <Grid BindingContext="{StaticResource GPSData}"
+                  BackgroundColor="{AppThemeBinding Light={DynamicResource Gray050}, Dark={DynamicResource PrimaryBackgroundDark}}">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*" />
                     <RowDefinition Height="*" />
@@ -75,10 +78,10 @@
                         HeightRequest="12"
                         Margin="10,0,10,0"
                         FontSize="12"
-                        Text="{Binding GPSViewModel.GPSButtonText}"
+                        Text="{Binding GPSButtonText}"
                         BackgroundColor="{AppThemeBinding Light={DynamicResource Primary}, Dark={DynamicResource PrimaryDark}}"
                         TextColor="{AppThemeBinding Light={DynamicResource PrimaryDarkText}, Dark={DynamicResource PrimaryText}}"
-                        Command="{Binding GPSViewModel.ToggleGPSCommand}"/>
+                        Command="{Binding ToggleGPSCommand}"/>
 
                 <Label Grid.Row="0" Grid.Column="1"
                        Text="BSM 24" 

@@ -14,7 +14,11 @@
              BackgroundColor="#60000000"
              Title="Settings">
 
-    <Border
+    <Mopups:PopupPage.Resources>
+        <x:Static Member="services:SettingsService.Instance" x:Key="Settings" />
+    </Mopups:PopupPage.Resources>
+
+    <Border x:DataType="services:SettingsService" BindingContext="{StaticResource Settings}"
         StrokeShape="RoundRectangle 20,20,20,20"
         Margin="0,30,0,30"
         Padding="16,16,16,16"
@@ -23,7 +27,7 @@
         HorizontalOptions="Center"
         VerticalOptions="Center">
         <ScrollView>
-            <VerticalStackLayout x:DataType="services:SettingsService" Spacing="0">
+            <VerticalStackLayout Spacing="0">
                 <Label Text="{Binding PinMinScaleLimit, StringFormat='Min. Pingrösse limitieren: {0:0.##}%'}" />
                 <Slider Maximum="100"
                         Minimum="1"
@@ -64,7 +68,6 @@
                             OnColor="{DynamicResource Secondary}"
                             IsToggled="{Binding IsPlanRotateLocked}"/>
                 </Grid>
-
 
                 <Label Text="Icon für Map:"/>
                 <Grid RowSpacing="0" Margin="0,0,0,16">

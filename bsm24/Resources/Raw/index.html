@@ -53,12 +53,13 @@
     <script src="https://cdn.jsdelivr.net/npm/ol@latest/dist/ol.js"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ol@latest/ol.css">
     <script>
-        var markers = [];  // Array für die Marker
-        var mapReady = false;  // Karte ist anfangs noch nicht bereit
-        var pendingPositions = [];  // Array für die Positionen, die gesetzt werden sollen, wenn die Karte bereit ist
-        var vectorSource;  // Globale Variable für die Vektorquelle
-        var vectorLayer;   // Globale Variable für den Vektor-Layer
-        var wmsLayer; // globale Variable
+        var markers = [];          // Array für die Marker
+        var mapReady = false;      // Karte ist anfangs noch nicht bereit
+        var pendingPositions = []; // Positionen, die gesetzt werden sollen, wenn die Karte bereit ist
+        var vectorSource;          // Globale Variable für die Vektorquelle
+        var vectorLayer;           // Globale Variable für den Vektor-Layer
+        var wmsLayer;              // Globale Variable für den WMS-Layer
+        var map;                   // Globale Variable für die Karte
 
         function initMap() {
             wmsLayer = new ol.layer.Tile({
@@ -104,6 +105,13 @@
             });
             map.addOverlay(popup);
 
+            // Hinzufügen der Modify-Interaktion
+            var modify = new ol.interaction.Modify({
+                hitDetection: vectorLayer,
+                source: vectorSource
+            });
+            map.addInteraction(modify);
+
             map.on('click', function (evt) {
                 var feature = map.forEachFeatureAtPixel(evt.pixel, function (feature) {
                     return feature;
@@ -121,10 +129,9 @@
                     document.getElementById('popup').style.display = 'none';
                 }
             });
-
         }
 
-        function setMarkerPosition(lon, lat, pindesc, pinlocation, pinname) {
+        function setMarkerPosition(lon, lat, pinname, pinlocation, pindesc, plankey, pinkey) {
             if (mapReady) {
                 var iconStyle = new ol.style.Style({
                     image: new ol.style.Icon({
@@ -141,7 +148,9 @@
                     geometry: new ol.geom.Point(ol.proj.fromLonLat([lon, lat])),
                     pinname: pinname,
                     pinlocation: pinlocation,
-                    pindesc: pindesc
+                    pindesc: pindesc,
+                    plankey: plankey,
+                    pinkey: pinkey
                 });
 
                 // Wende den Icon-Style auf den Marker an
@@ -152,13 +161,13 @@
                 markers.push(marker);  // Füge den Marker zum Array der Marker hinzu
             } else {
                 // Speichere die Position, wenn die Karte noch nicht bereit ist
-                pendingPositions.push({ lon: lon, lat: lat, pinname: pinname, pinlocation: pinlocation, pindesc: pindesc });
+                pendingPositions.push({ lon: lon, lat: lat, pinname: pinname, pinlocation: pinlocation, pindesc: pindesc, plankey: plankey, pinkey: pinkey });
             }
         }
 
         function setMultipleMarkers(positions) {
             positions.forEach(function (position) {
-                setMarkerPosition(position.lon, position.lat, position.pindesc, position.pinlocation, position.pinname);
+                setMarkerPosition(position.lon, position.lat, position.pinname, position.pinlocation, position.pindesc, position.plankey, position.pinkey );
             });
         }
 
@@ -166,6 +175,23 @@
             wmsLayer.getSource().updateParams({
                 LAYERS: layer
             });
+        }
+
+        function getMarkerCoordinates() {
+            var features = vectorSource.getFeatures();
+            if (features.length > 0) {
+                var coordinatesList = features.map(function (feature) {
+                    var coordinates = ol.proj.toLonLat(feature.getGeometry().getCoordinates());
+                    return {
+                        lon: coordinates[0],
+                        lat: coordinates[1],
+                        pinkey: feature.get('pinkey'),
+                        plankey: feature.get('plankey')
+                    };
+                });
+                return JSON.stringify(coordinatesList);
+            }
+            return null;
         }
     </script>
 </head>

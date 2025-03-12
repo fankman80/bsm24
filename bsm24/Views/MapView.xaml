@@ -6,15 +6,10 @@
                 xmlns:uranium="http://schemas.enisn-projects.io/dotnet/maui/uraniumui"
                 xmlns:material="http://schemas.enisn-projects.io/dotnet/maui/uraniumui/material"
                 xmlns:m="clr-namespace:UraniumUI.Icons.MaterialSymbols;assembly=UraniumUI.Icons.MaterialSymbols"
-                xmlns:model="clr-namespace:bsm24.ViewModels"
                 xmlns:local="clr-namespace:bsm24"   
                 Shell.TitleColor="{DynamicResource PrimaryDark}"
                 x:Class="bsm24.Views.MapView"
                 Title="swisstopo Karte">
-
-    <ContentPage.BindingContext>
-        <model:MainShellViewModel/>
-    </ContentPage.BindingContext>
 
     <ContentPage.ToolbarItems>
         <ToolbarItem x:Name ="SetPosBtn"
@@ -33,9 +28,9 @@
             <StackLayout Orientation="Horizontal"
                          Spacing="20"
                          Padding="20"
-                         AbsoluteLayout.LayoutBounds="1,1,AutoSize,AutoSize"
+                         AbsoluteLayout.LayoutBounds="0,1,AutoSize,AutoSize"
                          AbsoluteLayout.LayoutFlags="PositionProportional">
-
+                 
                 <Border Grid.Column="0"
                         WidthRequest="60"
                         HeightRequest="60"
@@ -68,6 +63,14 @@
                     </Border.Shadow>
                 </Border>
             </StackLayout>
+            
+                <Button Text="Speichern"
+                        Margin="20"
+                        BackgroundColor="{AppThemeBinding Light={DynamicResource Primary}, Dark={DynamicResource PrimaryDark}}"
+                        TextColor="{AppThemeBinding Light={DynamicResource PrimaryDarkText}, Dark={DynamicResource PrimaryText}}"
+                        AbsoluteLayout.LayoutBounds="1,1,AutoSize,AutoSize"
+                        AbsoluteLayout.LayoutFlags="PositionProportional"
+                        Clicked="GetCoordinatesClicked"/>  
         </AbsoluteLayout>
 
         <!-- Overlay für Busy-Indikator -->

@@ -3,6 +3,7 @@ using bsm24.Models;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Text.Json;
+using bsm24.ViewModels;
 
 namespace bsm24.Services;
 public partial class SettingsService : INotifyPropertyChanged

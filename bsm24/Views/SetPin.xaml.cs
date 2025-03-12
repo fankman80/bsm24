@@ -75,7 +75,7 @@ public partial class SetPin : UraniumContentPage, IQueryAttributable
         SizePercentText.Text = Math.Round(GlobalJson.Data.Plans[PlanId].Pins[PinId].PinScale * 100, 0).ToString() + "%";
         priorityPicker.SelectedIndex = GlobalJson.Data.Plans[PlanId].Pins[PinId].PinPriority;
         PinAcc.Text = GlobalJson.Data.Plans[PlanId].Pins[PinId].GeoLocation != null ?
-                      GlobalJson.Data.Plans[PlanId].Pins[PinId].GeoLocation.Accuracy.ToString() + " m" :
+                      GlobalJson.Data.Plans[PlanId].Pins[PinId].GeoLocation.Accuracy.ToString() :
                       "N/A";
 
         if (GlobalJson.Data.Plans[PlanId].Pins[PinId].GeoLocation != null)

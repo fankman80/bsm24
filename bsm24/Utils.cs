@@ -17,7 +17,7 @@ public static class Utils
             var question = $"To use this feature the {permission} permission is required. Please go into Settings and turn on {permission} for the app.";
             var positive = "Settings";
             var negative = "Maybe Later";
-            var task = Application.Current?.MainPage?.DisplayAlert(title, question, positive, negative);
+            var task = Application.Current?.Windows[0].Page?.DisplayAlert(title, question, positive, negative);
             if (task == null)
                 return false;
 
@@ -39,7 +39,7 @@ public static class Utils
                 var question = $"To use the plugin the {permission} permission is required.";
                 var positive = "Settings";
                 var negative = "Maybe Later";
-                var task = Application.Current?.MainPage?.DisplayAlert(title, question, positive, negative);
+                var task = Application.Current?.Windows[0].Page?.DisplayAlert(title, question, positive, negative);
                 if (task == null)
                     return false;
 

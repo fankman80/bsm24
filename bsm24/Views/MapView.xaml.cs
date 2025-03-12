@@ -6,9 +6,11 @@ using Android.Webkit;
 
 using bsm24.Models;
 using bsm24.Services;
+using bsm24.ViewModels;
 using Mopups.Services;
 using System.Globalization;
-using bsm24.ViewModels;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace bsm24.Views;
 
@@ -161,7 +163,7 @@ public partial class MapView : IQueryAttributable
                         var pindesc = GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].PinDesc;
                         var pinlocation = GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].PinLocation;
                         var pinname = GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].PinName;
-                        positionsJson += $"{{ lon: {lon.ToString(CultureInfo.InvariantCulture)}, lat: {lat.ToString(CultureInfo.InvariantCulture)}, pinname: '{pinname}', pinlocation: '{pinlocation}', pindesc: '{pindesc}'}},";
+                        positionsJson += $"{{ lon: {lon.ToString(CultureInfo.InvariantCulture)}, lat: {lat.ToString(CultureInfo.InvariantCulture)}, pinname: '{pinname}', pinlocation: '{pinlocation}', pindesc: '{pindesc}', plankey: '{plan.Key}', pinkey: '{pin.Key}'}},";
                     }
                 }
             }
@@ -212,4 +214,39 @@ public partial class MapView : IQueryAttributable
         var script = $"changeMapLayer('{layer}');";
         GeoAdminWebView.EvaluateJavaScriptAsync(script);
     }
+
+    private async void GetCoordinatesClicked(object sender, EventArgs e)
+    {
+        string result = await GeoAdminWebView.EvaluateJavaScriptAsync("getMarkerCoordinates()");
+        if (!string.IsNullOrEmpty(result))
+        {
+            result = result.Replace("\\\"", "\"");
+            List<Coordinate> coordinates = JsonSerializer.Deserialize<List<Coordinate>>(result);
+
+            foreach (var coord in coordinates)
+            {
+                GlobalJson.Data.Plans[coord.PlanKey].Pins[coord.PinKey].GeoLocation.WGS84.Longitude = coord.Lon;
+                GlobalJson.Data.Plans[coord.PlanKey].Pins[coord.PinKey].GeoLocation.WGS84.Latitude = coord.Lat;
+                GlobalJson.Data.Plans[coord.PlanKey].Pins[coord.PinKey].GeoLocation.Accuracy = 0;
+            }
+
+            // save data to file
+            GlobalJson.SaveToFile();
+        }
+    }
+}
+
+public class Coordinate
+{
+    [JsonPropertyName("lon")]
+    public double Lon { get; set; }
+
+    [JsonPropertyName("lat")]
+    public double Lat { get; set; }
+
+    [JsonPropertyName("plankey")]
+    public string PlanKey { get; set; }
+
+    [JsonPropertyName("pinkey")]
+    public string PinKey { get; set; }
 }

@@ -44,7 +44,7 @@ public partial class GPSViewModel : INotifyPropertyChanged
     }
     public Command ToggleGPSCommand { get; set; }
 
-    public GPSViewModel()
+    private GPSViewModel()
     {
         ToggleGPSCommand = new Command(OnToggleGPS);
         GPSButtonText = "GPS Off";

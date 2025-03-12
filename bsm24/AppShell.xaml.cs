@@ -1,7 +1,5 @@
 ﻿#nullable disable
 
-using bsm24.Services;
-using bsm24.ViewModels;
 using bsm24.Views;
 using Mopups.Services;
 using System.Windows.Input;

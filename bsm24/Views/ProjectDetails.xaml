@@ -2,7 +2,6 @@
 <uranium:UraniumContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"     
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:ff="clr-namespace:FFImageLoading.Maui;assembly=FFImageLoading.Maui"                             
-             xmlns:vm="clr-namespace:bsm24.ViewModels"
              xmlns:views="clr-namespace:bsm24.Views"
              xmlns:uranium="http://schemas.enisn-projects.io/dotnet/maui/uraniumui"
              xmlns:material="http://schemas.enisn-projects.io/dotnet/maui/uraniumui/material"
@@ -13,8 +12,12 @@
              BackgroundColor="{AppThemeBinding Light={DynamicResource PrimaryBackground}, Dark={DynamicResource PrimaryBackgroundDark}}"
              x:Class="bsm24.Views.ProjectDetails"
              Title="Projekt Details">
+    
+    <uranium:UraniumContentPage.Resources>
+        <x:Static Member="services:SettingsService.Instance" x:Key="Settings" />
+    </uranium:UraniumContentPage.Resources>
 
-    <Grid>
+    <Grid x:DataType="services:SettingsService" BindingContext="{StaticResource Settings}">
         <Grid Margin="16">
             <Grid.RowDefinitions>
                 <RowDefinition Height="120" />
@@ -22,7 +25,7 @@
                 <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
             
-            <Grid Grid.Row="0" x:DataType="services:SettingsService">
+            <Grid Grid.Row="0">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="Auto" />
@@ -36,7 +39,7 @@
                         StrokeThickness="1"
                         BackgroundColor="White"
                         StrokeShape="RoundRectangle 8">
-                        <Image Source="{Binding FlyoutHeaderImage}" Aspect="AspectFill"/>
+                    <Image Source="{Binding FlyoutHeaderImage}" Aspect="AspectFill"/>
                 </Border>
                 <Grid Grid.Column="0">
                     <Grid.ColumnDefinitions>
@@ -67,7 +70,7 @@
             </Grid>
                   
             <ScrollView Grid.Row="1" Margin="0,10,0,0">
-                <VerticalStackLayout x:DataType="services:SettingsService">
+                <VerticalStackLayout>
                     <material:TextField
                         x:Name="client_name"
                         TextColor="{AppThemeBinding Light={DynamicResource PrimaryText}, Dark={DynamicResource PrimaryDarkText}}"
