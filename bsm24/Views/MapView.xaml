@@ -32,8 +32,8 @@
                          AbsoluteLayout.LayoutFlags="PositionProportional">
 
                 <Border Grid.Column="0"
-                        WidthRequest="80"
-                        HeightRequest="80"
+                        WidthRequest="60"
+                        HeightRequest="60"
                         Stroke="{AppThemeBinding Light={DynamicResource PrimaryDarkText}, Dark={DynamicResource PrimaryText}}"
                         StrokeThickness="1"
                         BackgroundColor="White"
@@ -48,8 +48,8 @@
                 </Border>
 
                 <Border Grid.Column="0"
-                        WidthRequest="80"
-                        HeightRequest="80"
+                        WidthRequest="60"
+                        HeightRequest="60"
                         Stroke="{AppThemeBinding Light={DynamicResource PrimaryDarkText}, Dark={DynamicResource PrimaryText}}"
                         StrokeThickness="1"
                         BackgroundColor="White"
