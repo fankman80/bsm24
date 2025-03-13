@@ -57,6 +57,7 @@ public partial class Pin : INotifyPropertyChanged
     public Dictionary<string, Foto> Fotos { get; set; }
     public string OnPlanId { get; set; }
     public string SelfId { get; set; }
+    public DateTime DateTime { get; set; }
     public SKColor PinColor { get; set; }
     public double PinScale { get; set; }
     public double PinRotation { get; set; }

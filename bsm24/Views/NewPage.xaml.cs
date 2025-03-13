@@ -441,6 +441,7 @@ public partial class NewPage : IQueryAttributable
                 Fotos = [],
                 OnPlanId = PlanId,
                 SelfId = currentDateTime,
+                DateTime = DateTime.Now,
                 PinColor = (SKColor)pinColor,
                 PinScale = iconItem.IconScale,
                 PinRotation = 0,
@@ -462,7 +463,8 @@ public partial class NewPage : IQueryAttributable
                 Console.WriteLine($"Plan mit ID {PlanId} existiert nicht.");
 
             AddPin(currentDateTime, newPinData.PinIcon);
-        };
+        }
+        ;
     }
 
     private void OnMouseMoved(object sender, MouseEventArgs e)
@@ -689,7 +691,7 @@ public partial class NewPage : IQueryAttributable
     private void RemoveDrawingView()
     {
         var absoluteLayout = this.FindByName<Microsoft.Maui.Controls.AbsoluteLayout>("PlanView");
-        if (drawingView != null && absoluteLayout != null)      
+        if (drawingView != null && absoluteLayout != null)
             absoluteLayout.Children.Remove(drawingView);
     }
 

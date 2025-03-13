@@ -1,5 +1,6 @@
 ﻿#nullable disable
 
+using Mopups.Services;
 using System.Collections.ObjectModel;
 using UraniumUI.Pages;
 
@@ -59,6 +60,27 @@ public partial class IconGallery : UraniumContentPage, IQueryAttributable
         GlobalJson.SaveToFile();
 
         await Shell.Current.GoToAsync($"..?planId={PlanId}&pinId={PinId}&pinIcon={fileName}");
+    }
+
+    private async void OnLongPressed(object sender, EventArgs e)
+    {
+        var button = sender as Button;
+        var fileName = button.AutomationId;
+
+        GlobalJson.Data.Plans[PlanId].Pins[PinId].PinIcon = fileName;
+
+        // Suche Icon-Daten
+        var iconItem = Settings.PinData.FirstOrDefault(item => item.FileName.Equals(fileName, StringComparison.OrdinalIgnoreCase));
+
+        var popup = new PopupIconEdit(iconItem.DisplayName,
+                                      iconItem.FileName,
+                                      iconItem.AnchorPoint,
+                                      iconItem.IconScale);
+        await MopupService.Instance.PushAsync(popup);
+        var result = await popup.PopupDismissedTask;
+        if (result != null)
+        {
+        }
     }
 
     private async void UpdateSpan()

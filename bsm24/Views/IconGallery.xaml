@@ -3,6 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:ff="clr-namespace:FFImageLoading.Maui;assembly=FFImageLoading.Maui" 
              xmlns:views="clr-namespace:bsm24.Views"
+             xmlns:mr="clr-namespace:MR.Gestures;assembly=MR.Gestures"
              xmlns:uranium="http://schemas.enisn-projects.io/dotnet/maui/uraniumui"
              xmlns:material="http://schemas.enisn-projects.io/dotnet/maui/uraniumui/material"
              xmlns:m="clr-namespace:UraniumUI.Icons.MaterialSymbols;assembly=UraniumUI.Icons.MaterialSymbols"            
@@ -28,6 +29,7 @@
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="Auto" />
                                 <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="35" />
                             </Grid.ColumnDefinitions>
                             <ff:CachedImage Grid.Column="0"
                                             Source="{Binding FileName}"
@@ -39,14 +41,17 @@
                                    VerticalOptions="Center"
                                    Margin="16,0,0,0"
                                    LineBreakMode="WordWrap"/>
-                            <Button Grid.ColumnSpan="2"
+                            <mr:Button Grid.ColumnSpan="2"
                                     AutomationId = "{Binding FileName}"
                                     Background="Transparent"
-                                    Clicked="OnIconClicked"/>
+                                    LongPressing="OnLongPressed"
+                                    Clicked="OnIconClicked">
+                            </mr:Button>
                         </Grid>
                     </DataTemplate>
                 </CollectionView.ItemTemplate>
             </CollectionView>
+            
         </Grid>
 
         <!-- Overlay für Busy-Indikator -->

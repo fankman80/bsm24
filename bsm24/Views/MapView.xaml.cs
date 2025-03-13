@@ -7,6 +7,8 @@ using Android.Webkit;
 using bsm24.Models;
 using bsm24.Services;
 using bsm24.ViewModels;
+using CommunityToolkit.Maui.Alerts;
+using CommunityToolkit.Maui.Storage;
 using Mopups.Services;
 using System.Globalization;
 using System.Text.Json;
@@ -199,12 +201,12 @@ public partial class MapView : IQueryAttributable
         else
         {
             var popup1 = new PopupAlert("Aktivieren Sie zuerst die Ortungsdienste, damit der Standort aktualisiert werden kann?");
-            await MopupService.Instance.PushAsync(popup1);   
+            await MopupService.Instance.PushAsync(popup1);
         }
     }
     private void OnMapLayerColorClicked(object sender, EventArgs e)
     {
-        var layer = "ch.swisstopo.pixelkarte-farbe";   
+        var layer = "ch.swisstopo.pixelkarte-farbe";
         var script = $"changeMapLayer('{layer}');";
         GeoAdminWebView.EvaluateJavaScriptAsync(script);
     }
@@ -233,6 +235,64 @@ public partial class MapView : IQueryAttributable
             // save data to file
             GlobalJson.SaveToFile();
         }
+    }
+
+    private async void KmlExportClicked(object sender, EventArgs e)
+    {
+        string outputPath = Path.Combine(FileSystem.AppDataDirectory, GlobalJson.Data.ProjectPath, GlobalJson.Data.ProjectPath + ".kml");
+
+        List<(double Latitude, double Longitude, string Name, DateTime Time)> coordinates = [];
+        foreach (var plan in GlobalJson.Data.Plans)
+        {
+            if (GlobalJson.Data.Plans[plan.Key].Pins != null)
+            {
+                foreach (var pin in GlobalJson.Data.Plans[plan.Key].Pins)
+                {
+                    if (GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].GeoLocation != null)
+                    {
+                        coordinates.Add((GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].GeoLocation.WGS84.Latitude,
+                                         GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].GeoLocation.WGS84.Longitude,
+                                         GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].PinDesc,
+                                         GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].DateTime));
+                    }
+                }
+            }
+        }
+
+        KmlGenerator.GenerateKml(outputPath, coordinates);
+
+        var saveStream = File.Open(outputPath, FileMode.Open);
+        var fileSaveResult = await FileSaver.Default.SaveAsync(GlobalJson.Data.ProjectPath + ".kml", saveStream);
+        if (fileSaveResult.IsSuccessful)
+        {
+            if (DeviceInfo.Platform == DevicePlatform.WinUI)
+                await Application.Current.Windows[0].Page.DisplayAlert("", "KML-Datei wurde gespeichert", "OK");
+            else
+                await Toast.Make($"KML-Datei wurde gespeichert").Show();
+        }
+        else
+        {
+            if (DeviceInfo.Platform == DevicePlatform.WinUI)
+                await Application.Current.Windows[0].Page.DisplayAlert("", "KML-Datei wurde nicht gespeichert", "OK");
+            else
+                await Toast.Make($"KML-Datei wurde nicht gespeichert").Show();
+        }
+        saveStream.Close();
+    }
+
+    private async void OnButtonPressed(object sender, EventArgs e)
+    {
+        var button = (Button)sender;
+        await button.ScaleTo(0.8, 150); // Animation für Button-Verkleinerung
+        button.Text = "gespeichert";
+    }
+
+    private async void OnButtonReleased(object sender, EventArgs e)
+    {
+        var button = (Button)sender;
+        await button.ScaleTo(1.0, 150); // Animation für Button-Rückkehr zur Normalgröße
+        await Task.Delay(1500);
+        button.Text = "Speichern";
     }
 }
 

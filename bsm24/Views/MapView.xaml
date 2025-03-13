@@ -30,7 +30,7 @@
                          Padding="20"
                          AbsoluteLayout.LayoutBounds="0,1,AutoSize,AutoSize"
                          AbsoluteLayout.LayoutFlags="PositionProportional">
-                
+
                 <Border Grid.Column="0"
                         WidthRequest="80"
                         HeightRequest="80"
@@ -64,19 +64,36 @@
                 </Border>
             </StackLayout>
 
-            <Button Text="Speichern"
-                    Margin="20"
-                    BorderColor="{AppThemeBinding Light={DynamicResource PrimaryDarkText}, Dark={DynamicResource PrimaryText}}"
-                    BorderWidth="1"
-                    BackgroundColor="{AppThemeBinding Light={DynamicResource Primary}, Dark={DynamicResource PrimaryDark}}"
-                    TextColor="{AppThemeBinding Light={DynamicResource PrimaryDarkText}, Dark={DynamicResource PrimaryText}}"
-                    AbsoluteLayout.LayoutBounds="1,1,AutoSize,AutoSize"
-                    AbsoluteLayout.LayoutFlags="PositionProportional"
-                    Clicked="GetCoordinatesClicked">
-                <Button.Shadow>
-                    <Shadow Brush="Black" Opacity="0.5" Offset="5,5" Radius="8"/>
-                </Button.Shadow>
-            </Button>
+            <StackLayout Orientation="Horizontal"
+                         Spacing="20"
+                         Padding="20"
+                         AbsoluteLayout.LayoutBounds="1,1,AutoSize,AutoSize"
+                         AbsoluteLayout.LayoutFlags="PositionProportional">
+
+                <Button Text="KML Export"
+                        BorderColor="{AppThemeBinding Light={DynamicResource PrimaryDarkText}, Dark={DynamicResource PrimaryText}}"
+                        BorderWidth="1"
+                        BackgroundColor="{AppThemeBinding Light={DynamicResource Primary}, Dark={DynamicResource PrimaryDark}}"
+                        TextColor="{AppThemeBinding Light={DynamicResource PrimaryDarkText}, Dark={DynamicResource PrimaryText}}"
+                        Clicked="KmlExportClicked">
+                    <Button.Shadow>
+                        <Shadow Brush="Black" Opacity="0.5" Offset="5,5" Radius="8"/>
+                    </Button.Shadow>
+                </Button>
+
+                <Button Text="Speichern"
+                        BorderColor="{AppThemeBinding Light={DynamicResource PrimaryDarkText}, Dark={DynamicResource PrimaryText}}"
+                        BorderWidth="1"
+                        BackgroundColor="{AppThemeBinding Light={DynamicResource Primary}, Dark={DynamicResource PrimaryDark}}"
+                        TextColor="{AppThemeBinding Light={DynamicResource PrimaryDarkText}, Dark={DynamicResource PrimaryText}}"
+                        Pressed="OnButtonPressed"
+                        Released="OnButtonReleased"
+                        Clicked="GetCoordinatesClicked">
+                    <Button.Shadow>
+                        <Shadow Brush="Black" Opacity="0.5" Offset="5,5" Radius="8"/>
+                    </Button.Shadow>
+                </Button>
+            </StackLayout>
         </AbsoluteLayout>
 
         <!-- Overlay für Busy-Indikator -->
