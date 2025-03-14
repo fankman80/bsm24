@@ -54,7 +54,9 @@ public partial class ExportReport
         List<string> uniquePinIcons = GetUniquePinIcons(GlobalJson.Data);
         foreach (string icon in uniquePinIcons)
             if (icon.Contains("custompin_", StringComparison.OrdinalIgnoreCase)) //check if icon is a custompin
-                CopyImageToDirectory(cacheDir, icon);
+                CopyImageToDirectory(cacheDir, GlobalJson.Data.CustomPinsPath, icon);
+            else if (icon.Contains("customicons", StringComparison.OrdinalIgnoreCase)) //check if icon is a customicon
+                CopyImageToDirectory(System.IO.Path.Combine(cacheDir, "customicons"), "customicons", System.IO.Path.GetFileName(icon));  
             else
                 await CopyImageToDirectoryAsync(cacheDir, icon);
 
@@ -793,13 +795,16 @@ public partial class ExportReport
         return new SizeF(250, 140);
     }
 
-    public static void CopyImageToDirectory(string destinationPath, string icon)
+    public static void CopyImageToDirectory(string destinationPath, string path, string icon)
     {
         string destinationFilePath = System.IO.Path.Combine(destinationPath, icon);
-        string sourceFilePath = System.IO.Path.Combine(FileSystem.AppDataDirectory, GlobalJson.Data.CustomPinsPath, icon);
+        string sourceFilePath = System.IO.Path.Combine(FileSystem.AppDataDirectory, path, icon);
 
         if (!Directory.Exists(destinationPath))
+        {
             Directory.CreateDirectory(destinationPath);
+            Directory.CreateDirectory(System.IO.Path.Combine(destinationPath, "customicons"));
+        }
 
         File.Copy(sourceFilePath, destinationFilePath);
     }

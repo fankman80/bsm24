@@ -17,7 +17,7 @@
             Text="Importieren"            
             Clicked="OnUploadClicked"/>
         <ToolbarItem
-            IconImageSource="{FontImageSource FontFamily=MaterialOutlined, Color={DynamicResource PrimaryDark}, Glyph={x:Static m:MaterialOutlined.Add_box}}" 
+            IconImageSource="{FontImageSource FontFamily=MaterialOutlined, Color={DynamicResource PrimaryDark}, Glyph={x:Static m:MaterialOutlined.Add}}" 
             Text="Neu"            
             Clicked="OnNewClicked"/>        
     </ContentPage.ToolbarItems>

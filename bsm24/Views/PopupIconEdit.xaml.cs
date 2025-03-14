@@ -18,7 +18,7 @@ public partial class PopupIconEdit : PopupPage, INotifyPropertyChanged
     public PopupIconEdit(IconItem _iconItem)
     {
         InitializeComponent();
-
+        BindingContext = this;
         iconItem = _iconItem;
         var file = iconItem.FileName;
 
@@ -37,13 +37,13 @@ public partial class PopupIconEdit : PopupPage, INotifyPropertyChanged
         if (file.Contains("customicons", StringComparison.OrdinalIgnoreCase))
             deleteIcon.IsEnabled = true;
 
-        BindingContext = this;
         UpdateSelectedColor();
     }
 
     protected override void OnAppearing()
     {
         base.OnAppearing();
+
         _taskCompletionSource = new TaskCompletionSource<string>();
     }
 
@@ -169,7 +169,6 @@ public partial class PopupIconEdit : PopupPage, INotifyPropertyChanged
     }
 
     public new event PropertyChangedEventHandler PropertyChanged;
-
     protected new virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
     {
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));

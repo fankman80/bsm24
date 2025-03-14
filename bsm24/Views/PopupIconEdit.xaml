@@ -15,7 +15,7 @@
              IsAnimationEnabled="False"
              Title="Icon Editor">
 
-    <Border
+    <Border x:DataType="local:PopupIconEdit"
         StrokeShape="RoundRectangle 20,20,20,20"
         Padding="16,16,16,16"
         BackgroundColor="{AppThemeBinding Light={DynamicResource PrimaryBackground}, Dark={DynamicResource PrimaryBackgroundDark}}"
@@ -23,7 +23,7 @@
         HorizontalOptions="Center"
         VerticalOptions="Center">
 
-        <VerticalStackLayout x:DataType="local:PopupIconEdit">
+        <VerticalStackLayout>
             <Label Text="Icon Editor" FontAttributes="Bold"/>
 
             <Grid>
@@ -61,7 +61,7 @@
                                 AccentColor="{AppThemeBinding Light={DynamicResource PrimaryAccent}, Dark={DynamicResource SecondaryDark}}"
                                 AllowClear="True"/>
 
-            <Label x:Name="sliderText" Text="Voreinstellung Skalierung:" Margin="0, 0, 0, -12"/>
+            <Label x:Name="sliderText" Text="Skalierung:" Margin="0, 0, 0, -12"/>
             <Slider x:Name="iconScale"
                     Maximum="100"
                     Minimum="1"
@@ -71,13 +71,18 @@
                     MaximumTrackColor="{DynamicResource PrimaryDark}"
                     ValueChanged="OnSliderValueChanged"/>
 
-            <HorizontalStackLayout>
-                <Label Text="Voreinstellung Rotation sperren:" VerticalOptions="Start"/>
-                <Switch x:Name="allowRotate"
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="3*" />
+                    <ColumnDefinition Width="1*" />
+                </Grid.ColumnDefinitions>
+                <Label Text="Rotation sperren:" Grid.Column="0" Grid.Row="0"/>
+                <Switch Grid.Column="1" Grid.Row="0"
+                        x:Name="allowRotate"
                         Margin="0,-8,0,0"
                         ThumbColor="{AppThemeBinding Light={DynamicResource Primary}, Dark={DynamicResource PrimaryDarkAccent}}"
                         OnColor="{DynamicResource Secondary}"/>
-            </HorizontalStackLayout>
+            </Grid>
            
             <Grid>
                 <Grid.ColumnDefinitions>
@@ -133,15 +138,20 @@
                        Text="{Binding BlueValue, Mode=TwoWay}" Keyboard="Numeric" TextColor="Blue" />
             </Grid>
 
-            <HorizontalStackLayout>
-                <Label Text="Icon löschen:" VerticalOptions="Start"/>
-                <Switch x:Name="deleteIcon"
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="3*" />
+                    <ColumnDefinition Width="1*" />
+                </Grid.ColumnDefinitions>
+                <Label Text="Icon löschen:"  Grid.Column="0" Grid.Row="0"/>
+                <Switch Grid.Column="1" Grid.Row="0"
+                        x:Name="deleteIcon"
                         IsToggled="False"
                         IsEnabled="False"
                         Margin="0,-8,0,0"
                         ThumbColor="{AppThemeBinding Light={DynamicResource Primary}, Dark={DynamicResource PrimaryDarkAccent}}"
                         OnColor="{DynamicResource Secondary}"/>
-            </HorizontalStackLayout>
+            </Grid>
 
             <Grid>
                 <Grid.ColumnDefinitions>

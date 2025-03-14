@@ -105,9 +105,6 @@ public partial class IconGallery : UraniumContentPage, IQueryAttributable
                 PickerTitle = "Wähle ein Bild aus"
             });
 
-            if (result == null)
-                return;
-
             var origName = Path.Combine(FileSystem.AppDataDirectory, "customicons", result.FileName);
             var ext = Path.GetExtension(origName);
             string newName = origName;
@@ -118,7 +115,7 @@ public partial class IconGallery : UraniumContentPage, IQueryAttributable
                 i++;
             }
 
-            var fileName = newName;    
+            var fileName = "opsz271_1.png"; // newName;    
             using var stream = await result.OpenReadAsync();
             var localPath = Path.Combine(FileSystem.AppDataDirectory, "customicons", fileName);
 
@@ -130,11 +127,13 @@ public partial class IconGallery : UraniumContentPage, IQueryAttributable
                 await stream.CopyToAsync(fileStream);
             }
 
+            var size = await Task.Run(() => GetImageSize(localPath));
+
             var updatedItem = new IconItem(
                 Path.Combine(FileSystem.AppDataDirectory, "customicons", fileName),
                 "Neues Icon " + i.ToString(),
                 new Point(0.5, 0.5),
-                GetImageSize(localPath),
+                size,
                 false,
                 new SKColor(255, 0, 0),
                 1

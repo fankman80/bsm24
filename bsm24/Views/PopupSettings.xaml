@@ -67,7 +67,7 @@
                         <Label Text="Planrotation sperren:" Grid.Column="0" Grid.Row="0"/>
                         <Switch Grid.Column="1" Grid.Row="0"
                                 x:Name="isPlanRotateLocked"
-                                Margin="0,-10,0,10" 
+                                Margin="0,-8,0,10" 
                                 ThumbColor="{AppThemeBinding Light={DynamicResource Primary}, Dark={DynamicResource PrimaryDarkAccent}}"
                                 OnColor="{DynamicResource Secondary}"
                                 IsToggled="{Binding IsPlanRotateLocked}"/>

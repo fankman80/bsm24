@@ -1,6 +1,4 @@
-﻿using SkiaSharp;
-
-namespace bsm24;
+﻿namespace bsm24;
 
 public static class Settings
 {
