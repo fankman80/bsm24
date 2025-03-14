@@ -8,7 +8,6 @@
              xmlns:m="clr-namespace:UraniumUI.Icons.MaterialSymbols;assembly=UraniumUI.Icons.MaterialSymbols"   
              xmlns:local="clr-namespace:bsm24.Views"
              x:Class="bsm24.Views.PopupIconEdit"
-             BackgroundClicked="PopupPage_BackgroundClicked"
              BackgroundInputTransparent="False"
              CloseWhenBackgroundIsClicked="True"
              HasSystemPadding="False"

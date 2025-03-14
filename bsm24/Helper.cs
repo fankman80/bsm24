@@ -227,9 +227,9 @@ public class Helper
                 iconItems.Add(iconItem);
             }
         }
-        catch (Exception)
+        catch (Exception ex)
         {
-            Toast.Make($"Fehler in der Icon-Datenbank.").Show();
+            Toast.Make($"Fehler in der Icon-Datenbank." + ex.Message).Show();
         }
 
         return iconItems;

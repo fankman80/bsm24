@@ -50,12 +50,6 @@ public partial class PopupIconEdit : PopupPage, INotifyPropertyChanged
         _taskCompletionSource.SetResult(ReturnValue);
     }
 
-    private async void PopupPage_BackgroundClicked(object sender, EventArgs e)
-    {
-        ReturnValue = null;
-        await MopupService.Instance.PopAsync();
-    }
-
     private async void OnOkClicked(object sender, EventArgs e)
     {
         // XML-Daten schreiben

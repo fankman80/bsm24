@@ -65,7 +65,7 @@ public partial class SetPin : UraniumContentPage, IQueryAttributable
         priorityPicker.ItemsSource = Settings.PriorityItems.Select(item => item.Key).ToList();
         
         var file = GlobalJson.Data.Plans[PlanId].Pins[PinId].PinIcon;
-        if (file.StartsWith("customicons", StringComparison.OrdinalIgnoreCase))
+        if (file.Contains("customicons", StringComparison.OrdinalIgnoreCase))
             file = Path.Combine(FileSystem.AppDataDirectory, file);
 
         this.Title = GlobalJson.Data.Plans[PlanId].Pins[PinId].PinName;

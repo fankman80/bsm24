@@ -1,12 +1,10 @@
 ﻿#nullable disable
 
-using DocumentFormat.OpenXml;
+using CommunityToolkit.Maui.Alerts;
 using Mopups.Services;
-using SharpKml.Dom;
-using System.Collections.ObjectModel;
-using System.Globalization;
-using UraniumUI.Pages;
 using SkiaSharp;
+using System.Collections.ObjectModel;
+using UraniumUI.Pages;
 
 namespace bsm24.Views;
 
@@ -90,6 +88,10 @@ public partial class IconGallery : UraniumContentPage, IQueryAttributable
         var popup = new PopupIconEdit(iconItem);
         await MopupService.Instance.PushAsync(popup);
         var result = await popup.PopupDismissedTask;
+
+        Icons = [.. Settings.PinData];
+        IconCollectionView.ItemsSource = null;
+        IconCollectionView.ItemsSource = Icons;
     }
 
     private async void ImportIconClicked(object sender, EventArgs e)
@@ -117,28 +119,18 @@ public partial class IconGallery : UraniumContentPage, IQueryAttributable
                 }
 
                 var updatedItem = new IconItem(
-                    Path.Combine("customicons", fileName),
-                    "Neues Icon",
-                    new Microsoft.Maui.Graphics.Point(0.5, 0.5),
-                    GetImageSize(localPath),
-                    false,
-                    new SKColor(255, 0, 0),
-                    1
-                );
-
-                var temp_updatedItem = new IconItem(
                     Path.Combine(FileSystem.AppDataDirectory, "customicons", fileName),
                     "Neues Icon",
-                    new Microsoft.Maui.Graphics.Point(0.5, 0.5),
+                    new Point(0.5, 0.5),
                     GetImageSize(localPath),
                     false,
                     new SKColor(255, 0, 0),
                     1
                 );
 
-                var popup = new PopupIconEdit(temp_updatedItem);
-                await MopupService.Instance.PushAsync(popup);
-                var popup_result = await popup.PopupDismissedTask;
+                var popup1 = new PopupIconEdit(updatedItem);
+                await MopupService.Instance.PushAsync(popup1);
+                var popup_result = await popup1.PopupDismissedTask;
 
                 if (popup_result == null)
                 {
@@ -152,7 +144,7 @@ public partial class IconGallery : UraniumContentPage, IQueryAttributable
         }
         catch (Exception ex)
         {
-            Console.WriteLine("Fehler beim Importieren des Bildes: " + ex.Message);
+            Toast.Make("Fehler beim Importieren des Bildes: " + ex.Message);
         }
     }
 
