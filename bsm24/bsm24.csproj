@@ -194,66 +194,46 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<MauiXaml Update="App.xaml">
-			<Generator>None</Generator>
-		</MauiXaml>
-		<MauiXaml Update="AppShell.xaml">
-			<Generator>None</Generator>
-		</MauiXaml>
-		<MauiXaml Update="BusyOverlayView.xaml">
-		  <Generator>None</Generator>
-		</MauiXaml>
-		<MauiXaml Update="Views\MapView.xaml">
-			<Generator>None</Generator>
-		</MauiXaml>
-		<MauiXaml Update="Views\ExportSettings.xaml">
-			<Generator>None</Generator>
-		</MauiXaml>
-		<MauiXaml Update="Views\PinList.xaml">
-			<Generator>None</Generator>
-		</MauiXaml>
-		<MauiXaml Update="Views\LoadPDFPages.xaml">
-			<Generator>None</Generator>
-		</MauiXaml>
-		<MauiXaml Update="Views\PopupIconEdit.xaml">
-		  <Generator>None</Generator>
-		</MauiXaml>
-		<MauiXaml Update="Views\PopupSlider.xaml">
-			<Generator>None</Generator>
-		</MauiXaml>
-		<MauiXaml Update="Views\PopupAlert.xaml">
-			<Generator>None</Generator>
-		</MauiXaml>
-		<MauiXaml Update="Views\PopupDualResponse.xaml">
-			<Generator>None</Generator>
-		</MauiXaml>
-		<MauiXaml Update="Views\PopupSettings.xaml">
-			<Generator>None</Generator>
-		</MauiXaml>
-		<MauiXaml Update="Views\PopupEntry.xaml">
-			<Generator>None</Generator>
-		</MauiXaml>
-		<MauiXaml Update="Views\OpenProject.xaml">
-			<Generator>None</Generator>
-		</MauiXaml>
-		<MauiXaml Update="Views\ImageViewPage.xaml">
-			<Generator>None</Generator>
-		</MauiXaml>
-		<MauiXaml Update="Views\IconGallery.xaml">
-			<Generator>None</Generator>
-		</MauiXaml>
-		<MauiXaml Update="Views\HomeScreen.xaml">
-			<Generator>None</Generator>
-		</MauiXaml>
-		<MauiXaml Update="Views\NewPage.xaml">
-			<Generator>None</Generator>
-		</MauiXaml>
-		<MauiXaml Update="Views\ProjectDetails.xaml">
-			<Generator>None</Generator>
-		</MauiXaml>
-		<MauiXaml Update="Views\SetPin.xaml">
-			<Generator>None</Generator>
-		</MauiXaml>
+		<MauiXaml Update="App.xaml"/>
+		
+		<MauiXaml Update="AppShell.xaml"/>
+
+		<MauiXaml Update="BusyOverlayView.xaml"/>
+
+		<MauiXaml Update="Views\MapView.xaml"/>
+
+		<MauiXaml Update="Views\ExportSettings.xaml"/>
+
+		<MauiXaml Update="Views\PinList.xaml"/>
+
+		<MauiXaml Update="Views\LoadPDFPages.xaml"/>
+
+		<MauiXaml Update="Views\PopupIconEdit.xaml"/>
+
+		<MauiXaml Update="Views\PopupSlider.xaml"/>
+
+		<MauiXaml Update="Views\PopupAlert.xaml"/>
+
+		<MauiXaml Update="Views\PopupDualResponse.xaml"/>
+
+		<MauiXaml Update="Views\PopupSettings.xaml"/>
+
+		<MauiXaml Update="Views\PopupEntry.xaml"/>
+
+		<MauiXaml Update="Views\OpenProject.xaml"/>
+
+		<MauiXaml Update="Views\ImageViewPage.xaml"/>
+
+		<MauiXaml Update="Views\IconGallery.xaml"/>
+
+		<MauiXaml Update="Views\HomeScreen.xaml"/>
+
+		<MauiXaml Update="Views\NewPage.xaml"/>
+
+		<MauiXaml Update="Views\ProjectDetails.xaml"/>
+	
+		<MauiXaml Update="Views\SetPin.xaml"/>
+
 	</ItemGroup>
 
 	<ItemGroup>

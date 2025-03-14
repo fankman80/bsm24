@@ -128,9 +128,9 @@ public partial class IconGallery : UraniumContentPage, IQueryAttributable
                     1
                 );
 
-                var popup1 = new PopupIconEdit(updatedItem);
-                await MopupService.Instance.PushAsync(popup1);
-                var popup_result = await popup1.PopupDismissedTask;
+                var popup = new PopupIconEdit(updatedItem);
+                await MopupService.Instance.PushAsync(popup);
+                var popup_result = await popup.PopupDismissedTask;
 
                 if (popup_result == null)
                 {

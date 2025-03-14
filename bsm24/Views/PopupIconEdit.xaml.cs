@@ -35,7 +35,7 @@ public partial class PopupIconEdit : PopupPage, INotifyPropertyChanged
         SelectedColor = new Color(iconItem.PinColor.Red, iconItem.PinColor.Green, iconItem.PinColor.Blue);
 
         this.BindingContext = this;
-        UpdateSelectedColor(); // Initialize the color
+        UpdateSelectedColor();
     }
 
     protected override void OnAppearing()
