@@ -105,6 +105,9 @@ public partial class MapView : IQueryAttributable
             GeoAdminWebView.EvaluateJavaScriptAsync(Generatescript());
         };
 #endif
+
+        mapLayerPicker.ItemsSource = Settings.SwissTopoLayers.Select(item => item.Desc).ToList(); // load map-layers to picker
+        mapLayerPicker.SelectedIndex = 0;
     }
 
 
@@ -136,7 +139,7 @@ public partial class MapView : IQueryAttributable
         htmlContent = htmlContent.Replace("{mapzoom}", _zoom);
         htmlContent = htmlContent.Replace("{icon}", SettingsService.Instance.MapIcons[SettingsService.Instance.MapIcon]);
         htmlContent = htmlContent.Replace("{iconzoom}", ((double)SettingsService.Instance.MapIconSize / 100).ToString(CultureInfo.InvariantCulture));
-        htmlContent = htmlContent.Replace("{titlecolor}", ((Color)Application.Current.Resources["Primary"]).ToRgbaHex());
+        htmlContent = htmlContent.Replace("#999999", ((Color)Application.Current.Resources["Primary"]).ToRgbaHex());
 
         return htmlContent;
     }
@@ -195,18 +198,6 @@ public partial class MapView : IQueryAttributable
             var popup1 = new PopupAlert("Aktivieren Sie zuerst die Ortungsdienste, damit der Standort aktualisiert werden kann?");
             await MopupService.Instance.PushAsync(popup1);
         }
-    }
-    private void OnMapLayerColorClicked(object sender, EventArgs e)
-    {
-        var layer = "ch.swisstopo.pixelkarte-farbe";
-        var script = $"changeMapLayer('{layer}');";
-        GeoAdminWebView.EvaluateJavaScriptAsync(script);
-    }
-    private void OnMapLayerRealClicked(object sender, EventArgs e)
-    {
-        var layer = "ch.swisstopo.swissimage";
-        var script = $"changeMapLayer('{layer}');";
-        GeoAdminWebView.EvaluateJavaScriptAsync(script);
     }
 
     private async void GetCoordinatesClicked(object sender, EventArgs e)
@@ -288,6 +279,31 @@ public partial class MapView : IQueryAttributable
         await button.ScaleTo(1.0, 150); // Animation für Button-Rückkehr zur Normalgröße
         await Task.Delay(1500);
         button.Text = "Speichern";
+    }
+
+    private void OnMapLayerChanged(object sender, EventArgs e)
+    {
+        if (sender is Picker picker)
+        {
+            var selectedIndex = picker.SelectedIndex;
+            var layer = Settings.SwissTopoLayers[selectedIndex].Id;
+            var script = $"changeOverlayLayer('{layer}');";
+            GeoAdminWebView.EvaluateJavaScriptAsync(script);
+        }
+    }
+
+    private void OnMapLayerColorClicked(object sender, EventArgs e)
+    {
+        var layer = Settings.SwissTopoLayers[1].Id; //ch.swisstopo.pixelkarte-farbe
+        var script = $"changeMapLayer('{layer}');";
+        GeoAdminWebView.EvaluateJavaScriptAsync(script);
+    }
+
+    private void OnMapLayerRealClicked(object sender, EventArgs e)
+    {
+        var layer = Settings.SwissTopoLayers[5].Id; //ch.swisstopo.swissimage
+        var script = $"changeMapLayer('{layer}');";
+        GeoAdminWebView.EvaluateJavaScriptAsync(script);
     }
 }
 

@@ -166,8 +166,6 @@
                         x:Name="priorityPicker"
                         SelectedIndexChanged="OnSelectedValueChanged">
                 </Picker>
-                
-
             </Grid>
         
             <Grid>

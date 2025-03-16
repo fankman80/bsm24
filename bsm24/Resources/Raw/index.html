@@ -37,7 +37,7 @@
             font-weight: bold;
             font-style: italic;
             margin: 5px;
-            color: {titlecolor};
+            color: #999999;
         }
 
         #popup p {
@@ -59,6 +59,7 @@
         var vectorSource;          // Globale Variable für die Vektorquelle
         var vectorLayer;           // Globale Variable für den Vektor-Layer
         var wmsLayer;              // Globale Variable für den WMS-Layer
+        var overlayLayer;          // Globale Variable für den WMS-Layer
         var map;                   // Globale Variable für die Karte
 
         function initMap() {
@@ -70,26 +71,32 @@
                 })
             });
 
+            overlayLayer = new ol.layer.Tile({
+                source: new ol.source.TileWMS({
+                    url: 'https://wms.geo.admin.ch/',
+                    params: { 'LAYERS': '', 'TILED': true },
+                    serverType: 'mapserver'
+                })
+            });
+
             var map = new ol.Map({
                 target: 'map',
-                layers: [wmsLayer],
+                layers: [wmsLayer, overlayLayer],
                 view: new ol.View({
                     center: ol.proj.fromLonLat([{center_koord}]),
                     zoom: {mapzoom}
                 })
             });
 
-            // Erstelle die Vektorquelle und den Vektorlayer nur einmal
             vectorSource = new ol.source.Vector();
 
             vectorLayer = new ol.layer.Vector({
                 source: vectorSource
             });
 
-            map.addLayer(vectorLayer); // Füge den Vektorlayer zur Karte hinzu
-            mapReady = true;  // Setze den Status auf „bereit“
+            map.addLayer(vectorLayer);
+            mapReady = true;
 
-            // Wenn Positionen vor dem Laden der Karte übergeben wurden, setze sie jetzt
             if (pendingPositions.length > 0) {
                 pendingPositions.forEach(function (position) {
                     setMarkerPosition(position.lon, position.lat);
@@ -105,7 +112,6 @@
             });
             map.addOverlay(popup);
 
-            // Hinzufügen der Modify-Interaktion
             var modify = new ol.interaction.Modify({
                 hitDetection: vectorLayer,
                 source: vectorSource
@@ -173,6 +179,12 @@
 
         function changeMapLayer(layer) {
             wmsLayer.getSource().updateParams({
+                LAYERS: layer
+            });
+        }
+
+        function changeOverlayLayer(layer) {
+            overlayLayer.getSource().updateParams({
                 LAYERS: layer
             });
         }

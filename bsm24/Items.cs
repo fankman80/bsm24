@@ -50,4 +50,10 @@ namespace bsm24
         public required string Key { get; set; }
         public required string Color { get; set; }
     }
+
+    public class MapViewItem
+    {
+        public required string Desc { get; set; }
+        public required string Id { get; set; }
+    }
 }

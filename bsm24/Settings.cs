@@ -12,6 +12,7 @@ public static class Settings
     public static int PinTextDistance { get => pinTextDistance; set => pinTextDistance = value; }
     public static List<IconItem> PinData { get => pinData; set => pinData = value; }
     public static Color[] ColorData { get => colorData; set => colorData = value; }
+    public static List<MapViewItem> SwissTopoLayers { get => swissTopoLayers; set => swissTopoLayers = value; }
 
     private static string cacheDirectory = Path.Combine(FileSystem.AppDataDirectory, "cache");
     private static string templateDirectory = Path.Combine(FileSystem.AppDataDirectory, "templates");
@@ -21,6 +22,38 @@ public static class Settings
     private static int pinTextPadding = 6;
     private static int pinTextDistance = 3;
     private static List<IconItem> pinData = [];
+
+    private static List<MapViewItem> swissTopoLayers = [
+        new MapViewItem { Desc = "kein Map-Layer", Id = "" },
+        new MapViewItem { Desc = "PIXELKARTE_FARBE", Id = "ch.swisstopo.pixelkarte-farbe" },
+        new MapViewItem { Desc = "PIXELKARTE_FARK_PK1000", Id = "ch.swisstopo.pixelkarte-farbe-pk1000.noscale" },
+        new MapViewItem { Desc = "PIXELKARTE_GRAUSTUFEN", Id = "ch.swisstopo.pixelkarte-grau" },
+        new MapViewItem { Desc = "PIXELKARTE_FARBE_WINTER", Id = "ch.swisstopo.pixelkarte-farbe-winter" },
+        new MapViewItem { Desc = "SWISSIMAGE", Id = "ch.swisstopo.swissimage" },
+        new MapViewItem { Desc = "SWISSIMAGE_1946", Id = "ch.swisstopo.swissimage-product_1946" },
+        new MapViewItem { Desc = "LUFTFAHRTKARTEN_ICAO", Id = "ch.bazl.luftfahrtkarten-icao" },
+        new MapViewItem { Desc = "SEGELFLUGKARTE", Id = "ch.bazl.segelflugkarte" },
+        new MapViewItem { Desc = "MIL_AIRSPACE_CHART", Id = "ch.vbs.milairspacechart" },
+        new MapViewItem { Desc = "SPERR_GEFAHRENZONENKARTE", Id = "ch.vbs.sperr-gefahrenzonenkarte" },
+        new MapViewItem { Desc = "SWISSMILPILOTSCHART", Id = "ch.vbs.swissmilpilotschart" },
+        new MapViewItem { Desc = "HIKS_DUFOR", Id = "ch.swisstopo.hiks-dufour" },
+        new MapViewItem { Desc = "HIKS_SIEGFRIED", Id = "ch.swisstopo.hiks-siegfried" },
+        new MapViewItem { Desc = "SWISSTLM3D_EISENBAHNNETZ", Id = "ch.swisstopo.swisstlm3d-eisenbahnnetz" },
+        new MapViewItem { Desc = "SWISSTLM3D_STRASSEN", Id = "ch.swisstopo.swisstlm3d-strassen" },
+        new MapViewItem { Desc = "SWISSTLM3D_UEBRIGVERKEHR", Id = "ch.swisstopo.swisstlm3d-uebrigerverkehr" },
+        new MapViewItem { Desc = "SWISSTLM3D_WANDERWEGE", Id = "ch.swisstopo.swisstlm3d-wanderwege" },
+        new MapViewItem { Desc = "SCHWEIZMOBIL_WANDERLAND", Id = "ch.astra.wanderland" },
+        new MapViewItem { Desc = "SCHWEIZMOBIL_VELOLAND", Id = "ch.astra.veloland" },
+        new MapViewItem { Desc = "SCHWEIZMOBIL_MOUNTAINBIKELAND", Id = "ch.astra.mountainbikeland" },
+        new MapViewItem { Desc = "HANGNEIGUNG_30", Id = "ch.swisstopo-karto.hangneigung" },
+        new MapViewItem { Desc = "HANGNEIGUNGSKLASSEN_30", Id = "ch.swisstopo.hangneigung-ueber_30" },
+        new MapViewItem { Desc = "WILDSCHUTZ_GEBIETE", Id = "ch.bafu.wrz-jagdbanngebiete_select" },
+        new MapViewItem { Desc = "WILDRUHEZONEN", Id = "ch.bafu.wrz-wildruhezonen_portal" },
+        new MapViewItem { Desc = "SCHNEESCHUH_ROUTEN", Id = "ch.swisstopo-karto.schneeschuhrouten" },
+        new MapViewItem { Desc = "SKI_TOUR_ROUTEN", Id = "ch.swisstopo-karto.skitouren" },
+        new MapViewItem { Desc = "DROHNEN", Id = "ch.bazl.einschraenkungen-drohnen" },
+        new MapViewItem { Desc = "SCHUTZGEBIETE_LUFTFAHRT", Id = "ch.bafu.schutzgebiete-luftfahrt" },
+        new MapViewItem { Desc = "EISZEIT", Id = "ch.swisstopo.geologie-eiszeit-lgm-raster" }];
 
     private static Color[] colorData = [
         new Color(0, 153, 0),
