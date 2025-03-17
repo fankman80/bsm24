@@ -36,6 +36,7 @@ public partial class MapView : IQueryAttributable
         });
 #endif
         InitializeComponent();
+        mapLayerPicker.PropertyChanged += MapLayerPicker_PropertyChanged;
     }
     public void ApplyQueryAttributes(IDictionary<string, object> query)
     {
@@ -107,7 +108,7 @@ public partial class MapView : IQueryAttributable
 #endif
 
         mapLayerPicker.ItemsSource = Settings.SwissTopoLayers.Select(item => item.Desc).ToList(); // load map-layers to picker
-        mapLayerPicker.SelectedIndex = 0;
+        mapLayerPicker.SelectedItem = Settings.SwissTopoLayers[0].Desc;
     }
 
 
@@ -281,14 +282,17 @@ public partial class MapView : IQueryAttributable
         button.Text = "Speichern";
     }
 
-    private void OnMapLayerChanged(object sender, EventArgs e)
+    private void MapLayerPicker_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
     {
-        if (sender is Picker picker)
+        if (e.PropertyName == nameof(mapLayerPicker.SelectedItem))
         {
-            var selectedIndex = picker.SelectedIndex;
-            var layer = Settings.SwissTopoLayers[selectedIndex].Id;
-            var script = $"changeOverlayLayer('{layer}');";
-            GeoAdminWebView.EvaluateJavaScriptAsync(script);
+            var selectedDesc = mapLayerPicker.SelectedItem?.ToString();
+            var layer = Settings.SwissTopoLayers.FirstOrDefault(x => x.Desc == selectedDesc);
+            if (layer != null)
+            {
+                var script = $"changeOverlayLayer('{layer.Id}');";
+                GeoAdminWebView.EvaluateJavaScriptAsync(script);
+            }
         }
     }
 

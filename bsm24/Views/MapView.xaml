@@ -26,31 +26,23 @@
                  AbsoluteLayout.LayoutBounds="0,0,1,1"
                  AbsoluteLayout.LayoutFlags="All" />
 
-            <Border HeightRequest="30" Padding="-7" VerticalOptions="Center"
-                    Margin="20,20,100,60"
-                    AbsoluteLayout.LayoutBounds="1,0,AutoSize,AutoSize"
-                    AbsoluteLayout.LayoutFlags="PositionProportional">
-                <Picker x:DataType="services:SettingsService" BindingContext="{x:Static services:SettingsService.Instance}"
-                        HeightRequest="20"
-                        FontSize="10"
-                        x:Name="mapLayerPicker"
-                        BackgroundColor="White"
-                        SelectedIndexChanged="OnMapLayerChanged">
-                </Picker>
-                <Border.StrokeShape>
-                    <RoundRectangle CornerRadius="4" StrokeThickness="1"/>
-                </Border.StrokeShape>
-                <Border.Shadow>
-                    <Shadow Brush="Black" Opacity="0.5" Offset="5,5" Radius="8"/>
-                </Border.Shadow>
-            </Border>      
-            
+            <uranium:Dropdown x:Name="mapLayerPicker"
+                              FontSize="10"
+                              Padding="10,4,10,4"
+                              Margin="8"
+                              BorderColor="DarkGrey"
+                              BackgroundColor="White"       
+                              SelectedItem="OnMapLayerChanged"
+                              AbsoluteLayout.LayoutBounds="0.5,0,AutoSize,AutoSize"
+                              AbsoluteLayout.LayoutFlags="PositionProportional">
+            </uranium:Dropdown>
+  
             <StackLayout Orientation="Vertical"
                          Spacing="20"
-                         Padding="20"
-                         AbsoluteLayout.LayoutBounds="1,0,AutoSize,AutoSize"
+                         Padding="14"
+                         AbsoluteLayout.LayoutBounds="0,1,AutoSize,AutoSize"
                          AbsoluteLayout.LayoutFlags="PositionProportional">
-                
+
                 <Border Grid.Column="0"
                         WidthRequest="60"
                         HeightRequest="60"
@@ -66,14 +58,13 @@
                         <Shadow Brush="Black" Opacity="0.5" Offset="5,5" Radius="8"/>
                     </Border.Shadow>
                 </Border>
-
-                <Border Grid.Column="0"
-                        WidthRequest="60"
-                        HeightRequest="60"
-                        Stroke="{AppThemeBinding Light={DynamicResource PrimaryDarkText}, Dark={DynamicResource PrimaryText}}"
-                        StrokeThickness="1"
-                        BackgroundColor="White"
-                        StrokeShape="RoundRectangle 8">
+                <Border
+                    WidthRequest="60"
+                    HeightRequest="60"
+                    Stroke="{AppThemeBinding Light={DynamicResource PrimaryDarkText}, Dark={DynamicResource PrimaryText}}"
+                    StrokeThickness="1"
+                    BackgroundColor="White"
+                    StrokeShape="RoundRectangle 8">
                     <Image Source="maprealbtn.png"/>
                     <Border.GestureRecognizers>
                         <TapGestureRecognizer Tapped="OnMapLayerRealClicked"/>
@@ -86,10 +77,9 @@
 
             <StackLayout Orientation="Horizontal"
                          Spacing="20"
-                         Padding="20"
+                         Padding="14"
                          AbsoluteLayout.LayoutBounds="1,1,AutoSize,AutoSize"
                          AbsoluteLayout.LayoutFlags="PositionProportional">
-
                 <Button Text="KML Export"
                         BorderColor="{AppThemeBinding Light={DynamicResource PrimaryDarkText}, Dark={DynamicResource PrimaryText}}"
                         BorderWidth="1"
@@ -115,10 +105,5 @@
                 </Button>
             </StackLayout>
         </AbsoluteLayout>
-
-        <!-- Overlay für Busy-Indikator -->
-        <local:BusyOverlayView x:Name="busyOverlay"
-                               AbsoluteLayout.LayoutBounds="0,0,1,1"
-                               AbsoluteLayout.LayoutFlags="All"/>
     </Grid>
 </ContentPage>
