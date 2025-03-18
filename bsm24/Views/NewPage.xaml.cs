@@ -23,7 +23,7 @@ public partial class NewPage : IQueryAttributable
     public string PinUpdate;
     public string PlanId;
     public string PinDelete;
-    public string PinZoom;
+    public string PinZoom = null;
     private MR.Gestures.Image activePin = null;
     private double densityX, densityY;
     private bool isFirstLoad = true;
@@ -45,7 +45,6 @@ public partial class NewPage : IQueryAttributable
         InitializeComponent();
         BindingContext = new TransformViewModel();
         PlanId = planId;
-        PinZoom = null;
         planContainer = (TransformViewModel)PlanContainer.BindingContext;
         PageTitle = GlobalJson.Data.Plans[PlanId].Name;
     }

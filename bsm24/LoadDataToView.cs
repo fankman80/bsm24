@@ -56,20 +56,11 @@ public partial class LoadDataToView
 
     public static void ResetFlyoutItems()
     {
-        // Liste für zu entfernende ShellItems erstellen
-        var itemsToRemove = new List<ShellItem>();
-
-        // Alle ShellItems durchlaufen und zu entfernende Items sammeln
-        foreach (var shellitem in (Application.Current.Windows[0].Page as AppShell).Items)
+        // Alle ShellItems durchlaufen und Items entfernen, deren AutomationId nicht null ist
+        foreach (var shellitem in (Application.Current.Windows[0].Page as AppShell).Items.ToList())
         {
             if (shellitem.AutomationId != null)
-                itemsToRemove.Add(shellitem);
-        }
-
-        // Jetzt die gesammelten Items entfernen, nachdem die Iteration abgeschlossen ist
-        foreach (var shellitem in itemsToRemove)
-        {
-            (Application.Current.Windows[0].Page as AppShell).Items.Remove(shellitem);
+                (Application.Current.Windows[0].Page as AppShell).Items.Remove(shellitem);
         }
 
         Helper.AddMenuItem("Projektliste", UraniumUI.Icons.MaterialSymbols.MaterialOutlined.Open_in_new, "OnProjectOpenClicked");
