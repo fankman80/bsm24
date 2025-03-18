@@ -53,7 +53,6 @@ public partial class LoadDataToView
         }
     }
 
-
     public static void ResetFlyoutItems()
     {
         // Alle ShellItems durchlaufen und Items entfernen, deren AutomationId nicht null ist

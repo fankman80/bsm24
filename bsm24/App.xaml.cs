@@ -1,4 +1,6 @@
 ﻿using bsm24.Services;
+using Microsoft.Maui.Controls;
+using System.Collections.ObjectModel;
 using UraniumUI;
 #if WINDOWS
 using Microsoft.UI.Windowing;
@@ -56,6 +58,4 @@ public partial class App : Application
 #endif
         return window;
     }
-
-
 }

@@ -156,8 +156,7 @@
                         BorderColor="{AppThemeBinding Light={DynamicResource SecondaryBackground}, Dark={DynamicResource SecondaryBackground}}"
                         AccentColor="{AppThemeBinding Light={DynamicResource PrimaryAccent}, Dark={DynamicResource SecondaryDark}}"
                         ItemsSource="{Binding Themes}"
-                        SelectedItem="{Binding SelectedTheme}"
-                        BindingContextChanged="OnSelectedValueChanged">
+                        SelectedItem="{Binding SelectedTheme}">
                     </material:PickerField>                
                 </VerticalStackLayout>
             </ScrollView>

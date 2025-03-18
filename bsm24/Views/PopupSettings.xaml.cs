@@ -3,6 +3,7 @@
 using Mopups.Pages;
 using Mopups.Services;
 using bsm24.Services;
+using bsm24.ViewModels;
 
 namespace bsm24.Views;
 
@@ -15,6 +16,7 @@ public partial class PopupSettings : PopupPage
     public PopupSettings()
 	{
 		InitializeComponent();
+        colorThemePicker.PropertyChanged += MapLayerPicker_PropertyChanged;
     }
 
     protected override void OnAppearing()
@@ -41,7 +43,7 @@ public partial class PopupSettings : PopupPage
         await MopupService.Instance.PopAsync();
     }
 
-    private void OnSelectedValueChanged(object sender, EventArgs e)
+    private void MapLayerPicker_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
     {
         // Hole die AppShell
         var appShell = (AppShell)Application.Current.Windows[0].Page;

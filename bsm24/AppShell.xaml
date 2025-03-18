@@ -73,11 +73,17 @@
                         HeightRequest="12"
                         Padding="0"
                         FontSize="12"
-                        Text="GPS"        
+                        Text="GPS"      
                         TextColor="{AppThemeBinding Light={DynamicResource Primary}, Dark={DynamicResource PrimaryDark}}"
-                        ImageSource="{Binding GPSButtonIcon}"
                         BackgroundColor="Transparent"
-                        Command="{Binding ToggleGPSCommand}"/>
+                        Command="{Binding ToggleGPSCommand}">
+                    <Button.ImageSource>
+                        <FontImageSource Glyph="{Binding GPSButtonIcon.Glyph}"
+                         FontFamily="MaterialOutlined"
+                         Size="24"
+                         Color="{AppThemeBinding Light={DynamicResource Primary}, Dark={DynamicResource PrimaryDark}}" />
+                    </Button.ImageSource>
+                </Button>
 
                 <Label Grid.Row="0" Grid.Column="1"
                        Text="BSM 24" 
