@@ -26,17 +26,17 @@
                  AbsoluteLayout.LayoutBounds="0,0,1,1"
                  AbsoluteLayout.LayoutFlags="All" />
 
-            <uranium:Dropdown x:Name="mapLayerPicker"
-                              FontSize="10"
-                              Padding="10,4,10,4"
-                              Margin="8"
-                              BorderColor="DarkGrey"
-                              BackgroundColor="White"       
-                              SelectedItem="OnMapLayerChanged"
-                              AbsoluteLayout.LayoutBounds="0.5,0,AutoSize,AutoSize"
-                              AbsoluteLayout.LayoutFlags="PositionProportional">
-            </uranium:Dropdown>
-  
+            <Border
+                BackgroundColor="White"
+                VerticalOptions="Center"
+                Margin="8"
+                Stroke="DarkGrey"
+                StrokeThickness="0.5"
+                AbsoluteLayout.LayoutBounds="0.5,0,AutoSize,AutoSize"
+                AbsoluteLayout.LayoutFlags="PositionProportional">
+                <uranium:Dropdown x:Name="mapLayerPicker" FontSize="10"/>
+            </Border>
+
             <StackLayout Orientation="Vertical"
                          Spacing="20"
                          Padding="14"

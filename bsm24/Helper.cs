@@ -22,7 +22,7 @@ public class Helper
             shellContent.FlyoutItemIsVisible = isVisible;
     }
 
-    public static void AddMenuItem(string title, string glyph, string methodName)
+    public static void AddMenuItem(string title, string glyph, string methodName, string routeName)
     {
         var newMenuItem = new MenuItem
         {

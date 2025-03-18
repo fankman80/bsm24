@@ -24,7 +24,7 @@ public partial class IconGallery : UraniumContentPage, IQueryAttributable
         SizeChanged += OnSizeChanged;
         Icons = [.. Settings.PinData];
         BindingContext = this;
-    }
+    }    
 
     public void ApplyQueryAttributes(IDictionary<string, object> query)
     {
@@ -33,7 +33,6 @@ public partial class IconGallery : UraniumContentPage, IQueryAttributable
         if (query.TryGetValue("pinId", out object value2))
             PinId = value2 as string;
     }
-
 
     private void OnSizeChanged(object sender, EventArgs e)
     {
@@ -73,7 +72,7 @@ public partial class IconGallery : UraniumContentPage, IQueryAttributable
         // save data to file
         GlobalJson.SaveToFile();
 
-        await Shell.Current.GoToAsync($"..?planId={PlanId}&pinId={PinId}&pinIcon={fileName}");
+        await Shell.Current.GoToAsync($"setpin?planId={PlanId}&pinId={PinId}&pinIcon={fileName}");
     }
 
     private async void OnLongPressed(object sender, EventArgs e)

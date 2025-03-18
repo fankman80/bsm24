@@ -38,6 +38,7 @@ public partial class MapView : IQueryAttributable
         InitializeComponent();
         mapLayerPicker.PropertyChanged += MapLayerPicker_PropertyChanged;
     }
+
     public void ApplyQueryAttributes(IDictionary<string, object> query)
     {
         if (query.TryGetValue("planId", out object value1))

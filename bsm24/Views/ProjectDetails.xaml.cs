@@ -48,11 +48,8 @@ public partial class ProjectDetails : UraniumContentPage
 
         Helper.HeaderUpdate();
 
-        // Entferne die aktuelle Seite aus dem Stack
-        var currentPage = Shell.Current.CurrentPage;
-        Shell.Current.Navigation.RemovePage(currentPage);
-
         await Shell.Current.GoToAsync("//homescreen");
+
 #if ANDROID
         Shell.Current.FlyoutIsPresented = true;
 #endif

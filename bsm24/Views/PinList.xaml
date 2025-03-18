@@ -34,6 +34,7 @@
                                 <ColumnDefinition Width="64" />
                                 <ColumnDefinition Width="*" />
                                 <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="Auto" />
                             </Grid.ColumnDefinitions>
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto"/>
@@ -61,7 +62,7 @@
                                    LineBreakMode="TailTruncation"
                                    Text="{Binding PinName}"/>
 
-                            <BoxView Grid.Column="0" Grid.Row="2" Grid.ColumnSpan="3"
+                            <BoxView Grid.Column="0" Grid.Row="2" Grid.ColumnSpan="4"
                                      Color="{AppThemeBinding Light={DynamicResource Primary}, Dark={DynamicResource PrimaryDark}}"
                                      HeightRequest="1"
                                      Margin="10,2,10,2"/>
@@ -81,22 +82,28 @@
                                    Margin="0,4,6,4"
                                    Text="{Binding PinDesc}"/>
 
-                            <Border Grid.ColumnSpan="3" Grid.RowSpan="4"
+                            <Border Grid.ColumnSpan="4" Grid.RowSpan="4"
                                     IsVisible="{Binding AllowExport, Converter={StaticResource BooleanInverterConverter}}"
                                     Opacity="0.6"
                                     BackgroundColor="LightGray"/>
 
-                            <Button Grid.ColumnSpan="3" Grid.RowSpan="4"
+                            <Button Grid.ColumnSpan="4" Grid.RowSpan="4"
                                     ClassId="{Binding SelfId}"
+                                    AutomationId = "{Binding OnPlanId}"                                    
                                     BorderWidth="1"
                                     BorderColor="{AppThemeBinding Light={DynamicResource Primary}, Dark={DynamicResource PrimaryDark}}"
-                                    AutomationId = "{Binding OnPlanId}"
                                     Background="Transparent"
+                                    Clicked="OnEditClicked"/>
+
+                            <Button Grid.Column="2" Grid.Row="0" Grid.RowSpan="2"
+                                    ClassId="{Binding SelfId}"
+                                    AutomationId = "{Binding OnPlanId}"  
+                                    Background="Transparent"
+                                    ImageSource="{FontImageSource FontFamily=MaterialOutlined, Color={AppThemeBinding Light={DynamicResource Primary}, Dark={DynamicResource PrimaryDark}}, Glyph={x:Static m:MaterialOutlined.Recenter}}"
                                     Clicked="OnPinClicked"/>
 
-                            <CheckBox Grid.Column="4" Grid.Row="0" Grid.RowSpan="2"
-                                      HorizontalOptions="End"
-                                      IsChecked="{Binding AllowExport}"
+                            <CheckBox Grid.Column="3" Grid.Row="0" Grid.RowSpan="2"
+                                      IsChecked="{Binding AllowExport, Mode=TwoWay}"
                                       Color="{AppThemeBinding Light={DynamicResource PrimaryText}, Dark={DynamicResource PrimaryDark}}"/>
                         </Grid>
                     </DataTemplate>

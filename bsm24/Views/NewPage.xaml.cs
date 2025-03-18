@@ -40,12 +40,12 @@ public partial class NewPage : IQueryAttributable
     private double shiftKeyRotationStart;
 #endif
 
-    public NewPage(string planId, string zoomToPin = null)
+    public NewPage(string planId)
     {
         InitializeComponent();
         BindingContext = new TransformViewModel();
         PlanId = planId;
-        PinZoom = zoomToPin;
+        PinZoom = null;
         planContainer = (TransformViewModel)PlanContainer.BindingContext;
         PageTitle = GlobalJson.Data.Plans[PlanId].Name;
     }
@@ -58,6 +58,12 @@ public partial class NewPage : IQueryAttributable
         {
             AddPlan();
             PlanImage.PropertyChanged += PlanImage_PropertyChanged;
+        }
+
+        if (PinZoom != null)
+        {
+            ZoomToPin(PinZoom);
+            PinZoom = null;
         }
     }
 
@@ -130,6 +136,10 @@ public partial class NewPage : IQueryAttributable
                 // save data to file
                 GlobalJson.SaveToFile();
             }
+        }
+        if (query.TryGetValue("pinZoom", out object value3))
+        {
+            PinZoom = value3 as string;
         }
     }
 
@@ -341,12 +351,7 @@ public partial class NewPage : IQueryAttributable
 
                     // Rufe AddPins auf, wenn die Berechnung abgeschlossen ist
                     isFirstLoad = false;
-
-                    if (PinZoom != null)
-                        ZoomToPin(PinZoom);
-                    else
-                        ImageFit(null, null);
-
+                    ImageFit(null, null);
                     AddPins();
                 }
             }

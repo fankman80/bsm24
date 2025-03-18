@@ -21,6 +21,13 @@ public partial class LoadDataToView
                         AutomationId = planId
                     };
 
+                    // ShellContent mit explizit gesetzter Route (planId)
+                    var shellContent = new ShellContent
+                    {
+                        Content = newPage,
+                        Route = planId  // Hier wird der Routename definiert
+                    };
+
                     var newFlyoutItem = new FlyoutItem
                     {
                         Title = planTitle,
@@ -33,17 +40,19 @@ public partial class LoadDataToView
                                     ? (Color)Application.Current.Resources["PrimaryDark"]
                                     : (Color)Application.Current.Resources["Primary"]
                         },
-                        Items =
-                        {
-                            new ShellContent { Content = newPage }
-                        },
+                        Items = { shellContent },
                     };
+
+                    // Registriere die Route für die Seite
                     Routing.RegisterRoute(planId, typeof(Views.NewPage));
+
+                    // Füge den FlyoutItem zum AppShell hinzu
                     (Application.Current.Windows[0].Page as AppShell).Items.Add(newFlyoutItem);
                 }
             }
         }
     }
+
 
     public static void ResetFlyoutItems()
     {
@@ -63,10 +72,10 @@ public partial class LoadDataToView
             (Application.Current.Windows[0].Page as AppShell).Items.Remove(shellitem);
         }
 
-        Helper.AddMenuItem("Projekt Details", UraniumUI.Icons.MaterialSymbols.MaterialOutlined.Home_work, "OnProjectDetailsClicked");
-        Helper.AddMenuItem("swisstopo Karte", UraniumUI.Icons.MaterialSymbols.MaterialOutlined.Map, "OnMapViewClicked");
-        Helper.AddMenuItem("Pin Liste", UraniumUI.Icons.MaterialSymbols.MaterialOutlined.Format_list_numbered, "OnPinListClicked");
-        Helper.AddMenuItem("Bericht exportieren", UraniumUI.Icons.MaterialSymbols.MaterialOutlined.Download, "OnExportClicked");
+        Helper.AddMenuItem("Projekt Details", UraniumUI.Icons.MaterialSymbols.MaterialOutlined.Home_work, "OnProjectDetailsClicked", "project_details");
+        Helper.AddMenuItem("swisstopo Karte", UraniumUI.Icons.MaterialSymbols.MaterialOutlined.Map, "OnMapViewClicked", "mapview");
+        Helper.AddMenuItem("Pin Liste", UraniumUI.Icons.MaterialSymbols.MaterialOutlined.Format_list_numbered, "OnPinListClicked", "pinList");
+        Helper.AddMenuItem("Bericht exportieren", UraniumUI.Icons.MaterialSymbols.MaterialOutlined.Download, "OnExportClicked", "exportSettings");
         Helper.AddDivider();
     }
 

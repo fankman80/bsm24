@@ -18,6 +18,11 @@ public partial class ExportSettings : UraniumContentPage
     {
         InitializeComponent();
     }
+    protected override bool OnBackButtonPressed()
+    {
+        // Zurück-Taste ignorieren
+        return true;
+    }
 
     protected override void OnAppearing()
     {

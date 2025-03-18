@@ -74,11 +74,11 @@ public partial class PinList : UraniumContentPage
 
     private void Pin_PropertyChanged(object sender, PropertyChangedEventArgs e)
     {
-        if (e.PropertyName == nameof(Pin.AllowExport))
+        if (e.PropertyName == nameof(PinItem.AllowExport))
         {
-            var pin = (Pin)sender;
+            var pinItem = (PinItem)sender;
 
-            GlobalJson.Data.Plans[pin.OnPlanId].Pins[pin.SelfId].AllowExport = pin.AllowExport;
+            GlobalJson.Data.Plans[pinItem.OnPlanId].Pins[pinItem.SelfId].AllowExport = pinItem.AllowExport;
 
             // save data to file
             GlobalJson.SaveToFile();
@@ -91,31 +91,16 @@ public partial class PinList : UraniumContentPage
         string planId = button.AutomationId;
         string pinId = button.ClassId;
 
-        var newPage = new Views.NewPage(planId, pinId)
-        {
-            Title = GlobalJson.Data.Plans[planId].Name,
-            AutomationId = planId
-        };
+        await Shell.Current.GoToAsync($"//{planId}?pinZoom={pinId}");
+    }
 
-        // Methode zur Vermeidung eines zu grossen Navigations-Stacks
-        var navigationStack = Shell.Current.Navigation.NavigationStack;
-        Page existingPage = null;
-        for (int i = 0; i < navigationStack.Count; i++)
-        {
-            var page = navigationStack[i];
-            if (page != null && page.AutomationId == planId)
-            {
-                existingPage = page;
-                break;
-            }
-        }
-        if (existingPage != null)
-        {
-            while (navigationStack[navigationStack.Count - 1] != existingPage)
-                await Shell.Current.Navigation.PopAsync(false);
-        }
-        else
-            await Shell.Current.Navigation.PushAsync(newPage);
+    private async void OnEditClicked(object sender, EventArgs e)
+    {
+        var button = sender as Button;
+        string planId = button.AutomationId;
+        string pinId = button.ClassId;
+
+        await Shell.Current.GoToAsync($"setpin?planId={planId}&pinId={pinId}");
     }
 
     private async void UpdateSpan()

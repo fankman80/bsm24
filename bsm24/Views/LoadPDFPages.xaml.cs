@@ -26,6 +26,11 @@ public partial class LoadPDFPages : UraniumContentPage
         base.OnAppearing();
         LoadPreviewPDFImages();
     }
+    protected override bool OnBackButtonPressed()
+    {
+        // Zurück-Taste ignorieren
+        return true;
+    }
 
     private async void LoadPreviewPDFImages()
     {

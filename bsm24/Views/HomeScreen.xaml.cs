@@ -6,4 +6,10 @@ public partial class HomeScreen : ContentPage
     {
         InitializeComponent();
     }
+
+    protected override bool OnBackButtonPressed()
+    {
+        // Zurück-Taste ignorieren
+        return true;
+    }
 }

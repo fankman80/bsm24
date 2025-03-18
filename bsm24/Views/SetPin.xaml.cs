@@ -24,17 +24,20 @@ public partial class SetPin : UraniumContentPage, IQueryAttributable
         SizeChanged += OnSizeChanged;
     }
 
+    protected override bool OnBackButtonPressed()
+    {
+        // Zurück-Taste ignorieren
+        return true;
+    }
+
     public void ApplyQueryAttributes(IDictionary<string, object> query)
     {
         if (query.TryGetValue("planId", out object value1))
             PlanId = value1 as string;
         if (query.TryGetValue("pinId", out object value2))
             PinId = value2 as string;
-        if (query.TryGetValue("pinIcon", out object value3))
-        {
-            PinIcon = value3 as string;
-            PinImage.Source = PinIcon;
-        }
+
+        PinImage.Source = GlobalJson.Data.Plans[PlanId].Pins[PinId].PinIcon;
 
         MyView_Load();
         BindingContext = this;
@@ -116,7 +119,7 @@ public partial class SetPin : UraniumContentPage, IQueryAttributable
         await MopupService.Instance.PushAsync(popup);
         var result = await popup.PopupDismissedTask;
         if (result != null)
-            await Shell.Current.GoToAsync($"..?pinDelete={PinId}");
+            await Shell.Current.GoToAsync($"//{PlanId}?pinDelete={PinId}");
     }
 
     private async void OnEditClick(object sender, EventArgs e)
@@ -171,9 +174,9 @@ public partial class SetPin : UraniumContentPage, IQueryAttributable
         GlobalJson.SaveToFile();
 
         if (GlobalJson.Data.Plans[PlanId].Pins[PinId].IsCustomPin)
-            await Shell.Current.GoToAsync($"..");
+            await Shell.Current.GoToAsync($"//{PlanId}");
         else
-            await Shell.Current.GoToAsync($"..?pinUpdate={PinId}");
+            await Shell.Current.GoToAsync($"//{PlanId}?pinUpdate={PinId}");
     }
 
     private async void ShowGeoLoc(object sender, EventArgs e)
