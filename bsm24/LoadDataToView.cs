@@ -21,11 +21,10 @@ public partial class LoadDataToView
                         AutomationId = planId
                     };
 
-                    // ShellContent mit explizit gesetzter Route (planId)
                     var shellContent = new ShellContent
                     {
                         Content = newPage,
-                        Route = planId  // Hier wird der Routename definiert
+                        Route = planId
                     };
 
                     var newFlyoutItem = new FlyoutItem
@@ -43,10 +42,6 @@ public partial class LoadDataToView
                         Items = { shellContent },
                     };
 
-                    // Registriere die Route für die Seite
-                    Routing.RegisterRoute(planId, typeof(Views.NewPage));
-
-                    // Füge den FlyoutItem zum AppShell hinzu
                     (Application.Current.Windows[0].Page as AppShell).Items.Add(newFlyoutItem);
                 }
             }

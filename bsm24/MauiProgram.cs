@@ -2,10 +2,14 @@
 using CommunityToolkit.Maui;
 using CommunityToolkit.Maui.Storage;
 using FFImageLoading.Maui;
-using Microsoft.Maui.LifecycleEvents;
+using InputKit.Handlers;
 using Mopups.Hosting;
 using MR.Gestures;
 using UraniumUI;
+
+#if WINDOWS
+using Microsoft.Maui.LifecycleEvents;
+#endif
 
 namespace bsm24;
 public static class MauiProgram

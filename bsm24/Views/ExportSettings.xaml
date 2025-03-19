@@ -61,49 +61,52 @@
                             <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
                         <Grid.RowDefinitions>
-                            <RowDefinition Height="*" />
-                            <RowDefinition Height="*" />
-                            <RowDefinition Height="*" />
-                            <RowDefinition Height="*" />
-                            <RowDefinition Height="*" />
+                            <RowDefinition Height="40" />
+                            <RowDefinition Height="40" />
+                            <RowDefinition Height="40" />
+                            <RowDefinition Height="40" />
+                            <RowDefinition Height="40" />
                         </Grid.RowDefinitions>
-                        <Label Text="Exportiere Pläne:" Grid.Column="0" Grid.Row="0"/>
-                        <Label Text="Exportiere Positionsbilder:"  Grid.Column="0" Grid.Row="1"/>
-                        <Label Text="Exportiere Pin-Icons:" Grid.Column="0" Grid.Row="3"/>
-                        <Label Text="Exportiere Fotos:" Grid.Column="0" Grid.Row="2"/>
-                        <Label Text="Exportiere Foto-Overlays:" Grid.Column="0" Grid.Row="4"/>
 
-                        <Switch Grid.Column="1" Grid.Row="0"
-                                    Margin="0,-8,0,0"                       
-                                    ThumbColor="{AppThemeBinding Light={DynamicResource Primary}, Dark={DynamicResource PrimaryDarkAccent}}"
-                                    OnColor="{DynamicResource Secondary}"
-                                    IsToggled="{Binding IsPlanExport}"/>
+                        <HorizontalStackLayout Grid.Column="0" Grid.Row="0">
+                            <CheckBox
+                              Scale="1.2"
+                              Color="{DynamicResource Primary}"
+                              IsChecked="{Binding IsPlanExport}"/>                            
+                            <Label Text="Exportiere Pläne" VerticalTextAlignment="Center"/>                            
+                        </HorizontalStackLayout>
 
-                        <Switch Grid.Column="1" Grid.Row="1"
-                                    Margin="0,-8,0,0"                      
-                                    ThumbColor="{AppThemeBinding Light={DynamicResource Primary}, Dark={DynamicResource PrimaryDarkAccent}}"
-                                    OnColor="{DynamicResource Secondary}"
-                                    IsToggled="{Binding IsPosImageExport}"/>
+                        <HorizontalStackLayout Grid.Column="0" Grid.Row="1">
+                            <CheckBox
+                              Scale="1.2"
+                              Color="{DynamicResource Primary}"
+                              IsChecked="{Binding IsPosImageExport}"/>
+                            <Label Text="Exportiere Positionsbilder" VerticalTextAlignment="Center"/> 
+                        </HorizontalStackLayout>
 
-                        <Switch Grid.Column="1" Grid.Row="3"
-                                    Margin="0,-8,0,0"
-                                    VerticalOptions="Start"
-                                    ThumbColor="{AppThemeBinding Light={DynamicResource Primary}, Dark={DynamicResource PrimaryDarkAccent}}"
-                                    OnColor="{DynamicResource Secondary}"
-                                    IsToggled="{Binding IsPinIconExport}"/>
+                        <HorizontalStackLayout Grid.Column="0" Grid.Row="2">
+                            <CheckBox
+                                  Scale="1.2"
+                                  Color="{DynamicResource Primary}"
+                                  IsChecked="{Binding IsPinIconExport}"/>
+                            <Label Text="Exportiere Pin-Icons" VerticalTextAlignment="Center"/>                            
+                        </HorizontalStackLayout>
 
-                        <Switch Grid.Column="1" Grid.Row="2"
-                                    Margin="0,-8,0,0"
-                                    ThumbColor="{AppThemeBinding Light={DynamicResource Primary}, Dark={DynamicResource PrimaryDarkAccent}}"
-                                    OnColor="{DynamicResource Secondary}"
-                                    IsToggled="{Binding IsImageExport}"/>
+                        <HorizontalStackLayout Grid.Column="0" Grid.Row="3">
+                            <CheckBox
+                                  Scale="1.2"
+                                  Color="{DynamicResource Primary}"
+                                  IsChecked="{Binding IsImageExport}"/>
+                            <Label Text="Exportiere Fotos" VerticalTextAlignment="Center"/>                            
+                        </HorizontalStackLayout>
 
-                        <Switch Grid.Column="1" Grid.Row="4"
-                                    Margin="0,-8,0,0"
-                                    VerticalOptions="Start"
-                                    ThumbColor="{AppThemeBinding Light={DynamicResource Primary}, Dark={DynamicResource PrimaryDarkAccent}}"
-                                    OnColor="{DynamicResource Secondary}"
-                                    IsToggled="{Binding IsFotoOverlayExport}"/>
+                        <HorizontalStackLayout Grid.Column="0" Grid.Row="4">
+                            <CheckBox
+                                  Scale="1.2"
+                                  Color="{DynamicResource Primary}"
+                                  IsChecked="{Binding IsFotoOverlayExport}"/>
+                            <Label Text="Exportiere Foto-Overlays" VerticalTextAlignment="Center"/>                            
+                        </HorizontalStackLayout>
                     </Grid>
 
                     <Grid>

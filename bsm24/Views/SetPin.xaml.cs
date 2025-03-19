@@ -2,6 +2,7 @@
 
 using bsm24.Models;
 using FFImageLoading.Maui;
+using Microsoft.Maui.Controls.Compatibility;
 using Mopups.Services;
 using System.Collections.ObjectModel;
 using UraniumUI.Pages;
@@ -75,9 +76,9 @@ public partial class SetPin : UraniumContentPage, IQueryAttributable
         PinDesc.Text = GlobalJson.Data.Plans[PlanId].Pins[PinId].PinDesc;
         PinLocation.Text = GlobalJson.Data.Plans[PlanId].Pins[PinId].PinLocation;
         PinImage.Source = file;
-        LockSwitch.IsToggled = GlobalJson.Data.Plans[PlanId].Pins[PinId].IsLocked;
-        LockRotate.IsToggled = GlobalJson.Data.Plans[PlanId].Pins[PinId].IsLockRotate;
-        AllowExport.IsToggled = GlobalJson.Data.Plans[PlanId].Pins[PinId].AllowExport;
+        LockSwitch.IsChecked = GlobalJson.Data.Plans[PlanId].Pins[PinId].IsLocked;
+        LockRotate.IsChecked = GlobalJson.Data.Plans[PlanId].Pins[PinId].IsLockRotate;
+        AllowExport.IsChecked = GlobalJson.Data.Plans[PlanId].Pins[PinId].AllowExport;
         SizePercentText.Text = Math.Round(GlobalJson.Data.Plans[PlanId].Pins[PinId].PinScale * 100, 0).ToString() + "%";
         priorityPicker.SelectedIndex = GlobalJson.Data.Plans[PlanId].Pins[PinId].PinPriority;
         PinAcc.Text = GlobalJson.Data.Plans[PlanId].Pins[PinId].GeoLocation != null ?
@@ -165,18 +166,18 @@ public partial class SetPin : UraniumContentPage, IQueryAttributable
         GlobalJson.Data.Plans[PlanId].Pins[PinId].PinName = this.Title;
         GlobalJson.Data.Plans[PlanId].Pins[PinId].PinDesc = PinDesc.Text;
         GlobalJson.Data.Plans[PlanId].Pins[PinId].PinLocation = PinLocation.Text;
-        GlobalJson.Data.Plans[PlanId].Pins[PinId].IsLocked = LockSwitch.IsToggled;
-        GlobalJson.Data.Plans[PlanId].Pins[PinId].IsLockRotate = LockRotate.IsToggled;
-        GlobalJson.Data.Plans[PlanId].Pins[PinId].AllowExport = AllowExport.IsToggled;
+        GlobalJson.Data.Plans[PlanId].Pins[PinId].IsLocked = LockSwitch.IsChecked;
+        GlobalJson.Data.Plans[PlanId].Pins[PinId].IsLockRotate = LockRotate.IsChecked;
+        GlobalJson.Data.Plans[PlanId].Pins[PinId].AllowExport = AllowExport.IsChecked;
         GlobalJson.Data.Plans[PlanId].Pins[PinId].PinPriority = priorityPicker.SelectedIndex;
 
         // save data to file
         GlobalJson.SaveToFile();
 
         if (GlobalJson.Data.Plans[PlanId].Pins[PinId].IsCustomPin)
-            await Shell.Current.GoToAsync($"//{PlanId}");
+            await Shell.Current.GoToAsync($"///{PlanId}");
         else
-            await Shell.Current.GoToAsync($"//{PlanId}?pinUpdate={PinId}");
+            await Shell.Current.GoToAsync($"///{PlanId}?pinUpdate={PinId}");
     }
 
     private async void ShowGeoLoc(object sender, EventArgs e)
