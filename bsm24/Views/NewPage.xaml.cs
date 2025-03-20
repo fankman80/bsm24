@@ -49,6 +49,12 @@ public partial class NewPage : IQueryAttributable
         PageTitle = GlobalJson.Data.Plans[PlanId].Name;
     }
 
+    protected override bool OnBackButtonPressed()
+    {
+        // Zurück-Taste ignorieren
+        return true;
+    }
+
     protected override void OnAppearing()
     {
         base.OnAppearing();
