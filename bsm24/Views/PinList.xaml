@@ -108,7 +108,7 @@
                                      Margin="10,2,10,2"/>
 
                             <ff:CachedImage Grid.Column="0" Grid.Row="2"
-                                    VerticalOptions="Start"
+                                    VerticalOptions="Center"
                                     Source="{Binding PinIcon}"
                                     CacheType="Memory"
                                     Aspect="AspectFit"
