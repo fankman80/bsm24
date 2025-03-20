@@ -21,7 +21,11 @@ public partial class App : Application
 
         System.Globalization.CultureInfo.CurrentCulture = new System.Globalization.CultureInfo("de-DE");
         System.Globalization.CultureInfo.CurrentUICulture = new System.Globalization.CultureInfo("de-DE");
-        SettingsService.Instance.LoadSettings();
+
+        if (!File.Exists(Path.Combine(Settings.TemplateDirectory, "appsettings.ini")))
+            SettingsService.Instance.SaveSettings();
+        else
+            SettingsService.Instance.LoadSettings()
 
         if (!Directory.Exists(Settings.TemplateDirectory))
             Directory.CreateDirectory(Settings.TemplateDirectory);
