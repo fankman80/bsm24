@@ -29,28 +29,20 @@
             <RowDefinition Height="Auto" />            
         </Grid.RowDefinitions>
 
-        <Border Grid.Row="0"
-                HeightRequest="30"
-                HorizontalOptions="End"
-                StrokeThickness="0.5">
-            <Grid>
-                <Image Source="{FontImageSource FontFamily=MaterialOutlined, Color={AppThemeBinding Light={DynamicResource Primary}, Dark={DynamicResource PrimaryDark}}, Glyph={x:Static m:MaterialOutlined.Sort}}"                   
-                       HorizontalOptions="Start"
-                       Margin="10,0,0,0"
-                       WidthRequest="20"
-                       HeightRequest="20"
-                       BackgroundColor="Transparent"/>
-                <Picker x:Name="SortPicker" x:DataType="services:SettingsService" BindingContext="{x:Static services:SettingsService.Instance}"
-                        WidthRequest="250"
-                        HorizontalOptions="End"
-                        VerticalOptions="Center"
-                        HorizontalTextAlignment="End"
-                        ItemsSource="{Binding IconSortCrits}"
-                        SelectedItem="{Binding IconSortCrit}"
-                        SelectedIndexChanged="OnSortPickerChanged">
-                </Picker>
-            </Grid>
-        </Border>
+        <HorizontalStackLayout Grid.Row="0" HorizontalOptions="End">
+            <Image Source="{FontImageSource FontFamily=MaterialOutlined, Color={AppThemeBinding Light={DynamicResource Primary}, Dark={DynamicResource PrimaryDark}}, Glyph={x:Static m:MaterialOutlined.Sort}}"                   
+                HorizontalOptions="Start"
+                Margin="10,0,0,0"
+                WidthRequest="20"
+                HeightRequest="20"
+                BackgroundColor="Transparent"/>
+            <Border Stroke="DarkGrey" StrokeThickness="0.5">
+                <uranium:Dropdown x:Name="SortPicker" x:DataType="services:SettingsService" BindingContext="{x:Static services:SettingsService.Instance}"
+                                  FontSize="12"
+                                  ItemsSource="{Binding IconSortCrits}"
+                                  SelectedItem="{Binding IconSortCrit}"/>
+            </Border>
+        </HorizontalStackLayout>
 
         <Grid Grid.Row="1" x:DataType="views:IconGallery">
             <CollectionView x:Name="IconCollectionView"

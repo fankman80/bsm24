@@ -9,14 +9,12 @@ namespace bsm24.Views;
 public partial class PinList : UraniumContentPage
 {
     public Command<IconItem> IconTappedCommand { get; }
-    public int DynamicSpan = 1;
-    public int MinSize = 1;
-    public List<PinItem> pinItems = [];
+    private List<PinItem> pinItems = [];
+    private object previousSelectedItem;
 
     public PinList()
     {
         InitializeComponent();
-        SizeChanged += OnSizeChanged;
         BindingContext = this;
         LoadPins();
     }
@@ -25,12 +23,14 @@ public partial class PinList : UraniumContentPage
     {
         base.OnAppearing();
 
-        LoadPins();
+        SortPicker.PropertyChanged += OnSortPickerChanged;
     }
 
-    private void OnSizeChanged(object sender, EventArgs e)
+    protected override void OnDisappearing()
     {
-        UpdateSpan();
+        base.OnDisappearing();
+
+        SortPicker.PropertyChanged -= OnSortPickerChanged;
     }
 
     private void LoadPins()
@@ -107,13 +107,18 @@ public partial class PinList : UraniumContentPage
 
     private void OnSortPickerChanged(object sender, EventArgs e)
     {
-        IconSorting();
-        SettingsService.Instance.SaveSettings();
+        var currentSelectedItem = SortPicker.SelectedItem;
+        if (previousSelectedItem != currentSelectedItem)
+        {
+            previousSelectedItem = currentSelectedItem;
+            IconSorting();
+            SettingsService.Instance.SaveSettings();
+        }
     }
 
     private void IconSorting()
     {
-        if (SortPicker.SelectedIndex == -1) return;
+        if (SortPicker.SelectedItem == null) return;
 
         SettingsService.Instance.PinSortCrit = SortPicker.SelectedItem.ToString();
 
@@ -143,10 +148,5 @@ public partial class PinList : UraniumContentPage
 
         pinListView.ItemsSource = null;
         pinListView.ItemsSource = pinItems;
-    }
-
-    private void UpdateSpan()
-    {
-        OnPropertyChanged(nameof(DynamicSpan));
     }
 }

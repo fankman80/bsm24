@@ -1,31 +1,42 @@
 ﻿#nullable disable
 
+using bsm24.Services;
 using CommunityToolkit.Maui.Alerts;
-using DocumentFormat.OpenXml.Spreadsheet;
 using Mopups.Services;
 using SkiaSharp;
 using System.Collections.ObjectModel;
 using UraniumUI.Pages;
-using bsm24.Services;
 
 namespace bsm24.Views;
 
 public partial class IconGallery : UraniumContentPage, IQueryAttributable
 {
     public ObservableCollection<IconItem> Icons { get; set; }
-    public Command<IconItem> IconTappedCommand { get; }
-    public string PlanId;
-    public string PinId;
-    public int DynamicSpan;
-    public int MinSize;
+    private Command<IconItem> IconTappedCommand { get; }
+    private string PlanId;
+    private string PinId;
     private bool isLongPressed = false;
+    private object previousSelectedItem;
 
     public IconGallery()
     {
         InitializeComponent();
-        SizeChanged += OnSizeChanged;
-        IconSorting();
         BindingContext = this;
+        IconSorting();
+    }
+
+    protected override void OnAppearing()
+    {
+        base.OnAppearing();
+
+        SortPicker.PropertyChanged += OnSortPickerChanged;
+    }
+
+    protected override void OnDisappearing()
+    {
+        base.OnDisappearing();
+
+        SortPicker.PropertyChanged -= OnSortPickerChanged;
     }
 
     public void ApplyQueryAttributes(IDictionary<string, object> query)
@@ -34,11 +45,6 @@ public partial class IconGallery : UraniumContentPage, IQueryAttributable
             PlanId = value1 as string;
         if (query.TryGetValue("pinId", out object value2))
             PinId = value2 as string;
-    }
-
-    private void OnSizeChanged(object sender, EventArgs e)
-    {
-        UpdateSpan();
     }
 
     private async void OnIconClicked(object sender, EventArgs e)
@@ -155,11 +161,6 @@ public partial class IconGallery : UraniumContentPage, IQueryAttributable
         }
     }
 
-    private void UpdateSpan()
-    {
-        OnPropertyChanged(nameof(DynamicSpan));
-    }
-
     public static Size GetImageSize(string localPath)
     {
         using var stream = File.OpenRead(localPath);
@@ -169,13 +170,18 @@ public partial class IconGallery : UraniumContentPage, IQueryAttributable
 
     private void OnSortPickerChanged(object sender, EventArgs e)
     {
-        IconSorting();
-        SettingsService.Instance.SaveSettings();
+        var currentSelectedItem = SortPicker.SelectedItem;
+        if (previousSelectedItem != currentSelectedItem)
+        {
+            previousSelectedItem = currentSelectedItem;
+            IconSorting();
+            SettingsService.Instance.SaveSettings();
+        }
     }
 
     private void IconSorting()
     {
-        if (SortPicker.SelectedIndex == -1) return;
+        if (SortPicker.SelectedItem == null) return;
 
         SettingsService.Instance.IconSortCrit = SortPicker.SelectedItem.ToString();
 
