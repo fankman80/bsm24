@@ -71,7 +71,7 @@
 
         <StackLayout Grid.Row="1" Spacing="9" x:DataType="x:AppThemeBindingExtension">
             <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto, Auto">
-                <material:EditorField Grid.Column="0" Grid.Row="0" Grid.RowSpan="2"
+                <material:TextField Grid.Column="0" Grid.Row="0" Grid.RowSpan="2"
                     x:Name="PinLocation"
                     HorizontalOptions="Fill"
                     TextColor="{AppThemeBinding Light={DynamicResource PrimaryText}, Dark={DynamicResource PrimaryDarkText}}"

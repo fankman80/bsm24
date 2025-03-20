@@ -119,7 +119,7 @@
                                    LineBreakMode="WordWrap"
                                    MinimumHeightRequest="80"
                                    FontSize="12"
-                                   Margin="0,4,10,4"
+                                   Margin="6,4,10,4"
                                    Text="{Binding PinDesc}"/>
 
                             <Border Grid.ColumnSpan="4" Grid.RowSpan="4"
