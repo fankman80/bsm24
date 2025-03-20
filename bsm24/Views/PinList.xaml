@@ -21,7 +21,6 @@
         </ResourceDictionary>
     </uranium:UraniumContentPage.Resources>
 
-    
     <Grid Margin="10">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
@@ -32,8 +31,6 @@
             <Image Source="{FontImageSource FontFamily=MaterialOutlined, Color={AppThemeBinding Light={DynamicResource Primary}, Dark={DynamicResource PrimaryDark}}, Glyph={x:Static m:MaterialOutlined.Sort}}"                   
                 HorizontalOptions="Start"
                 Margin="10,0,0,0"
-                WidthRequest="20"
-                HeightRequest="20"
                 BackgroundColor="Transparent"/>
             <Border Stroke="DarkGrey" StrokeThickness="0.5">
                 <uranium:Dropdown x:Name="SortPicker" x:DataType="services:SettingsService" BindingContext="{x:Static services:SettingsService.Instance}"
@@ -50,57 +47,79 @@
                 </CollectionView.ItemsLayout>
                 <CollectionView.ItemTemplate>
                     <DataTemplate x:DataType="local:PinItem">
-                        <Grid RowSpacing="0">
+                        <Grid RowSpacing="0" ColumnSpacing="0">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="64" />
                                 <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition Width="Auto" />
                             </Grid.ColumnDefinitions>
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto"/>
                                 <RowDefinition Height="Auto"/>
                                 <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="Auto"/>
                             </Grid.RowDefinitions>
 
-                            <HorizontalStackLayout Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="2" Spacing="0">
-                                <Label Margin="10,4,0,0"
+                            <Grid Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="2" RowSpacing="0" ColumnSpacing="0">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
+                                
+                                <Label Grid.Column="0" Grid.Row="0"
+                                       Margin="10,4,0,0"
                                        FontAttributes="Bold"
                                        FontSize="12"
                                        Text="{Binding OnPlanName}"/>
-                                <Label Margin="8,4,8,0"
+                                <Label Grid.Column="1" Grid.Row="0"
+                                       Margin="8,4,8,0"
                                        FontSize="12"
                                        Text="/"/>
-                                <Label Margin="0,4,0,0"
+                                <Label Grid.Column="2" Grid.Row="0"
+                                       Margin="0,4,0,0"
                                        FontSize="12"
+                                       LineBreakMode="TailTruncation"
                                        Text="{Binding PinLocation}"/>
-                            </HorizontalStackLayout>
+                                <Label Grid.Column="0" Grid.Row="1" Grid.ColumnSpan="3"
+                                       Margin="10,0,0,0"
+                                       FontSize="12"
+                                       LineBreakMode="TailTruncation"
+                                       Text="{Binding PinName}"/>
+                                <Button Grid.Column="3" Grid.Row="0" Grid.RowSpan="2"
+                                        ClassId="{Binding SelfId}"
+                                        AutomationId = "{Binding OnPlanId}"  
+                                        Background="Transparent"
+                                        ImageSource="{FontImageSource FontFamily=MaterialOutlined, Color={AppThemeBinding Light={DynamicResource Primary}, Dark={DynamicResource PrimaryDark}}, Glyph={x:Static m:MaterialOutlined.Recenter}}"
+                                        Clicked="OnPinClicked"/>
+                                <CheckBox Grid.Column="4" Grid.Row="0" Grid.RowSpan="2"
+                                          IsChecked="{Binding AllowExport, Mode=TwoWay}"
+                                          Color="{AppThemeBinding Light={DynamicResource PrimaryText}, Dark={DynamicResource PrimaryDark}}"/>                                                   
+                            </Grid>
 
-                            <Label Grid.Column="0" Grid.Row="1" Grid.ColumnSpan="2"
-                                   Margin="10,4,6,0"
-                                   FontSize="12"
-                                   LineBreakMode="TailTruncation"
-                                   Text="{Binding PinName}"/>
 
-                            <BoxView Grid.Column="0" Grid.Row="2" Grid.ColumnSpan="4"
+                            <BoxView Grid.Column="0" Grid.Row="1" Grid.ColumnSpan="4"
                                      Color="{AppThemeBinding Light={DynamicResource Primary}, Dark={DynamicResource PrimaryDark}}"
                                      HeightRequest="1"
                                      Margin="10,2,10,2"/>
 
-                            <ff:CachedImage Grid.Column="0" Grid.Row="3"
+                            <ff:CachedImage Grid.Column="0" Grid.Row="2"
                                     VerticalOptions="Start"
                                     Source="{Binding PinIcon}"
                                     CacheType="Memory"
                                     Aspect="AspectFit"
-                                    Margin="16,20,6,0"/>
+                                    Margin="12,16,6,0"/>
 
-                            <Label Grid.Column="1" Grid.Row="3" Grid.ColumnSpan="2"
+                            <Label Grid.Column="1" Grid.Row="2" Grid.ColumnSpan="3"
                                    MaxLines="4"
                                    LineBreakMode="WordWrap"
                                    MinimumHeightRequest="80"
                                    FontSize="12"
-                                   Margin="0,4,6,4"
+                                   Margin="0,4,10,4"
                                    Text="{Binding PinDesc}"/>
 
                             <Border Grid.ColumnSpan="4" Grid.RowSpan="4"
@@ -116,16 +135,7 @@
                                     Background="Transparent"
                                     Clicked="OnEditClicked"/>
 
-                            <Button Grid.Column="2" Grid.Row="0" Grid.RowSpan="2"
-                                    ClassId="{Binding SelfId}"
-                                    AutomationId = "{Binding OnPlanId}"  
-                                    Background="Transparent"
-                                    ImageSource="{FontImageSource FontFamily=MaterialOutlined, Color={AppThemeBinding Light={DynamicResource Primary}, Dark={DynamicResource PrimaryDark}}, Glyph={x:Static m:MaterialOutlined.Recenter}}"
-                                    Clicked="OnPinClicked"/>
 
-                            <CheckBox Grid.Column="3" Grid.Row="0" Grid.RowSpan="2"
-                                      IsChecked="{Binding AllowExport, Mode=TwoWay}"
-                                      Color="{AppThemeBinding Light={DynamicResource PrimaryText}, Dark={DynamicResource PrimaryDark}}"/>
                         </Grid>
                     </DataTemplate>
                 </CollectionView.ItemTemplate>

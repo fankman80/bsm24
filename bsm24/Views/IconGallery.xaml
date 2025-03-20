@@ -33,8 +33,6 @@
             <Image Source="{FontImageSource FontFamily=MaterialOutlined, Color={AppThemeBinding Light={DynamicResource Primary}, Dark={DynamicResource PrimaryDark}}, Glyph={x:Static m:MaterialOutlined.Sort}}"                   
                 HorizontalOptions="Start"
                 Margin="10,0,0,0"
-                WidthRequest="20"
-                HeightRequest="20"
                 BackgroundColor="Transparent"/>
             <Border Stroke="DarkGrey" StrokeThickness="0.5">
                 <uranium:Dropdown x:Name="SortPicker" x:DataType="services:SettingsService" BindingContext="{x:Static services:SettingsService.Instance}"
