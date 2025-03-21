@@ -14,6 +14,12 @@ public partial class ProjectDetails : UraniumContentPage
         isPdfChanged = false;
     }
 
+    protected override bool OnBackButtonPressed()
+    {
+        // Zurück-Taste ignorieren
+        return true;
+    }
+
     protected override void OnAppearing()
     {
         base.OnAppearing();

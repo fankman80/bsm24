@@ -14,6 +14,10 @@
                             x:Class="bsm24.Views.SetPin"
                             Title="Pin bearbeiten">
     
+    <Shell.BackButtonBehavior>
+        <BackButtonBehavior IsVisible="False" />
+    </Shell.BackButtonBehavior>
+    
     <ContentPage.ToolbarItems>
         <ToolbarItem
             IconImageSource="{FontImageSource FontFamily=MaterialOutlined, Color={DynamicResource PrimaryDark}, Glyph={x:Static m:MaterialOutlined.Edit_square}}" 

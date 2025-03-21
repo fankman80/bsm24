@@ -12,6 +12,10 @@
              x:Class="bsm24.Views.LoadPDFPages"
              Title="PDF Seiten hinzufügen">
 
+    <Shell.BackButtonBehavior>
+        <BackButtonBehavior IsVisible="False" />
+    </Shell.BackButtonBehavior>    
+
     <ContentPage.ToolbarItems>
         <ToolbarItem
             x:Name="btnRows"

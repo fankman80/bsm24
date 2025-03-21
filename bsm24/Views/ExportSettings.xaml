@@ -14,7 +14,11 @@
         x:Name="ExportSettingsPage"
         x:Class="bsm24.Views.ExportSettings"
         Title="Bericht exportieren">
-
+    
+    <Shell.BackButtonBehavior>
+        <BackButtonBehavior IsVisible="False" />
+    </Shell.BackButtonBehavior>
+    
     <uranium:UraniumContentPage.Resources>
         <ResourceDictionary>
             <services:BooleanInverterConverter x:Key="BooleanInverterConverter" />
