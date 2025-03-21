@@ -135,10 +135,9 @@
                        Text="{Binding BlueValue, Mode=TwoWay}" Keyboard="Numeric" TextColor="Blue" />
             </Grid>
 
-            <HorizontalStackLayout Spacing="0">
+            <HorizontalStackLayout x:Name="deleteIconContainer" Spacing="0" IsVisible="False">
                 <CheckBox x:Name="deleteIcon"
                           IsChecked="False"
-                          IsEnabled="False"
                           Scale="1.2"
                           Color="{DynamicResource Primary}"/>
                 <Label Text="Icon löschen" VerticalOptions="Center"/>

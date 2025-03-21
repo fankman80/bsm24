@@ -35,7 +35,7 @@ public partial class PopupIconEdit : PopupPage, INotifyPropertyChanged
         SelectedColor = new Color(iconItem.PinColor.Red, iconItem.PinColor.Green, iconItem.PinColor.Blue);
 
         if (file.Contains("customicons", StringComparison.OrdinalIgnoreCase))
-            deleteIcon.IsEnabled = true;
+            deleteIconContainer.IsVisible = true;
 
         UpdateSelectedColor();
     }
@@ -50,6 +50,7 @@ public partial class PopupIconEdit : PopupPage, INotifyPropertyChanged
     protected override void OnDisappearing()
     {
         base.OnDisappearing();
+
         _taskCompletionSource.SetResult(ReturnValue);
     }
 

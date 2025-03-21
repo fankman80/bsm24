@@ -96,7 +96,8 @@ public partial class IconGallery : UraniumContentPage, IQueryAttributable
         await MopupService.Instance.PushAsync(popup);
         var result = await popup.PopupDismissedTask;
 
-        IconSorting();
+        if (result != null)
+            IconSorting();
     }
 
     private async void ImportIconClicked(object sender, EventArgs e)
