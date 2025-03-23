@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Mopups:PopupPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:Mopups="clr-namespace:Mopups.Pages;assembly=Mopups"
+             xmlns:Animations="clr-namespace:Mopups.Animations;assembly=Mopups"
+             xmlns:uranium="http://schemas.enisn-projects.io/dotnet/maui/uraniumui"
+             xmlns:material="http://schemas.enisn-projects.io/dotnet/maui/uraniumui/material"
+             xmlns:m="clr-namespace:UraniumUI.Icons.MaterialSymbols;assembly=UraniumUI.Icons.MaterialSymbols"   
+             x:Class="bsm24.Views.PopupProjectEdit"
+             BackgroundClicked="PopupPage_BackgroundClicked"
+             BackgroundInputTransparent="False"
+             CloseWhenBackgroundIsClicked="True"
+             HasSystemPadding="False"
+             BackgroundColor="#60000000"
+             Title="Project Edit">
+
+    <Border
+        StrokeShape="RoundRectangle 20,20,20,20"
+        Padding="16,16,16,16"
+        BackgroundColor="{AppThemeBinding Light={DynamicResource PrimaryBackground}, Dark={DynamicResource PrimaryBackgroundDark}}"
+        WidthRequest="300"
+        HorizontalOptions="Center"
+        VerticalOptions="Center">
+
+        <VerticalStackLayout>
+            <Label Text="Projekt bearbeiten"
+                   FontAttributes="Bold"
+                   HorizontalOptions="Center"/>
+
+            <material:TextField x:Name="text_entry"
+                                Title="Projekt Titel"
+                                TextColor="{AppThemeBinding Light={DynamicResource PrimaryText}, Dark={DynamicResource PrimaryDarkText}}"
+                                BorderColor="{AppThemeBinding Light={DynamicResource SecondaryBackground}, Dark={DynamicResource SecondaryBackground}}"
+                                AccentColor="{AppThemeBinding Light={DynamicResource PrimaryAccent}, Dark={DynamicResource SecondaryDark}}"
+                                AllowClear="True"/>
+
+            <Button Grid.Column="0"
+                        Text="Zip Exportieren"
+                        BackgroundColor="{AppThemeBinding Light={DynamicResource Primary}, Dark={DynamicResource PrimaryDark}}"
+                        TextColor="{AppThemeBinding Light={DynamicResource PrimaryDarkText}, Dark={DynamicResource PrimaryText}}"                       
+                        Clicked="OnSaveClicked" />
+
+            <Button Grid.Column="0"
+                        Text="Verzeichnis öffnen"
+                        BackgroundColor="{AppThemeBinding Light={DynamicResource Primary}, Dark={DynamicResource PrimaryDark}}"
+                        TextColor="{AppThemeBinding Light={DynamicResource PrimaryDarkText}, Dark={DynamicResource PrimaryText}}"                       
+                        Clicked="OnOpenFolderClicked" />
+
+            <Button Grid.Column="0"
+                        Text="Projekt löschen"
+                        BackgroundColor="{AppThemeBinding Light={DynamicResource Primary}, Dark={DynamicResource PrimaryDark}}"
+                        TextColor="{AppThemeBinding Light={DynamicResource PrimaryDarkText}, Dark={DynamicResource PrimaryText}}"                       
+                        Clicked="OnDeleteClicked" />
+
+            <Grid Margin="0,16,0,0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <Button Grid.Column="0"
+                        x:Name="cancelButtonText"
+                        Text="Abbrechen"
+                        BackgroundColor="{AppThemeBinding Light={DynamicResource Primary}, Dark={DynamicResource PrimaryDark}}"
+                        TextColor="{AppThemeBinding Light={DynamicResource PrimaryDarkText}, Dark={DynamicResource PrimaryText}}"                       
+                        Clicked="OnCancelClicked" />
+                <Button Grid.Column="1"
+                        x:Name="okButtonText"
+                        Text="Ok"
+                        BackgroundColor="{AppThemeBinding Light={DynamicResource Primary}, Dark={DynamicResource PrimaryDark}}"
+                        TextColor="{AppThemeBinding Light={DynamicResource PrimaryDarkText}, Dark={DynamicResource PrimaryText}}"                     
+                        Clicked="OnOkClicked" />
+            </Grid>
+        </VerticalStackLayout>
+    </Border>
+
+</Mopups:PopupPage>

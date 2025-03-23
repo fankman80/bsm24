@@ -32,8 +32,6 @@
                                 <ColumnDefinition Width="66" />
                                 <ColumnDefinition Width="*" />
                                 <ColumnDefinition Width="35" />
-                                <ColumnDefinition Width="35" />
-                                <ColumnDefinition Width="35" />
                             </Grid.ColumnDefinitions>
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="25" />
@@ -47,7 +45,6 @@
                             <Label Grid.Column="1" Grid.Row="1"
                                     FontSize="12"
                                     Text="{Binding FileDate}"/>
-
                             <Image Grid.Column="0" Grid.RowSpan="2"
                                     Source="{Binding ImagePath}"
                                     Aspect="AspectFill"/>
@@ -57,18 +54,8 @@
                             <Button Grid.Column="2" Grid.RowSpan="2"
                                     Padding="6"
                                     Background="Transparent"
-                                    ImageSource="{FontImageSource FontFamily=MaterialOutlined, Color={AppThemeBinding Light={DynamicResource Primary}, Dark={DynamicResource PrimaryDark}}, Glyph={x:Static m:MaterialOutlined.Edit}}"
+                                    ImageSource="{FontImageSource FontFamily=MaterialOutlined, Color={AppThemeBinding Light={DynamicResource Primary}, Dark={DynamicResource PrimaryDark}}, Glyph={x:Static m:MaterialOutlined.Edit_square}}"
                                     Clicked="OnEditClicked"/>
-                            <Button Grid.Column="3" Grid.RowSpan="2"
-                                    Padding="6"
-                                    Background="Transparent"
-                                    ImageSource="{FontImageSource FontFamily=MaterialOutlined, Color={AppThemeBinding Light={DynamicResource Primary}, Dark={DynamicResource PrimaryDark}}, Glyph={x:Static m:MaterialOutlined.Folder_zip}}"
-                                    Clicked="OnSaveClicked"/>
-                            <Button Grid.Column="4" Grid.RowSpan="2"
-                                    Padding="6"
-                                    Background="Transparent"
-                                    ImageSource="{FontImageSource FontFamily=MaterialOutlined, Color={AppThemeBinding Light={DynamicResource Primary}, Dark={DynamicResource PrimaryDark}}, Glyph={x:Static m:MaterialOutlined.Delete}}"
-                                    Clicked="OnDeleteClicked"/>
                         </Grid>
                     </DataTemplate>
                 </CollectionView.ItemTemplate>
