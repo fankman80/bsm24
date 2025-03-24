@@ -70,7 +70,7 @@ public partial class IconGallery : UraniumContentPage, IQueryAttributable
         GlobalJson.Data.Plans[PlanId].Pins[PinId].PinIcon = fileName;
 
         // Suche Icon-Daten
-        var iconItem = Settings.PinData.FirstOrDefault(item => item.FileName.Contains(fileName, StringComparison.OrdinalIgnoreCase));
+        var iconItem = Settings.IconData.FirstOrDefault(item => item.FileName.Contains(fileName, StringComparison.OrdinalIgnoreCase));
         if (iconItem != null)
         {
             GlobalJson.Data.Plans[PlanId].Pins[PinId].PinName = iconItem.DisplayName;
@@ -94,7 +94,7 @@ public partial class IconGallery : UraniumContentPage, IQueryAttributable
         var fileName = button.AutomationId;
 
         // Suche Icon-Daten
-        var iconItem = Settings.PinData.FirstOrDefault(item => item.FileName.Equals(fileName, StringComparison.OrdinalIgnoreCase));
+        var iconItem = Settings.IconData.FirstOrDefault(item => item.FileName.Equals(fileName, StringComparison.OrdinalIgnoreCase));
 
         var popup = new PopupIconEdit(iconItem);
         await MopupService.Instance.PushAsync(popup);
@@ -149,7 +149,7 @@ public partial class IconGallery : UraniumContentPage, IQueryAttributable
                 false,
                 new SKColor(255, 0, 0),
                 1,
-                "Eigene Icons"
+                "eigene Icons"
             );
 
             var popup = new PopupIconEdit(updatedItem);
@@ -191,13 +191,6 @@ public partial class IconGallery : UraniumContentPage, IQueryAttributable
         if (previousSelectedCategoryItem != currentSelectedItem)
         {
             previousSelectedCategoryItem = currentSelectedItem;
-
-            // Icon-Daten einlesen
-            var iconItems = Helper.LoadIconItems(Path.Combine(Settings.TemplateDirectory, "IconData.xml"), out List<string> iconCategories, currentSelectedItem.ToString());
-            SettingsService.Instance.IconCategories = iconCategories;
-            Settings.PinData = iconItems;
-
-            Settings.PinData = iconItems;
             IconSorting(OrderDirection);
             SettingsService.Instance.SaveSettings();
         }
@@ -224,8 +217,13 @@ public partial class IconGallery : UraniumContentPage, IQueryAttributable
     {
         if (SortPicker.SelectedItem == null) return;
 
+        var iconItems = Helper.LoadIconItems(Path.Combine(Settings.TemplateDirectory, "IconData.xml"), out List<string> iconCategories, CategoryPicker.SelectedItem.ToString());
+        SettingsService.Instance.IconCategories = iconCategories;
         SettingsService.Instance.IconSortCrit = SortPicker.SelectedItem.ToString();
         SettingsService.Instance.IconCategory = CategoryPicker.SelectedItem.ToString();
+        Settings.IconData = iconItems;
+
+        CategoryPicker.ItemsSource = iconCategories;
 
         var selectedOption = SortPicker.SelectedItem.ToString();
 
@@ -234,10 +232,10 @@ public partial class IconGallery : UraniumContentPage, IQueryAttributable
             switch (SettingsService.Instance.IconSortCrit)
             {
                 case var crit when crit == SettingsService.Instance.IconSortCrits[0]:
-                    Icons = [.. Settings.PinData.OrderBy(pin => pin.DisplayName).ToList()];
+                    Icons = [.. Settings.IconData.OrderBy(pin => pin.DisplayName).ToList()];
                     break;
                 case var crit when crit == SettingsService.Instance.IconSortCrits[1]:
-                    Icons = [.. Settings.PinData.OrderBy(pin => pin.PinColor.ToString()).ToList()];
+                    Icons = [.. Settings.IconData.OrderBy(pin => pin.PinColor.ToString()).ToList()];
                     break;
             }
         }
@@ -246,10 +244,10 @@ public partial class IconGallery : UraniumContentPage, IQueryAttributable
             switch (SettingsService.Instance.IconSortCrit)
             {
                 case var crit when crit == SettingsService.Instance.IconSortCrits[0]:
-                    Icons = [.. Settings.PinData.OrderByDescending(pin => pin.DisplayName).ToList()];
+                    Icons = [.. Settings.IconData.OrderByDescending(pin => pin.DisplayName).ToList()];
                     break;
                 case var crit when crit == SettingsService.Instance.IconSortCrits[1]:
-                    Icons = [.. Settings.PinData.OrderByDescending(pin => pin.PinColor.ToString()).ToList()];
+                    Icons = [.. Settings.IconData.OrderByDescending(pin => pin.PinColor.ToString()).ToList()];
                     break;
             }
         }

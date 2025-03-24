@@ -34,10 +34,11 @@
             <Border Stroke="{AppThemeBinding Light={DynamicResource Primary}, Dark={DynamicResource PrimaryDark}}"
                     StrokeThickness="0.5"
                     StrokeShape="RoundRectangle 4">
-                <uranium:Dropdown x:Name="CategoryPicker" x:DataType="services:SettingsService" BindingContext="{x:Static services:SettingsService.Instance}"
-                                      FontSize="12"
-                                      ItemsSource="{Binding IconCategories}"
-                                      SelectedItem="{Binding IconCategory}"/>
+                <uranium:Dropdown x:DataType="services:SettingsService" BindingContext="{x:Static services:SettingsService.Instance}"
+                                  x:Name="CategoryPicker" 
+                                  FontSize="12"
+                                  ItemsSource="{Binding IconCategories}"
+                                  SelectedItem="{Binding IconCategory}"/>
             </Border>              
         </HorizontalStackLayout>
 

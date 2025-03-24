@@ -89,12 +89,6 @@ public partial class PopupIconEdit : PopupPage, INotifyPropertyChanged
                 Helper.DeleteIconItem(Path.Combine(Settings.TemplateDirectory, "IconData.xml"), file);
             }
         }
-
-        // Icon-Daten einlesen
-        var iconItems = Helper.LoadIconItems(Path.Combine(Settings.TemplateDirectory, "IconData.xml"), out List<string> iconCategories);
-        SettingsService.Instance.IconCategories = iconCategories;
-        Settings.PinData = iconItems;
-
         await MopupService.Instance.PopAsync();
     }
 

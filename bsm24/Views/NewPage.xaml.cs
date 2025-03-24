@@ -412,7 +412,7 @@ public partial class NewPage : IQueryAttributable
         {
             string _newPin = "a_pin_red.png";
             string currentDateTime = DateTime.Now.ToString("yyyyMMdd_HHmmss");
-            var iconItem = Settings.PinData.FirstOrDefault(item => item.FileName.Equals(_newPin, StringComparison.OrdinalIgnoreCase));
+            var iconItem = Settings.IconData.FirstOrDefault(item => item.FileName.Equals(_newPin, StringComparison.OrdinalIgnoreCase));
 
             Location location = new();
             if (GPSViewModel.Instance.IsRunning)

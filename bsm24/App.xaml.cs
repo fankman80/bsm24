@@ -82,7 +82,7 @@ public partial class App : Application
         // Icon-Daten einlesen
         var iconItems = Helper.LoadIconItems(Path.Combine(Settings.TemplateDirectory, "IconData.xml"), out List<string> iconCategories);
         SettingsService.Instance.IconCategories = iconCategories;
-        Settings.PinData = iconItems;
+        Settings.IconData = iconItems;
 
         // lade Einstellungen
         SettingsService.Instance.LoadSettings();

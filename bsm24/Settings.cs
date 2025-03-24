@@ -11,7 +11,7 @@ public static class Settings
     public static double DefaultPinZoom { get => defaultPinZoom; set => defaultPinZoom = value; }
     public static int PinTextPadding { get => pinTextPadding; set => pinTextPadding = value; }
     public static int PinTextDistance { get => pinTextDistance; set => pinTextDistance = value; }
-    public static List<IconItem> PinData { get => pinData; set => pinData = value; }
+    public static List<IconItem> IconData { get => iconData; set => iconData = value; }
     public static Color[] ColorData { get => colorData; set => colorData = value; }
     public static List<string> IconSortCrits { get => iconSortCrits; set => iconSortCrits = value; }
     public static List<string> PinSortCrits { get => pinSortCrits; set => pinSortCrits = value; }
@@ -36,7 +36,7 @@ public static class Settings
     private static double defaultPinZoom = 2;
     private static int pinTextPadding = 6;
     private static int pinTextDistance = 3;
-    private static List<IconItem> pinData = [];
+    private static List<IconItem> iconData = [];
 
     private static List<MapViewItem> swissTopoLayers = [
         new MapViewItem { Desc = "kein Map-Layer", Id = "" },

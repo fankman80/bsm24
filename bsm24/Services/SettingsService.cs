@@ -661,7 +661,7 @@ public partial class SettingsService : INotifyPropertyChanged
                 this.PinSortCrit = (settings.PinSortCrit < PinSortCrits.Count)
                     ? PinSortCrits[settings.PinSortCrit]
                     : PinSortCrits[0];
-                this.IconCategory = (settings.IconCategory < IconCategories.Count)
+                this.IconCategory = (settings.IconCategory < IconCategories.Count && settings.IconCategory > 0)
                     ? IconCategories[settings.IconCategory]
                     : IconCategories[0];
             }
