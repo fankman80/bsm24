@@ -30,7 +30,7 @@
                 <RowDefinition Height="*" />
                 <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
-            <ScrollView Grid.Row="0">
+            <ScrollView Grid.Row="0" VerticalOptions="Start" MaximumHeightRequest="800">
                 <VerticalStackLayout>
                     <Grid>
                         <Grid.ColumnDefinitions>

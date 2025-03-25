@@ -29,12 +29,12 @@
             HorizontalOptions="Center"
             VerticalOptions="Center">
 
-        <Grid>
+        <Grid VerticalOptions="Center">
             <Grid.RowDefinitions>
                 <RowDefinition Height="*" />
                 <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
-            <ScrollView Grid.Row="0">
+            <ScrollView Grid.Row="0" VerticalOptions="Start" MaximumHeightRequest="800">
                 <VerticalStackLayout Spacing="0">
                     <Label Text="{Binding PinMinScaleLimit, StringFormat='Min. Pingrösse limitieren: {0:0.##}%'}" />
                     <Slider Maximum="100"
