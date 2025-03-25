@@ -24,8 +24,7 @@
 
         <VerticalStackLayout>
             <Label Text="Projekt bearbeiten"
-                FontAttributes="Bold"
-                HorizontalOptions="Center"/>
+                FontAttributes="Bold"/>
             
             <material:TextField x:Name="text_entry"
                             Title="Projekt Titel"

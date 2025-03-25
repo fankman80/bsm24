@@ -32,7 +32,6 @@
             </Grid.RowDefinitions>
             <ScrollView Grid.Row="0">
                 <VerticalStackLayout>
-                    <Label Text="Icon Editor" FontAttributes="Bold"/>
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="100" />
@@ -62,11 +61,11 @@
                     </Grid>
 
                     <material:TextField x:Name="iconName"
+                                        FontSize="14"
                                         Title="Bezeichnung"
                                         TextColor="{AppThemeBinding Light={DynamicResource PrimaryText}, Dark={DynamicResource PrimaryDarkText}}"
                                         BorderColor="{AppThemeBinding Light={DynamicResource SecondaryBackground}, Dark={DynamicResource SecondaryBackground}}"
-                                        AccentColor="{AppThemeBinding Light={DynamicResource PrimaryAccent}, Dark={DynamicResource SecondaryDark}}"
-                                        AllowClear="True"/>
+                                        AccentColor="{AppThemeBinding Light={DynamicResource PrimaryAccent}, Dark={DynamicResource SecondaryDark}}"/>
 
                     <material:AutoCompleteTextField x:DataType="services:SettingsService" BindingContext="{x:Static services:SettingsService.Instance}"
                                         x:Name="iconCategory"
@@ -94,19 +93,11 @@
                         <Label Text="Rotation sperren" VerticalOptions="Center"/>
                     </HorizontalStackLayout>
 
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="*" />
-                        </Grid.ColumnDefinitions>
-                        <Label Grid.Column="0" Text="Pin Farbe wählen:" VerticalTextAlignment="Center" HeightRequest="30"/>
-                        <BoxView Grid.Column="1" Color="{Binding SelectedColor}" />
-                    </Grid>
-
                     <Grid RowSpacing="0">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="50" />
                             <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="30" />
                         </Grid.ColumnDefinitions>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="*" />
@@ -149,6 +140,8 @@
                                Scale="0.8"
                                HorizontalTextAlignment="Center"                       
                                Text="{Binding BlueValue, Mode=TwoWay}" Keyboard="Numeric" TextColor="Blue" />
+
+                        <BoxView Grid.Column="2" Grid.Row="0" Grid.RowSpan="3" Color="{Binding SelectedColor}" />                        
                     </Grid>
 
                     <HorizontalStackLayout x:Name="deleteIconContainer" Spacing="0" IsVisible="False">
