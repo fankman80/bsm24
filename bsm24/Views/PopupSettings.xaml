@@ -149,7 +149,6 @@
                             MaximumTrackColor="{DynamicResource PrimaryDark}"
                             Value="{Binding MapIconSize}"/>
 
-                    <Label Text="Farbthema:" />
                     <material:PickerField x:Name="darkModePicker"
                                           Title="Appthema:"
                                           Margin="0,10,0,10"

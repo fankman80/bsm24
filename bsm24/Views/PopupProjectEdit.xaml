@@ -23,9 +23,6 @@
         VerticalOptions="Center">
 
         <VerticalStackLayout>
-            <Label Text="Projekt bearbeiten"
-                FontAttributes="Bold"/>
-            
             <material:TextField x:Name="text_entry"
                             Title="Projekt Titel"
                             TextColor="{AppThemeBinding Light={DynamicResource PrimaryText}, Dark={DynamicResource PrimaryDarkText}}"
