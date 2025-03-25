@@ -27,6 +27,7 @@ public partial class XmlImage
     // Item3 = Anchor
     // Item4 = Scale
     // Item5 = Rotate Degrees
+
     {
         var originalStream = File.OpenRead(imagePath.FullPath);
         var skBitmap = SKBitmap.Decode(originalStream);

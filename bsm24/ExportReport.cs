@@ -55,7 +55,7 @@ public partial class ExportReport
             if (icon.Contains("custompin_", StringComparison.OrdinalIgnoreCase)) //check if icon is a custompin
                 CopyImageToDirectory(Settings.CacheDirectory, System.IO.Path.Combine(GlobalJson.Data.ProjectPath, GlobalJson.Data.CustomPinsPath), icon);
             else if (icon.Contains("customicons", StringComparison.OrdinalIgnoreCase)) //check if icon is a customicon
-                CopyImageToDirectory(System.IO.Path.Combine(Settings.CacheDirectory, "customicons"), "customicons", System.IO.Path.GetFileName(icon));  
+                CopyImageToDirectory(System.IO.Path.Combine(Settings.CacheDirectory, "customicons"), "customicons", System.IO.Path.GetFileName(icon));
             else
                 await CopyImageToDirectoryAsync(Settings.CacheDirectory, icon);
 
@@ -681,8 +681,8 @@ public partial class ExportReport
 
     private static Picture CreateTextBoxWithShape(string text, Point coordinateMM, double fontSizePt, string fontColorHex)
     {
-        double xCoordinatePt = coordinateMM.X * 2.83465; //3.7795;
-        double yCoordinatePt = coordinateMM.Y * 2.83465; //3.7795;
+        double xCoordinatePt = coordinateMM.X * 2.83465;
+        double yCoordinatePt = coordinateMM.Y * 2.83465;
         double textWidthPt = GetTextWidthInPoints(text, "Arial", fontSizePt, 96) * 2;
 
         Picture picture1 = new();
