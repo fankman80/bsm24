@@ -155,54 +155,49 @@ public partial class ExportReport
                                                             string planPath = System.IO.Path.Combine(Settings.DataDirectory, GlobalJson.Data.ProjectPath, GlobalJson.Data.PlanPath, planName);
                                                             Point pinPos = GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].Pos;
                                                             string pinImage = GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].PinIcon;
-
-                                                            // Pin-Icon ein/ausblenden
-                                                            List<(string, SKPoint, SKPoint, float, float)> pinList = [];
-                                                            if (SettingsService.Instance.IsPinIconExport)
-                                                            {
-                                                                pinList = [(pinImage,
-                                                                        new SKPoint(0.5f, 0.5f),
-                                                                        new SKPoint((float)GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].Anchor.X, (float)GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].Anchor.Y),
-                                                                        (float)GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].PinScale,
-                                                                        (float)GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].PinRotation)];
-                                                            }
-                                                            else
-                                                                pinList = null;
-
-                                                            var cropSize = new SKSize(SettingsService.Instance.PinPosCropExportSize, SettingsService.Instance.PinPosCropExportSize);
-                                                            var cropPos = new SKPoint((float)pinPos.X, (float)pinPos.Y);
-                                                            var crop = new SKRectI
-                                                            {
-
-                                                                Left = (int)((cropPos.X-0.05) * 1000000),
-                                                                Right = (int)(((1-cropPos.X) + 0.05) * 1000000),
-                                                                Top = (int)((cropPos.Y - 0.05) * 1000000),
-                                                                Bottom = (int)(((1-cropPos.Y) + 0.05) * 1000000),
-                                                            };
-
-
-                                                            SizeF scaleFactor = new Size(1, 1);
                                                             Point pinAnchor = GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].Anchor;
                                                             Size pinSize = GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].Size;
                                                             SKColor pinColor = GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].PinColor;
-                                                            SizeF scaledPinSize = GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].IsCustomPin ?
-                                                                                  new SizeF((float)pinSize.Width * scaleFactor.Width, (float)pinSize.Height * scaleFactor.Height) :
-                                                                                  ScaleToFit(pinSize, new SizeF(0, (float)SettingsService.Instance.PinExportSize * (float)GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].PinScale));
 
-                                                            Drawing _imgPlan = GetImageElement(mainPart, planPath, new SizeF(40, 40), new Point(0, 0), 0, crop);
+                                                            var cropSize = new SizeF(
+                                                                SettingsService.Instance.PinPosCropExportSize, 
+                                                                SettingsService.Instance.PinPosCropExportSize);
 
-                                                            //Drawing _imgPlan = XmlImage.GenerateImage(mainPart,
-                                                            //                                    new FileResult(planPath),
-                                                            //                                    SettingsService.Instance.PosImageExportScale,
-                                                            //                                    new SKPoint((float)pinPos.X,
-                                                            //                                    (float)pinPos.Y),
-                                                            //                                    new SKSize(SettingsService.Instance.PinPosCropExportSize, SettingsService.Instance.PinPosCropExportSize),
-                                                            //                                    widthMilimeters: SettingsService.Instance.PinPosExportSize,
-                                                            //                                    imageQuality: SettingsService.Instance.ImageExportQuality,
-                                                            //                                    overlayImages: pinList);
+                                                            var cropPos = new SKPoint((float)pinPos.X, (float)pinPos.Y);
+                                                            var planScaleFactor = 1 - 1 / GlobalJson.Data.Plans[plan.Key].ImageSize.Width / GlobalJson.Data.Plans[plan.Key].ImageSize.Height;
+
+                                                            //var cropFactorX = 0.01;
+                                                            //var cropFactorY = 0.01 * planScaleFactor;
+                                                            //var crop = new SKRectI
+                                                            //{
+                                                            //    Left = (int)((cropPos.X - cropFactorX) * 100000),
+                                                            //    Top = (int)((cropPos.Y - cropFactorY) * 100000),
+                                                            //    Right = (int)((1 - cropPos.X - cropFactorX) * 100000),
+                                                            //    Bottom = (int)((1 - cropPos.Y - cropFactorY) * 100000),
+                                                            //};
+
+                                                            var planSize = GlobalJson.Data.Plans[plan.Key].ImageSize;
+
+                                                            var cropFactorX = (1 / planSize.Width * 300) / 2;
+                                                            var cropFactorY = (1 / planSize.Height * 300) / 2;
+                                                            var crop = new SKRectI
+                                                            {
+                                                                Left = (int)((cropPos.X - cropFactorX) * 100000),
+                                                                Top = (int)((cropPos.Y - cropFactorY) * 100000),
+                                                                Right = (int)((1 - cropPos.X - cropFactorX) * 100000),
+                                                                Bottom = (int)((1 - cropPos.Y - cropFactorY) * 100000),
+                                                            };
+
+                                                            var exportSize = new SizeF(
+                                                                SettingsService.Instance.PinPosExportSize,
+                                                                SettingsService.Instance.PinPosExportSize);
 
 
-                                                            Drawing _imgPin = GetImageElement(mainPart, pinImage, new SizeF(scaledPinSize.Width, scaledPinSize.Height), new Point(0,0), 0, new SKRectI(0,0,0,0));
+                                                            Drawing _imgPlan = GetImageElement(mainPart, planPath, exportSize, new Point(0, 0), 0, crop);
+
+                                                            var scaledPinSize = new SizeF((float)(pinSize.Width * planScaleFactor * GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].PinScale / 2.83465), (float)(pinSize.Height * planScaleFactor * GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].PinScale / 2.83465));
+
+                                                            Drawing _imgPin = GetImageElement(mainPart, pinImage, scaledPinSize, new Point(exportSize.Width/2, exportSize.Height/2), 0, new SKRectI(0,0,0,0));
 
                                                             newParagraph.Append(new Run(_imgPlan));
                                                             newParagraph.Append(new Run(_imgPin));
@@ -581,7 +576,6 @@ public partial class ExportReport
         };
         _bf.Append(_b);
 
-        // Zuschneidewerte in 1/1.000.000 Einheiten (also z. B. 10% = 100000)
         OXML.Drawing.SourceRectangle srcRect = new()
         {
             Left = crop.Left,
@@ -593,6 +587,7 @@ public partial class ExportReport
 
         OXML.Drawing.Stretch _str = new();
         OXML.Drawing.FillRectangle _fr = new();
+
         _str.Append(_fr);
         _bf.Append(_str);
 
@@ -609,9 +604,7 @@ public partial class ExportReport
             Cy = MillimetersToEMU(size.Height)
         };
 
-        // (in 1/60000 Grad, daher multiplizieren)
-        _t2d.Rotation = (OXML.Int32Value)(rotationAngle * 60000);
-
+        _t2d.Rotation = (OXML.Int32Value)(rotationAngle * 60000); // (in 1/60000 Grad, daher multiplizieren)
         _t2d.Append(_os);
         _t2d.Append(_ex);
 
@@ -620,6 +613,7 @@ public partial class ExportReport
             Preset = OXML.Drawing.ShapeTypeValues.Rectangle
         };
         OXML.Drawing.AdjustValueList _adl = new();
+
         _preGeo.Append(_adl);
 
         _shp.Append(_t2d);
@@ -630,6 +624,7 @@ public partial class ExportReport
         _pic.Append(_shp);
 
         _gd.Append(_pic);
+
         _g.Append(_gd);
 
         _anchor.Append(_spos);
