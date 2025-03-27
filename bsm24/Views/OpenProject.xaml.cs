@@ -5,6 +5,8 @@ using CommunityToolkit.Maui.Storage;
 using Mopups.Services;
 using System.Globalization;
 using UraniumUI.Pages;
+using SkiaSharp;
+
 
 #if WINDOWS
 using System.Diagnostics;

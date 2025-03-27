@@ -154,53 +154,38 @@ public partial class ExportReport
                                                             string planName = GlobalJson.Data.Plans[plan.Key].File;
                                                             string planPath = System.IO.Path.Combine(Settings.DataDirectory, GlobalJson.Data.ProjectPath, GlobalJson.Data.PlanPath, planName);
                                                             Point pinPos = GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].Pos;
-                                                            string pinImage = GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].PinIcon;
+                                                            string pinImage = System.IO.Path.Combine(Settings.CacheDirectory, GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].PinIcon);
                                                             Point pinAnchor = GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].Anchor;
+                                                            float pinRotation = (float)GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].PinRotation;
                                                             Size pinSize = GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].Size;
-                                                            SKColor pinColor = GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].PinColor;
-
-                                                            var cropSize = new SizeF(
-                                                                SettingsService.Instance.PinPosCropExportSize, 
-                                                                SettingsService.Instance.PinPosCropExportSize);
-
                                                             var cropPos = new SKPoint((float)pinPos.X, (float)pinPos.Y);
-                                                            var planScaleFactor = 1 - 1 / GlobalJson.Data.Plans[plan.Key].ImageSize.Width / GlobalJson.Data.Plans[plan.Key].ImageSize.Height;
-
-                                                            //var cropFactorX = 0.01;
-                                                            //var cropFactorY = 0.01 * planScaleFactor;
-                                                            //var crop = new SKRectI
-                                                            //{
-                                                            //    Left = (int)((cropPos.X - cropFactorX) * 100000),
-                                                            //    Top = (int)((cropPos.Y - cropFactorY) * 100000),
-                                                            //    Right = (int)((1 - cropPos.X - cropFactorX) * 100000),
-                                                            //    Bottom = (int)((1 - cropPos.Y - cropFactorY) * 100000),
-                                                            //};
-
                                                             var planSize = GlobalJson.Data.Plans[plan.Key].ImageSize;
-
-
-
-                                                            var cropFactorX = (1 / planSize.Width * 300) / 2;
-                                                            var cropFactorY = (1 / planSize.Height * 300) / 2;
+                                                            var cropFactor = new Point((1 / planSize.Width * 300) / 2, (1 / planSize.Height * 300) / 2);
                                                             var crop = new SKRectI
                                                             {
-                                                                Left = (int)((cropPos.X - cropFactorX) * 100000),
-                                                                Top = (int)((cropPos.Y - cropFactorY) * 100000),
-                                                                Right = (int)((1 - cropPos.X - cropFactorX) * 100000),
-                                                                Bottom = (int)((1 - cropPos.Y - cropFactorY) * 100000),
+                                                                Left = (int)((cropPos.X - cropFactor.X) * 100000),
+                                                                Top = (int)((cropPos.Y - cropFactor.Y) * 100000),
+                                                                Right = (int)((1 - cropPos.X - cropFactor.X) * 100000),
+                                                                Bottom = (int)((1 - cropPos.Y - cropFactor.Y) * 100000),
+                                                            };
+                                                            var exportSize = new SizeF
+                                                            { 
+                                                                Width = SettingsService.Instance.PinPosExportSize,
+                                                                Height = SettingsService.Instance.PinPosExportSize
+                                                            };
+                                                            var scaledPinSize = new Size
+                                                            {
+                                                                Width = pinSize.Width * exportSize.Width / SettingsService.Instance.PinPosCropExportSize * GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].PinScale,
+                                                                Height = pinSize.Height * exportSize.Height / SettingsService.Instance.PinPosCropExportSize * GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].PinScale
+                                                            };
+                                                            var pinPoint = new Point
+                                                            {
+                                                                X = (exportSize.Width / 2) - (scaledPinSize.Width * pinAnchor.X),
+                                                                Y = (exportSize.Height / 2) - (scaledPinSize.Height * pinAnchor.Y)
                                                             };
 
-                                                            var exportSize = new SizeF(
-                                                                SettingsService.Instance.PinPosExportSize,
-                                                                SettingsService.Instance.PinPosExportSize);
-
-                                                            Drawing _imgPlan = GetImageElement(mainPart, planPath, exportSize, new Point(0, 0), 0, crop);
-
-                                                            var scaleF = new Size(100 / (300 / 96) * (exportSize.Width / 25.4) / 100, 100 / (300 / 96) * (exportSize.Height / 25.4) / 100);
-
-                                                            var scaledPinSize = new Size((float)(pinSize.Width * scaleF.Width * GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].PinScale), (float)(pinSize.Height * scaleF.Height * GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].PinScale));
-
-                                                            Drawing _imgPin = GetImageElement(mainPart, pinImage, scaledPinSize, new Point(exportSize.Width/2, exportSize.Height/2), 0, new SKRectI(0,0,0,0));
+                                                            Drawing _imgPlan = GetImageElement(mainPart, planPath, exportSize, new Point(0, 0), 0, "anchor", crop);
+                                                            Drawing _imgPin = GetImageElement(mainPart, pinImage, scaledPinSize, pinPoint, pinRotation, "anchor");
 
                                                             newParagraph.Append(new Run(_imgPlan));
                                                             newParagraph.Append(new Run(_imgPin));
@@ -210,10 +195,10 @@ public partial class ExportReport
                                                     case "${pin_fotoList}":
                                                         if (SettingsService.Instance.IsImageExport)
                                                         {
-                                                            Run newRun = new();
                                                             // add Pictures
                                                             foreach (KeyValuePair<string, Foto> img in GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].Fotos)
                                                             {
+                                                            Run newRun = new();
                                                                 if (GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].Fotos[img.Key].IsChecked)
                                                                 {
                                                                     string imgName = GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].Fotos[img.Key].File;
@@ -221,16 +206,20 @@ public partial class ExportReport
                                                                     if (!SettingsService.Instance.IsFotoOverlayExport)
                                                                         if (GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].Fotos[img.Key].HasOverlay)
                                                                             imgPath = System.IO.Path.Combine(Settings.DataDirectory, GlobalJson.Data.ProjectPath, GlobalJson.Data.ImagePath, "originals", imgName);
-                                                                    Drawing _img = XmlImage.GenerateImage(mainPart,
-                                                                                                    new FileResult(imgPath),
-                                                                                                    SettingsService.Instance.ImageExportScale,
-                                                                                                    widthMilimeters: SettingsService.Instance.ImageExportSize,
-                                                                                                    imageQuality: SettingsService.Instance.ImageExportQuality);
+
+                                                                    var factor = GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].Fotos[img.Key].ImageSize.Width / GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].Fotos[img.Key].ImageSize.Height;
+                                                                    var scaledSize = new Size
+                                                                    {
+                                                                        Width = SettingsService.Instance.ImageExportSize,
+                                                                        Height = SettingsService.Instance.ImageExportSize / factor
+                                                                    };
+                                                                    
+                                                                    Drawing _img = GetImageElement(mainPart, imgPath, scaledSize, new Point(0, 0), 0, "inline");
 
                                                                     newRun.Append(_img);
                                                                 }
-                                                            }
                                                             newParagraph.Append(newRun);
+                                                            }
                                                         }
                                                         break;
 
@@ -303,11 +292,15 @@ public partial class ExportReport
                                     string imgPath = System.IO.Path.Combine(Settings.DataDirectory, GlobalJson.Data.ProjectPath, GlobalJson.Data.ImagePath, GlobalJson.Data.TitleImage);
                                     if (File.Exists(imgPath))
                                     {
-                                        Drawing _img = XmlImage.GenerateImage(mainPart,
-                                                                        new FileResult(imgPath),
-                                                                        0.5,
-                                                                        heightMilimeters: SettingsService.Instance.TitleExportSize,
-                                                                        imageQuality: SettingsService.Instance.ImageExportQuality);
+                                        var factor = GlobalJson.Data.TitleImageSize.Width / GlobalJson.Data.TitleImageSize.Height;
+                                        var scaledSize = new Size
+                                        {
+                                            Width = SettingsService.Instance.TitleExportSize * factor,
+                                            Height = SettingsService.Instance.TitleExportSize
+                                        };
+
+                                        Drawing _img = GetImageElement(mainPart, imgPath, scaledSize, new Point(0, 0), 0, "inline");
+
                                         run.Append(_img);
                                     }
                                 }
@@ -383,7 +376,7 @@ public partial class ExportReport
                                     SizeF scaleFactor = new(scaledPlanSize.Width / (float)planSize.Width, scaledPlanSize.Height / (float)planSize.Height);
 
                                     run = new Run();
-                                    run.Append(GetImageElement(mainPart, planImage, scaledPlanSize, new Point(0, 0), 0, new SKRectI(0,0,0,0)));
+                                    run.Append(GetImageElement(mainPart, planImage, scaledPlanSize, new Point(0, 0), 0, "anchor"));
 
                                     if (GlobalJson.Data.Plans[plan.Key].Pins != null)
                                     {
@@ -403,10 +396,10 @@ public partial class ExportReport
                                                                       (pinPos.Y * scaledPlanSize.Height) - (pinAnchor.Y * scaledPinSize.Height));
                                                 float rotationAngle = (float)GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].PinRotation;
 
-                                                run.Append(GetImageElement(mainPart, pinImage, new SizeF(scaledPinSize.Width, scaledPinSize.Height), posOnPlan, rotationAngle, new SKRectI(0, 0, 0, 0)));
+                                                run.Append(GetImageElement(mainPart, pinImage, new SizeF(scaledPinSize.Width, scaledPinSize.Height), posOnPlan, rotationAngle, "anchor"));
 
                                                 run.Append(CreateTextBoxWithShape(SettingsService.Instance.PlanLabelPrefix + i.ToString(),
-                                                                                  new Point(posOnPlan.X + scaledPinSize.Width, posOnPlan.Y - scaledPinSize.Height),
+                                                                                  new Point(posOnPlan.X + scaledPinSize.Width + 1, posOnPlan.Y - scaledPinSize.Height), // offset 1mm to right
                                                                                   SettingsService.Instance.PlanLabelFontSize,
                                                                                   pinColor.ToString()[3..]));
                                                 i += 1;
@@ -445,8 +438,11 @@ public partial class ExportReport
         if (Directory.Exists(Settings.CacheDirectory))
             Directory.Delete(Settings.CacheDirectory, true);
     }
-    private static Drawing GetImageElement(MainDocumentPart mainPart, string imgPath, SizeF size, Point pos, float rotationAngle, SKRectI crop)
+
+    private static Drawing GetImageElement(MainDocumentPart mainPart, string imgPath, SizeF size, Point pos, float rotationAngle, string wrap, SKRectI? crop = null)
     {
+        crop ??= new SKRectI(0, 0, 0, 0);
+
         // Prüfen, ob das Bild bereits hinzugefügt wurde
         if (!imageRelationshipIds.TryGetValue(imgPath, out string relationshipId))
         {
@@ -458,9 +454,117 @@ public partial class ExportReport
             relationshipId = mainPart.GetIdOfPart(imagePart);
             imageRelationshipIds[imgPath] = relationshipId;
         }
-        Drawing element = GetAnchorPicture(relationshipId, size, pos, rotationAngle, crop);
 
-        return element;
+        if (wrap == "inline")
+            return GetInlinePicture(relationshipId, size, rotationAngle, crop.Value);
+        else
+            return GetAnchorPicture(relationshipId, size, pos, rotationAngle, crop.Value);
+    }
+
+    private static Drawing GetInlinePicture(String imagePartId, SizeF size, float rotationAngle, SKRectI crop)
+    {
+        Drawing drawing = new();
+        DW.Inline inline = new()
+        {
+            DistanceFromTop = (OXML.UInt32Value)0U,
+            DistanceFromBottom = (OXML.UInt32Value)0U,
+            DistanceFromLeft = (OXML.UInt32Value)0U,
+            DistanceFromRight = (OXML.UInt32Value)0U,
+            Extent = new DW.Extent
+            {
+                Cx = MillimetersToEMU(size.Width),
+                Cy = MillimetersToEMU(size.Height)
+            },
+            EffectExtent = new DW.EffectExtent
+            {
+                LeftEdge = 0L,
+                TopEdge = 0L,
+                RightEdge = 0L,
+                BottomEdge = 0L
+            },
+            DocProperties = new DW.DocProperties
+            {
+                Id = 1U,
+                Name = "Picture"
+            },
+            NonVisualGraphicFrameDrawingProperties = new DW.NonVisualGraphicFrameDrawingProperties()
+        };
+
+        OXML.Drawing.Graphic graphic = new();
+        OXML.Drawing.GraphicData graphicData = new() { Uri = "http://schemas.openxmlformats.org/drawingml/2006/picture" };
+        OXML.Drawing.Pictures.Picture picture = new();
+
+        OXML.Drawing.Pictures.NonVisualPictureProperties nvPicProps = new();
+        OXML.Drawing.Pictures.NonVisualDrawingProperties nvDrawProps = new()
+        {
+            Id = 0U,
+            Name = "Picture"
+        };
+        OXML.Drawing.Pictures.NonVisualPictureDrawingProperties nonVisualPicDrawingProps = new();
+        nvPicProps.Append(nvDrawProps);
+        nvPicProps.Append(nonVisualPicDrawingProps);
+
+        OXML.Drawing.Pictures.BlipFill blipFill = new();
+
+        OXML.Drawing.Blip blip = new()
+        {
+            Embed = imagePartId,
+            CompressionState = OXML.Drawing.BlipCompressionValues.Print
+        };
+
+        OXML.Drawing.SourceRectangle srcRect = new()
+        {
+            Left = crop.Left,
+            Top = crop.Top,
+            Right = crop.Right,
+            Bottom = crop.Bottom
+        };
+        blipFill.Append(blip);
+        blipFill.Append(srcRect);
+
+        OXML.Drawing.Stretch stretch = new();
+        OXML.Drawing.FillRectangle fillRect = new();
+        stretch.Append(fillRect);
+        blipFill.Append(stretch);
+
+        OXML.Drawing.Pictures.ShapeProperties shapeProps = new();
+        OXML.Drawing.Transform2D transform2D = new();
+        OXML.Drawing.Offset offset = new()
+        {
+            X = 0L,
+            Y = 0L
+        };
+        OXML.Drawing.Extents extents = new()
+        {
+            Cx = MillimetersToEMU(size.Width),
+            Cy = MillimetersToEMU(size.Height)
+        };
+
+        transform2D.Rotation = (OXML.Int32Value)(rotationAngle * 60000); // Rotation in 1/60000 Grad
+        transform2D.Append(offset);
+        transform2D.Append(extents);
+
+        OXML.Drawing.PresetGeometry presetGeometry = new()
+        {
+            Preset = OXML.Drawing.ShapeTypeValues.Rectangle
+        };
+        OXML.Drawing.AdjustValueList adjustValueList = new();
+        presetGeometry.Append(adjustValueList);
+
+        shapeProps.Append(transform2D);
+        shapeProps.Append(presetGeometry);
+
+        picture.Append(nvPicProps);
+        picture.Append(blipFill);
+        picture.Append(shapeProps);
+
+        graphicData.Append(picture);
+        graphic.Append(graphicData);
+        inline.Append(graphic);
+
+        drawing.Append(inline);
+
+        return drawing;
     }
 
     private static Drawing GetAnchorPicture(String imagePartId, SizeF size, Point pos, float rotationAngle, SKRectI crop)
@@ -521,7 +625,7 @@ public partial class ExportReport
             BottomEdge = 0L
         };
 
-        DW.WrapTight _wp = new()
+        DW.WrapSquare _wp = new()
         {
             WrapText = DW.WrapTextValues.BothSides
         };
@@ -530,6 +634,7 @@ public partial class ExportReport
         {
             Edited = false
         };
+
         DW.StartPoint _sp = new()
         {
             X = 0L,

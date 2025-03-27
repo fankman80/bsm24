@@ -410,6 +410,11 @@ public partial class NewPage : IQueryAttributable
         var currentPage = (NewPage)Shell.Current.CurrentPage;
         if (currentPage != null)
         {
+            // Icon-Daten einlesen
+            var iconItems = Helper.LoadIconItems(Path.Combine(Settings.TemplateDirectory, "IconData.xml"), out List<string> iconCategories);
+            SettingsService.Instance.IconCategories = iconCategories;
+            Settings.IconData = iconItems;
+
             string _newPin = "a_pin_red.png";
             string currentDateTime = DateTime.Now.ToString("yyyyMMdd_HHmmss");
             var iconItem = Settings.IconData.FirstOrDefault(item => item.FileName.Equals(_newPin, StringComparison.OrdinalIgnoreCase));

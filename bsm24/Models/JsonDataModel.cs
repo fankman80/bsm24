@@ -23,6 +23,7 @@ public class JsonDataModel
     public string ProjectPath { get; set; }
     public string JsonFile { get; set; }
     public string TitleImage { get; set; }
+    public Size TitleImageSize { get; set; }
 }
 
 public class Pdf
@@ -88,6 +89,7 @@ public class Foto
     public bool HasOverlay { get; set; }
     public bool IsChecked { get; set; }
     public DateTime DateTime { get; set; }
+    public Size ImageSize { get; set; }
 }
 
 public class GeoLocData

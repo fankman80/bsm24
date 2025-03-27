@@ -1,10 +1,12 @@
 ﻿#nullable disable
 
+using SkiaSharp;
+
 namespace bsm24;
 
 public class CapturePicture
 {
-    public static async Task<FileResult> Capture(string filepath, string thumbnailPath=null, string customFilename=null)
+    public static async Task<(FileResult, Size)> Capture(string filepath, string thumbnailPath = null, string customFilename = null)
     {
         if (MediaPicker.Default.IsCaptureSupported)
         {
@@ -43,19 +45,21 @@ public class CapturePicture
                     if (File.Exists(originalFilePath)) //lösche das Originalfoto
                         File.Delete(originalFilePath);
 
-                    return new FileResult(resultPath);
+                    var codec = SKCodec.Create(resultPath.ToString());
+
+                    return (new FileResult(resultPath), new Size(codec.Info.Size.Width, codec.Info.Size.Height));
                 }
                 else
-                    { return null; }
+                    return (null, new Size(0,0));
             }
             catch (Exception ex)
             {
                 // Fehlerbehandlung
                 Console.WriteLine($"Fehler beim Aufnehmen oder Umbenennen des Fotos: {ex.Message}");
-                return null;
+                return (null, new Size(0, 0));
             }
         }
         else
-            { return null; }
+            return (null, new Size(0, 0));
     }
 }

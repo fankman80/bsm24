@@ -2,11 +2,10 @@
 
 using bsm24.Models;
 using FFImageLoading.Maui;
-using Microsoft.Maui.Controls.Compatibility;
 using Mopups.Services;
 using System.Collections.ObjectModel;
-using UraniumUI.Pages;
 using UraniumUI.Material.Controls;
+using UraniumUI.Pages;
 using CheckBox = Microsoft.Maui.Controls.CheckBox;
 
 namespace bsm24.Views;
@@ -190,15 +189,16 @@ public partial class SetPin : UraniumContentPage, IQueryAttributable
 
     private async void TakePhoto(object sender, EventArgs e)
     {
-        FileResult path = await CapturePicture.Capture(Path.Combine(GlobalJson.Data.ProjectPath, GlobalJson.Data.ImagePath), Path.Combine(GlobalJson.Data.ProjectPath, GlobalJson.Data.ThumbnailPath));
+        (FileResult path, Size imgSize) = await CapturePicture.Capture(Path.Combine(GlobalJson.Data.ProjectPath, GlobalJson.Data.ImagePath), Path.Combine(GlobalJson.Data.ProjectPath, GlobalJson.Data.ThumbnailPath));
 
         if (path != null)
-        {
+        {      
             Foto newImageData = new()
             {
                 IsChecked = true,
                 File = path.FileName,
-                DateTime = DateTime.Now
+                DateTime = DateTime.Now,
+                ImageSize = imgSize
             };
 
             // Neues Image hinzufügen

@@ -1,5 +1,6 @@
 ﻿#nullable disable
 
+using SkiaSharp;
 using UraniumUI.Pages;
 
 namespace bsm24.Views;
@@ -65,7 +66,7 @@ public partial class ProjectDetails : UraniumContentPage
     {
         string thumbFileName = $"title_{DateTime.Now.Ticks}.jpg";
 
-        var result = await CapturePicture.Capture(Path.Combine(GlobalJson.Data.ProjectPath, GlobalJson.Data.ImagePath), GlobalJson.Data.ProjectPath, thumbFileName);
+        (FileResult result, Size imgSize) = await CapturePicture.Capture(Path.Combine(GlobalJson.Data.ProjectPath, GlobalJson.Data.ImagePath), GlobalJson.Data.ProjectPath, thumbFileName);
         if (result != null)
         {
             if (File.Exists(Path.Combine(Settings.DataDirectory, GlobalJson.Data.ProjectPath, GlobalJson.Data.TitleImage))) // delete old Thumbnail
@@ -73,6 +74,7 @@ public partial class ProjectDetails : UraniumContentPage
             if (File.Exists(Path.Combine(Settings.DataDirectory, GlobalJson.Data.ProjectPath, GlobalJson.Data.ImagePath, GlobalJson.Data.TitleImage))) // delete old Title Image
                 File.Delete(Path.Combine(Settings.DataDirectory, GlobalJson.Data.ProjectPath, GlobalJson.Data.ImagePath, GlobalJson.Data.TitleImage));
             GlobalJson.Data.TitleImage = thumbFileName;
+            GlobalJson.Data.TitleImageSize = imgSize;
             GlobalJson.SaveToFile();
             Helper.HeaderUpdate();
         }
@@ -92,6 +94,7 @@ public partial class ProjectDetails : UraniumContentPage
             {
                 string thumbFileName = $"title_{DateTime.Now.Ticks}.jpg";
                 string sourceFilePath = fileResult.FullPath;
+                var codec = SKCodec.Create(fileResult.FullPath);
                 var destinationPath = Path.Combine(Settings.DataDirectory, GlobalJson.Data.ProjectPath, GlobalJson.Data.ImagePath, thumbFileName);
                 var destinationThumbPath = Path.Combine(Settings.DataDirectory, GlobalJson.Data.ProjectPath, thumbFileName);
 
@@ -105,7 +108,6 @@ public partial class ProjectDetails : UraniumContentPage
                 {
                     sourceStream.CopyTo(destinationStream);
                 }
-
                 Thumbnail.Generate(sourceFilePath, destinationThumbPath);
 
                 if (File.Exists(Path.Combine(Settings.DataDirectory, GlobalJson.Data.ProjectPath, GlobalJson.Data.TitleImage))) // delete old Thumbnail
@@ -113,6 +115,12 @@ public partial class ProjectDetails : UraniumContentPage
                 if (File.Exists(Path.Combine(Settings.DataDirectory, GlobalJson.Data.ProjectPath, GlobalJson.Data.ImagePath, GlobalJson.Data.TitleImage))) // delete old Title Image
                     File.Delete(Path.Combine(Settings.DataDirectory, GlobalJson.Data.ProjectPath, GlobalJson.Data.ImagePath, GlobalJson.Data.TitleImage));
                 GlobalJson.Data.TitleImage = thumbFileName;
+
+                if (codec != null)
+                    GlobalJson.Data.TitleImageSize = new Size(codec.Info.Size.Width, codec.Info.Size.Height);
+                else
+                    GlobalJson.Data.TitleImageSize = new Size(500, 500);
+
                 GlobalJson.SaveToFile();
                 Helper.HeaderUpdate();
             }
