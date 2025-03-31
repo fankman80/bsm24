@@ -12,6 +12,7 @@ public partial class LoadPDFPages : UraniumContentPage
     FileResult result;
     public int DynamicSpan { get; set; } = 2; // Standardwert
     public int MinSize = 2;
+    private int tagrgetDpi = SettingsService.Instance.PdfQuality;
 
     public LoadPDFPages()
     {
@@ -67,11 +68,22 @@ public partial class LoadPDFPages : UraniumContentPage
                     var skBitmap = SKBitmap.Decode(stream);
                     Size _imgSize = new(skBitmap.Width, skBitmap.Height);
 
+                    int widthHighDpi = skBitmap.Width * tagrgetDpi / 72;
+                    int heightHighDpi = skBitmap.Height * tagrgetDpi / 72;
+
+                    if (widthHighDpi > 8000 || heightHighDpi > 8000)
+                    {
+                        widthHighDpi = tagrgetDpi * 8000 / widthHighDpi;
+                        heightHighDpi = tagrgetDpi * 8000 / heightHighDpi;
+                        tagrgetDpi = Math.Min(widthHighDpi, heightHighDpi);
+                    }
+
                     pdfImages.Add(new ImageItem
                     {
                         ImagePath = imgPath,
                         PreviewPath = previewPath,
                         IsChecked = true,
+                        Dpi = tagrgetDpi
                     });
                 }
             });
@@ -106,7 +118,7 @@ public partial class LoadPDFPages : UraniumContentPage
                 var renderOptions = new RenderOptions()
                 {
                     AntiAliasing = PdfAntiAliasing.All,
-                    Dpi = SettingsService.Instance.PdfQuality,
+                    Dpi = tagrgetDpi, //SettingsService.Instance.PdfQuality,
                     WithAnnotations = true,
                     WithFormFill = true,
                     UseTiling = true,

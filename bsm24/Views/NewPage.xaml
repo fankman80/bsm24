@@ -85,6 +85,7 @@
                        HorizontalOptions="Start"
                        VerticalOptions="End"/>
                 <Button InputTransparent="False"
+                        Visual="None"
                         CornerRadius="0"
                         BackgroundColor="Transparent"
                         VerticalOptions="Fill"

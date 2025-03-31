@@ -54,7 +54,7 @@
                             MaximumTrackColor="{DynamicResource PrimaryDark}"
                             Value="{Binding PinMaxScaleLimit}"/>
 
-                    <Label Text="{Binding PdfQuality, StringFormat='PDF-Qualität: {0:0.##}'}" />
+                    <Label Text="{Binding PdfQuality, StringFormat='PDF-Auflösung: {0:0.##} dpi'}" />
                     <Slider Maximum="800"
                             Minimum="100"
                             ThumbColor="{DynamicResource Primary}"

@@ -37,10 +37,8 @@
                 </CollectionView.ItemsLayout>
                 <CollectionView.ItemTemplate>
                     <DataTemplate x:DataType="views:ImageItem">
-                        <Border Stroke="Gray"
-                                StrokeThickness="0"
-                                Padding="16">
-                            <Grid>
+                        <VerticalStackLayout>
+                            <Grid Margin="8">
                                 <ff:CachedImage Source="{Binding PreviewPath}"
                                                 CacheType="Memory"
                                                 FadeAnimationEnabled ="False"
@@ -49,10 +47,17 @@
                                 <CheckBox IsChecked="{Binding IsChecked}"
                                           Color="{DynamicResource Primary}"
                                           VerticalOptions="End"
-                                          HorizontalOptions="End"
-                                          Margin="8"/>
+                                          HorizontalOptions="End"/>
+                                <Label Text="{Binding Dpi, StringFormat='DPI: {0:0.##}'}"
+                                       FontSize="12"
+                                       Padding="4"
+                                       HorizontalTextAlignment="Center"
+                                       Background="White"
+                                       TextColor="{DynamicResource Primary}"
+                                       VerticalOptions="End"
+                                       HorizontalOptions="Start"/>
                             </Grid>
-                        </Border>
+                        </VerticalStackLayout>
                     </DataTemplate>
                 </CollectionView.ItemTemplate>
             </CollectionView>
