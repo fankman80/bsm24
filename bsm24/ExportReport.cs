@@ -5,6 +5,7 @@ using bsm24.Services;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Vml;
 using DocumentFormat.OpenXml.Wordprocessing;
+using Microsoft.Maui;
 using SkiaSharp;
 using System.Text.RegularExpressions;
 using DW = DocumentFormat.OpenXml.Drawing.Wordprocessing;
@@ -328,8 +329,11 @@ public partial class ExportReport
                                         text.Remove(); // Lösche den Platzhaltertext
                                         foreach (KeyValuePair<string, Plan> plan in GlobalJson.Data.Plans)
                                         {
-                                            run.Append(new Text("- " + GlobalJson.Data.Plans[plan.Key].Name));
-                                            run.Append(new Break() { Type = BreakValues.TextWrapping });
+                                            if (GlobalJson.Data.Plans[plan.Key].AllowExport)
+                                            {
+                                                run.Append(new Text("- " + GlobalJson.Data.Plans[plan.Key].Name));
+                                                run.Append(new Break() { Type = BreakValues.TextWrapping });
+                                            }
                                         }
                                     }
                                 }
@@ -346,78 +350,98 @@ public partial class ExportReport
                             {
                                 SizeF planMaxSize = ExtractDimensions(paragraph.InnerText.ToString());
                                 string replaceText = "${plan_images/" + planMaxSize.Width.ToString() + "/" + planMaxSize.Height.ToString() + "}";
+                                
+                                // lese Textformatierung des Platzhalters ein
                                 string fontSizeVal = "28";
                                 Run firstRun = paragraph.Elements<Run>().FirstOrDefault();
                                 var existingFontSize = firstRun?.RunProperties?.FontSize;
                                 if (existingFontSize != null)
                                     fontSizeVal = existingFontSize.Val;
 
+                                // lösche den Platzhalter
+                                paragraph.RemoveAllChildren();
+                                paragraph.Append(new Run());
+
+                                int planCounter = GlobalJson.Data.Plans.Count;
                                 int i = 1;
                                 foreach (KeyValuePair<string, Plan> plan in GlobalJson.Data.Plans)
                                 {
-                                    // Erster Paragraph für den Plan-Namen
-                                    Paragraph textParagraph = new();
-                                    RunProperties runProperties = new(); // definiere Schriftgrösse
-                                    DocumentFormat.OpenXml.Wordprocessing.FontSize fontSize = new() { Val = fontSizeVal }; // 16pt Schriftgröße
-                                    runProperties.Append(fontSize);
-
-                                    Run run = new();
-                                    run.PrependChild(runProperties);
-                                    run.Append(new Text(GlobalJson.Data.Plans[plan.Key].Name));
-                                    textParagraph.Append(run);
-
-                                    // Füge den Paragraph (Plan-Namen) hinzu
-                                    paragraph.Append(textParagraph);
-
-                                    // Zweiter Paragraph für das Plan-Image und Pins (ohne manuelles Break)
-                                    Paragraph imageAndPinsParagraph = new();
-                                    string planImage = System.IO.Path.Combine(Settings.DataDirectory, GlobalJson.Data.ProjectPath, GlobalJson.Data.PlanPath, GlobalJson.Data.Plans[plan.Key].File);
-                                    Size planSize = GlobalJson.Data.Plans[plan.Key].ImageSize;
-                                    SizeF scaledPlanSize = ScaleToFit(planSize, planMaxSize);
-                                    SizeF scaleFactor = new(scaledPlanSize.Width / (float)planSize.Width, scaledPlanSize.Height / (float)planSize.Height);
-
-                                    run = new Run();
-                                    run.Append(GetImageElement(mainPart, planImage, scaledPlanSize, new Point(0, 0), 0, "anchor"));
-
-                                    if (GlobalJson.Data.Plans[plan.Key].Pins != null)
+                                    if (GlobalJson.Data.Plans[plan.Key].AllowExport)
                                     {
-                                        foreach (KeyValuePair<string, Pin> pin in GlobalJson.Data.Plans[plan.Key].Pins)
+                                        // Erster Paragraph für den Plan-Namen
+                                        Paragraph textParagraph = new();
+                                        Run run = new();
+                                        RunProperties runProperties = new(); // definiere Schriftgrösse
+                                        DocumentFormat.OpenXml.Wordprocessing.FontSize fontSize = new() { Val = fontSizeVal }; // 16pt Schriftgröße
+                                        runProperties.Append(fontSize);
+                                        run.PrependChild(runProperties);
+                                        run.Append(new Text(GlobalJson.Data.Plans[plan.Key].Name));
+                                        textParagraph.Append(run);
+                                        paragraph.Append(textParagraph);
+
+                                        // Zweiter Paragraph für das Plan-Image und Pins
+                                        Paragraph imageAndPinsParagraph = new();
+                                        run = new Run();
+                                        string planImage = System.IO.Path.Combine(Settings.DataDirectory, GlobalJson.Data.ProjectPath, GlobalJson.Data.PlanPath, GlobalJson.Data.Plans[plan.Key].File);
+                                        Size planSize = GlobalJson.Data.Plans[plan.Key].ImageSize;
+                                        SizeF scaledPlanSize = ScaleToFit(planSize, planMaxSize);
+                                        SizeF scaleFactor = new(scaledPlanSize.Width / (float)planSize.Width, scaledPlanSize.Height / (float)planSize.Height);
+                                        run.Append(GetImageElement(mainPart, planImage, scaledPlanSize, new Point(0, 0), 0, "anchor"));
+
+                                        // Setze Pins
+                                        if (GlobalJson.Data.Plans[plan.Key].Pins != null)
                                         {
-                                            if (GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].AllowExport)
+                                            foreach (KeyValuePair<string, Pin> pin in GlobalJson.Data.Plans[plan.Key].Pins)
                                             {
-                                                string pinImage = System.IO.Path.Combine(Settings.CacheDirectory, GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].PinIcon);
-                                                Point pinPos = GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].Pos;
-                                                Point pinAnchor = GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].Anchor;
-                                                Size pinSize = GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].Size;
-                                                SKColor pinColor = GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].PinColor;
-
-                                                var scaledPinSize = new SizeF
+                                                if (GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].AllowExport)
                                                 {
-                                                    Width = (float)(pinSize.Width * scaledPlanSize.Width / planSize.Width * GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].PinScale),
-                                                    Height = (float)(pinSize.Height * scaledPlanSize.Height / planSize.Height * GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].PinScale)
-                                                };    
-                                                
-                                                Point posOnPlan = new((pinPos.X * scaledPlanSize.Width) - (pinAnchor.X * scaledPinSize.Width),
-                                                                      (pinPos.Y * scaledPlanSize.Height) - (pinAnchor.Y * scaledPinSize.Height));
-                                                float rotationAngle = (float)GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].PinRotation;
+                                                    string pinImage = System.IO.Path.Combine(Settings.CacheDirectory, GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].PinIcon);
+                                                    Point pinPos = GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].Pos;
+                                                    Point pinAnchor = GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].Anchor;
+                                                    Size pinSize = GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].Size;
+                                                    SKColor pinColor = GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].PinColor;
 
-                                                run.Append(GetImageElement(mainPart, pinImage, new SizeF(scaledPinSize.Width, scaledPinSize.Height), posOnPlan, rotationAngle, "anchor"));
-                                                run.Append(CreateTextBoxWithShape(SettingsService.Instance.PlanLabelPrefix + i.ToString(),
-                                                                                  new Point(posOnPlan.X + scaledPinSize.Width + 1, posOnPlan.Y - scaledPinSize.Height), // offset 1mm to right
-                                                                                  SettingsService.Instance.PlanLabelFontSize,
-                                                                                  pinColor.ToString()[3..]));
-                                                i += 1;
+                                                    var scaledPinSize = new SizeF
+                                                    {
+                                                        Width = (float)(pinSize.Width * scaledPlanSize.Width / planSize.Width * GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].PinScale),
+                                                        Height = (float)(pinSize.Height * scaledPlanSize.Height / planSize.Height * GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].PinScale)
+                                                    };
+
+                                                    Point posOnPlan = new((pinPos.X * scaledPlanSize.Width) - (pinAnchor.X * scaledPinSize.Width),
+                                                                          (pinPos.Y * scaledPlanSize.Height) - (pinAnchor.Y * scaledPinSize.Height));
+                                                    float rotationAngle = (float)GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].PinRotation;
+
+                                                    run.Append(GetImageElement(mainPart, pinImage, new SizeF(scaledPinSize.Width, scaledPinSize.Height), posOnPlan, rotationAngle, "anchor"));
+                                                    run.Append(CreateTextBoxWithShape(SettingsService.Instance.PlanLabelPrefix + i.ToString(),
+                                                                                      new Point(posOnPlan.X + scaledPinSize.Width + 1, posOnPlan.Y - scaledPinSize.Height), // offset 1mm to right
+                                                                                      SettingsService.Instance.PlanLabelFontSize,
+                                                                                      pinColor.ToString()[3..]));
+                                                    i++;
+                                                }
+                                            }
+                                        }
+                                        // Füge das Plan-Image und die Pins zum Paragraph hinzu
+                                        imageAndPinsParagraph.Append(run);
+                                        paragraph.Append(imageAndPinsParagraph);
+                                        planCounter--;
+
+                                        // Erstelle einen neuen Paragraph mit einem Seitenumbruch (ausser nach dem letzen Plan)
+                                        if (planCounter > 1)
+                                        {
+                                            Paragraph pageBreakParagraph = new(new Run(new Break() { Type = BreakValues.Page }));
+                                            paragraph.Append(pageBreakParagraph);
+                                        }
+                                    }
+                                    else // lasse den Pin-Zähler weiter laufen, aber zeichne keine Pins oder Pläne
+                                    {
+                                        if (GlobalJson.Data.Plans[plan.Key].Pins != null)
+                                        {
+                                            foreach (KeyValuePair<string, Pin> pin in GlobalJson.Data.Plans[plan.Key].Pins)
+                                            {
+                                                i++;
                                             }
                                         }
                                     }
-
-                                    // Füge das Plan-Image und die Pins zum Paragraph hinzu
-                                    imageAndPinsParagraph.Append(run);
-                                    paragraph.Append(imageAndPinsParagraph);
-
-                                    // Erstelle einen neuen Paragraph mit einem Seitenumbruch
-                                    Paragraph pageBreakParagraph = new(new Run(new Break() { Type = BreakValues.Page }));
-                                    paragraph.Append(pageBreakParagraph);
                                 }
                             }
                         }

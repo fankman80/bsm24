@@ -734,9 +734,10 @@ public partial class NewPage : IQueryAttributable
     {
         var popup = new PopupPlanEdit(name: GlobalJson.Data.Plans[PlanId].Name,
                                       desc: GlobalJson.Data.Plans[PlanId].Description,
-                                      gray: GlobalJson.Data.Plans[PlanId].IsGrayscale);
+                                      gray: GlobalJson.Data.Plans[PlanId].IsGrayscale,
+                                      export: GlobalJson.Data.Plans[PlanId].AllowExport);
         await MopupService.Instance.PushAsync(popup);
-        var (result1, result2) = await popup.PopupDismissedTask;
+        var (result1, result2, result3) = await popup.PopupDismissedTask;
 
         switch (result1)
         {
@@ -757,6 +758,7 @@ public partial class NewPage : IQueryAttributable
 
                 GlobalJson.Data.Plans[PlanId].Name = result1;
                 GlobalJson.Data.Plans[PlanId].Description = result2;
+                GlobalJson.Data.Plans[PlanId].AllowExport = result3;
 
                 // save data to file
                 GlobalJson.SaveToFile();

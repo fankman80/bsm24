@@ -30,15 +30,15 @@
                             AccentColor="{AppThemeBinding Light={DynamicResource PrimaryAccent}, Dark={DynamicResource SecondaryDark}}"
                             AllowClear="True"/>
 
-            <Button Grid.Column="0"
-                    Text="Zip Exportieren"
+            <Button Text="Zip Exportieren"
+                    Padding="0"
                     BackgroundColor="{AppThemeBinding Light={DynamicResource Primary}, Dark={DynamicResource PrimaryDark}}"
                     TextColor="{AppThemeBinding Light={DynamicResource PrimaryDarkText}, Dark={DynamicResource PrimaryText}}"    
                     ImageSource="{FontImageSource FontFamily=MaterialOutlined, Color={AppThemeBinding Light={DynamicResource PrimaryDarkText}, Dark={DynamicResource PrimaryText}}, Glyph={x:Static m:MaterialOutlined.Folder_zip}}"
                     Clicked="OnSaveClicked" />
 
-            <Button Grid.Column="0"
-                    x:Name="openFolderBtn"
+            <Button x:Name="openFolderBtn"
+                    Padding="0"
                     IsVisible="False"
                     Text="Verzeichnis öffnen"
                     BackgroundColor="{AppThemeBinding Light={DynamicResource Primary}, Dark={DynamicResource PrimaryDark}}"
@@ -46,8 +46,8 @@
                     ImageSource="{FontImageSource FontFamily=MaterialOutlined, Color={AppThemeBinding Light={DynamicResource PrimaryDarkText}, Dark={DynamicResource PrimaryText}}, Glyph={x:Static m:MaterialOutlined.Folder_open}}"
                     Clicked="OnOpenFolderClicked" />
 
-            <Button Grid.Column="0"
-                    Text="Projekt löschen"
+            <Button Text="Projekt löschen"
+                    Padding="0"
                     BackgroundColor="{AppThemeBinding Light={DynamicResource Primary}, Dark={DynamicResource PrimaryDark}}"
                     TextColor="{AppThemeBinding Light={DynamicResource PrimaryDarkText}, Dark={DynamicResource PrimaryText}}"        
                     ImageSource="{FontImageSource FontFamily=MaterialOutlined, Color={AppThemeBinding Light={DynamicResource PrimaryDarkText}, Dark={DynamicResource PrimaryText}}, Glyph={x:Static m:MaterialOutlined.Delete}}"

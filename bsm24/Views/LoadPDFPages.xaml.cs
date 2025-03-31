@@ -235,6 +235,7 @@ public partial class LoadPDFPages : UraniumContentPage
                     ImageSize = _imgSize,
                     IsGrayscale = false,
                     Description = "",
+                    AllowExport = true,
                 };
 
                 // Überprüfen, ob die Plans-Struktur initialisiert ist

@@ -38,6 +38,7 @@ public class Plan
     public Size ImageSize { get; set; }
     public bool IsGrayscale { get; set; }
     public string Description { get; set; }
+    public bool AllowExport { get; set; }
     public Dictionary<string, Pin> Pins { get; set; }
 }
 

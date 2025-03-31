@@ -27,7 +27,7 @@
                             Title="Planbezeichnung"
                             TextColor="{AppThemeBinding Light={DynamicResource PrimaryText}, Dark={DynamicResource PrimaryDarkText}}"
                             BorderColor="{AppThemeBinding Light={DynamicResource SecondaryBackground}, Dark={DynamicResource SecondaryBackground}}"
-                            AccentColor="{AppThemeBinding Light={DynamicResource PrimaryAccent}, Dark={DynamicResource SecondaryDark}}"
+                            AccentColor="{AppThemeBinding Light={DynamicResource PrimaryAccent}, Dark={DynamicResource SecondaryDark}}"                            
                             AllowClear="True"/>
 
             <material:EditorField x:Name="desc_entry"
@@ -36,16 +36,23 @@
                             BorderColor="{AppThemeBinding Light={DynamicResource SecondaryBackground}, Dark={DynamicResource SecondaryBackground}}"
                             AccentColor="{AppThemeBinding Light={DynamicResource PrimaryAccent}, Dark={DynamicResource SecondaryDark}}"/>
 
-            <Button Grid.Column="0"
-                    x:Name="grayscaleButtonText"
+            <HorizontalStackLayout>
+                <CheckBox x:Name="allow_export"
+                          Scale="1.2"
+                          Color="{DynamicResource Primary}"/>
+                <Label Text="Bericht Export" VerticalTextAlignment="Center"/>
+            </HorizontalStackLayout>
+
+            <Button x:Name="grayscaleButtonText"
+                    Padding="0"                    
                     Text="Farben entfernen"
                     BackgroundColor="{AppThemeBinding Light={DynamicResource Primary}, Dark={DynamicResource PrimaryDark}}"
                     TextColor="{AppThemeBinding Light={DynamicResource PrimaryDarkText}, Dark={DynamicResource PrimaryText}}"    
                     ImageSource="{FontImageSource FontFamily=MaterialOutlined, Color={AppThemeBinding Light={DynamicResource PrimaryDarkText}, Dark={DynamicResource PrimaryText}}, Glyph={x:Static m:MaterialOutlined.Invert_colors}}"
                     Clicked="OnGrayscaleClicked" />
 
-            <Button Grid.Column="0"
-                    Text="Plan löschen"
+            <Button Text="Plan löschen"
+                    Padding="0"                    
                     BackgroundColor="{AppThemeBinding Light={DynamicResource Primary}, Dark={DynamicResource PrimaryDark}}"
                     TextColor="{AppThemeBinding Light={DynamicResource PrimaryDarkText}, Dark={DynamicResource PrimaryText}}"        
                     ImageSource="{FontImageSource FontFamily=MaterialOutlined, Color={AppThemeBinding Light={DynamicResource PrimaryDarkText}, Dark={DynamicResource PrimaryText}}, Glyph={x:Static m:MaterialOutlined.Delete}}"
