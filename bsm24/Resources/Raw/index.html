@@ -126,21 +126,46 @@
                 var feature = map.forEachFeatureAtPixel(evt.pixel, function (feature) {
                     return feature;
                 });
+
+                var popupElement = document.getElementById('popup');
+
                 if (feature) {
                     var coordinates = feature.getGeometry().getCoordinates();
-                    popup.setPosition(coordinates);
-                    var popupElement = document.getElementById('popup');
-                    popupElement.innerHTML =
-                        '<h4 class="popup-header">Bezeichnung:</h4><p class="popup-header">' + feature.get('pinname') + '</p>' +
-                        '<hr class="solid">' +
-                        '<h4 class="popup-header">Standort:</h4><p class="popup-header">' + feature.get('pinlocation') + '</p>' +
-                        '<hr class="solid">' +
-                        '<h4 class="popup-header">Beschreibung:</h4><p class="popup-header">' + feature.get('pindesc') + '</p>';
+                    let content = '';
+
+                    let pinname = feature.get('pinname')?.trim();
+                    let pinlocation = feature.get('pinlocation')?.trim();
+                    let pindesc = feature.get('pindesc')?.trim();
+
+                    if (pinname) {
+                        content += '<h4 class="popup-header">Bezeichnung:</h4><p class="popup-header">' + pinname + '</p><hr class="solid">';
+                    }
+
+                    if (pinlocation) {
+                        content += '<h4 class="popup-header">Standort:</h4><p class="popup-header">' + pinlocation + '</p><hr class="solid">';
+                    }
+
+                    if (pindesc) {
+                        content += '<h4 class="popup-header">Beschreibung:</h4><p class="popup-header">' + pindesc + '</p>';
+                    }
+
+                    // Falls alle Felder leer sind, Standardtext setzen
+                    if (!content) {
+                        content = '<h4 class="popup-header">Keine Informationen verfügbar</h4>';
+                    } else {
+                        // Entferne das letzte `<hr>` falls vorhanden
+                        content = content.replace(/<hr class="solid">$/, '');
+                    }
+
+                    // Zeige das Popup immer an
+                    popupElement.innerHTML = content;
                     popupElement.style.display = 'block';
+                    popup.setPosition(coordinates);
                 } else {
-                    document.getElementById('popup').style.display = 'none';
+                    popupElement.style.display = 'none';
                 }
             });
+
         }
 
         function setMarkerPosition(lon, lat, pinname, pinlocation, pindesc, plankey, pinkey) {
