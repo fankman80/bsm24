@@ -226,7 +226,7 @@ public partial class MapView : IQueryAttributable
     {
         string outputPath = Path.Combine(Settings.DataDirectory, GlobalJson.Data.ProjectPath, GlobalJson.Data.ProjectPath + ".kml");
 
-        List<(double Latitude, double Longitude, string Name, DateTime Time)> coordinates = [];
+        List<(double Latitude, double Longitude, string Name, DateTime Time, string Desc)> coordinates = [];
         foreach (var plan in GlobalJson.Data.Plans)
         {
             if (GlobalJson.Data.Plans[plan.Key].Pins != null)
@@ -238,7 +238,8 @@ public partial class MapView : IQueryAttributable
                         coordinates.Add((GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].GeoLocation.WGS84.Latitude,
                                          GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].GeoLocation.WGS84.Longitude,
                                          GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].PinName,
-                                         GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].DateTime));
+                                         GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].DateTime,
+                                         GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].PinDesc));
                     }
                 }
             }

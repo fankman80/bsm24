@@ -8,7 +8,7 @@ namespace bsm24;
 
 public class KmlGenerator
 {
-    public static void GenerateKml(string filePath, List<(double Latitude, double Longitude, string Name, DateTime time)> coordinates)
+    public static void GenerateKml(string filePath, List<(double Latitude, double Longitude, string Name, DateTime time, string desc)> coordinates)
     {
         // Erstellen des KML-Dokuments
         var document = new Document
@@ -17,7 +17,7 @@ public class KmlGenerator
         };
 
         // Hinzufügen von Placemarks für jede Koordinate
-        foreach (var (Latitude, Longitude, Name, Time) in coordinates)
+        foreach (var (Latitude, Longitude, Name, Time, Desc) in coordinates)
         {
             var point = new Point
             {
@@ -29,11 +29,17 @@ public class KmlGenerator
                 When = Time
             };
 
-            var placemark = new Placemark
+            var description = new SharpKml.Dom.Description
+            {
+                Text = Desc
+            };
+
+            var placemark = new SharpKml.Dom.Placemark
             {
                 Name = Name,
                 Geometry = point,
                 Time = timeStamp,
+                Description = description,
             };
 
             document.AddFeature(placemark);
