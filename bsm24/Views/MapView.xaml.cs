@@ -237,7 +237,7 @@ public partial class MapView : IQueryAttributable
                     {
                         coordinates.Add((GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].GeoLocation.WGS84.Latitude,
                                          GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].GeoLocation.WGS84.Longitude,
-                                         GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].PinDesc,
+                                         GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].PinName,
                                          GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].DateTime));
                     }
                 }
