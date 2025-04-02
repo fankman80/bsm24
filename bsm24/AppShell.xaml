@@ -45,7 +45,7 @@
                        FontSize="18"
                        TextColor="{DynamicResource PrimaryDark}"
                        FontAttributes="Bold"
-                        VerticalTextAlignment="Center"
+                       VerticalTextAlignment="Center"
                        HorizontalTextAlignment="Start"/>
                 <Label Grid.Column="1"
                        Grid.Row="1"
@@ -106,7 +106,7 @@
                        HorizontalTextAlignment="Center"/>
 
                 <ImageButton Grid.Row="0" Grid.Column="2" Grid.RowSpan="2"
-                             Source="{FontImageSource FontFamily=MaterialOutlined, Color={AppThemeBinding Light={DynamicResource Primary}, Dark={DynamicResource PrimaryDark}}, Glyph={x:Static m:MaterialOutlined.Settings}}"
+                             Source="{FontImageSource FontFamily=MaterialOutlined, Size=24, Color={AppThemeBinding Light={DynamicResource Primary}, Dark={DynamicResource PrimaryDark}}, Glyph={x:Static m:MaterialOutlined.Settings}}"
                              HorizontalOptions="End"
                              VerticalOptions="Center"
                              BackgroundColor="Transparent"
