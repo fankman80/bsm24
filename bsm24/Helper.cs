@@ -3,6 +3,8 @@
 
 using bsm24.Services;
 using CommunityToolkit.Maui.Alerts;
+using Microsoft.Maui.Controls;
+using SixLabors.Fonts;
 using SkiaSharp;
 using System.Globalization;
 using System.IO.Compression;
@@ -56,7 +58,6 @@ public class Helper
             shellItems.Add(flyoutItem);
         
     }
-
 
     public static void HeaderUpdate()
     {
