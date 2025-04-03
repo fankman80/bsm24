@@ -2,18 +2,17 @@
 
 using System.Globalization;
 
-namespace bsm24.Services
-{
-    public class IntToBoolConverter : IValueConverter
-    {
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            return (int)value == int.Parse(parameter.ToString());
-        }
+namespace bsm24.Services;
 
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            return (bool)value ? int.Parse(parameter.ToString()) : Binding.DoNothing;
-        }
+public class IntToBoolConverter : IValueConverter
+{
+    public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+    {
+        return (int)value == int.Parse(parameter.ToString());
+    }
+
+    public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+    {
+        return (bool)value ? int.Parse(parameter.ToString()) : Binding.DoNothing;
     }
 }

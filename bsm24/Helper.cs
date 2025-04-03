@@ -24,8 +24,8 @@ public class Helper
                 FontFamily = "MaterialOutlined",
                 Glyph = glyph,
                 Color = Application.Current.RequestedTheme == AppTheme.Dark
-                        ? (Color)Application.Current.Resources["PrimaryDark"]
-                        : (Color)Application.Current.Resources["Primary"]
+                        ? (Color)Application.Current.Resources["PrimaryDarkText"]
+                        : (Color)Application.Current.Resources["PrimaryText"]
             }
         };
 
@@ -44,16 +44,19 @@ public class Helper
 
     public static void AddDivider()
     {
-        var menuItem = new MenuItem
+        var flyoutItem = new FlyoutItem
         {
-            Text = "----------- Pläne -----------",
-            IsEnabled = false,
-            AutomationId = "990",
+            Title = "────────────────────────────────────────────────────────", // Text für die Trennlinie
+            IsEnabled = false, // Deaktiviert, sodass es nicht klickbar ist
+            AutomationId = "990", // Optional, falls benötigt
+            Items = { new ShellContent{} },
         };
 
         if (Shell.Current.Items is IList<ShellItem> shellItems)
-            shellItems.Add(menuItem);
+            shellItems.Add(flyoutItem);
+        
     }
+
 
     public static void HeaderUpdate()
     {

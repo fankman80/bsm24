@@ -15,7 +15,6 @@ public partial class PopupSettings : PopupPage
     public PopupSettings()
 	{
 		InitializeComponent();
-        colorThemePicker.PropertyChanged += MapLayerPicker_PropertyChanged;
     }
 
     protected override void OnAppearing()
@@ -40,30 +39,5 @@ public partial class PopupSettings : PopupPage
     {
         SettingsService.Instance.SaveSettings();
         await MopupService.Instance.PopAsync();
-    }
-
-    private void MapLayerPicker_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
-    {
-        // Hole die AppShell
-        var appShell = (AppShell)Application.Current.Windows[0].Page;
-
-        foreach (var item in appShell.Items)
-        {
-            // Überprüfen und aktualisieren des `Icon`
-            if (item is FlyoutItem flyoutItem && flyoutItem.Icon is FontImageSource fontIcon)
-            {
-                fontIcon.Color = (Color)(Application.Current.RequestedTheme == AppTheme.Dark
-                                ? Application.Current.Resources["PrimaryDark"]
-                                : Application.Current.Resources["Primary"]);
-            }
-
-            // Überprüfen und aktualisieren des `FlyoutIcon`
-            if (item is BaseShellItem baseShellItem && baseShellItem.FlyoutIcon is FontImageSource flyoutFontIcon)
-            {
-                flyoutFontIcon.Color = (Color)(Application.Current.RequestedTheme == AppTheme.Dark
-                                ? Application.Current.Resources["PrimaryDark"]
-                                : Application.Current.Resources["Primary"]);
-            }
-        }
     }
 }

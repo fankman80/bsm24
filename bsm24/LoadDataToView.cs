@@ -1,5 +1,7 @@
 ﻿#nullable disable
 
+using Microsoft.Maui.Controls;
+
 namespace bsm24;
 
 public partial class LoadDataToView
@@ -18,7 +20,7 @@ public partial class LoadDataToView
                     var newPage = new Views.NewPage(planId)
                     {
                         Title = planTitle,
-                        AutomationId = planId
+                        AutomationId = planId,
                     };
 
                     var shellContent = new ShellContent
@@ -35,11 +37,9 @@ public partial class LoadDataToView
                         {
                             FontFamily = "MaterialOutlined",
                             Glyph = UraniumUI.Icons.MaterialSymbols.MaterialOutlined.Layers,
-                            Color = Application.Current.RequestedTheme == AppTheme.Dark
-                                    ? (Color)Application.Current.Resources["PrimaryDark"]
-                                    : (Color)Application.Current.Resources["Primary"]
+
                         },
-                        Items = { shellContent },
+                        Items = { shellContent }
                     };
 
                     (Application.Current.Windows[0].Page as AppShell).Items.Add(newFlyoutItem);

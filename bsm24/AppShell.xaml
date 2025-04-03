@@ -12,12 +12,31 @@
        xmlns:model="clr-namespace:bsm24.ViewModels"
        x:Class="bsm24.AppShell"
        x:Name="shell"
-       FlyoutBackgroundColor="{AppThemeBinding Light={DynamicResource PrimaryBackground}, Dark={DynamicResource SecondaryBackgroundDark}}"
-       FlyoutBackgroundImageAspect="AspectFill"
-       FlyoutHeaderBehavior="Fixed"
+       FlyoutBackgroundColor="{AppThemeBinding Light={DynamicResource PrimaryBackground}, Dark={DynamicResource SecondaryBackgroundDark}}"  
        Shell.ForegroundColor="{DynamicResource PrimaryDark}"       
        Shell.FlyoutBehavior="{OnIdiom Desktop=Locked, Default=Flyout}">
 
+    <Shell.ItemTemplate>
+        <DataTemplate>
+            <Grid ColumnDefinitions="22,Auto" HeightRequest="44" ColumnSpacing="10" Padding="8,0,0,0">
+                <Label Grid.Column="0"
+                       FontSize="22"
+                       FontFamily="MaterialOutlined" 
+                       VerticalOptions="Center"
+                       HorizontalOptions="Center"
+                       TextColor="{AppThemeBinding Light={DynamicResource Primary}, Dark={DynamicResource PrimaryDark}}">
+                    <Label.Text>
+                        <Binding Path="Icon.Glyph" />
+                    </Label.Text>
+                </Label>
+                <Label Grid.Column="1"
+                       Text="{Binding Title}" 
+                       TextColor="{AppThemeBinding Light={DynamicResource Primary}, Dark={DynamicResource PrimaryDark}}"
+                       VerticalOptions="Center"/>
+            </Grid>
+        </DataTemplate>
+    </Shell.ItemTemplate>
+    
     <Shell.FlyoutHeaderTemplate>
         <DataTemplate>
             <Grid x:DataType="services:SettingsService" BindingContext="{x:Static services:SettingsService.Instance}"
