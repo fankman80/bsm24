@@ -26,74 +26,10 @@ public partial class AppShell : Shell
         Routing.RegisterRoute("mapview", typeof(MapView));
     }
 
-    private async void OnProjectOpenClicked(object sender, EventArgs e)
-    {
-        await Shell.Current.GoToAsync("open_project");
-#if ANDROID
-        Shell.Current.FlyoutIsPresented = false;
-#endif
-    }
-
-    private async void OnProjectDetailsClicked(object sender, EventArgs e)
-    {
-        await Shell.Current.GoToAsync("project_details");
-#if ANDROID
-        Shell.Current.FlyoutIsPresented = false;
-#endif
-    }
-
-    private async void OnPinListClicked(object sender, EventArgs e)
-    {
-        if (GlobalJson.Data.Plans != null)
-        {
-            await Shell.Current.GoToAsync("pinList");
-        }
-        else
-        {
-            var popup = new PopupAlert("Keine Pläne vorhanden!");
-            await MopupService.Instance.PushAsync(popup);
-        }
-#if ANDROID
-        Shell.Current.FlyoutIsPresented = false;
-#endif
-    }
-
     private async void OnSettingsClicked(object sender, EventArgs e)
     {
         var popup = new PopupSettings();
         await MopupService.Instance.PushAsync(popup);
-    }
-
-    public async void OnExportClicked(object sender, EventArgs e)
-    {
-        if (GlobalJson.Data.Plans != null)
-        {
-            await Shell.Current.GoToAsync("exportSettings");
-        }
-        else
-        {
-            var popup = new PopupAlert("Keine Pläne vorhanden!");
-            await MopupService.Instance.PushAsync(popup);
-        }
-#if ANDROID
-        Shell.Current.FlyoutIsPresented = false;
-#endif
-    }
-
-    public async void OnMapViewClicked(object sender, EventArgs e)
-    {
-        if (GlobalJson.Data.Plans != null)
-        {
-            await Shell.Current.GoToAsync("mapview");
-        }
-        else
-        {
-            var popup = new PopupAlert("Keine Pläne vorhanden!");
-            await MopupService.Instance.PushAsync(popup);
-        }
-#if ANDROID
-        Shell.Current.FlyoutIsPresented = false;
-#endif
     }
 
     public void OnTitleClicked(object sender, EventArgs e)

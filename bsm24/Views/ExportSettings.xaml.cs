@@ -134,7 +134,7 @@ public partial class ExportSettings : UraniumContentPage
         if (File.Exists(outputPath))
             File.Delete(outputPath);
 
-        await Shell.Current.GoToAsync("..");
+        await Shell.Current.GoToAsync("//homescreen");
     }
 
     private static async Task ShareFileAsync(string filePath)
@@ -149,7 +149,7 @@ public partial class ExportSettings : UraniumContentPage
 
     private async void OnCancelClicked(object sender, EventArgs e)
     {
-        await Shell.Current.GoToAsync("..");
+        await Shell.Current.GoToAsync("//homescreen");
     }
 
     private static void LoadDocuments()

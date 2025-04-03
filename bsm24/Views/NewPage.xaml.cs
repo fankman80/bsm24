@@ -277,7 +277,7 @@ public partial class NewPage : IQueryAttributable
             isTappedHandled = true;
 
             var _pinIcon = GlobalJson.Data.Plans[PlanId].Pins[pinId].PinIcon;
-            await Shell.Current.GoToAsync($"setpin?planId={PlanId}&pinId={pinId}&pinIcon={_pinIcon}");
+            await Shell.Current.GoToAsync($"setpin?planId={PlanId}&pinId={pinId}");
 
             isTappedHandled = false;
         };

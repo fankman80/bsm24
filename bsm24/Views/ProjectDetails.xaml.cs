@@ -54,11 +54,8 @@ public partial class ProjectDetails : UraniumContentPage
         }
 
         Helper.HeaderUpdate();
-        
-        if (GlobalJson.Data.Plans == null)
-            await Shell.Current.GoToAsync("//homescreen");
-        else
-            await Shell.Current.GoToAsync("..");
+
+        await Shell.Current.GoToAsync("//homescreen");
 
 #if ANDROID
         Shell.Current.FlyoutIsPresented = true;

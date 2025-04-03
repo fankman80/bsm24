@@ -1,7 +1,6 @@
 ﻿using bsm24.Services;
 using UraniumUI;
 
-
 #if ANDROID
 using Android.OS;
 using Android.Content;
@@ -35,7 +34,6 @@ public partial class App : Application
         // Asynchronen Initialisierungsprozess starten
         await InitializeAsync();
     }
-
 
     private async static Task EnsureStoragePermissionAsync()
     {
@@ -88,9 +86,8 @@ public partial class App : Application
         // lade Einstellungen
         SettingsService.Instance.LoadSettings();
 
-        Helper.AddMenuItem("Projektliste", UraniumUI.Icons.MaterialSymbols.MaterialOutlined.Folder_open, "OnProjectOpenClicked");
+        Helper.AddMenuItem("Projektliste", UraniumUI.Icons.MaterialSymbols.MaterialOutlined.Folder_open, "OpenProject");
     }
-
 
     protected override Window CreateWindow(IActivationState? activationState)
     {

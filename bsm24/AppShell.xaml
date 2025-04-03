@@ -10,6 +10,7 @@
        xmlns:sys="clr-namespace:System;assembly=System.Runtime"
        xmlns:services="clr-namespace:bsm24.Services"
        xmlns:model="clr-namespace:bsm24.ViewModels"
+       xmlns:local="clr-namespace:bsm24"
        x:Class="bsm24.AppShell"
        x:Name="shell"
        FlyoutBackgroundColor="{AppThemeBinding Light={DynamicResource PrimaryBackground}, Dark={DynamicResource SecondaryBackgroundDark}}"  
@@ -18,21 +19,22 @@
 
     <Shell.ItemTemplate>
         <DataTemplate>
-            <Grid ColumnDefinitions="50,Auto" RowDefinitions="50">
+            <Grid ColumnDefinitions="Auto,Auto" RowDefinitions="44">
                 <Label Grid.Column="0" Grid.Row="0"
+                       Margin= "10,0,0,0"
                        FontSize="22"
                        FontFamily="MaterialOutlined" 
                        VerticalOptions="Center"
                        HorizontalOptions="Center"
-                       TextColor="{AppThemeBinding Light={DynamicResource Primary}, Dark={DynamicResource PrimaryDark}}">
+                       TextColor="{Binding Path=Icon.Color}">
                     <Label.Text>
                         <Binding Path="Icon.Glyph" />
                     </Label.Text>
                 </Label>
                 <Label Grid.Column="1" Grid.Row="0"
-                       Margin="24,0,0,0"
+                       Margin= "10,0,0,0"
                        Text="{Binding Title}" 
-                       TextColor="{AppThemeBinding Light={DynamicResource Primary}, Dark={DynamicResource PrimaryDark}}"
+                       TextColor="{Binding Path=Icon.Color}"
                        VerticalOptions="Center"/>
             </Grid>
         </DataTemplate>

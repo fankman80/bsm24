@@ -84,7 +84,7 @@ public partial class IconGallery : UraniumContentPage, IQueryAttributable
         // save data to file
         GlobalJson.SaveToFile();
 
-        await Shell.Current.GoToAsync($"setpin?planId={PlanId}&pinId={PinId}&pinIcon={fileName}");
+        await Shell.Current.GoToAsync($"setpin?planId={PlanId}&pinId={PinId}");
     }
 
     private async void OnLongPressed(object sender, EventArgs e)

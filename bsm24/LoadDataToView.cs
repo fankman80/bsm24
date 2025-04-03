@@ -1,6 +1,5 @@
 ﻿#nullable disable
-
-using Microsoft.Maui.Controls;
+using bsm24.Views;
 
 namespace bsm24;
 
@@ -32,12 +31,14 @@ public partial class LoadDataToView
                     var newFlyoutItem = new FlyoutItem
                     {
                         Title = planTitle,
-                        AutomationId = planId,
+                        AutomationId = "m2",
                         Icon = new FontImageSource
                         {
                             FontFamily = "MaterialOutlined",
                             Glyph = UraniumUI.Icons.MaterialSymbols.MaterialOutlined.Layers,
-
+                            Color = Application.Current.RequestedTheme == AppTheme.Dark
+                                    ? (Color)Application.Current.Resources["PrimaryDark"]
+                                    : (Color)Application.Current.Resources["Primary"]
                         },
                         Items = { shellContent }
                     };
@@ -51,17 +52,19 @@ public partial class LoadDataToView
     public static void ResetFlyoutItems()
     {
         // Alle ShellItems durchlaufen und Items entfernen, deren AutomationId nicht null ist
-        foreach (var shellitem in (Application.Current.Windows[0].Page as AppShell).Items.ToList())
+        if (Application.Current.Windows[0].Page is not AppShell appShell) return;
+
+        foreach (var item in appShell.Items.ToList())
         {
-            if (shellitem.AutomationId != null)
-                (Application.Current.Windows[0].Page as AppShell).Items.Remove(shellitem);
+            if (item is FlyoutItem flyoutItem)
+                appShell.Items.Remove(flyoutItem);
         }
 
-        Helper.AddMenuItem("Projektliste", UraniumUI.Icons.MaterialSymbols.MaterialOutlined.Folder_open, "OnProjectOpenClicked");
-        Helper.AddMenuItem("Projekt Details", UraniumUI.Icons.MaterialSymbols.MaterialOutlined.Home_work, "OnProjectDetailsClicked");
-        Helper.AddMenuItem("swisstopo Karte", UraniumUI.Icons.MaterialSymbols.MaterialOutlined.Map, "OnMapViewClicked");
-        Helper.AddMenuItem("Pin Liste", UraniumUI.Icons.MaterialSymbols.MaterialOutlined.Format_list_numbered, "OnPinListClicked");
-        Helper.AddMenuItem("Bericht exportieren", UraniumUI.Icons.MaterialSymbols.MaterialOutlined.Convert_to_text, "OnExportClicked");
+        Helper.AddMenuItem("Projektliste", UraniumUI.Icons.MaterialSymbols.MaterialOutlined.Folder_open, "OpenProject");
+        Helper.AddMenuItem("Projekt Details", UraniumUI.Icons.MaterialSymbols.MaterialOutlined.Home_work, "ProjectDetails");
+        Helper.AddMenuItem("swisstopo Karte", UraniumUI.Icons.MaterialSymbols.MaterialOutlined.Map, "MapView");
+        Helper.AddMenuItem("Pin Liste", UraniumUI.Icons.MaterialSymbols.MaterialOutlined.Format_list_numbered, "PinList");
+        Helper.AddMenuItem("Bericht exportieren", UraniumUI.Icons.MaterialSymbols.MaterialOutlined.Convert_to_text, "ExportSettings");
         Helper.AddDivider();
     }
 

@@ -13,8 +13,9 @@ public partial class PopupSettings : PopupPage
     public string ReturnValue { get; set; }
 
     public PopupSettings()
-	{
-		InitializeComponent();
+    {
+        InitializeComponent();
+        colorThemePicker.SelectedValueChanged += OnThemeChanged;
     }
 
     protected override void OnAppearing()
@@ -39,5 +40,27 @@ public partial class PopupSettings : PopupPage
     {
         SettingsService.Instance.SaveSettings();
         await MopupService.Instance.PopAsync();
+    }
+
+    private void OnThemeChanged(object sender, object e)
+    {
+        Color newColor_m1 = Application.Current.RequestedTheme == AppTheme.Dark
+            ? (Color)Application.Current.Resources["PrimaryDarkText"]
+            : (Color)Application.Current.Resources["PrimaryText"];
+
+        Color newColor_m2 = Application.Current.RequestedTheme == AppTheme.Dark
+            ? (Color)Application.Current.Resources["PrimaryDark"]
+            : (Color)Application.Current.Resources["Primary"];
+
+        foreach (var item in (Application.Current.Windows[0].Page as AppShell).Items)
+        {
+            if (item is FlyoutItem flyoutItem && flyoutItem.Icon is FontImageSource fontIcon)
+            {
+                if (item.AutomationId == "m1")
+                    fontIcon.Color = newColor_m1;
+                else if (item.AutomationId == "m2")
+                    fontIcon.Color = newColor_m2;
+            }
+        }
     }
 }

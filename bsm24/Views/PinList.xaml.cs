@@ -98,7 +98,7 @@ public partial class PinList : UraniumContentPage
         string planId = button.AutomationId;
         string pinId = button.ClassId;
 
-        await Shell.Current.GoToAsync($"//{planId}?pinZoom={pinId}");
+        await Shell.Current.GoToAsync($"///{planId}?pinZoom={pinId}");
     }
 
     private async void OnEditClicked(object sender, EventArgs e)
@@ -107,6 +107,8 @@ public partial class PinList : UraniumContentPage
         string planId = button.AutomationId;
         string pinId = button.ClassId;
 
+        await Shell.Current.GoToAsync($"///{planId}");
+        await Shell.Current.Navigation.PopToRootAsync();
         await Shell.Current.GoToAsync($"setpin?planId={planId}&pinId={pinId}");
     }
 

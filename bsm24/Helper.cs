@@ -3,13 +3,12 @@
 
 using bsm24.Services;
 using CommunityToolkit.Maui.Alerts;
-using Microsoft.Maui.Controls;
-using SixLabors.Fonts;
 using SkiaSharp;
 using System.Globalization;
 using System.IO.Compression;
 using System.Reflection;
 using System.Xml.Linq;
+using bsm24.Views;
 
 namespace bsm24;
 
@@ -17,46 +16,50 @@ public class Helper
 {
     public static void AddMenuItem(string title, string glyph, string methodName)
     {
-        var newMenuItem = new MenuItem
+        var shellItem = new FlyoutItem
         {
-            Text = title,
-            AutomationId = "990",
-            IconImageSource = new FontImageSource
+            Title = title,
+            AutomationId = "m1",
+            Icon = new FontImageSource
             {
                 FontFamily = "MaterialOutlined",
                 Glyph = glyph,
                 Color = Application.Current.RequestedTheme == AppTheme.Dark
-                        ? (Color)Application.Current.Resources["PrimaryDarkText"]
-                        : (Color)Application.Current.Resources["PrimaryText"]
+                                    ? (Color)Application.Current.Resources["PrimaryDarkText"]
+                                    : (Color)Application.Current.Resources["PrimaryText"]
             }
         };
 
-        if (Application.Current.Windows[0].Page is AppShell appShell)
-        {
-            var methodInfo = appShell.GetType().GetMethod(methodName, BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance);
-            if (methodInfo != null)
-                newMenuItem.Clicked += (s, e) => methodInfo.Invoke(appShell, [s, e]);
-            else
-                Console.WriteLine($"Methode '{methodName}' wurde nicht gefunden.");
-        }
+        // Den Typ der gewünschten Page per Reflection ermitteln
+        Type pageType = Type.GetType($"bsm24.Views.{methodName}"); // Namespace anpassen!
 
-        if (Shell.Current.Items is IList<ShellItem> shellItems)
-            shellItems.Add(newMenuItem);
+        if (pageType != null && typeof(ContentPage).IsAssignableFrom(pageType))
+        {
+            var shellContent = new ShellContent
+            {
+                Route = methodName, // Route muss vorher in AppShell registriert sein!
+                ContentTemplate = new DataTemplate(() => Activator.CreateInstance(pageType) as ContentPage) // Dynamisch instanziieren
+            };
+
+            // FlyoutItem bekommt ShellContent
+            shellItem.Items.Add(shellContent);
+
+            // Item zum Shell hinzufügen
+            Shell.Current.Items.Add(shellItem);
+        }
     }
 
     public static void AddDivider()
     {
         var flyoutItem = new FlyoutItem
         {
-            Title = "────────────────────────────────────────────────────────", // Text für die Trennlinie
-            IsEnabled = false, // Deaktiviert, sodass es nicht klickbar ist
-            AutomationId = "990", // Optional, falls benötigt
+            Title = "────────────────────────────────────────────────────────",
+            IsEnabled = false,
             Items = { new ShellContent{} },
         };
 
         if (Shell.Current.Items is IList<ShellItem> shellItems)
             shellItems.Add(flyoutItem);
-        
     }
 
     public static void HeaderUpdate()
