@@ -85,8 +85,6 @@ public partial class App : Application
 
         // lade Einstellungen
         SettingsService.Instance.LoadSettings();
-
-        Helper.AddMenuItem("Projektliste", UraniumUI.Icons.MaterialSymbols.MaterialOutlined.Folder_open, "OpenProject");
     }
 
     protected override Window CreateWindow(IActivationState? activationState)

@@ -5,71 +5,58 @@ namespace bsm24;
 
 public partial class LoadDataToView
 {
+
     public static void LoadData(FileResult path)
     {
-        if (path != null && !string.IsNullOrEmpty(path.FullPath))
+        if (path == null || string.IsNullOrEmpty(path.FullPath))
+            return;
+
+        if (GlobalJson.Data.Plans == null)
+            return;
+
+        if (Application.Current.Windows[0].Page is not AppShell appShell)
+            return;
+
+        foreach (var plan in GlobalJson.Data.Plans)
         {
-            if (GlobalJson.Data.Plans != null)
+            string planId = plan.Key;
+            string planTitle = plan.Value.Name;
+
+            // Neue Plan-Seite mit Übergabe der ID erstellen
+            var newPage = new Views.NewPage(planId)
             {
-                foreach (var plan in GlobalJson.Data.Plans)
-                {
-                    string planTitle = GlobalJson.Data.Plans[plan.Key].Name;
-                    string planId = plan.Key;
+                Title = planTitle,
+                AutomationId = planId,
+                PlanId = planId,
+            };
 
-                    var newPage = new Views.NewPage(planId)
-                    {
-                        Title = planTitle,
-                        AutomationId = planId,
-                    };
+            // ShellContent erzeugen und mit eindeutiger Route versehen
+            var shellContent = new ShellContent
+            {
+                Content = newPage,
+                Route = planId, // Wichtig: wird für GoToAsync("//planId") verwendet
+                Title = planTitle,
+                Icon = "icon_placeholder.png" // Optional: Standardicon oder aus IconGlyph generieren
+            };
 
-                    var shellContent = new ShellContent
-                    {
-                        Content = newPage,
-                        Route = planId
-                    };
+            // Seite zur Shell dynamisch hinzufügen
+            appShell.Items.Add(shellContent);
 
-                    var newFlyoutItem = new FlyoutItem
-                    {
-                        Title = planTitle,
-                        AutomationId = planId,
-                        Icon = new FontImageSource
-                        {
-                            FontFamily = "MaterialOutlined",
-                            Glyph = UraniumUI.Icons.MaterialSymbols.MaterialOutlined.Layers,
-                            Color = Application.Current.RequestedTheme == AppTheme.Dark
-                                    ? (Color)Application.Current.Resources["PrimaryDark"]
-                                    : (Color)Application.Current.Resources["Primary"]
-                        },
-                        Items = { shellContent }
-                    };
-
-                    (Application.Current.Windows[0].Page as AppShell).Items.Add(newFlyoutItem);
-                }
-            }
+            // PlanItem für ein Flyout- oder Menü-Item hinzufügen
+            appShell.PlanItems.Add(new PlanItem(GlobalJson.Data.Plans[plan.Key])
+            {
+                Title = planTitle,
+                PlanId = planId,
+                IconGlyph = UraniumUI.Icons.MaterialSymbols.MaterialOutlined.Layers,
+                PlanRoute = planId
+            });
         }
-    }
-
-    public static void ResetFlyoutItems()
-    {
-        // Alle ShellItems durchlaufen und Items entfernen, deren AutomationId nicht null ist
-        if (Application.Current.Windows[0].Page is not AppShell appShell) return;
-
-        foreach (var item in appShell.Items.ToList())
-        {
-            if (item is FlyoutItem flyoutItem)
-                appShell.Items.Remove(flyoutItem);
-        }
-
-        Helper.AddMenuItem("Projektliste", UraniumUI.Icons.MaterialSymbols.MaterialOutlined.Folder_open, "OpenProject");
-        Helper.AddMenuItem("Projekt Details", UraniumUI.Icons.MaterialSymbols.MaterialOutlined.Home_work, "ProjectDetails");
-        Helper.AddMenuItem("swisstopo Karte", UraniumUI.Icons.MaterialSymbols.MaterialOutlined.Map, "MapView");
-        Helper.AddMenuItem("Pin Liste", UraniumUI.Icons.MaterialSymbols.MaterialOutlined.Format_list_numbered, "PinList");
-        Helper.AddMenuItem("Bericht exportieren", UraniumUI.Icons.MaterialSymbols.MaterialOutlined.Convert_to_text, "ExportSettings");
-        Helper.AddDivider();
     }
 
     public static void ResetData()
     {
+        (Application.Current.Windows[0].Page as AppShell).PlanItems.Clear();
+
         // Reset Datenbank
         GlobalJson.Data.Client_name = null;
         GlobalJson.Data.Object_address = null;

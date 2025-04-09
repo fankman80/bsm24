@@ -72,7 +72,7 @@
             </CollectionView.ItemTemplate>
         </CollectionView>
 
-        <StackLayout Grid.Row="1" Spacing="9" x:DataType="x:AppThemeBindingExtension">
+        <StackLayout Grid.Row="1" x:DataType="x:AppThemeBindingExtension">
             <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto, Auto">
                 <material:TextField Grid.Column="0" Grid.Row="0" Grid.RowSpan="2"
                     x:Name="PinLocation"
@@ -86,7 +86,6 @@
                 <Button Grid.Column="1" Grid.Row="0"
                         x:Name="GeoLocButton"
                         HorizontalOptions="End"
-                        Padding="5"
                         BackgroundColor="Transparent"
                         ImageSource="{FontImageSource FontFamily=MaterialOutlined, Color={AppThemeBinding Light={DynamicResource SecondaryAccent}, Dark={DynamicResource PrimaryDark}}, Glyph={x:Static m:MaterialOutlined.Not_listed_location}}"
                         Clicked="ShowGeoLoc"/>

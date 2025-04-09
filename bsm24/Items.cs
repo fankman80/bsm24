@@ -2,6 +2,7 @@
 
 using SkiaSharp;
 using System.ComponentModel;
+using bsm24.Models;
 
 namespace bsm24
 {
@@ -72,4 +73,55 @@ namespace bsm24
         public required string Desc { get; set; }
         public required string Id { get; set; }
     }
+
+    public partial class PlanItem : INotifyPropertyChanged
+    {
+        private readonly Plan _plan; // direkte Referenz auf das zugrundeliegende Modell
+
+        public PlanItem(Plan plan)
+        {
+            _plan = plan;
+            PlanId = plan != null ? "" : string.Empty;
+            _plan.PropertyChanged += (s, e) =>
+            {
+                if (e.PropertyName == nameof(Plan.AllowExport))
+                    OnPropertyChanged(nameof(AllowExport));
+            };
+        }
+
+        public string Title
+        {
+            get => _title;
+            set
+            {
+                if (_title != value)
+                {
+                    _title = value;
+                    OnPropertyChanged(nameof(Title));
+                }
+            }
+        }
+        private string _title;
+
+        public string PlanId { get; set; }
+        public string IconGlyph { get; set; }
+        public string PlanRoute { get; set; }
+        public bool AllowExport
+        {
+            get => _plan != null && _plan.AllowExport;
+            set
+            {
+                if (_plan != null && _plan.AllowExport != value)
+                {
+                    _plan.AllowExport = value;
+                    OnPropertyChanged(nameof(AllowExport));
+                }
+            }
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+        protected virtual void OnPropertyChanged(string propertyName)
+            => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+    }
+
 }

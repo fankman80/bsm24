@@ -38,13 +38,30 @@ public class Plan
     public Size ImageSize { get; set; }
     public bool IsGrayscale { get; set; }
     public string Description { get; set; }
-    public bool AllowExport { get; set; }
     public Dictionary<string, Pin> Pins { get; set; }
+    private bool _allowExport;
+    public bool AllowExport
+    {
+        get => _allowExport;
+        set
+        {
+            if (_allowExport != value)
+            {
+                _allowExport = value;
+                OnPropertyChanged(nameof(AllowExport));
+            }
+        }
+    }
+
+    public event PropertyChangedEventHandler PropertyChanged;
+    protected virtual void OnPropertyChanged(string propertyName)
+    {
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+    }
 }
 
 public partial class Pin : INotifyPropertyChanged
 {
-    private bool _allowExport;
     public Point Pos { get; set; }
     public Point Anchor { get; set; }
     public Size Size { get; set; }
@@ -64,6 +81,7 @@ public partial class Pin : INotifyPropertyChanged
     public double PinScale { get; set; }
     public double PinRotation { get; set; }
     public GeoLocData GeoLocation { get; set; }
+    private bool _allowExport;
     public bool AllowExport
     {
         get => _allowExport;
@@ -78,7 +96,6 @@ public partial class Pin : INotifyPropertyChanged
     }
 
     public event PropertyChangedEventHandler PropertyChanged;
-
     protected virtual void OnPropertyChanged(string propertyName)
     {
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));

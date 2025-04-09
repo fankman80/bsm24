@@ -2,7 +2,6 @@
 using CommunityToolkit.Maui;
 using CommunityToolkit.Maui.Storage;
 using FFImageLoading.Maui;
-using InputKit.Handlers;
 using Mopups.Hosting;
 using MR.Gestures;
 using UraniumUI;

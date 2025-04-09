@@ -12,70 +12,27 @@
        xmlns:model="clr-namespace:bsm24.ViewModels"
        xmlns:local="clr-namespace:bsm24"
        x:Class="bsm24.AppShell"
-       x:Name="shell"
        FlyoutBackgroundColor="{AppThemeBinding Light={DynamicResource PrimaryBackground}, Dark={DynamicResource SecondaryBackgroundDark}}"  
-       Shell.ForegroundColor="{DynamicResource PrimaryDark}"       
+       Shell.ForegroundColor="{DynamicResource PrimaryDark}"
        Shell.FlyoutBehavior="{OnIdiom Desktop=Locked, Default=Flyout}">
 
-    <Shell.ItemTemplate>
-        <DataTemplate>
-            <Grid ColumnDefinitions="Auto,Auto,Auto" RowDefinitions="44">
-                <Label Grid.Column="0" Grid.Row="0"
-                       Margin= "10,0,0,0"
-                       FontSize="22"
-                       FontFamily="MaterialOutlined" 
-                       VerticalOptions="Center"
-                       HorizontalOptions="Center"
-                       TextColor="{Binding Path=Icon.Color}">
-                    <Label.Text>
-                        <Binding Path="Icon.Glyph" />
-                    </Label.Text>
-                </Label>
-                <Label Grid.Column="1" Grid.Row="0"
-                       WidthRequest="140"
-                       Margin= "10,0,0,0"
-                       Text="{Binding Title}" 
-                       TextColor="{Binding Path=Icon.Color}"
-                       VerticalOptions="Center"/>
-                <HorizontalStackLayout Grid.Column="2" Grid.Row="0" Spacing="0">
-                    <HorizontalStackLayout.Triggers>
-                        <DataTrigger TargetType="HorizontalStackLayout" 
-                             Binding="{Binding Source={RelativeSource AncestorType={x:Type FlyoutItem}}, Path=AutomationId}" 
-                             Value="root_menu">
-                            <Setter Property="IsVisible" Value="False" />
-                        </DataTrigger>
-                    </HorizontalStackLayout.Triggers>
-
-                    <ImageButton Clicked="OnUpArrowClicked">
-                        <ImageButton.Source>
-                            <FontImageSource Glyph="{x:Static m:MaterialOutlined.Arrow_upward}"
-                             FontFamily="MaterialOutlined"
-                             Size="16"
-                             Color="{AppThemeBinding Light={DynamicResource Primary}, Dark={DynamicResource PrimaryDark}}" />
-                        </ImageButton.Source>
-                    </ImageButton>
-                    <ImageButton Clicked="OnDownArrowClicked">
-                        <ImageButton.Source>
-                            <FontImageSource Glyph="{x:Static m:MaterialOutlined.Arrow_downward}"
-                             FontFamily="MaterialOutlined"
-                             Size="16"
-                             Color="{AppThemeBinding Light={DynamicResource Primary}, Dark={DynamicResource PrimaryDark}}" />
-                        </ImageButton.Source>
-                    </ImageButton>
-                </HorizontalStackLayout>
-            </Grid>
-        </DataTemplate>
-    </Shell.ItemTemplate>
+    <Shell.Resources>
+        <ResourceDictionary>
+            <services:BooleanInverterConverter x:Key="BooleanInverterConverter" />
+        </ResourceDictionary>
+    </Shell.Resources>
 
     <Shell.FlyoutHeaderTemplate>
         <DataTemplate>
             <Grid x:DataType="services:SettingsService" BindingContext="{x:Static services:SettingsService.Instance}"
-                  BackgroundColor="{AppThemeBinding Light={DynamicResource SecondaryBackgroundDark}, Dark={DynamicResource PrimaryBackgroundDark}}">
+                  BackgroundColor="{AppThemeBinding Light={DynamicResource SecondaryBackgroundDark}, Dark={DynamicResource PrimaryBackgroundDark}}"
+                  RowSpacing="0">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
                 <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
@@ -84,13 +41,13 @@
                              WidthRequest="100"
                              Grid.RowSpan="2"
                              Aspect="AspectFill"
+                             BackgroundColor="Transparent"
                              Source="{Binding FlyoutHeaderImage}"
                              Clicked="OnTitleClicked"/>
                 <Label Grid.Column="1"
                        Grid.Row="0"
                        Text="{Binding FlyoutHeaderDesc}"
                        LineBreakMode="TailTruncation"
-                       Padding="4,4,4,0"
                        FontSize="18"
                        TextColor="{DynamicResource PrimaryDark}"
                        FontAttributes="Bold"
@@ -100,11 +57,89 @@
                        Grid.Row="1"
                        Text="{Binding FlyoutHeaderTitle}"
                        LineBreakMode="WordWrap"
-                       Padding="4,0,4,0"
                        FontSize="14"
                        TextColor="{DynamicResource PrimaryDark}"
                        VerticalTextAlignment="Center"
                        HorizontalTextAlignment="Start"/>
+
+                <VerticalStackLayout Grid.Column="0" Grid.Row="2" Grid.ColumnSpan="2"
+                                     BackgroundColor="{AppThemeBinding Light={DynamicResource PrimaryBackground}, Dark={DynamicResource SecondaryBackgroundDark}}"
+                                     Spacing="0">
+                    <!-- Open Project -->
+                    <Grid ColumnDefinitions="Auto,Auto" HeightRequest="44" Margin="14,0,0,0">
+                        <Grid.GestureRecognizers>
+                            <TapGestureRecognizer Tapped="OnNavigateTapped" CommandParameter="open_project" />
+                        </Grid.GestureRecognizers>
+
+                        <Label Grid.Column="0"
+                               Text="{x:Static m:MaterialOutlined.Folder_open}"
+                               FontFamily="MaterialOutlined" FontSize="22" VerticalOptions="Center"
+                               TextColor="{AppThemeBinding Light={DynamicResource PrimaryText}, Dark={DynamicResource PrimaryDarkText}}" />
+                        <Label Grid.Column="1" Text="Projektliste" FontSize="14" VerticalOptions="Center"
+                               TextColor="{AppThemeBinding Light={DynamicResource PrimaryText}, Dark={DynamicResource PrimaryDarkText}}" />
+                    </Grid>
+
+                    <!-- Details -->
+                    <Grid ColumnDefinitions="Auto,Auto" HeightRequest="44" Margin="14,0,0,0" IsVisible="{Binding IsProjectLoaded}">
+                        <Grid.GestureRecognizers>
+                            <TapGestureRecognizer Tapped="OnNavigateTapped" CommandParameter="project_details" />
+                        </Grid.GestureRecognizers>
+
+                        <Label Grid.Column="0"
+                               Text="{x:Static m:MaterialOutlined.Home_work}"
+                               FontFamily="MaterialOutlined" FontSize="22" VerticalOptions="Center"
+                               TextColor="{AppThemeBinding Light={DynamicResource PrimaryText}, Dark={DynamicResource PrimaryDarkText}}" />
+                        <Label Grid.Column="1" Text="Projektdetails" FontSize="14" VerticalOptions="Center"
+                               TextColor="{AppThemeBinding Light={DynamicResource PrimaryText}, Dark={DynamicResource PrimaryDarkText}}" />
+                    </Grid>
+
+                    <!-- swisstopo Karte -->
+                    <Grid ColumnDefinitions="Auto,Auto" HeightRequest="44" Margin="14,0,0,0" IsVisible="{Binding IsProjectLoaded}">
+                        <Grid.GestureRecognizers>
+                            <TapGestureRecognizer Tapped="OnNavigateTapped" CommandParameter="mapview" />
+                        </Grid.GestureRecognizers>
+
+                        <Label Grid.Column="0"
+                               Text="{x:Static m:MaterialOutlined.Map}"
+                               FontFamily="MaterialOutlined" FontSize="22" VerticalOptions="Center"
+                               TextColor="{AppThemeBinding Light={DynamicResource PrimaryText}, Dark={DynamicResource PrimaryDarkText}}" />
+                        <Label Grid.Column="1" Text="swisstopo Karte" FontSize="14" VerticalOptions="Center"
+                               TextColor="{AppThemeBinding Light={DynamicResource PrimaryText}, Dark={DynamicResource PrimaryDarkText}}" />
+                    </Grid>
+
+                    <!-- Pins -->
+                    <Grid ColumnDefinitions="Auto,Auto" HeightRequest="44" Margin="14,0,0,0" IsVisible="{Binding IsProjectLoaded}">
+                        <Grid.GestureRecognizers>
+                            <TapGestureRecognizer Tapped="OnNavigateTapped" CommandParameter="pinList" />
+                        </Grid.GestureRecognizers>
+
+                        <Label Grid.Column="0"
+                               Text="{x:Static m:MaterialOutlined.Format_list_numbered}"
+                               FontFamily="MaterialOutlined" FontSize="22" VerticalOptions="Center"
+                               TextColor="{AppThemeBinding Light={DynamicResource PrimaryText}, Dark={DynamicResource PrimaryDarkText}}" />
+                        <Label Grid.Column="1" Text="Pin Liste" FontSize="14" VerticalOptions="Center"
+                               TextColor="{AppThemeBinding Light={DynamicResource PrimaryText}, Dark={DynamicResource PrimaryDarkText}}" />
+                    </Grid>
+
+                    <!-- Bericht exportieren -->
+                    <Grid ColumnDefinitions="Auto,Auto" HeightRequest="44" Margin="14,0,0,0" IsVisible="{Binding IsProjectLoaded}">
+                        <Grid.GestureRecognizers>
+                            <TapGestureRecognizer Tapped="OnNavigateTapped" CommandParameter="exportSettings" />
+                        </Grid.GestureRecognizers>
+
+                        <Label Grid.Column="0"
+                               Text="{x:Static m:MaterialOutlined.Convert_to_text}"
+                               FontFamily="MaterialOutlined" FontSize="22" VerticalOptions="Center"
+                               TextColor="{AppThemeBinding Light={DynamicResource PrimaryText}, Dark={DynamicResource PrimaryDarkText}}" />
+                        <Label Grid.Column="1" Text="Bericht exportieren" FontSize="14" VerticalOptions="Center"
+                               TextColor="{AppThemeBinding Light={DynamicResource PrimaryText}, Dark={DynamicResource PrimaryDarkText}}" />
+                    </Grid>
+                    
+                    <!-- Trennlinie -->
+                    <Grid Margin="14,6,14,6" IsVisible="{Binding IsProjectLoaded}">
+                        <Line X1="0" Y1="0" X2="500" Y2="0" Stroke="{AppThemeBinding Light={DynamicResource PrimaryText}, Dark={DynamicResource PrimaryDarkText}}" StrokeThickness="1" />
+                    </Grid>
+                </VerticalStackLayout>
             </Grid>
         </DataTemplate>
     </Shell.FlyoutHeaderTemplate>
@@ -174,4 +209,43 @@
     <ShellContent Route="homescreen"
                   ContentTemplate="{DataTemplate views:HomeScreen}"
                   FlyoutItemIsVisible="False" />
+
+    <Shell.FlyoutContent>
+        <ContentView x:DataType="local:AppShell">
+            <CollectionView ItemsSource="{Binding PlanItems}" CanReorderItems="True" Margin="14,0,20,0" ReorderCompleted="OnReorderCompleted">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate x:DataType="local:PlanItem">
+                        <Grid ColumnDefinitions="Auto,*,Auto" HeightRequest="44">
+                            <Grid.GestureRecognizers>
+                                <TapGestureRecognizer Tapped="OnPlanTapped" CommandParameter="{Binding PlanRoute}" />
+                            </Grid.GestureRecognizers>
+                            
+                            <Label Grid.Column="0"
+                                   Text="{Binding IconGlyph}" 
+                                   FontFamily="MaterialOutlined"
+                                   FontSize="22" 
+                                   HorizontalOptions="Center"
+                                   VerticalOptions="Center"
+                                   TextColor="{AppThemeBinding Light={DynamicResource Primary}, Dark={DynamicResource PrimaryDark}}" />
+
+                            <Label Grid.Column="1"
+                                   Text="{Binding Title}" 
+                                   FontSize="14" 
+                                   VerticalOptions="Center" 
+                                   TextColor="{AppThemeBinding Light={DynamicResource Primary}, Dark={DynamicResource PrimaryDark}}" />
+                            
+                            <Label Grid.Column="2"
+                                   IsVisible="{Binding AllowExport, Converter={StaticResource BooleanInverterConverter}}"
+                                   Text="{x:Static m:MaterialOutlined.Visibility_off}"
+                                   FontFamily="MaterialOutlined"
+                                   FontSize="18" 
+                                   HorizontalOptions="Center"
+                                   VerticalOptions="Center"
+                                   TextColor="{AppThemeBinding Light={DynamicResource Primary}, Dark={DynamicResource PrimaryDark}}" />
+                        </Grid>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+        </ContentView>
+    </Shell.FlyoutContent>
 </Shell>

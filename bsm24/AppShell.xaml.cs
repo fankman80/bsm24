@@ -1,16 +1,15 @@
 ﻿#nullable disable
 
+using bsm24.Services;
 using bsm24.Views;
 using Mopups.Services;
-using System.Windows.Input;
+using System.Collections.ObjectModel;
 
 namespace bsm24;
 
 public partial class AppShell : Shell
 {
-    public Dictionary<string, Type> Routes { get; private set; } = [];
-
-    public static ICommand HelpCommand => new Command<string>(async (url) => await Launcher.OpenAsync(url));
+    public ObservableCollection<PlanItem> PlanItems { get; set; }
 
     public AppShell()
     {
@@ -24,6 +23,9 @@ public partial class AppShell : Shell
         Routing.RegisterRoute("pinList", typeof(PinList));
         Routing.RegisterRoute("exportSettings", typeof(ExportSettings));
         Routing.RegisterRoute("mapview", typeof(MapView));
+
+        PlanItems = [];
+
         BindingContext = this;
     }
 
@@ -35,26 +37,69 @@ public partial class AppShell : Shell
 
     public void OnTitleClicked(object sender, EventArgs e)
     {
-        if (GlobalJson.Data.JsonFile != null)
+        if (SettingsService.Instance.IsProjectLoaded)
         {
             var projectDetails = new ProjectDetails();
             projectDetails.OnTitleCaptureClicked(null, null);
         }
     }
 
-    public void OnUpArrowClicked(object sender, EventArgs e)
+    private async void OnNavigateTapped(object sender, EventArgs e)
     {
-        if (sender is ImageButton button && button.BindingContext is FlyoutItem flyoutItem)
+        if (sender is Grid ve && ve.GestureRecognizers.FirstOrDefault() is TapGestureRecognizer tap)
         {
-            Helper.MoveItem(flyoutItem.AutomationId, -1);
+            var parameter = tap.CommandParameter?.ToString();
+            if (!string.IsNullOrWhiteSpace(parameter))
+            {
+#if WINDOWS     
+                Shell.Current.FlyoutIsPresented = true;
+#endif
+#if ANDROID     
+                Shell.Current.FlyoutIsPresented = false;
+#endif
+                await Shell.Current.GoToAsync(parameter);
+            }
         }
     }
 
-    public void OnDownArrowClicked(object sender, EventArgs e)
+    private async void OnPlanTapped(object sender, EventArgs e)
     {
-        if (sender is ImageButton button && button.BindingContext is FlyoutItem flyoutItem)
+        if (sender is Grid ve && ve.GestureRecognizers.FirstOrDefault() is TapGestureRecognizer tap)
         {
-            Helper.MoveItem(flyoutItem.AutomationId, 1);
+            var parameter = tap.CommandParameter?.ToString();
+            if (!string.IsNullOrWhiteSpace(parameter))
+            {
+#if WINDOWS     
+                Shell.Current.FlyoutIsPresented = true;
+#endif
+#if ANDROID     
+                Shell.Current.FlyoutIsPresented = false;
+#endif
+                await Shell.Current.GoToAsync($"//{parameter}");
+            }
         }
+    }
+
+    private void OnReorderCompleted(object sender, EventArgs e)
+    {
+        if ((sender as CollectionView).ItemsSource is ObservableCollection<PlanItem> reorderedItems)
+        {
+            var updatedPlans = reorderedItems.Select(item => item.PlanRoute).ToList();
+            AppShell.UpdatePlansOrder(updatedPlans);
+
+            // Speichern
+            GlobalJson.SaveToFile();
+        }
+    }
+
+    private static void UpdatePlansOrder(List<string> updatedPlanOrder)
+    {
+        var plansList = GlobalJson.Data.Plans.ToList();
+        var reorderedPlans = updatedPlanOrder.Select(planRoute =>
+        {
+            return plansList.FirstOrDefault(p => p.Key == planRoute);
+        }).Where(p => p.Key != null).ToList();
+
+        GlobalJson.Data.Plans = reorderedPlans.ToDictionary(p => p.Key, p => p.Value);
     }
 }

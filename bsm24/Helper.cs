@@ -14,55 +14,6 @@ namespace bsm24;
 
 public class Helper
 {
-    public static void AddMenuItem(string title, string glyph, string methodName)
-    {
-        var shellItem = new FlyoutItem
-        {
-            Title = title,
-            AutomationId = "root_menu",
-            Icon = new FontImageSource
-            {
-                FontFamily = "MaterialOutlined",
-                Glyph = glyph,
-                Color = Application.Current.RequestedTheme == AppTheme.Dark
-                                    ? (Color)Application.Current.Resources["PrimaryDarkText"]
-                                    : (Color)Application.Current.Resources["PrimaryText"]
-            }
-        };
-
-        // Den Typ der gewünschten Page per Reflection ermitteln
-        Type pageType = Type.GetType($"bsm24.Views.{methodName}"); // Namespace anpassen!
-
-        if (pageType != null && typeof(ContentPage).IsAssignableFrom(pageType))
-        {
-            var shellContent = new ShellContent
-            {
-                Route = methodName, // Route muss vorher in AppShell registriert sein!
-                ContentTemplate = new DataTemplate(() => Activator.CreateInstance(pageType) as ContentPage) // Dynamisch instanziieren
-            };
-
-            // FlyoutItem bekommt ShellContent
-            shellItem.Items.Add(shellContent);
-
-            // Item zum Shell hinzufügen
-            Shell.Current.Items.Add(shellItem);
-        }
-    }
-
-    public static void AddDivider()
-    {
-        var flyoutItem = new FlyoutItem
-        {
-            Title = "────────────────────────────────────────────────────────",
-            IsEnabled = false,
-            Items = { new ShellContent{} },
-            AutomationId = "root_menu",
-        };
-
-        if (Shell.Current.Items is IList<ShellItem> shellItems)
-            shellItems.Add(flyoutItem);
-    }
-
     public static void HeaderUpdate()
     {
         // aktualisiere den Header Text
@@ -303,54 +254,5 @@ public class Helper
         using var data = image.Encode(SKEncodedImageFormat.Jpeg, 90);
         using var stream = File.OpenWrite(destinationPath);
         data.SaveTo(stream);
-    }
-
-    public static void MoveItem(string automationId, int direction)
-    {
-        // Dictionary in eine Liste umwandeln, um Reihenfolge zu manipulieren
-        var plansList = GlobalJson.Data.Plans.ToList();
-
-        // Index des Elements finden
-        int index = plansList.FindIndex(p => p.Key == automationId);
-        int newIndex = index + direction;
-
-        if (index >= 0 && newIndex >= 0 && newIndex < plansList.Count)
-        {
-            // Elemente tauschen
-            var temp = plansList[index];
-            plansList[index] = plansList[newIndex];
-            plansList[newIndex] = temp;
-
-            // Das Dictionary neu aufbauen (Reihenfolge der Liste beibehalten)
-            GlobalJson.Data.Plans = plansList.ToDictionary(p => p.Key, p => p.Value);
-
-            // FlyoutItem in Shell aktualisieren
-            MoveFlyoutItem(automationId, direction);
-
-            // Speichern
-            GlobalJson.SaveToFile();
-        }
-    }
-
-    public static void MoveFlyoutItem(string automationId, int direction)
-    {
-        var shellItems = Shell.Current.Items.ToList(); // In eine Liste umwandeln, da Shell.Items keine List<T> ist
-        int index = shellItems.FindIndex(item => item is FlyoutItem flyoutItem && flyoutItem.AutomationId == automationId);
-        int newIndex = index + direction;
-
-        if (index >= 0 && newIndex >= 0 && newIndex < shellItems.Count)
-        {
-            // FlyoutItem verschieben
-            var temp = shellItems[index];
-            shellItems[index] = shellItems[newIndex];
-            shellItems[newIndex] = temp;
-
-            // Shell leeren und neu befüllen (Reihenfolge aktualisieren)
-            Shell.Current.Items.Clear();
-            foreach (var item in shellItems)
-            {
-                Shell.Current.Items.Add(item);
-            }
-        }
     }
 }

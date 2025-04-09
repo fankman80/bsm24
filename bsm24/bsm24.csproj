@@ -56,7 +56,6 @@
 	  <RunAOTCompilation>False</RunAOTCompilation>
 	  <DebugType>embedded</DebugType>
 	  <Optimize>True</Optimize>
-	  <AndroidLinkTool>r8</AndroidLinkTool>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net9.0-android35.0|AnyCPU'">
@@ -230,6 +229,10 @@
 		
 	<MauiXaml Update="BusyOverlayView.xaml">
 		<Generator>MSBuild:Compile</Generator>
+	</MauiXaml>
+		
+	<MauiXaml Update="MainPage.xaml">
+	  <Generator>MSBuild:Compile</Generator>
 	</MauiXaml>
 		
 	<MauiXaml Update="Views\MapView.xaml">

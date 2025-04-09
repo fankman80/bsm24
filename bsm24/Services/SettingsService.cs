@@ -29,6 +29,20 @@ public partial class SettingsService : INotifyPropertyChanged
     public List<string> IconCategories { get; set; } = ["alle Icons"];
 
 
+    private bool _isProjectLoaded = false;
+    public bool IsProjectLoaded
+    {
+        get => _isProjectLoaded;
+        set
+        {
+            if (_isProjectLoaded != value)
+            {
+                _isProjectLoaded = value;
+                OnPropertyChanged(nameof(IsProjectLoaded));
+            }
+        }
+    }
+
     private string _flyoutHeaderTitle = "";
     public string FlyoutHeaderTitle
     {

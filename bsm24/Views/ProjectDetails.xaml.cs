@@ -49,7 +49,6 @@ public partial class ProjectDetails : UraniumContentPage
 
         if (isPdfChanged)
         {
-            LoadDataToView.ResetFlyoutItems();
             LoadDataToView.LoadData(new FileResult(Path.Combine(Settings.DataDirectory, GlobalJson.Data.ProjectPath, GlobalJson.Data.JsonFile)));
         }
 

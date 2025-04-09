@@ -753,7 +753,7 @@ public partial class NewPage : IQueryAttributable
                 break;
 
             default:
-                (Application.Current.Windows[0].Page as AppShell).Items.FirstOrDefault(i => i.AutomationId == PlanId).Title = result1;
+                (Application.Current.Windows[0].Page as AppShell).PlanItems.FirstOrDefault(i => i.PlanId == PlanId).Title = result1;
                 Title = result1;
 
                 GlobalJson.Data.Plans[PlanId].Name = result1;

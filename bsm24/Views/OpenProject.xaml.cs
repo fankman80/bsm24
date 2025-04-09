@@ -5,8 +5,7 @@ using CommunityToolkit.Maui.Storage;
 using Mopups.Services;
 using System.Globalization;
 using UraniumUI.Pages;
-using SkiaSharp;
-
+using bsm24.Services;
 
 #if WINDOWS
 using System.Diagnostics;
@@ -91,7 +90,6 @@ public partial class OpenProject : UraniumContentPage
 
             string filePath = Path.Combine(Settings.DataDirectory, result, result + ".json");
 
-            LoadDataToView.ResetFlyoutItems();
             LoadDataToView.ResetData();
 
             GlobalJson.CreateNewFile(filePath);
@@ -165,7 +163,7 @@ public partial class OpenProject : UraniumContentPage
                 MainThread.BeginInvokeOnMainThread(async () =>
                 {
                     // Daten laden und verarbeiten (nicht UI-bezogen)
-                    LoadDataToView.ResetFlyoutItems();
+                    SettingsService.Instance.IsProjectLoaded = true;
                     LoadDataToView.ResetData();
                     GlobalJson.LoadFromFile(item.FilePath);
                     LoadDataToView.LoadData(new FileResult(item.FilePath));
@@ -174,7 +172,7 @@ public partial class OpenProject : UraniumContentPage
                     await Shell.Current.GoToAsync("project_details");
 #if ANDROID
                     Shell.Current.FlyoutIsPresented = false;
-#endif
+#endif  
                 });
             }
         });
@@ -314,7 +312,6 @@ public partial class OpenProject : UraniumContentPage
                     if (item.FileName == Path.GetFileName(Path.Combine(GlobalJson.Data.ProjectPath,GlobalJson.Data.JsonFile)))
                     {
                         // Daten laden und verarbeiten (nicht UI-bezogen)
-                        LoadDataToView.ResetFlyoutItems();
                         LoadDataToView.ResetData();
                         GlobalJson.LoadFromFile(newFilePath);
                         LoadDataToView.LoadData(new FileResult(newFilePath));
