@@ -147,10 +147,11 @@
     <Shell.FlyoutFooterTemplate>
         <DataTemplate>
             <Grid x:DataType="model:GPSViewModel" BindingContext="{x:Static model:GPSViewModel.Instance}"
-                  BackgroundColor="{AppThemeBinding Light={DynamicResource Gray050}, Dark={DynamicResource PrimaryBackgroundDark}}">
+                  BackgroundColor="{AppThemeBinding Light={DynamicResource Gray050}, Dark={DynamicResource PrimaryBackgroundDark}}"
+                  RowSpacing="0">
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="*" />
-                    <RowDefinition Height="*" />
+                    <RowDefinition Height="20" />
+                    <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="100" />
@@ -158,9 +159,14 @@
                     <ColumnDefinition Width="100" />
                 </Grid.ColumnDefinitions>
 
-                <Button Grid.Row="0" Grid.Column="0" Grid.RowSpan="2"
-                        HeightRequest="12"
-                        Padding="0"
+                <Label Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3"
+                       BackgroundColor="{AppThemeBinding Light={DynamicResource PrimaryBackground}, Dark={DynamicResource SecondaryBackgroundDark}}"
+                       Text="Zum Umsortieren Pläne gedrückt halten und ziehen" 
+                       TextColor="{AppThemeBinding Light={DynamicResource Primary}, Dark={DynamicResource PrimaryDark}}"
+                       FontSize="11"
+                       HorizontalTextAlignment="Center"/>
+                
+                <Button Grid.Row="1" Grid.Column="0"
                         FontSize="12"
                         Text="GPS"      
                         TextColor="{AppThemeBinding Light={DynamicResource Primary}, Dark={DynamicResource PrimaryDark}}"
@@ -174,25 +180,20 @@
                     </Button.ImageSource>
                 </Button>
 
-                <Label Grid.Row="0" Grid.Column="1"
-                       Text="BSM 24" 
-                       TextColor="{AppThemeBinding Light={DynamicResource Primary}, Dark={DynamicResource PrimaryDark}}"
-                       FontAttributes="Bold"
-                       FontSize="12"
-                       VerticalOptions="End"
-                       HorizontalTextAlignment="Center"/>
-
-                <Label Grid.Row="1" Grid.Column="1"
-                       Text="Version 1.1"
-                       TextColor="{AppThemeBinding Light={DynamicResource Primary}, Dark={DynamicResource PrimaryDark}}"
-                       FontSize="10"
-                       VerticalOptions="Start"
-                       HorizontalTextAlignment="Center"/>
-
-                <ImageButton Grid.Row="0" Grid.Column="2" Grid.RowSpan="2"
+                <VerticalStackLayout Grid.Row="1" Grid.Column="1" Spacing="0" Margin="6">
+                    <Label Text="BSM 24"
+                           TextColor="{AppThemeBinding Light={DynamicResource Primary}, Dark={DynamicResource PrimaryDark}}"
+                           FontAttributes="Bold"
+                           FontSize="12"
+                           HorizontalTextAlignment="Center"/>
+                    <Label Text="Version 1.1"
+                           TextColor="{AppThemeBinding Light={DynamicResource Primary}, Dark={DynamicResource PrimaryDark}}"
+                           FontSize="10"
+                           HorizontalTextAlignment="Center"/>
+                </VerticalStackLayout>
+                
+                <ImageButton Grid.Row="1" Grid.Column="2"
                              HorizontalOptions="End"
-                             HeightRequest="12"
-                             Padding="0"
                              BackgroundColor="Transparent"
                              Clicked="OnSettingsClicked">
                     <ImageButton.Source>
