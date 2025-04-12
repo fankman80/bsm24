@@ -53,10 +53,39 @@
                 </AbsoluteLayout>
             </mr:ContentView>
 
-            <Grid x:Name="PinSizeBorder"
+            <Grid x:Name="PinEditBorder"
                   IsVisible="False"                  
                   AbsoluteLayout.LayoutBounds="0, 0, 1, 1"
                   AbsoluteLayout.LayoutFlags="All">
+                
+                <Border
+                    BackgroundColor="{DynamicResource Primary}"
+                    StrokeThickness="0"
+                    HeightRequest="60"
+                    VerticalOptions="End"
+                    Margin="20,0,20,100"
+                    ZIndex="10000">
+                    <Border.StrokeShape>
+                        <RoundRectangle CornerRadius="30"/>
+                    </Border.StrokeShape>
+                    <Slider x:Name="PinSizeSlider"
+                            Margin="70,15,15,15"
+                            Minimum="1"                    
+                            Maximum="100"
+                            Value="0"
+                            ThumbColor="{DynamicResource PrimaryDarkText}"
+                            MinimumTrackColor="{DynamicResource PrimaryDarkText}"
+                            MaximumTrackColor="{DynamicResource PrimaryDarkText}"
+                            ValueChanged="OnResizeSliderValueChanged"
+                            DragCompleted="OnResizeSliderDragCompleted"/>
+                </Border>
+                <Image Source="{FontImageSource FontFamily=MaterialOutlined, Size=40, Glyph={x:Static m:MaterialOutlined.Pan_zoom}}"
+                       HeightRequest="40"
+                       Margin="40,0,0,110"
+                       ZIndex="10000"
+                       HorizontalOptions="Start"
+                       VerticalOptions="End"/>                
+                
                 <Border
                     BackgroundColor="{DynamicResource Primary}"
                     StrokeThickness="0"
@@ -67,7 +96,7 @@
                     <Border.StrokeShape>
                         <RoundRectangle CornerRadius="30"/>
                     </Border.StrokeShape>
-                    <Slider x:Name="PinSizeSlider"
+                    <Slider x:Name="PinRotateSlider"
                             Margin="70,15,15,15"
                             Minimum="0"                    
                             Maximum="360"
@@ -75,8 +104,8 @@
                             ThumbColor="{DynamicResource PrimaryDarkText}"
                             MinimumTrackColor="{DynamicResource PrimaryDarkText}"
                             MaximumTrackColor="{DynamicResource PrimaryDarkText}"
-                            ValueChanged="OnSliderValueChanged"
-                            DragCompleted="OnSliderDragCompleted"/>
+                            ValueChanged="OnRotateSliderValueChanged"
+                            DragCompleted="OnRotateSliderDragCompleted"/>
                 </Border>
                 <Image Source="{FontImageSource FontFamily=MaterialOutlined, Size=40, Glyph={x:Static m:MaterialOutlined.Rotate_right}}"
                        HeightRequest="40"
@@ -84,13 +113,13 @@
                        ZIndex="10000"
                        HorizontalOptions="Start"
                        VerticalOptions="End"/>
+                
                 <Button InputTransparent="False"
                         Visual="None"
                         CornerRadius="0"
                         BackgroundColor="Transparent"
                         VerticalOptions="Fill"
-                        Clicked="OnFullScreenButtonClicked"
-                        AbsoluteLayout.LayoutBounds="0, 0, 1, 1"/>
+                        Clicked="OnFullScreenButtonClicked"/>
             </Grid>
             
             <Button x:Name="SetPinBtn"

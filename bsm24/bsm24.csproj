@@ -213,9 +213,9 @@
 		<PackageReference Include="MR.Gestures" Version="5.0.0" />
 		<PackageReference Include="PDFtoImage" Version="5.1.0-preview6" />
 		<PackageReference Include="SharpKml.Core" Version="6.1.0" />
-		<PackageReference Include="UraniumUI" Version="2.11.0" />
-		<PackageReference Include="UraniumUI.Icons.MaterialSymbols" Version="2.11.0" />
-		<PackageReference Include="UraniumUI.Material" Version="2.11.0" />
+		<PackageReference Include="UraniumUI" Version="2.11.1" />
+		<PackageReference Include="UraniumUI.Icons.MaterialSymbols" Version="2.11.1" />
+		<PackageReference Include="UraniumUI.Material" Version="2.11.1" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -229,10 +229,6 @@
 		
 	<MauiXaml Update="BusyOverlayView.xaml">
 		<Generator>MSBuild:Compile</Generator>
-	</MauiXaml>
-		
-	<MauiXaml Update="MainPage.xaml">
-	  <Generator>MSBuild:Compile</Generator>
 	</MauiXaml>
 		
 	<MauiXaml Update="Views\MapView.xaml">

@@ -285,11 +285,12 @@ public partial class NewPage : IQueryAttributable
         smallImage.DoubleTapped += (s, e) =>
         {
             activePin = smallImage;
-            PinSizeSlider.Value = activePin.Rotation;
+            PinSizeSlider.Value = activePin.Scale * 100;
+            PinRotateSlider.Value = activePin.Rotation;
             planContainer.IsPanningEnabled = false;
             DrawBtn.IsVisible = false;
             SetPinBtn.IsVisible = false;
-            PinSizeBorder.IsVisible = true;
+            PinEditBorder.IsVisible = true;
         };
 
         // sort large custom pins on lower z-indexes
@@ -364,7 +365,7 @@ public partial class NewPage : IQueryAttributable
         double deltaX = e.DeltaDistance.X * Math.Cos(angle) - -e.DeltaDistance.Y * Math.Sin(angle);
         double deltaY = -e.DeltaDistance.X * Math.Sin(angle) + e.DeltaDistance.Y * Math.Cos(angle);
 
-        if (activePin != null && PinSizeBorder.IsVisible == false)
+        if (activePin != null && PinEditBorder.IsVisible == false)
         {
             activePin.TranslationX += deltaX * scaleSpeed;
             activePin.TranslationY += deltaY * scaleSpeed;
@@ -704,19 +705,19 @@ public partial class NewPage : IQueryAttributable
     private void OnFullScreenButtonClicked(object sender, EventArgs e)
     {
         planContainer.IsPanningEnabled = true;
-        PinSizeBorder.IsVisible = false;
+        PinEditBorder.IsVisible = false;
         DrawBtn.IsVisible = true;
         SetPinBtn.IsVisible = true;
         activePin = null;
     }
 
-    private void OnSliderValueChanged(object sender, EventArgs e)
+    private void OnRotateSliderValueChanged(object sender, EventArgs e)
     {
         var sliderValue = ((Microsoft.Maui.Controls.Slider)sender).Value;
         activePin.Rotation = sliderValue;
     }
 
-    private void OnSliderDragCompleted(object sender, EventArgs e)
+    private void OnRotateSliderDragCompleted(object sender, EventArgs e)
     {
         var sliderValue = ((Microsoft.Maui.Controls.Slider)sender).Value;
 
@@ -727,7 +728,29 @@ public partial class NewPage : IQueryAttributable
         GlobalJson.SaveToFile();
 
         planContainer.IsPanningEnabled = true;
-        PinSizeBorder.IsVisible = false;
+        PinEditBorder.IsVisible = false;
+        DrawBtn.IsVisible = true;
+        SetPinBtn.IsVisible = true;
+        activePin = null;
+    }
+
+    private void OnResizeSliderValueChanged(object sender, EventArgs e)
+    {
+        var sliderValue = ((Microsoft.Maui.Controls.Slider)sender).Value;
+        activePin.Scale = sliderValue / 100;
+    }
+
+    private void OnResizeSliderDragCompleted(object sender, EventArgs e)
+    {
+        var sliderValue = ((Microsoft.Maui.Controls.Slider)sender).Value;
+
+        GlobalJson.Data.Plans[PlanId].Pins[activePin.AutomationId].PinScale = sliderValue / 100;
+
+        // save data to file
+        GlobalJson.SaveToFile();
+
+        planContainer.IsPanningEnabled = true;
+        PinEditBorder.IsVisible = false;
         DrawBtn.IsVisible = true;
         SetPinBtn.IsVisible = true;
         activePin = null;

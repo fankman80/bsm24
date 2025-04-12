@@ -34,9 +34,9 @@ public partial class LoadDataToView
             var shellContent = new ShellContent
             {
                 Content = newPage,
-                Route = planId, // Wichtig: wird für GoToAsync("//planId") verwendet
+                Route = planId,
                 Title = planTitle,
-                Icon = "icon_placeholder.png" // Optional: Standardicon oder aus IconGlyph generieren
+                Icon = "icon_placeholder.png"
             };
 
             // Seite zur Shell dynamisch hinzufügen

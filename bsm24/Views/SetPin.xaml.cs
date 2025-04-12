@@ -1,9 +1,11 @@
 ﻿#nullable disable
 
 using bsm24.Models;
+using CommunityToolkit.Maui.Core.Extensions;
 using FFImageLoading.Maui;
 using Mopups.Services;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using UraniumUI.Material.Controls;
 using UraniumUI.Pages;
 using CheckBox = Microsoft.Maui.Controls.CheckBox;
@@ -48,25 +50,15 @@ public partial class SetPin : UraniumContentPage, IQueryAttributable
 
     private void MyView_Load()
     {
-        Images ??= []; // Initialisiere Images, falls es null ist
-        Images.Clear(); // lösche Einträge in Images
-
-        // lese neue Bilder ein
-        foreach (var img in GlobalJson.Data.Plans[PlanId].Pins[PinId].Fotos)
-        {
-            string imgPath = GlobalJson.Data.Plans[PlanId].Pins[PinId].Fotos[img.Key].File;
-            bool isChecked = GlobalJson.Data.Plans[PlanId].Pins[PinId].Fotos[img.Key].IsChecked;
-
-            Images.Add(new ImageItem
+        Images = GlobalJson.Data.Plans[PlanId].Pins[PinId].Fotos
+            .Select(img => new ImageItem
             {
-                ImagePath = Path.Combine(Settings.DataDirectory, GlobalJson.Data.ProjectPath, GlobalJson.Data.ThumbnailPath, imgPath),
-                IsChecked = isChecked,
-                DateTime = GlobalJson.Data.Plans[PlanId].Pins[PinId].Fotos[img.Key].DateTime
-            });
-        }
-
-        ImageGallery.ItemsSource = null; // Temporär die ItemsSource auf null setzen
-        ImageGallery.ItemsSource = Images; // Dann wieder auf die Collection setzen
+                Key = img.Key,
+                ImagePath = Path.Combine(Settings.DataDirectory, GlobalJson.Data.ProjectPath, GlobalJson.Data.ThumbnailPath, img.Value.File),
+                IsChecked = img.Value.IsChecked,
+                DateTime = img.Value.DateTime
+            })
+            .ToObservableCollection();
 
         priorityPicker.ItemsSource = Settings.PriorityItems.Select(item => item.Key).ToList();
         
@@ -81,7 +73,6 @@ public partial class SetPin : UraniumContentPage, IQueryAttributable
         LockSwitch.IsChecked = GlobalJson.Data.Plans[PlanId].Pins[PinId].IsLocked;
         LockRotate.IsChecked = GlobalJson.Data.Plans[PlanId].Pins[PinId].IsLockRotate;
         AllowExport.IsChecked = GlobalJson.Data.Plans[PlanId].Pins[PinId].AllowExport;
-        SizePercentText.Text = Math.Round(GlobalJson.Data.Plans[PlanId].Pins[PinId].PinScale * 100, 0).ToString() + "%";
         priorityPicker.SelectedIndex = GlobalJson.Data.Plans[PlanId].Pins[PinId].PinPriority;
         PinAcc.Text = GlobalJson.Data.Plans[PlanId].Pins[PinId].GeoLocation != null ?
                       GlobalJson.Data.Plans[PlanId].Pins[PinId].GeoLocation.Accuracy.ToString() :
@@ -102,8 +93,6 @@ public partial class SetPin : UraniumContentPage, IQueryAttributable
         if (GlobalJson.Data.Plans[PlanId].Pins[PinId].IsCustomPin)
         {
             PinImageContainer.IsVisible = false;
-            SizePercentButton.IsVisible = false;
-            SizePercentText.IsVisible = false;
         }
     }
 
@@ -207,36 +196,20 @@ public partial class SetPin : UraniumContentPage, IQueryAttributable
                 ImageSize = imgSize
             };
 
-            // Neues Image hinzufügen
             var pin = GlobalJson.Data.Plans[PlanId].Pins[PinId];
             pin.Fotos[path.FileName] = newImageData;
 
-            // save data to file
-            GlobalJson.SaveToFile();
-
             Images.Add(new ImageItem
             {
+                Key = Guid.NewGuid().ToString(),
                 ImagePath = path.FullPath,
                 IsChecked = true,
                 DateTime = DateTime.Now
             });
+
+            // save data to file
+            GlobalJson.SaveToFile();
         }
-    }
-
-    private async void OnResizeClicked(object sender, EventArgs e)
-    {
-        if (MopupService.Instance.PopupStack.Any())
-            return;
-
-        var popup = new PopupSlider(GlobalJson.Data.Plans[PlanId].Pins[PinId].PinScale);
-        await MopupService.Instance.PushAsync(popup);
-        var result = await popup.PopupDismissedTask;
-
-        GlobalJson.Data.Plans[PlanId].Pins[PinId].PinScale = result;
-        SizePercentText.Text = Math.Round(result * 100, 0).ToString() + "%";
-
-        // save data to file
-        GlobalJson.SaveToFile();
     }
 
     private void OnSizeChanged(object sender, EventArgs e)
@@ -267,15 +240,35 @@ public partial class SetPin : UraniumContentPage, IQueryAttributable
             }
         }
     }
+
+    private void OnReorderCompleted(object sender, EventArgs e)
+    {
+        if ((sender as CollectionView).ItemsSource is ObservableCollection<ImageItem> reorderedItems)
+        {
+            var newFotosDict = reorderedItems
+                .ToDictionary(img => img.Key, img => new Foto
+                {
+                    File = Path.GetFileName(img.ImagePath),
+                    IsChecked = img.IsChecked,
+                    DateTime = img.DateTime
+                });
+
+            GlobalJson.Data.Plans[PlanId].Pins[PinId].Fotos = newFotosDict;
+            GlobalJson.SaveToFile();
+        }
+    }
 }
 
 public class ImageItem
 {
+    public string Key { get; set; }
     public string ImagePath { get; set; }
     public string PreviewPath { get; set; }
     public bool IsChecked { get; set; }
     public DateTime DateTime { get; set; }
     public int Dpi { get; set; }
+
+    public event PropertyChangedEventHandler PropertyChanged;
 }
 
 public partial class SquareView : ContentView

@@ -226,7 +226,10 @@
 
     <Shell.FlyoutContent>
         <ContentView x:DataType="local:AppShell">
-            <CollectionView ItemsSource="{Binding PlanItems}" CanReorderItems="True" Margin="14,0,20,0" ReorderCompleted="OnReorderCompleted">
+            <CollectionView ItemsSource="{Binding PlanItems}"
+                            CanReorderItems="True"
+                            Margin="14,0,20,0"
+                            ReorderCompleted="OnReorderCompleted">
                 <CollectionView.ItemTemplate>
                     <DataTemplate x:DataType="local:PlanItem">
                         <Grid ColumnDefinitions="Auto,*,Auto" HeightRequest="44">
