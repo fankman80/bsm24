@@ -70,7 +70,7 @@
                     </Border.StrokeShape>
                     <Slider x:Name="PinSizeSlider"
                             Margin="70,15,15,15"
-                            Minimum="1"                    
+                            Minimum="10"                    
                             Maximum="100"
                             Value="0"
                             ThumbColor="{DynamicResource PrimaryDarkText}"
