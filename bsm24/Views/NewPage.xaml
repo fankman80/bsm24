@@ -69,7 +69,6 @@
                         <RoundRectangle CornerRadius="30"/>
                     </Border.StrokeShape>
                     <Slider x:Name="PinSizeSlider"
-                            Margin="54,15,54,15"
                             Minimum="10"                    
                             Maximum="100"
                             Value="0"
@@ -77,7 +76,15 @@
                             MinimumTrackColor="{DynamicResource PrimaryDarkText}"
                             MaximumTrackColor="{DynamicResource PrimaryDarkText}"
                             ValueChanged="OnResizeSliderValueChanged"
-                            DragCompleted="OnResizeSliderDragCompleted"/>
+                            DragCompleted="OnResizeSliderDragCompleted">
+                        <Slider.Margin>
+                            <OnPlatform x:TypeArguments="Thickness">
+                                <On Platform="Android" Value="50,15,50,15" />
+                                <On Platform="iOS" Value="50,15,50,15" />
+                                <On Platform="WinUI" Value="70,15,70,15" />
+                            </OnPlatform>
+                        </Slider.Margin>
+                    </Slider>                        
                 </Border>
                 <Image Source="{FontImageSource FontFamily=MaterialOutlined, Size=40, Glyph={x:Static m:MaterialOutlined.Pan_zoom}}"
                        HeightRequest="38"
@@ -106,7 +113,6 @@
                         <RoundRectangle CornerRadius="30"/>
                     </Border.StrokeShape>
                     <Slider x:Name="PinRotateSlider"
-                            Margin="54,15,54,15"
                             Minimum="0"                    
                             Maximum="360"
                             Value="0"
@@ -114,7 +120,15 @@
                             MinimumTrackColor="{DynamicResource PrimaryDarkText}"
                             MaximumTrackColor="{DynamicResource PrimaryDarkText}"
                             ValueChanged="OnRotateSliderValueChanged"
-                            DragCompleted="OnRotateSliderDragCompleted"/>
+                            DragCompleted="OnRotateSliderDragCompleted">
+                        <Slider.Margin>
+                            <OnPlatform x:TypeArguments="Thickness">
+                                <On Platform="Android" Value="50,15,50,15" />
+                                <On Platform="iOS" Value="50,15,50,15" />
+                                <On Platform="WinUI" Value="70,15,70,15" />
+                            </OnPlatform>
+                        </Slider.Margin>
+                    </Slider>
                 </Border>
                 <Image Source="{FontImageSource FontFamily=MaterialOutlined, Size=40, Glyph={x:Static m:MaterialOutlined.Rotate_right}}"
                        HeightRequest="38"

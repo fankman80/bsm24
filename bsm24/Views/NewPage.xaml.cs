@@ -64,11 +64,13 @@ public partial class NewPage : IQueryAttributable
             AddPlan();
             PlanImage.PropertyChanged += PlanImage_PropertyChanged;
         }
-
-        if (PinZoom != null)
+        else
         {
-            ZoomToPin(PinZoom);
-            PinZoom = null;
+            if (PinZoom != null)
+            {
+                ZoomToPin(PinZoom);
+                PinZoom = null;
+            }
         }
     }
 
@@ -85,7 +87,7 @@ public partial class NewPage : IQueryAttributable
                 var pinIcon = GlobalJson.Data.Plans[PlanId].Pins[PinUpdate].PinIcon;
                 if (pinIcon.StartsWith("customicons", StringComparison.OrdinalIgnoreCase))
                     pinIcon = Path.Combine(Settings.DataDirectory, pinIcon);
-                
+
                 image.Source = pinIcon;
                 image.AnchorX = GlobalJson.Data.Plans[PlanId].Pins[PinUpdate].Anchor.X;
                 image.AnchorY = GlobalJson.Data.Plans[PlanId].Pins[PinUpdate].Anchor.Y;
@@ -343,6 +345,12 @@ public partial class NewPage : IQueryAttributable
                     isFirstLoad = false;
                     ImageFit(null, null);
                     AddPins();
+
+                    if (PinZoom != null)
+                    {
+                        ZoomToPin(PinZoom);
+                        PinZoom = null;
+                    }
                 }
             }
         }
