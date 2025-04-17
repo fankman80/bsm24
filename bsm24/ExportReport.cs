@@ -24,12 +24,12 @@ public partial class ExportReport
     {
         Dictionary<string, string> placeholders_single = new()
         {
-            {"${client_name}", GlobalJson.Data.Client_name.Replace("\r", "{linebreak}")},
+            {"${client_name}", GlobalJson.Data.Client_name},
             {"${object_address}", GlobalJson.Data.Object_address.Replace("\r", "{linebreak}")},
-            {"${working_title}", GlobalJson.Data.Working_title.Replace("\r", "{linebreak}")},
-            {"${object_name}", GlobalJson.Data.Object_name.Replace("\r", "{linebreak}")},
+            {"${working_title}", GlobalJson.Data.Working_title},
+            {"${object_name}", GlobalJson.Data.Object_name},
             {"${creation_date}", GlobalJson.Data.Creation_date.Date.ToString("D")},
-            {"${project_manager}", GlobalJson.Data.Project_manager.Replace("\r", "{linebreak}")},
+            {"${project_manager}", GlobalJson.Data.Project_manager},
         };
         Dictionary<string, string> placeholders_lists = new()
         {
@@ -145,7 +145,7 @@ public partial class ExportReport
                                                         break;
 
                                                     case "${pin_planName}":
-                                                        text = GlobalJson.Data.Plans[plan.Key].Name.Replace("\r", "{linebreak}");
+                                                        text = GlobalJson.Data.Plans[plan.Key].Name;
                                                         break;
 
                                                     case "${pin_posImage}":
@@ -232,7 +232,7 @@ public partial class ExportReport
                                                         break;
 
                                                     case "${pin_name}":
-                                                        text = GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].PinName.Replace("\r", "{linebreak}");
+                                                        text = GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].PinName;
                                                         break;
 
                                                     case "${pin_desc}":
@@ -341,7 +341,7 @@ public partial class ExportReport
                                                 if (!string.IsNullOrWhiteSpace(GlobalJson.Data.Plans[plan.Key].Description))
                                                 {
                                                     run.Append(new Text(" (" + GlobalJson.Data.Plans[plan.Key].Description + ")")
-                                                    {Space = SpaceProcessingModeValues.Preserve});
+                                                    { Space = SpaceProcessingModeValues.Preserve });
                                                 }
                                                 run.Append(new Break() { Type = BreakValues.TextWrapping });
                                             }
