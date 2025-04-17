@@ -24,12 +24,12 @@ public partial class ExportReport
     {
         Dictionary<string, string> placeholders_single = new()
         {
-            {"${client_name}", GlobalJson.Data.Client_name},
-            {"${object_address}", GlobalJson.Data.Object_address},
-            {"${working_title}", GlobalJson.Data.Working_title},
-            {"${object_name}", GlobalJson.Data.Object_name},
+            {"${client_name}", GlobalJson.Data.Client_name.Replace("\r", "{linebreak}")},
+            {"${object_address}", GlobalJson.Data.Object_address.Replace("\r", "{linebreak}")},
+            {"${working_title}", GlobalJson.Data.Working_title.Replace("\r", "{linebreak}")},
+            {"${object_name}", GlobalJson.Data.Object_name.Replace("\r", "{linebreak}")},
             {"${creation_date}", GlobalJson.Data.Creation_date.Date.ToString("D")},
-            {"${project_manager}", GlobalJson.Data.Project_manager},
+            {"${project_manager}", GlobalJson.Data.Project_manager.Replace("\r", "{linebreak}")},
         };
         Dictionary<string, string> placeholders_lists = new()
         {
@@ -145,7 +145,7 @@ public partial class ExportReport
                                                         break;
 
                                                     case "${pin_planName}":
-                                                        text = GlobalJson.Data.Plans[plan.Key].Name;
+                                                        text = GlobalJson.Data.Plans[plan.Key].Name.Replace("\r", "{linebreak}");
                                                         break;
 
                                                     case "${pin_posImage}":
@@ -232,11 +232,11 @@ public partial class ExportReport
                                                         break;
 
                                                     case "${pin_name}":
-                                                        text = GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].PinName;
+                                                        text = GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].PinName.Replace("\r", "{linebreak}");
                                                         break;
 
                                                     case "${pin_desc}":
-                                                        text = GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].PinDesc;
+                                                        text = GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].PinDesc.Replace("\r", "{linebreak}");
                                                         break;
 
                                                     case "${pin_location}":
@@ -458,6 +458,10 @@ public partial class ExportReport
                         }
                     }
                 }
+
+                // Ersetze alle {linebreak} im Dokument mit einem Zeilenumbruch
+                ReplacePlaceholdersWithLineBreaks(wordDoc.MainDocumentPart, "{linebreak}");
+
                 wordDoc.Save(); // Änderungen im MemoryStream speichern
             }
         }
@@ -1075,6 +1079,32 @@ public partial class ExportReport
         catch (Exception ex)
         {
             throw new Exception($"Error while copying image to directory: {ex.Message}");
+        }
+    }
+
+    public static void ReplacePlaceholdersWithLineBreaks(MainDocumentPart mainPart, string placeholder)
+    {
+        string regexPattern = Regex.Escape(placeholder); // Sonderzeichen escapen
+
+        foreach (var paragraph in mainPart.Document.Descendants<Paragraph>())
+        {
+            foreach (var run in paragraph.Elements<Run>())
+            {
+                var textElement = run.GetFirstChild<Text>();
+                if (textElement != null && textElement.Text.Contains(placeholder))
+                {
+                    var parts = Regex.Split(textElement.Text, regexPattern);
+                    run.RemoveAllChildren<Text>();
+                    for (int i = 0; i < parts.Length; i++)
+                    {
+                        run.AppendChild(new Text(parts[i]) { Space = SpaceProcessingModeValues.Preserve });
+                        if (i < parts.Length - 1)
+                        {
+                            run.AppendChild(new Break());
+                        }
+                    }
+                }
+            }
         }
     }
 }
