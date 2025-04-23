@@ -38,7 +38,7 @@
                     <BoxView Grid.Column="2"
                              HeightRequest="26"
                              CornerRadius="6"
-                             BackgroundColor="{Binding PinColor, Converter={StaticResource SkColorToHexConverter}}"/>                    
+                             BackgroundColor="{Binding PinColor, Converter={StaticResource SkColorToHexConverter}}"/>
                     <mr:Button Grid.ColumnSpan="3"
                                AutomationId = "{Binding FileName}"
                                BorderColor="Transparent"
@@ -46,7 +46,6 @@
                                LongPressing="OnLongPressed"
                                Clicked="OnIconClicked"
                                Tapped="OnIconClicked"/>
-
                 </Grid>
             </DataTemplate>
 
