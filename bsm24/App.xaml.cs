@@ -85,6 +85,7 @@ public partial class App : Application
 
         // lade Einstellungen
         SettingsService.Instance.LoadSettings();
+        SettingsService.Instance.SaveSettings();
     }
 
     protected override Window CreateWindow(IActivationState? activationState)

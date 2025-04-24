@@ -2,7 +2,6 @@
 using bsm24.Models;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Diagnostics.CodeAnalysis;
 using System.Text.Json;
 
 namespace bsm24.Services;
@@ -30,7 +29,6 @@ public partial class SettingsService : INotifyPropertyChanged
     public List<string> PinSortCrits { get; set; } = Settings.PinSortCrits;
 
     public List<string> IconCategories { get; set; } = ["alle Icons"];
-
 
     private bool _isProjectLoaded = false;
     public bool IsProjectLoaded

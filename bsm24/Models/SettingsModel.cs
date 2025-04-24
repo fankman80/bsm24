@@ -15,5 +15,5 @@ internal class SettingsModel
     public int SelectedAppTheme { get; set; }
     public bool IsFotoCompressed { get; set; }
     public int FotoCompressValue { get; set; }
-    public required string IconGalleryMode { get; set; }
+    public string? IconGalleryMode { get; set; }
 }
