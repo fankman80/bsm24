@@ -59,7 +59,7 @@ public static class Settings
         new MapViewItem { Desc = "SCHUTZGEBIETE_LUFTFAHRT", Id = "ch.bafu.schutzgebiete-luftfahrt" },
         new MapViewItem { Desc = "EISZEIT", Id = "ch.swisstopo.geologie-eiszeit-lgm-raster" }];
 
-    public static readonly Color[] ColorData = [
+    public static readonly List<Color> ColorData = [
         new Color(0, 153, 0),
         new Color(202, 254, 150),
         new Color(159, 255, 127),

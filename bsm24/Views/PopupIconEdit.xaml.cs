@@ -1,12 +1,12 @@
 #nullable disable
 
+using CommunityToolkit.Maui.Views;
 using Mopups.Pages;
 using Mopups.Services;
 using SkiaSharp;
 using System.ComponentModel;
 using System.Globalization;
 using System.Runtime.CompilerServices;
-using bsm24.Services;
 
 namespace bsm24.Views;
 
@@ -16,6 +16,7 @@ public partial class PopupIconEdit : PopupPage, INotifyPropertyChanged
     public Task<string> PopupDismissedTask => _taskCompletionSource.Task;
     public string ReturnValue { get; set; }
     public IconItem iconItem;
+
     public PopupIconEdit(IconItem _iconItem)
     {
         InitializeComponent();
@@ -31,15 +32,10 @@ public partial class PopupIconEdit : PopupPage, INotifyPropertyChanged
         iconScale.Value = iconItem.IconScale * 100;
         sliderText.Text = "Voreinstellung Skalierung: " + (iconItem.IconScale * 100).ToString() + "%";
         allowRotate.IsChecked = iconItem.IsRotationLocked;
-        RedValue = iconItem.PinColor.Red;
-        GreenValue = iconItem.PinColor.Green;
-        BlueValue = iconItem.PinColor.Blue;
         SelectedColor = new Color(iconItem.PinColor.Red, iconItem.PinColor.Green, iconItem.PinColor.Blue);
 
         if (file.Contains("customicons", StringComparison.OrdinalIgnoreCase))
             deleteIconContainer.IsVisible = true;
-
-        UpdateSelectedColor();
     }
 
     protected override void OnAppearing()
@@ -54,6 +50,20 @@ public partial class PopupIconEdit : PopupPage, INotifyPropertyChanged
         base.OnDisappearing();
 
         _taskCompletionSource.SetResult(ReturnValue);
+    }
+
+    private Color selectedColor;
+    public Color SelectedColor
+    {
+        get => selectedColor;
+        set
+        {
+            if (selectedColor != value)
+            {
+                selectedColor = value;
+                OnPropertyChanged();
+            }
+        }
     }
 
     private async void OnOkClicked(object sender, EventArgs e)
@@ -73,7 +83,7 @@ public partial class PopupIconEdit : PopupPage, INotifyPropertyChanged
                           string.IsNullOrEmpty(anchorY.Text) ? 0.0 : double.Parse(anchorY.Text, CultureInfo.InvariantCulture)),
                 iconItem.IconSize,
                 allowRotate.IsChecked,
-                new SKColor((byte)RedValue, (byte)GreenValue, (byte)BlueValue),
+                new SKColor((byte)(SelectedColor.Red * 255), (byte)(SelectedColor.Green * 255), (byte)(SelectedColor.Blue * 255)),
                 Math.Round(iconScale.Value / 100, 1),
                 iconCategory.Text
             );
@@ -104,73 +114,19 @@ public partial class PopupIconEdit : PopupPage, INotifyPropertyChanged
         sliderText.Text = "Skalierung:" + Math.Round(sliderValue, 0).ToString() + "%";
     }
 
-    private int redValue = 255;
-    public int RedValue
-    {
-        get => redValue;
-        set
-        {
-            if (redValue != value)
-            {
-                redValue = value;
-                OnPropertyChanged();
-                UpdateSelectedColor();
-            }
-        }
-    }
-
-    private int greenValue = 0;
-    public int GreenValue
-    {
-        get => greenValue;
-        set
-        {
-            if (greenValue != value)
-            {
-                greenValue = value;
-                OnPropertyChanged();
-                UpdateSelectedColor();
-            }
-        }
-    }
-
-    private int blueValue = 0;
-    public int BlueValue
-    {
-        get => blueValue;
-        set
-        {
-            if (blueValue != value)
-            {
-                blueValue = value;
-                OnPropertyChanged();
-                UpdateSelectedColor();
-            }
-        }
-    }
-
-    private Color selectedColor = new(255, 0, 0);
-    public Color SelectedColor
-    {
-        get => selectedColor;
-        set
-        {
-            if (selectedColor != value)
-            {
-                selectedColor = value;
-                OnPropertyChanged();
-            }
-        }
-    }
-
-    private void UpdateSelectedColor()
-    {
-        SelectedColor = Color.FromRgb(RedValue, GreenValue, BlueValue);
-    }
 
     public new event PropertyChangedEventHandler PropertyChanged;
     protected new virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
     {
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+    }
+
+    private async void OnColorPickerClicked(object sender, EventArgs e)
+    {
+        var popup = new PopupColorPicker(0, SelectedColor, lineWidthVisibility: false);
+        await MopupService.Instance.PushAsync(popup);
+        var result = await popup.PopupDismissedTask;
+
+        SelectedColor = result.Item1;
     }
 }

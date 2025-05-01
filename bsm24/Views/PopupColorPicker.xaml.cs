@@ -4,26 +4,41 @@ using Mopups.Pages;
 using Mopups.Services;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Runtime.CompilerServices;
 
 namespace bsm24.Views;
 
-public partial class PopupColorPicker : PopupPage
+public partial class PopupColorPicker : PopupPage, INotifyPropertyChanged
 {
     TaskCompletionSource<(Color, int)> _taskCompletionSource;
-    public ObservableCollection<ColorItem> Colors { get; set; }
+    public ObservableCollection<ColorBoxItem> ColorsList { get; set; }
     public Task<(Color, int)> PopupDismissedTask => _taskCompletionSource.Task;
     public (Color, int) ReturnValue { get; set; }
-    private Color borderColor = Microsoft.Maui.Graphics.Colors.Black;
-    private readonly int _lineWidth;
-    private Color _selectedColor;
+    public bool LineWidthVisibility { get; set; }
 
-    public PopupColorPicker(int lineWidth, Color selectedColor, string okText = "Ok")
+    public PopupColorPicker(int lineWidth, Color selectedColor, bool lineWidthVisibility = true, string okText = "Ok")
     {
 	    InitializeComponent();
         okButtonText.Text = okText;
-        _lineWidth = lineWidth;
-        _selectedColor = selectedColor;
-        Colors = [.. Settings.ColorData.Select(c => new ColorItem { BackgroundColor = c, StrokeColor = popupBorder.BackgroundColor })];
+        LineWidthVisibility = lineWidthVisibility;
+        LineWidth = lineWidth;
+        ColorsList = new ObservableCollection<ColorBoxItem>(
+                    Settings.ColorData.Select(c => new ColorBoxItem
+                    { BackgroundColor = c }));
+
+        // Pr�fen, ob selectedColor in der Liste vorkommt
+        var matchingItem = ColorsList.FirstOrDefault(c => c.BackgroundColor.ToHex() == selectedColor.ToHex());
+        if (matchingItem != null)
+        {
+            SelectedColor = matchingItem.BackgroundColor;
+            ColorListPicker.SelectedItem = matchingItem;
+        }            
+        else if (ColorsList.Count > 0)
+        {
+            SelectedColor = ColorsList[0].BackgroundColor;
+            ColorListPicker.SelectedItem = ColorsList[0];
+        }            
+        
         BindingContext = this;
     }
 
@@ -31,95 +46,130 @@ public partial class PopupColorPicker : PopupPage
     {
         base.OnAppearing();
 
-        var currentTheme = Application.Current.RequestedTheme;
-        if (currentTheme == AppTheme.Light)
-            borderColor = Microsoft.Maui.Graphics.Colors.Black;
-        else if (currentTheme == AppTheme.Dark)
-            borderColor = Microsoft.Maui.Graphics.Colors.White;
-
-        foreach (var colorItem in Colors)
-            if (colorItem.BackgroundColor.Equals(_selectedColor))
-                colorItem.StrokeColor = borderColor;
-
-        sliderText.Text = "Pinselgrösse: " + _lineWidth.ToString();
-        LineWidthSlider.Value = _lineWidth;
         _taskCompletionSource = new TaskCompletionSource<(Color, int)>();
     }
 
-
-    private void OnColorTapped(object sender, EventArgs e)
+    private void OnColorTapped(object sender, TappedEventArgs e)
     {
-        if (sender is Border border && border.BindingContext is ColorItem selectedItem)
+        if (sender is Border backgroundcolor && backgroundcolor.BindingContext is ColorBoxItem item)
         {
-            foreach (var item in Colors)
-                item.StrokeColor = popupBorder.BackgroundColor;
-            selectedItem.StrokeColor = borderColor;
-            _selectedColor = selectedItem.BackgroundColor;
+            RedValue = (int)(item.BackgroundColor.Red * 255);
+            GreenValue = (int)(item.BackgroundColor.Green * 255);
+            BlueValue = (int)(item.BackgroundColor.Blue * 255);
         }
     }
 
     protected override void OnDisappearing()
     {
         base.OnDisappearing();
-        _taskCompletionSource.SetResult((_selectedColor, (int)LineWidthSlider.Value));
+        _taskCompletionSource.SetResult((SelectedColor, LineWidth));
     }
 
     private async void PopupPage_BackgroundClicked(object sender, EventArgs e)
     {
-        ReturnValue = (_selectedColor, (int)LineWidthSlider.Value);
+        ReturnValue = (SelectedColor, LineWidth);
         await MopupService.Instance.PopAsync();
     }
 
     private async void OnOkClicked(object sender, EventArgs e)
     {
-        ReturnValue = (_selectedColor, (int)LineWidthSlider.Value);
+        ReturnValue = (SelectedColor, LineWidth);
         await MopupService.Instance.PopAsync();
     }
 
     private async void OnCancelClicked(object sender, EventArgs e)
     {
-        ReturnValue = (_selectedColor, (int)LineWidthSlider.Value);
+        ReturnValue = (SelectedColor, LineWidth);
         await MopupService.Instance.PopAsync();
     }
 
-    private void OnSliderValueChanged(object sender, EventArgs e)
+    private int redValue;
+    public int RedValue
     {
-        var sliderValue = ((Slider)sender).Value;
-        sliderText.Text = "Pinselgrösse: " + ((int)sliderValue).ToString();
-    }
-
-}
-
-public partial class ColorItem : INotifyPropertyChanged
-{
-    private Color backgroundcolor;
-    private Color strokecolor;
-
-    public Color BackgroundColor
-    {
-        get => backgroundcolor;
+        get => redValue;
         set
         {
-            backgroundcolor = value;
-            OnPropertyChanged(nameof(BackgroundColor));
+            if (redValue != value)
+            {
+                redValue = value;
+                OnPropertyChanged();
+                UpdateSelectedColor();
+            }
         }
     }
 
-    public Color StrokeColor
+    private int greenValue;
+    public int GreenValue
     {
-        get => strokecolor;
+        get => greenValue;
         set
         {
-            strokecolor = value;
-            OnPropertyChanged(nameof(StrokeColor));
+            if (greenValue != value)
+            {
+                greenValue = value;
+                OnPropertyChanged();
+                UpdateSelectedColor();
+            }
         }
     }
 
-    public event PropertyChangedEventHandler PropertyChanged;
-    protected virtual void OnPropertyChanged(string propertyName)
+    private int blueValue;
+    public int BlueValue
+    {
+        get => blueValue;
+        set
+        {
+            if (blueValue != value)
+            {
+                blueValue = value;
+                OnPropertyChanged();
+                UpdateSelectedColor();
+            }
+        }
+    }
+
+    private Color selectedColor;
+    public Color SelectedColor
+    {
+        get => selectedColor;
+        set
+        {
+            if (selectedColor != value)
+            {
+                selectedColor = value;
+                OnPropertyChanged();
+            }
+        }
+    }
+
+    private int lineWidth;
+    public int LineWidth
+    {
+        get => lineWidth;
+        set
+        {
+            if (lineWidth != value)
+            {
+                lineWidth = value;
+                OnPropertyChanged();
+            }
+        }
+    }
+
+    private void UpdateSelectedColor()
+    {
+        SelectedColor = Color.FromRgb(RedValue, GreenValue, BlueValue);
+    }
+
+    public new event PropertyChangedEventHandler PropertyChanged;
+    protected new virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
     {
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }
 }
 
+public partial class ColorBoxItem
+{
+    public Color BackgroundColor { get; set; }
+}
 

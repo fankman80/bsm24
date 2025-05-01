@@ -7,6 +7,7 @@
              xmlns:material="http://schemas.enisn-projects.io/dotnet/maui/uraniumui/material"
              xmlns:m="clr-namespace:UraniumUI.Icons.MaterialSymbols;assembly=UraniumUI.Icons.MaterialSymbols"  
              xmlns:views="clr-namespace:bsm24.Views"
+             xmlns:services="clr-namespace:bsm24.Services"
              x:Class="bsm24.Views.PopupColorPicker"
              BackgroundInputTransparent="False"
              CloseWhenBackgroundIsClicked="True"
@@ -18,42 +19,115 @@
             StrokeShape="RoundRectangle 20,20,20,20"
             Padding="16,16,16,16"
             BackgroundColor="{AppThemeBinding Light={DynamicResource PrimaryBackground}, Dark={DynamicResource PrimaryBackgroundDark}}"
-            WidthRequest="302"
+            WidthRequest="300"
             HorizontalOptions="Center"
             VerticalOptions="Center">
 
         <VerticalStackLayout x:DataType="views:PopupColorPicker">
-            <Label Text="Pinselfarbe:" HorizontalOptions="Center" />
-            <CollectionView x:Name="colorList" ItemsSource="{Binding Colors}">
-                <CollectionView.ItemsLayout>
-                    <GridItemsLayout Orientation="Vertical" Span="6"/>
-                </CollectionView.ItemsLayout>
+            <CollectionView x:Name="ColorListPicker" ItemsSource="{Binding ColorsList}" SelectionMode="Single">
                 <CollectionView.ItemTemplate>
-                    <DataTemplate x:DataType="views:ColorItem">
-                        <Border BackgroundColor="{Binding BackgroundColor}"
-                                WidthRequest="45"
-                                HeightRequest="45"
-                                Stroke="{Binding StrokeColor}"
-                                StrokeThickness="6">
+                    <DataTemplate x:DataType="views:ColorBoxItem">
+                        <Border BackgroundColor="{Binding BackgroundColor}" HeightRequest="40" WidthRequest="40">
                             <Border.GestureRecognizers>
-                                <TapGestureRecognizer Tapped="OnColorTapped" />
+                                <TapGestureRecognizer Tapped="OnColorTapped"/>
                             </Border.GestureRecognizers>
+                            <VisualStateManager.VisualStateGroups>
+                                <VisualStateGroup Name="CommonStates">
+                                    <VisualState Name="Selected">
+                                        <VisualState.Setters>
+                                            <Setter Property="Stroke" Value="Black" />
+                                            <Setter Property="StrokeThickness" Value="2" />
+                                            <Setter Property="StrokeShape">
+                                                <Setter.Value>
+                                                    <RoundRectangle CornerRadius="20" />
+                                                </Setter.Value>
+                                            </Setter>
+                                        </VisualState.Setters>
+                                    </VisualState>
+                                    <VisualState Name="Normal">
+                                        <VisualState.Setters>
+                                            <Setter Property="Stroke" Value="Transparent" />
+                                            <Setter Property="StrokeShape">
+                                                <Setter.Value>
+                                                    <RoundRectangle CornerRadius="0" />
+                                                </Setter.Value>
+                                            </Setter>
+                                        </VisualState.Setters>
+                                    </VisualState>
+                                </VisualStateGroup>
+                            </VisualStateManager.VisualStateGroups>
                         </Border>
                     </DataTemplate>
                 </CollectionView.ItemTemplate>
+                <CollectionView.ItemsLayout>
+                    <GridItemsLayout Orientation="Vertical" Span="6"/>
+                </CollectionView.ItemsLayout>
             </CollectionView>
-        
+
+            <Grid RowSpacing="0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="50" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="30" />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+
+                <!-- Slider for Red -->
+                <Slider Grid.Column="1" Grid.Row="0"
+                        Margin="0,6,0,0"
+                        Minimum="0" Maximum="255" Value="{Binding RedValue}"
+                        ThumbColor="{DynamicResource Primary}"
+                        MinimumTrackColor="{DynamicResource Primary}"
+                        MaximumTrackColor="{DynamicResource PrimaryDark}"/>
+                <Entry Grid.Column="0" Grid.Row="0"
+                       Scale="0.8"
+                       HorizontalTextAlignment="Center"
+                       Text="{Binding RedValue, Mode=TwoWay}" Keyboard="Numeric" TextColor="Red" />
+
+                <!-- Slider for Green -->
+                <Slider Grid.Column="1" Grid.Row="1"
+                        Margin="0,6,0,0"                        
+                        Minimum="0" Maximum="255" Value="{Binding GreenValue}"
+                        ThumbColor="{DynamicResource Primary}"
+                        MinimumTrackColor="{DynamicResource Primary}"
+                        MaximumTrackColor="{DynamicResource PrimaryDark}"/>
+                <Entry Grid.Column="0" Grid.Row="1"
+                       Scale="0.8"
+                       HorizontalTextAlignment="Center"                       
+                       Text="{Binding GreenValue, Mode=TwoWay}" Keyboard="Numeric" TextColor="Green" />
+
+                <!-- Slider for Blue -->
+                <Slider Grid.Column="1" Grid.Row="2"
+                        Margin="0,6,0,0"                        
+                        Minimum="0" Maximum="255" Value="{Binding BlueValue}"
+                        ThumbColor="{DynamicResource Primary}"
+                        MinimumTrackColor="{DynamicResource Primary}"
+                        MaximumTrackColor="{DynamicResource PrimaryDark}"/>
+                <Entry Grid.Column="0" Grid.Row="2"
+                       Scale="0.8"
+                       HorizontalTextAlignment="Center"                       
+                       Text="{Binding BlueValue, Mode=TwoWay}" Keyboard="Numeric" TextColor="Blue" />
+
+                <BoxView Grid.Column="2" Grid.Row="0" Grid.RowSpan="3"
+                         BackgroundColor="{Binding SelectedColor}"/>
+            </Grid>
+
             <Label x:Name="sliderText"
+                   IsVisible="{Binding LineWidthVisibility}"
                    HorizontalOptions="Start"
-                   Text="Pinselgrösse: 15"/>
+                   Text="{Binding LineWidth, StringFormat='Pinselgrösse: {0}'}"/>
             <Slider x:Name="LineWidthSlider"
+                    IsVisible="{Binding LineWidthVisibility}"
                     Maximum="60"
                     Minimum="1"
-                    Value="14"
+                    Value="{Binding LineWidth}"
                     ThumbColor="{DynamicResource Primary}"
                     MinimumTrackColor="{DynamicResource Primary}"
-                    MaximumTrackColor="{DynamicResource PrimaryDark}"
-                    ValueChanged="OnSliderValueChanged"/>
+                    MaximumTrackColor="{DynamicResource PrimaryDark}"/>
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" />

@@ -711,7 +711,7 @@ public partial class NewPage : IQueryAttributable
         if (MopupService.Instance.PopupStack.Any())
             return;
 
-        var popup = new PopupColorPicker(lineWidth, selectedColor);
+        var popup = new PopupColorPicker(lineWidth, selectedColor, lineWidthVisibility: true);
         await MopupService.Instance.PushAsync(popup);
         var result = await popup.PopupDismissedTask;
 
