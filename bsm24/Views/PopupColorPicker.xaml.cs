@@ -1,7 +1,5 @@
 #nullable disable
 
-using ColorMine.ColorSpaces;
-using DocumentFormat.OpenXml;
 using Mopups.Pages;
 using Mopups.Services;
 using System.Collections.ObjectModel;
@@ -31,7 +29,7 @@ public partial class PopupColorPicker : PopupPage, INotifyPropertyChanged
                     Settings.ColorData.Select(c => new ColorBoxItem
                     { BackgroundColor = c }));
 
-        // Prüfen, ob selectedColor in der Liste vorkommt
+        // PrÃ¼fen, ob selectedColor in der Liste vorkommt
         var matchingItem = ColorsList.FirstOrDefault(c => c.BackgroundColor.ToHex() == selectedColor.ToHex());
         if (matchingItem != null)
         {
