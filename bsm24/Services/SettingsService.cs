@@ -100,6 +100,36 @@ public partial class SettingsService : INotifyPropertyChanged
         }
     }
 
+    private List<string> _colorList = [
+    "#009900",
+    "#CAFE96",
+    "#000000",
+    "#7F00FF",
+    "#0365DD",
+    "#7FBFFF",
+    "#7D5F00",
+    "#DF7100",
+    "#FFBF00",
+    "#C565E3",
+    "#FABAFC",
+    "#79F3F3",
+    "#0032CC",
+    "#FF0000",
+    "#FFFF00",
+    "#DFDFDF"];
+    public List<string> ColorList
+    {
+        get => _colorList;
+        set
+        {
+            if (_colorList != value)
+            {
+                _colorList = value;
+                OnPropertyChanged(nameof(ColorList));
+            }
+        }
+    }
+
     private bool _isPlanRotateLocked = false;
     public bool IsPlanRotateLocked
     {
@@ -646,6 +676,7 @@ public partial class SettingsService : INotifyPropertyChanged
             IsFotoCompressed = this.IsFotoCompressed,
             FotoCompressValue = this.FotoCompressValue,
             IconGalleryMode = this.IconGalleryMode,
+            ColorList = this.ColorList
         };
 
         var json = JsonSerializer.Serialize(settings, GetOptions());
@@ -685,6 +716,7 @@ public partial class SettingsService : INotifyPropertyChanged
                 this.IsFotoCompressed = settings.IsFotoCompressed;
                 this.FotoCompressValue = settings.FotoCompressValue;
                 this.IconGalleryMode = settings.IconGalleryMode ?? "IconListTemplate";
+                this.ColorList = settings.ColorList;
             }
         }
     }

@@ -59,35 +59,6 @@ public static class Settings
         new MapViewItem { Desc = "SCHUTZGEBIETE_LUFTFAHRT", Id = "ch.bafu.schutzgebiete-luftfahrt" },
         new MapViewItem { Desc = "EISZEIT", Id = "ch.swisstopo.geologie-eiszeit-lgm-raster" }];
 
-    public static readonly List<Color> ColorData = [
-        new Color(0, 153, 0),
-        new Color(202, 254, 150),
-        new Color(159, 255, 127),
-        new Color(0, 0, 0),
-        new Color(127, 0, 255),
-        new Color(3, 101, 221),
-
-        new Color(127, 191, 255),
-        new Color(125, 95, 0),
-        new Color(223, 113, 0),
-        new Color(255, 191, 0),
-        new Color(197, 101, 227),
-        new Color(250, 186, 252),
-
-        new Color(121, 243, 243),
-        new Color(0, 50, 204),
-        new Color(52, 148, 253),
-        new Color(255, 0, 0),
-        new Color(255, 132, 132),
-        new Color(255, 255, 0),
-
-        new Color(0, 138, 30),
-        new Color(0, 170, 30),
-        new Color(255, 179, 179),
-        new Color(223, 223, 223),
-        new Color(255, 233, 210),
-        new Color(255, 255, 255)];
-
     public static readonly List<PriorityItem> PriorityItems =
     [
         new PriorityItem { Key = "", Color = "#000000" },

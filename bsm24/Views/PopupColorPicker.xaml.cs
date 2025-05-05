@@ -1,5 +1,7 @@
 #nullable disable
 
+using bsm24.Services;
+using FFImageLoading.Extensions;
 using Mopups.Pages;
 using Mopups.Services;
 using System.Collections.ObjectModel;
@@ -26,10 +28,10 @@ public partial class PopupColorPicker : PopupPage, INotifyPropertyChanged
         LineWidthVisibility = lineWidthVisibility;
         LineWidth = lineWidth;
         ColorsList = new ObservableCollection<ColorBoxItem>(
-                    Settings.ColorData.Select(c => new ColorBoxItem
-                    { BackgroundColor = c }))
+                    SettingsService.Instance.ColorList.Select(c => new ColorBoxItem
+                    { BackgroundColor = Color.Parse(c) }))
         {
-            new() { IsAddButton = true }
+            new() { BackgroundColor = selectedColor, IsAddButton = true }
         };
 
         // Prüfen, ob selectedColor in der Liste vorkommt
@@ -65,7 +67,7 @@ public partial class PopupColorPicker : PopupPage, INotifyPropertyChanged
 
     private void OnColorTapped(object sender, EventArgs e)
     {
-        if (sender is Border border && border.BindingContext is ColorBoxItem tappedItem)
+        if (sender is MR.Gestures.Border border && border.BindingContext is ColorBoxItem tappedItem)
         {
             foreach (var item in ColorsList)
                 item.IsSelected = false;
@@ -115,7 +117,32 @@ public partial class PopupColorPicker : PopupPage, INotifyPropertyChanged
             ColorsList.Add(new ColorBoxItem { BackgroundColor = SelectedColor, IsSelected = true });
 
             // Dummy wieder ans Ende setzen
-            ColorsList.Add(new ColorBoxItem { BackgroundColor = SelectedColor, IsAddButton = true });
+            ColorsList.Add(new ColorBoxItem { IsAddButton = true });
+
+            // Farbliste speichern
+            SettingsService.Instance.ColorList = [.. ColorsList
+                .Where(c => !c.IsAddButton)
+                .Select(c => c.BackgroundColor.ToHex())];
+
+            SettingsService.Instance.SaveSettings();
+        }
+    }
+
+    private void OnLongPressed(object sender, EventArgs e)
+    {
+        if (sender is MR.Gestures.Border border && border.BindingContext is ColorBoxItem tappedItem)
+        {
+            if (!tappedItem.IsAddButton)
+            {
+                ColorsList.Remove(tappedItem);
+
+                // Farbliste speichern
+                SettingsService.Instance.ColorList = [.. ColorsList
+                .Where(c => !c.IsAddButton)
+                .Select(c => c.BackgroundColor.ToHex())];
+
+                SettingsService.Instance.SaveSettings();
+            }
         }
     }
 

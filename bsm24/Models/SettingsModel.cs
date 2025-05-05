@@ -16,4 +16,5 @@ internal class SettingsModel
     public bool IsFotoCompressed { get; set; }
     public int FotoCompressValue { get; set; }
     public string? IconGalleryMode { get; set; }
+    public List<string>? ColorList { get; set; }
 }
