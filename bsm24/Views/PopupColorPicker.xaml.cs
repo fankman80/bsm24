@@ -335,7 +335,7 @@ public partial class PopupColorPicker : PopupPage, INotifyPropertyChanged
 
     private void UpdateSelectedColor_Work()
     {
-        SelectedColor = Color.FromHsla((float)workH, (float)workS, (float)workV);
+        SelectedColor = Color.FromRgb(RedValue, GreenValue, BlueValue);
         if (ColorsList?.Any() == true)
         {
             var lastItem = ColorsList.Last();
@@ -352,9 +352,9 @@ public partial class PopupColorPicker : PopupPage, INotifyPropertyChanged
 
     private void UpdateRGBFromHSV_Work()
     {
-        workR = Color.FromHsla((float)workH, (float)workS, (float)workV).Red;
-        workG = Color.FromHsla((float)workH, (float)workS, (float)workV).Green;
-        workB = Color.FromHsla((float)workH, (float)workS, (float)workV).Blue;
+        workR = Color.FromHsla(workH, workS, workV).Red;
+        workG = Color.FromHsla(workH, workS, workV).Green;
+        workB = Color.FromHsla(workH, workS, workV).Blue;
     }
 
     public new event PropertyChangedEventHandler PropertyChanged;
