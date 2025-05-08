@@ -39,6 +39,7 @@ public partial class PinList : UraniumContentPage
     {
         int pincounter = 0;
         pinListView.ItemsSource = null;
+        bool saveRequested = false;
 
         foreach (var plan in GlobalJson.Data.Plans)
         {
@@ -49,8 +50,26 @@ public partial class PinList : UraniumContentPage
                     if (!GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].IsCustomPin)
                     {
                         var pinIcon = GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].PinIcon;
-                        if (pinIcon.Contains("customicons", StringComparison.OrdinalIgnoreCase))
-                            pinIcon = Path.Combine(Settings.DataDirectory, pinIcon);
+                        if (pinIcon.StartsWith("customicons", StringComparison.OrdinalIgnoreCase))
+                        {
+                            var _pinIcon = Path.Combine(Settings.DataDirectory, pinIcon);
+                            if (File.Exists(_pinIcon))
+                                pinIcon = _pinIcon;
+                            else
+                            {
+                                // Lade Default-Icon falls Custom-Icon nicht existiert
+                                var iconItem = Settings.IconData.First();
+                                GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].PinIcon = iconItem.FileName;
+                                GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].Size = iconItem.IconSize;
+                                GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].IsLockRotate = iconItem.IsRotationLocked;
+                                GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].IsCustomPin = iconItem.IsCustomPin;
+                                GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].Anchor = iconItem.AnchorPoint;
+                                GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].PinScale = iconItem.IconScale;
+                                GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].PinColor = iconItem.PinColor;
+                                pinIcon = iconItem.FileName;
+                                saveRequested = true;
+                            }
+                        }
                         var newPin = new PinItem
                         {
                             PinDesc = GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].PinDesc,
@@ -67,9 +86,13 @@ public partial class PinList : UraniumContentPage
                         pinItems.Add(newPin);
                         pincounter++;
                     }
-                }     
+                }
             }
         }
+
+        // speichere Json nur wenn Daten geändert wurden
+        if (saveRequested)
+            GlobalJson.SaveToFile();
 
         originalPinItems = [.. pinItems];
 

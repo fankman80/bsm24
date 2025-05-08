@@ -228,7 +228,21 @@ public partial class NewPage : IQueryAttributable
         }
         else if (pinIcon.StartsWith("customicons", StringComparison.OrdinalIgnoreCase))
         {
-            pinIcon = Path.Combine(Settings.DataDirectory, pinIcon);
+            var _pinIcon = Path.Combine(Settings.DataDirectory, pinIcon);
+            if (File.Exists(_pinIcon))
+                pinIcon = _pinIcon;
+            else
+            {
+                // Lade Default-Icon falls Custom-Icon nicht existiert
+                var iconItem = Settings.IconData.First();
+                GlobalJson.Data.Plans[PlanId].Pins[pinId].PinIcon = iconItem.FileName;
+                GlobalJson.Data.Plans[PlanId].Pins[pinId].Size = iconItem.IconSize;
+                GlobalJson.Data.Plans[PlanId].Pins[pinId].IsLockRotate = iconItem.IsRotationLocked;
+                GlobalJson.Data.Plans[PlanId].Pins[pinId].IsCustomPin = iconItem.IsCustomPin;
+                GlobalJson.Data.Plans[PlanId].Pins[pinId].Anchor = iconItem.AnchorPoint;
+                GlobalJson.Data.Plans[PlanId].Pins[pinId].PinScale = iconItem.IconScale;
+                GlobalJson.Data.Plans[PlanId].Pins[pinId].PinColor = iconItem.PinColor;
+            }
         }
 
         // berechne Anchor-Koordinaten
@@ -425,7 +439,7 @@ public partial class NewPage : IQueryAttributable
             SettingsService.Instance.IconCategories = iconCategories;
             Settings.IconData = iconItems;
 
-            string _newPin = "a_pin_red.png";
+            string _newPin = Settings.IconData.First().FileName;
             string currentDateTime = DateTime.Now.ToString("yyyyMMdd_HHmmss");
             var iconItem = Settings.IconData.FirstOrDefault(item => item.FileName.Equals(_newPin, StringComparison.OrdinalIgnoreCase));
 

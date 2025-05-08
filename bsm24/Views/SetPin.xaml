@@ -16,7 +16,7 @@
     <Shell.BackButtonBehavior>
         <BackButtonBehavior IsVisible="False" />
     </Shell.BackButtonBehavior>
-    
+
     <ContentPage.ToolbarItems>
         <ToolbarItem
             IconImageSource="{FontImageSource FontFamily=MaterialOutlined, Color={DynamicResource PrimaryDark}, Glyph={x:Static m:MaterialOutlined.Edit_square}}" 
@@ -148,17 +148,27 @@
                                  Padding="12"/>
                 </Border>
             </Grid>
-            
-            <Grid>
+
+            <Grid x:DataType="views:SetPin">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
+                <Label Grid.Column="0"
+                       Text="{x:Static m:MaterialOutlined.Traffic}"
+                       VerticalTextAlignment="Center"
+                       FontFamily="MaterialOutlined"
+                       TextColor="{Binding PriorityColor}"
+                       FontSize="40"/>
 
-                <Label x:Name="priorityLabel" Grid.Column="0" Text="Priorität:" VerticalOptions="Center"/>
-                <material:PickerField Grid.Column="1" x:Name="priorityPicker"/>
+                <material:PickerField Grid.Column="1"
+                                      x:Name="priorityPicker" 
+                                      Title="Priorität"   
+                                      TitleColor="{Binding PriorityColor}"
+                                      TextColor="{AppThemeBinding Light={DynamicResource PrimaryText}, Dark={DynamicResource PrimaryDarkText}}"
+                                      BorderColor="{Binding PriorityColor}"/>
             </Grid>
-      
+            
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" />

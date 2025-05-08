@@ -1,6 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <IconData>
 	<Item>
+		<FileName>a_pin_red.png</FileName>
+		<Description></Description>
+		<AnchorPoint X="0.297" Y="0.97" />
+		<Size Width="64" Height="64" />
+		<RotationLocked>false</RotationLocked>
+		<Color Red="255" Green="0" Blue="0" />
+		<Scale>1.0</Scale>
+		<Category>Stecknadeln</Category>
+	</Item>
+
+	<Item>
 		<FileName>a_pin_blue.png</FileName>
 		<Description></Description>
 		<AnchorPoint X="0.297" Y="0.97" />
@@ -40,17 +51,6 @@
 		<Size Width="64" Height="64" />
 		<RotationLocked>false</RotationLocked>
 		<Color Red="252" Green="2" Blue="202" />
-		<Scale>1.0</Scale>
-		<Category>Stecknadeln</Category>
-	</Item>
-
-	<Item>
-		<FileName>a_pin_red.png</FileName>
-		<Description></Description>
-		<AnchorPoint X="0.297" Y="0.97" />
-		<Size Width="64" Height="64" />
-		<RotationLocked>false</RotationLocked>
-		<Color Red="255" Green="0" Blue="0" />
 		<Scale>1.0</Scale>
 		<Category>Stecknadeln</Category>
 	</Item>

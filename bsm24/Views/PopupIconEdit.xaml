@@ -86,32 +86,35 @@
                     <Button Text="Farbe wählen"
                             BackgroundColor="{Binding SelectedColor}"
                             TextColor="{Binding SelectedColor, Converter={StaticResource ContrastConverter}}"
-                            Clicked="OnColorPickerClicked"/>    
-                    
-                    <Label x:Name="sliderText" Text="Skalierung:" Margin="0, 0, 0, -12"/>
-                    <Slider x:Name="iconScale"
-                            Maximum="100"
-                            Minimum="1"
-                            Value="100"
-                            ThumbColor="{DynamicResource Primary}"
-                            MinimumTrackColor="{DynamicResource Primary}"
-                            MaximumTrackColor="{DynamicResource PrimaryDark}"
-                            ValueChanged="OnSliderValueChanged"/>
+                            Clicked="OnColorPickerClicked"/>
 
-                    <HorizontalStackLayout Spacing="0">
-                        <CheckBox x:Name="allowRotate"
-                                  Scale="1.2"
-                                  Color="{DynamicResource Primary}"/>
-                        <Label Text="Rotation sperren" VerticalOptions="Center"/>
-                    </HorizontalStackLayout>
+
+                    <VerticalStackLayout Spacing="0">
+                        <Label x:Name="sliderText" Text="Skalierung:"/>
+                        <Slider x:Name="iconScale"
+                                Maximum="100"
+                                Minimum="1"
+                                Value="100"
+                                ThumbColor="{DynamicResource Primary}"
+                                MinimumTrackColor="{DynamicResource Primary}"
+                                MaximumTrackColor="{DynamicResource PrimaryDark}"
+                                ValueChanged="OnSliderValueChanged"/>
+
+                        <HorizontalStackLayout Spacing="0">
+                            <CheckBox x:Name="allowRotate"
+                                      Scale="1.2"
+                                      Color="{DynamicResource Primary}"/>
+                            <Label Text="Rotation sperren" VerticalOptions="Center"/>
+                        </HorizontalStackLayout>
                     
-                    <HorizontalStackLayout x:Name="deleteIconContainer" Spacing="0" IsVisible="False">
-                        <CheckBox x:Name="deleteIcon"
-                                  IsChecked="False"
-                                  Scale="1.2"
-                                  Color="{DynamicResource Primary}"/>
-                        <Label Text="Icon löschen" VerticalOptions="Center"/>
-                    </HorizontalStackLayout>
+                        <HorizontalStackLayout x:Name="deleteIconContainer" Spacing="0" IsVisible="False">
+                            <CheckBox x:Name="deleteIcon"
+                                      IsChecked="False"
+                                      Scale="1.2"
+                                      Color="{DynamicResource Primary}"/>
+                            <Label Text="Icon löschen" VerticalOptions="Center"/>
+                        </HorizontalStackLayout>
+                    </VerticalStackLayout>
                 </VerticalStackLayout>
             </ScrollView>
 

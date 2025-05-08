@@ -5,7 +5,6 @@ using CommunityToolkit.Maui.Core.Extensions;
 using FFImageLoading.Maui;
 using Mopups.Services;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
 using UraniumUI.Material.Controls;
 using UraniumUI.Pages;
 using CheckBox = Microsoft.Maui.Controls.CheckBox;
@@ -20,6 +19,20 @@ public partial class SetPin : UraniumContentPage, IQueryAttributable
     public string PlanId;
     public string PinId;
     public string PinIcon;
+
+    private Color priorityColor = Color.FromArgb("#000000");
+    public Color PriorityColor
+    {
+        get => priorityColor;
+        set
+        {
+            if (priorityColor != value)
+            {
+                priorityColor = value;
+                OnPropertyChanged(nameof(PriorityColor));
+            }
+        }
+    }
 
     public SetPin()
     {
@@ -229,11 +242,7 @@ public partial class SetPin : UraniumContentPage, IQueryAttributable
         {
             var selectedIndex = picker.SelectedIndex;
             if (selectedIndex >= 0)
-            {
-                priorityPicker.BorderColor = Color.FromArgb(Settings.PriorityItems[selectedIndex].Color);
-                priorityPicker.AccentColor = Color.FromArgb(Settings.PriorityItems[selectedIndex].Color);
-                priorityLabel.TextColor = Color.FromArgb(Settings.PriorityItems[selectedIndex].Color);
-            }
+                PriorityColor = Color.FromArgb(Settings.PriorityItems[selectedIndex].Color);
         }
     }
 
@@ -253,6 +262,8 @@ public partial class SetPin : UraniumContentPage, IQueryAttributable
             GlobalJson.SaveToFile();
         }
     }
+
+
 }
 
 public class ImageItem
