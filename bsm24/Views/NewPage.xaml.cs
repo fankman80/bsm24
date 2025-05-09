@@ -6,7 +6,6 @@ using bsm24.ViewModels;
 using CommunityToolkit.Maui.Core;
 using CommunityToolkit.Maui.Core.Views;
 using CommunityToolkit.Maui.Views;
-using Microsoft.Maui;
 using Mopups.Services;
 using MR.Gestures;
 using SkiaSharp;
@@ -483,7 +482,7 @@ public partial class NewPage : IQueryAttributable
 
             using (var canvas = new SKCanvas(previewBitmap))
             {
-                canvas.DrawBitmap(result.MaskBitmap, result.OffsetX, result.OffsetY);
+                canvas.DrawBitmap(result.MaskBitmap, result.OffsetX, result.OffsetY);                
             }
             fillView.InvalidateSurface();
         }
@@ -801,20 +800,16 @@ public partial class NewPage : IQueryAttributable
             BackgroundColor = Colors.Transparent,
             InputTransparent = true,
             WidthRequest = PlanImage.Width,
-            HeightRequest = PlanImage.Height
+            HeightRequest = PlanImage.Height,
+            AnchorX = 0,
+            AnchorY = 0,
         };
-
-        pinBound.Left = int.MaxValue;
-        pinBound.Right = int.MinValue;
-        pinBound.Top = int.MaxValue;
-        pinBound.Bottom = int.MinValue;
 
         // Füge die EventHandler hinzu
         fillView.PaintSurface += OnCanvasPaintSurface;
         var absoluteLayout = this.FindByName<Microsoft.Maui.Controls.AbsoluteLayout>("PlanContainer");
         absoluteLayout.Children.Add(fillView);
     }
-
     private void RemoveFillView()
     {
         var absoluteLayout = this.FindByName<Microsoft.Maui.Controls.AbsoluteLayout>("PlanContainer");
