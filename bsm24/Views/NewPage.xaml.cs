@@ -6,26 +6,18 @@ using bsm24.ViewModels;
 using CommunityToolkit.Maui.Core;
 using CommunityToolkit.Maui.Core.Views;
 using CommunityToolkit.Maui.Views;
+using DocumentFormat.OpenXml.Office2010.Excel;
 using Mopups.Services;
 using MR.Gestures;
-using SkiaSharp;
-using SkiaSharp.Views.Maui;
-using SkiaSharp.Views.Maui.Controls;
-using Application = Microsoft.Maui.Controls.Application;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Processing;
+using SkiaSharp;
+using Application = Microsoft.Maui.Controls.Application;
 using Color = Microsoft.Maui.Graphics.Color;
-using Point = Microsoft.Maui.Graphics.Point;
 using Image = SixLabors.ImageSharp.Image;
+using Point = Microsoft.Maui.Graphics.Point;
 using Size = Microsoft.Maui.Graphics.Size;
-using System.IO;
-
-
-
-
-
-
 
 #if WINDOWS
 using bsm24.Platforms.Windows;
@@ -194,6 +186,7 @@ public partial class NewPage : IQueryAttributable
             PlanImage.WidthRequest = GlobalJson.Data.Plans[PlanId].ImageSize.Width;
             PlanImage.HeightRequest = GlobalJson.Data.Plans[PlanId].ImageSize.Height;
         }
+
         PlanImage.Source = Path.Combine(Settings.DataDirectory, GlobalJson.Data.ProjectPath, GlobalJson.Data.PlanPath, GlobalJson.Data.Plans[PlanId].File);
 
         PlanContainer.PropertyChanged += (s, e) =>
@@ -513,14 +506,42 @@ public partial class NewPage : IQueryAttributable
             visited[px, py] = true;
             overlayImage[px, py] = fillColor; // Nur ins Overlay schreiben
 
-            queue.Enqueue((px + 1, py));
-            queue.Enqueue((px - 1, py));
-            queue.Enqueue((px, py + 1));
-            queue.Enqueue((px, py - 1));
+            // Überprüfe benachbarte Pixel, um die Füllregion dynamisch zu erweitern
+            if (IsNearFilledRegion(px, py))
+            {
+                queue.Enqueue((px + 1, py));
+                queue.Enqueue((px - 1, py));
+                queue.Enqueue((px, py + 1));
+                queue.Enqueue((px, py - 1));
+            }
         }
 
         UpdateImageViewWithOverlay();
     }
+
+    private bool IsNearFilledRegion(int x, int y)
+    {
+        // Prüfe, ob das Pixel nahe an der ursprünglich gefüllten Region liegt
+        for (int dx = -1; dx <= 1; dx++)
+        {
+            for (int dy = -1; dy <= 1; dy++)
+            {
+                int nx = x + dx;
+                int ny = y + dy;
+
+                if (nx >= 0 && ny >= 0 && nx < originalImage.Width && ny < originalImage.Height)
+                {
+                    // Überprüfe, ob benachbarte Pixel bereits die Füllfarbe haben
+                    if (overlayImage[nx, ny] != new Rgba32(0, 0, 0, 0)) // Wenn das benachbarte Pixel nicht transparent ist
+                    {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
 
     private void UpdateImageViewWithOverlay()
     {
@@ -528,7 +549,7 @@ public partial class NewPage : IQueryAttributable
         combined.Mutate(ctx =>
         {
             ctx.DrawImage(originalImage, 1f);
-            ctx.DrawImage(overlayImage ,1f);
+            ctx.DrawImage(overlayImage, 1f);
         });
         fillView.Source = ConvertImageSharpToImageSource(combined);
     }
@@ -794,6 +815,7 @@ public partial class NewPage : IQueryAttributable
         var absoluteLayout = this.FindByName<Microsoft.Maui.Controls.AbsoluteLayout>("PlanContainer");
         absoluteLayout.Children.Add(fillView);
     }
+
     private void RemoveFillView()
     {
         var absoluteLayout = this.FindByName<Microsoft.Maui.Controls.AbsoluteLayout>("PlanContainer");
