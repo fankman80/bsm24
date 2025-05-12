@@ -6,7 +6,6 @@ using bsm24.ViewModels;
 using CommunityToolkit.Maui.Core;
 using CommunityToolkit.Maui.Core.Views;
 using CommunityToolkit.Maui.Views;
-using DocumentFormat.OpenXml.Office2010.Excel;
 using Mopups.Services;
 using MR.Gestures;
 using SixLabors.ImageSharp;
@@ -39,7 +38,7 @@ public partial class NewPage : IQueryAttributable
     private readonly TransformViewModel planContainer;
     private Microsoft.Maui.Controls.Image fillView;
     private DrawingView drawingView;
-    private Image<Rgba32> originalImage;
+    private Image<Rgb24> originalImage;
     private Image<Rgba32> overlayImage; // Nur Maske mit Alpha
     private int lineWidth = 15;
     private Color selectedColor = new(255, 0, 0);
@@ -542,7 +541,6 @@ public partial class NewPage : IQueryAttributable
         return false;
     }
 
-
     private void UpdateImageViewWithOverlay()
     {
         using var combined = new Image<Rgba32>(originalImage.Width, originalImage.Height);
@@ -562,13 +560,12 @@ public partial class NewPage : IQueryAttributable
         return ImageSource.FromStream(() => ms);
     }
 
-    private static bool ColorsAreClose(Rgba32 c1, Rgba32 c2, int tolerance)
+    private static bool ColorsAreClose(Rgb24 c1, Rgb24 c2, int tolerance)
     {
         int dr = c1.R - c2.R;
         int dg = c1.G - c2.G;
         int db = c1.B - c2.B;
-        int da = c1.A - c2.A;
-        int distance = dr * dr + dg * dg + db * db + da * da;
+        int distance = dr * dr + dg * dg + db * db;
         return distance <= tolerance * tolerance;
     }
 
@@ -800,7 +797,7 @@ public partial class NewPage : IQueryAttributable
     {
         var plan_path = Path.Combine(Settings.DataDirectory, GlobalJson.Data.ProjectPath, GlobalJson.Data.PlanPath, GlobalJson.Data.Plans[PlanId].File);
         var stream = File.OpenRead(plan_path);
-        originalImage = Image.Load<Rgba32>(stream);
+        originalImage = Image.Load<Rgb24>(stream);
         overlayImage = new Image<Rgba32>(originalImage.Width, originalImage.Height);
 
         fillView = new Microsoft.Maui.Controls.Image
