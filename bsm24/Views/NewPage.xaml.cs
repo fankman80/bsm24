@@ -3,11 +3,9 @@
 using bsm24.Models;
 using bsm24.Services;
 using bsm24.ViewModels;
-using Codeuctivity.OpenXmlPowerTools;
 using CommunityToolkit.Maui.Core;
 using CommunityToolkit.Maui.Core.Views;
 using CommunityToolkit.Maui.Views;
-using DocumentFormat.OpenXml.Office2010.Excel;
 using Mopups.Services;
 using MR.Gestures;
 using SixLabors.ImageSharp;
@@ -16,7 +14,6 @@ using SixLabors.ImageSharp.Processing;
 using SkiaSharp;
 using Application = Microsoft.Maui.Controls.Application;
 using Color = Microsoft.Maui.Graphics.Color;
-using Image = SixLabors.ImageSharp.Image;
 using Point = Microsoft.Maui.Graphics.Point;
 using Size = Microsoft.Maui.Graphics.Size;
 
@@ -40,7 +37,6 @@ public partial class NewPage : IQueryAttributable
     private readonly TransformViewModel planContainer;
     private Microsoft.Maui.Controls.Image fillView;
     private DrawingView drawingView;
-    private Image<Rgba32> originalImage;
     private DynamicOverlayMask overlayMask; // Nur Maske mit Alpha
     private TileManager tileManager;
     private int lineWidth = 15;
@@ -559,8 +555,6 @@ public partial class NewPage : IQueryAttributable
         ms.Position = 0;
         return ImageSource.FromStream(() => ms);
     }
-
-
 
     private void FillIconDown(object sender, EventArgs e)
     {
