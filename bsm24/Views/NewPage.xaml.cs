@@ -8,14 +8,7 @@ using CommunityToolkit.Maui.Core.Views;
 using CommunityToolkit.Maui.Views;
 using Mopups.Services;
 using MR.Gestures;
-using SixLabors.ImageSharp;
-using SixLabors.ImageSharp.PixelFormats;
-using SixLabors.ImageSharp.Processing;
 using SkiaSharp;
-using Application = Microsoft.Maui.Controls.Application;
-using Color = Microsoft.Maui.Graphics.Color;
-using Point = Microsoft.Maui.Graphics.Point;
-using Size = Microsoft.Maui.Graphics.Size;
 
 #if WINDOWS
 using bsm24.Platforms.Windows;
@@ -35,15 +28,11 @@ public partial class NewPage : IQueryAttributable
     private bool isFirstLoad = true;
     private Point mousePos;
     private readonly TransformViewModel planContainer;
-    private Microsoft.Maui.Controls.Image fillView;
     private DrawingView drawingView;
-    private DynamicOverlayMask overlayMask; // Nur Maske mit Alpha
-    private TileManager tileManager;
     private int lineWidth = 15;
     private Color selectedColor = new(255, 0, 0);
     bool isTappedHandled = false;
     SKRectI pinBound;
-    private string drawingMode = null;
 
 #if WINDOWS
     private bool shiftKeyDown = false;
@@ -442,131 +431,7 @@ public partial class NewPage : IQueryAttributable
         CheckBtn.IsVisible = true;
         EraseBtn.IsVisible = true;
 
-        drawingMode = "draw";
-
         AddDrawingView();
-    }
-
-    private void FillRegionClicked(object sender, EventArgs e)
-    {
-        SetPinBtn.IsVisible = false;
-        DrawBtn.IsVisible = false;
-        PenSettingsBtn.IsVisible = true;
-        CheckBtn.IsVisible = true;
-        EraseBtn.IsVisible = true;
-        DraggableIcon.IsVisible = true;
-        DraggableIcon.TranslationX =  this.Width / 2;
-        DraggableIcon.TranslationY = this.Height / 2;
-
-        drawingMode = "fill";
-
-        AddFillView();
-    }
-
-    private void AddFillTapped(object sender, EventArgs e)
-    {
-        // Koordinaten umrechnen
-        var scaleSpeed = 1 / PlanContainer.Scale;
-        double angle = PlanContainer.Rotation * Math.PI / 180.0;
-        double cos = Math.Cos(-angle);
-        double sin = Math.Sin(-angle);
-        var _dx = (DraggableIcon.TranslationX + (DraggableIcon.Width * DraggableIcon.AnchorX) - (this.Width / 2)) * scaleSpeed;
-        var _dy = (DraggableIcon.TranslationY + (DraggableIcon.Height * DraggableIcon.AnchorY) - (this.Height / 2)) * scaleSpeed;
-        var dx = _dx * cos - _dy * sin;
-        var dy = _dx * sin + _dy * cos;
-        Point pos = new(PlanContainer.AnchorX * PlanContainer.Width + dx, PlanContainer.AnchorY * PlanContainer.Height + dy);
-
-        // overlayMask ist ein Feld deiner Page
-        FloodFillWithDynamicOverlay(
-            (int)pos.X, (int)pos.Y,
-            new Rgba32(255, 0, 0, 120),  // z. B. halbtransparentes Rot
-            tileManager,
-            ref overlayMask,
-            25);
-
-        // Danach aktualisierst du die Anzeige:
-        UpdateImageViewWithOverlay(tileManager, overlayMask);      
-    }
-
-    public void FloodFillWithDynamicOverlay(
-        int startX, int startY,
-        Rgba32 fillColor,
-        TileManager tileManager,
-        ref DynamicOverlayMask overlayMask,
-        int tolerance = 20)
-    {
-        if (overlayMask == null)
-            overlayMask = new DynamicOverlayMask();
-
-        var targetColor = tileManager.GetPixel(startX, startY);
-        var visited = new HashSet<(int x, int y)>();
-        var queue = new Queue<(int x, int y)>();
-        queue.Enqueue((startX, startY));
-
-        while (queue.Count > 0)
-        {
-            var (x, y) = queue.Dequeue();
-
-            if (visited.Contains((x, y)))
-                continue;
-
-            if (x < 0 || y < 0 || x >= tileManager.Width || y >= tileManager.Height)
-                continue;
-
-            var currentColor = tileManager.GetPixel(x, y);
-            if (!ColorsAreClose(currentColor, targetColor, tolerance))
-                continue;
-
-            visited.Add((x, y));
-            overlayMask.Set(x, y, fillColor);
-
-            queue.Enqueue((x + 1, y));
-            queue.Enqueue((x - 1, y));
-            queue.Enqueue((x, y + 1));
-            queue.Enqueue((x, y - 1));
-        }
-    }
-
-    private void UpdateImageViewWithOverlay(TileManager tileManager, DynamicOverlayMask mask)
-    {
-        var overlay = mask.GetImage();
-        if (overlay == null)
-            return;
-
-        using var combined = new Image<Rgba32>(tileManager.Width, tileManager.Height);
-        combined.Mutate(ctx =>
-        {
-            ctx.DrawImage(tileManager.LoadBaseImage(), 1f);
-            ctx.DrawImage(overlay, new SixLabors.ImageSharp.Point(mask.OffsetX, mask.OffsetY), 1f);
-        });
-
-        fillView.Source = ConvertImageSharpToImageSource(combined);
-    }
-
-    private bool ColorsAreClose(L8 a, L8 b, int tolerance)
-    {
-        return Math.Abs(a.PackedValue - b.PackedValue) < tolerance;
-    }
-
-    private ImageSource ConvertImageSharpToImageSource(Image<Rgba32> image)
-    {
-        var ms = new MemoryStream();
-        image.SaveAsPng(ms);
-        ms.Position = 0;
-        return ImageSource.FromStream(() => ms);
-    }
-
-    private void FillIconDown(object sender, EventArgs e)
-    {
-        MR.Gestures.Image icon = (MR.Gestures.Image)sender;
-        planContainer.IsPanningEnabled = false;
-        activePin = icon;
-    }
-
-    private void FillIconUp(object sender, EventArgs e)
-    {
-        planContainer.IsPanningEnabled = true;
-        activePin = null;
     }
 
     private void SetPin(string customName = null, int customPinSizeWidth = 0, int customPinSizeHeight = 0, double customPinX = 0, double customPinY = 0, SKColor? pinColor = null)
@@ -780,32 +645,6 @@ public partial class NewPage : IQueryAttributable
             absoluteLayout.Children.Remove(drawingView);
     }
 
-    private void AddFillView()
-    {
-        var plan_path = Path.Combine(Settings.DataDirectory, GlobalJson.Data.ProjectPath, GlobalJson.Data.PlanPath, GlobalJson.Data.Plans[PlanId].File);
-
-        fillView = new Microsoft.Maui.Controls.Image
-        {
-            InputTransparent = true,
-            WidthRequest = PlanImage.Width,
-            HeightRequest = PlanImage.Height,
-            AnchorX = 0,
-            AnchorY = 0,
-        };
-
-        tileManager = new TileManager(plan_path);
-
-        var absoluteLayout = this.FindByName<Microsoft.Maui.Controls.AbsoluteLayout>("PlanContainer");
-        absoluteLayout.Children.Add(fillView);
-    }
-
-    private void RemoveFillView()
-    {
-        var absoluteLayout = this.FindByName<Microsoft.Maui.Controls.AbsoluteLayout>("PlanContainer");
-        if (fillView != null && absoluteLayout != null)
-            absoluteLayout.Children.Remove(fillView);
-    }
-
     private void OnDrawingLineUpdated(object sender, PointDrawnEventArgs e)
     {
         if (e.Point.X < pinBound.Left)
@@ -820,113 +659,50 @@ public partial class NewPage : IQueryAttributable
 
     private async void CheckClicked(object sender, EventArgs e)
     {
-        if (drawingMode == "draw")
+        if (drawingView.Lines.Count > 0)
         {
-            if (drawingView.Lines.Count > 0)
-            {
-                var customPinPath = Path.Combine(Settings.DataDirectory, GlobalJson.Data.ProjectPath, GlobalJson.Data.CustomPinsPath);
-                var customPinName = "custompin_" + DateTime.Now.ToString("yyyyMMdd_HHmmss") + ".png";
-                string filePath = Path.Combine(customPinPath, customPinName);
-
-                await using var imageStream = await DrawingViewService.GetImageStream(
-                                                    ImageLineOptions.JustLines(drawingView.Lines,
-                                                    new Size(pinBound.Width, pinBound.Height),
-                                                    Brush.Transparent));
-                if (imageStream != null)
-                {
-                    if (!Directory.Exists(customPinPath))
-                        Directory.CreateDirectory(customPinPath);
-
-                    using var memoryStream = new MemoryStream();
-                    await imageStream.CopyToAsync(memoryStream);
-                    memoryStream.Seek(0, SeekOrigin.Begin);
-                    using var _skBitmap = SKBitmap.Decode(memoryStream);
-                    var skBitmap = CropBitmap(_skBitmap, 4);
-                    var resizedBitmap = new SKBitmap(pinBound.Width + (int)drawingView.LineWidth, pinBound.Height + (int)drawingView.LineWidth);
-                    var samplingOptions = new SKSamplingOptions(SKFilterMode.Linear);
-                    skBitmap.ScalePixels(resizedBitmap, samplingOptions);
-
-                    using var imageData = resizedBitmap.Encode(SKEncodedImageFormat.Png, 90); // 90 = Qualität
-                    using (var fileStream = new FileStream(filePath, FileMode.Create, FileAccess.Write))
-                    {
-                        imageData.SaveTo(fileStream);
-                    }
-
-                    SetPin(customPinName, resizedBitmap.Width, resizedBitmap.Height,
-                          (pinBound.Left + pinBound.Width / 2) / GlobalJson.Data.Plans[PlanId].ImageSize.Width * densityX,
-                          (pinBound.Top + pinBound.Height / 2) / GlobalJson.Data.Plans[PlanId].ImageSize.Height * densityY,
-                          new SKColor(drawingView.LineColor.ToUint()));
-                }
-            }
-            RemoveDrawingView();
-        }
-
-        if (drawingMode == "fill")
-        {
-            // Speichern
             var customPinPath = Path.Combine(Settings.DataDirectory, GlobalJson.Data.ProjectPath, GlobalJson.Data.CustomPinsPath);
-            if (!Directory.Exists(customPinPath))
-                Directory.CreateDirectory(customPinPath);
-
             var customPinName = "custompin_" + DateTime.Now.ToString("yyyyMMdd_HHmmss") + ".png";
             string filePath = Path.Combine(customPinPath, customPinName);
 
-            //var (trimmedMask, offsetX, offsetY) = TrimTransparentEdgesWithOffset(overlayMask);
-            //if (trimmedMask.Width > 1 || trimmedMask.Height > 1)
-            //{
-            //    using (var fs = File.OpenWrite(filePath))
-            //    {
-            //        trimmedMask.SaveAsPng(fs);
-            //    }
+            await using var imageStream = await DrawingViewService.GetImageStream(
+                                                ImageLineOptions.JustLines(drawingView.Lines,
+                                                new Size(pinBound.Width, pinBound.Height),
+                                                Brush.Transparent));
+            if (imageStream != null)
+            {
+                if (!Directory.Exists(customPinPath))
+                    Directory.CreateDirectory(customPinPath);
 
-            //    // Pin setzen
-            //    SetPin(customPinName, trimmedMask.Width, trimmedMask.Height,
-            //            (offsetX + (trimmedMask.Width / 2)) / GlobalJson.Data.Plans[PlanId].ImageSize.Width * densityX,
-            //            (offsetY + (trimmedMask.Height / 2)) / GlobalJson.Data.Plans[PlanId].ImageSize.Height * densityY,
-            //            new SKColor(selectedColor.ToUint()));
-            //}
+                using var memoryStream = new MemoryStream();
+                await imageStream.CopyToAsync(memoryStream);
+                memoryStream.Seek(0, SeekOrigin.Begin);
+                using var _skBitmap = SKBitmap.Decode(memoryStream);
+                var skBitmap = CropBitmap(_skBitmap, 4);
+                var resizedBitmap = new SKBitmap(pinBound.Width + (int)drawingView.LineWidth, pinBound.Height + (int)drawingView.LineWidth);
+                var samplingOptions = new SKSamplingOptions(SKFilterMode.Linear);
+                skBitmap.ScalePixels(resizedBitmap, samplingOptions);
 
+                using var imageData = resizedBitmap.Encode(SKEncodedImageFormat.Png, 90); // 90 = Qualität
+                using (var fileStream = new FileStream(filePath, FileMode.Create, FileAccess.Write))
+                {
+                    imageData.SaveTo(fileStream);
+                }
 
-            RemoveFillView();
+                SetPin(customPinName, resizedBitmap.Width, resizedBitmap.Height,
+                        (pinBound.Left + pinBound.Width / 2) / GlobalJson.Data.Plans[PlanId].ImageSize.Width * densityX,
+                        (pinBound.Top + pinBound.Height / 2) / GlobalJson.Data.Plans[PlanId].ImageSize.Height * densityY,
+                        new SKColor(drawingView.LineColor.ToUint()));
+            }
         }
+        RemoveDrawingView();
 
-        drawingMode = "none";
         planContainer.IsPanningEnabled = true;
         PenSettingsBtn.IsVisible = false;
         CheckBtn.IsVisible = false;
         EraseBtn.IsVisible = false;
         SetPinBtn.IsVisible = true;
         DrawBtn.IsVisible = true;
-        DraggableIcon.IsVisible = false;
-    }
-
-    public static (Image<Rgba32> TrimmedImage, int OffsetX, int OffsetY) TrimTransparentEdgesWithOffset(Image<Rgba32> source)
-    {
-        int left = source.Width, right = 0, top = source.Height, bottom = 0;
-
-        for (int y = 0; y < source.Height; y++)
-        {
-            for (int x = 0; x < source.Width; x++)
-            {
-                if (source[x, y].A > 0)
-                {
-                    if (x < left) left = x;
-                    if (x > right) right = x;
-                    if (y < top) top = y;
-                    if (y > bottom) bottom = y;
-                }
-            }
-        }
-
-        // Kein sichtbarer Inhalt?
-        if (right < left || bottom < top)
-            return (new Image<Rgba32>(1, 1), 0, 0);
-
-        int width = right - left + 1;
-        int height = bottom - top + 1;
-        var trimmed = source.Clone(ctx => ctx.Crop(new Rectangle(left, top, width, height)));
-
-        return (trimmed, left, top);
     }
 
     public static SKBitmap CropBitmap(SKBitmap originalBitmap, int cropWidth)
@@ -962,19 +738,13 @@ public partial class NewPage : IQueryAttributable
             {
                 drawingView.LineColor = selectedColor;
                 drawingView.LineWidth = (int)(lineWidth / densityX);
-            }   
+            }
         }
     }
 
     private void EraseClicked(object sender, EventArgs e)
     {
-        if (drawingMode == "draw")
-            drawingView.Clear();
-        if (drawingMode == "fill")
-        {
-            //overlayMask = new Image<Rgba32>(originalImage.Width, originalImage.Height);
-            //UpdateImageViewWithOverlay();
-        }
+        drawingView.Clear();
     }
 
     private void OnFullScreenButtonClicked(object sender, EventArgs e)
