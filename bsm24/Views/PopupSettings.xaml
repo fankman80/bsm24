@@ -62,8 +62,7 @@
                                         Value="{Binding PdfQuality}"/>
 
                         <HorizontalStackLayout>
-                            <CheckBox x:Name="isPlanRotateLocked"
-                                              Margin="0,0,0,10"
+                            <CheckBox x:Name="isPlanRotateLocked"   
                                               Scale="1.2"
                                               Color="{DynamicResource Primary}"
                                               IsChecked="{Binding IsPlanRotateLocked}"/>
