@@ -6,8 +6,8 @@ using bsm24.ViewModels;
 using CommunityToolkit.Maui.Core;
 using CommunityToolkit.Maui.Core.Views;
 using CommunityToolkit.Maui.Views;
-using Mopups.Services;
 using MR.Gestures;
+using SharpKml.Dom.GX;
 using SkiaSharp;
 
 #if WINDOWS
@@ -723,12 +723,8 @@ public partial class NewPage : IQueryAttributable
 
     private async void PenSettingsClicked(object sender, EventArgs e)
     {
-        if (MopupService.Instance.PopupStack.Any())
-            return;
-
         var popup = new PopupColorPicker(lineWidth, selectedColor, lineWidthVisibility: true);
-        await MopupService.Instance.PushAsync(popup);
-        var result = await popup.PopupDismissedTask;
+        (Color, int) result = ((Color, int))await this.ShowPopupAsync(popup);
 
         if (result.Item1 != null)
         {
@@ -837,17 +833,13 @@ public partial class NewPage : IQueryAttributable
 
     private async void OnEditClicked(object sender, EventArgs e)
     {
-        if (MopupService.Instance.PopupStack.Any())
-            return;
-
         var popup = new PopupPlanEdit(name: GlobalJson.Data.Plans[PlanId].Name,
                                       desc: GlobalJson.Data.Plans[PlanId].Description,
                                       gray: GlobalJson.Data.Plans[PlanId].IsGrayscale,
                                       export: GlobalJson.Data.Plans[PlanId].AllowExport);
-        await MopupService.Instance.PushAsync(popup);
-        var (result1, result2, result3) = await popup.PopupDismissedTask;
+        (string, string, bool) result = ((string, string, bool))await this.ShowPopupAsync(popup);
 
-        switch (result1)
+        switch (result.Item1)
         {
             case "delete":
                 OnDeleteClick();
@@ -861,12 +853,12 @@ public partial class NewPage : IQueryAttributable
                 break;
 
             default:
-                (Application.Current.Windows[0].Page as AppShell).PlanItems.FirstOrDefault(i => i.PlanId == PlanId).Title = result1;
-                Title = result1;
+                (Application.Current.Windows[0].Page as AppShell).PlanItems.FirstOrDefault(i => i.PlanId == PlanId).Title = result.Item1;
+                Title = result.Item1;
 
-                GlobalJson.Data.Plans[PlanId].Name = result1;
-                GlobalJson.Data.Plans[PlanId].Description = result2;
-                GlobalJson.Data.Plans[PlanId].AllowExport = result3;
+                GlobalJson.Data.Plans[PlanId].Name = result.Item1;
+                GlobalJson.Data.Plans[PlanId].Description = result.Item2;
+                GlobalJson.Data.Plans[PlanId].AllowExport = result.Item3;
 
                 // save data to file
                 GlobalJson.SaveToFile();
@@ -877,8 +869,7 @@ public partial class NewPage : IQueryAttributable
     private async void OnDeleteClick()
     {
         var popup = new PopupDualResponse("Wollen Sie diesen Plan wirklich löschen?", okText: "Löschen", alert: true);
-        await MopupService.Instance.PushAsync(popup);
-        var result = await popup.PopupDismissedTask;
+        var result = await this.ShowPopupAsync(popup);
         if (result != null)
         {
             var menuitem = (Application.Current.Windows[0].Page as AppShell).PlanItems.FirstOrDefault(i => i.PlanId == PlanId);
