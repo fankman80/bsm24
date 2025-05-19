@@ -96,7 +96,7 @@ public partial class MapView : IQueryAttributable
 
         var htmlSource = new HtmlWebViewSource
         {
-            Html = LoadHtmlFromFile(lon, lat, zoom),
+            Html = LoadHtmlFromFile(lon, lat, zoom)
         };
 
         GeoAdminWebView.Source = htmlSource;
@@ -136,7 +136,6 @@ public partial class MapView : IQueryAttributable
         string _center_koord = lon.ToString(CultureInfo.InvariantCulture) + ", " + lat.ToString(CultureInfo.InvariantCulture);
         string _zoom = zoom.ToString();
 
-        htmlContent = htmlContent.Replace("{maplayer}", "ch.swisstopo.pixelkarte-farbe");
         htmlContent = htmlContent.Replace("{center_koord}", _center_koord);
         htmlContent = htmlContent.Replace("{mapzoom}", _zoom);
         htmlContent = htmlContent.Replace("{icon}", SettingsService.Instance.MapIcons[SettingsService.Instance.MapIcon]);
@@ -159,7 +158,7 @@ public partial class MapView : IQueryAttributable
                     {
                         var lon = GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].GeoLocation.WGS84.Longitude;
                         var lat = GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].GeoLocation.WGS84.Latitude;
-                        var pindesc = GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].PinDesc;
+                        var pindesc = EscapeForJs(GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].PinDesc);
                         var pinlocation = GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].PinLocation;
                         var pinname = GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].PinName;
                         positionsJson += $"{{ lon: {lon.ToString(CultureInfo.InvariantCulture)}, lat: {lat.ToString(CultureInfo.InvariantCulture)}, pinname: '{pinname}', pinlocation: '{pinlocation}', pindesc: '{pindesc}', plankey: '{plan.Key}', pinkey: '{pin.Key}'}},";
@@ -170,6 +169,14 @@ public partial class MapView : IQueryAttributable
         positionsJson = positionsJson.TrimEnd(',') + "]";
         return $"setMultipleMarkers({positionsJson});";
     }
+
+    static string EscapeForJs(string value)
+    {
+        return value?
+            .Replace("\r", "<br>")
+            .Replace("\n", "<br>");
+    }
+
     private async void SetPosClicked(object sender, EventArgs e)
     {
         if (GPSViewModel.Instance.IsRunning)
