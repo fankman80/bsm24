@@ -76,39 +76,39 @@
                                                        HorizontalOptions="Fill"
                                                        Orientation="Horizontal">
                             <material:RadioButton Value="0"
-                                            WidthRequest="30"
-                                            Margin="0,0,0,10"
-                                            CircleColor="{AppThemeBinding Light={DynamicResource SecondaryBackground}, Dark={DynamicResource SecondaryBackground}}"
-                                            Color="{AppThemeBinding Light={DynamicResource Primary}, Dark={DynamicResource PrimaryDarkAccent}}"
-                                            HorizontalOptions="Center" />
+                                                  WidthRequest="30"
+                                                  Margin="0,0,0,10"
+                                                  CircleColor="{AppThemeBinding Light={DynamicResource SecondaryBackground}, Dark={DynamicResource SecondaryBackground}}"
+                                                  Color="{AppThemeBinding Light={DynamicResource Primary}, Dark={DynamicResource PrimaryDarkAccent}}"
+                                                  HorizontalOptions="Center" />
 
                             <material:RadioButton Value="1"
-                                            WidthRequest="30"
-                                            Margin="0,0,0,10"                                                  
-                                            CircleColor="{AppThemeBinding Light={DynamicResource SecondaryBackground}, Dark={DynamicResource SecondaryBackground}}"
-                                            Color="{AppThemeBinding Light={DynamicResource Primary}, Dark={DynamicResource PrimaryDarkAccent}}"
-                                            HorizontalOptions="Center" />
+                                                  WidthRequest="30"
+                                                  Margin="0,0,0,10"                                                  
+                                                  CircleColor="{AppThemeBinding Light={DynamicResource SecondaryBackground}, Dark={DynamicResource SecondaryBackground}}"
+                                                  Color="{AppThemeBinding Light={DynamicResource Primary}, Dark={DynamicResource PrimaryDarkAccent}}"
+                                                  HorizontalOptions="Center" />
 
                             <material:RadioButton Value="2"
-                                            WidthRequest="30"
-                                            Margin="0,0,0,10"                                                  
-                                            CircleColor="{AppThemeBinding Light={DynamicResource SecondaryBackground}, Dark={DynamicResource SecondaryBackground}}"
-                                            Color="{AppThemeBinding Light={DynamicResource Primary}, Dark={DynamicResource PrimaryDarkAccent}}"
-                                            HorizontalOptions="Center" />
+                                                  WidthRequest="30"
+                                                  Margin="0,0,0,10"                                                  
+                                                  CircleColor="{AppThemeBinding Light={DynamicResource SecondaryBackground}, Dark={DynamicResource SecondaryBackground}}"
+                                                  Color="{AppThemeBinding Light={DynamicResource Primary}, Dark={DynamicResource PrimaryDarkAccent}}"
+                                                  HorizontalOptions="Center" />
 
                             <material:RadioButton Value="3"
-                                            WidthRequest="30"
-                                            Margin="0,0,0,10"                                                  
-                                            CircleColor="{AppThemeBinding Light={DynamicResource SecondaryBackground}, Dark={DynamicResource SecondaryBackground}}"
-                                            Color="{AppThemeBinding Light={DynamicResource Primary}, Dark={DynamicResource PrimaryDarkAccent}}"
-                                            HorizontalOptions="Center" />
+                                                  WidthRequest="30"
+                                                  Margin="0,0,0,10"                                                  
+                                                  CircleColor="{AppThemeBinding Light={DynamicResource SecondaryBackground}, Dark={DynamicResource SecondaryBackground}}"
+                                                  Color="{AppThemeBinding Light={DynamicResource Primary}, Dark={DynamicResource PrimaryDarkAccent}}"
+                                                  HorizontalOptions="Center" />
 
                             <material:RadioButton Value="4"
-                                            WidthRequest="30"
-                                            Margin="0,0,0,10"                                                  
-                                            CircleColor="{AppThemeBinding Light={DynamicResource SecondaryBackground}, Dark={DynamicResource SecondaryBackground}}"
-                                            Color="{AppThemeBinding Light={DynamicResource Primary}, Dark={DynamicResource PrimaryDarkAccent}}"
-                                            HorizontalOptions="Center" />
+                                                  WidthRequest="30"
+                                                  Margin="0,0,0,10"                                                  
+                                                  CircleColor="{AppThemeBinding Light={DynamicResource SecondaryBackground}, Dark={DynamicResource SecondaryBackground}}"
+                                                  Color="{AppThemeBinding Light={DynamicResource Primary}, Dark={DynamicResource PrimaryDarkAccent}}"
+                                                  HorizontalOptions="Center" />
                         </material:RadioButtonGroupView>
 
                         <HorizontalStackLayout Spacing="28" Margin="0,0,0,10">
@@ -152,7 +152,7 @@
                         </material:PickerField>
 
                         <material:PickerField x:Name="colorThemePicker"
-                                             Title="Farbthema"
+                                              Title="Farbthema"
                                               Margin="0,0,0,10"
                                               BorderColor="{AppThemeBinding Light={DynamicResource SecondaryBackground}, Dark={DynamicResource SecondaryBackground}}"
                                               AccentColor="{AppThemeBinding Light={DynamicResource PrimaryAccent}, Dark={DynamicResource SecondaryDark}}"
@@ -168,11 +168,11 @@
                         <ColumnDefinition Width="Auto" />
                     </Grid.ColumnDefinitions>
                     <Button Grid.Column="1"
-                                    Text="OK"
-                                    MinimumWidthRequest="100"
-                                    BackgroundColor="{AppThemeBinding Light={DynamicResource Primary}, Dark={DynamicResource PrimaryDark}}"
-                                    TextColor="{AppThemeBinding Light={DynamicResource PrimaryDarkText}, Dark={DynamicResource PrimaryText}}"                   
-                                    Clicked="OnOkClicked" />
+                            Text="OK"
+                            MinimumWidthRequest="100"
+                            BackgroundColor="{AppThemeBinding Light={DynamicResource Primary}, Dark={DynamicResource PrimaryDark}}"
+                            TextColor="{AppThemeBinding Light={DynamicResource PrimaryDarkText}, Dark={DynamicResource PrimaryText}}"                   
+                            Clicked="OnOkClicked" />
                 </Grid>
             </Grid>
         </Border>

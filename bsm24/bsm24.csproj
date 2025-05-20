@@ -109,12 +109,25 @@
 
 	<ItemGroup>
 		<MauiAsset Remove="Resources\Raw\index.html" />
+		<MauiAsset Remove="Resources\Raw\mappin1a.png" />
+		<MauiAsset Remove="Resources\Raw\mappin2a.png" />
+		<MauiAsset Remove="Resources\Raw\mappin3a.png" />
+		<MauiAsset Remove="Resources\Raw\mappin4a.png" />
+		<MauiAsset Remove="Resources\Raw\mappin5a.png" />
 	</ItemGroup>
 
 	<ItemGroup>
 		<EmbeddedResource Include="Resources\Raw\index.html">
 		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</EmbeddedResource>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <MauiImage Include="Resources\Raw\mappin1a.png" />
+	  <MauiImage Include="Resources\Raw\mappin2a.png" />
+	  <MauiImage Include="Resources\Raw\mappin3a.png" />
+	  <MauiImage Include="Resources\Raw\mappin4a.png" />
+	  <MauiImage Include="Resources\Raw\mappin5a.png" />
 	</ItemGroup>
 
 	<ItemGroup>
