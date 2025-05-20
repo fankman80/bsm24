@@ -1,9 +1,11 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="de">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GeoAdmin Map</title>
+    <script src="https://cdn.jsdelivr.net/npm/ol@latest/dist/ol.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ol@latest/ol.css">
     <style>
         html, body {
             height: 100%;
@@ -33,37 +35,37 @@
             border: 1px solid gray;
         }
 
-        /* Rahmen-Pfeil (größeres Dreieck) */
-        #popup::before {
-            content: "";
-            position: absolute;
-            left: -11px;         /* Etwas weiter links, damit der Rahmen sichtbar ist */
-            top: 40px;           /* Feste Position, z.B. 20px vom oberen Rand */
-            border-top: 11px solid transparent;
-            border-bottom: 11px solid transparent;
-            border-right: 11px solid gray; /* Rahmenfarbe */
-        }
+            /* Rahmen-Pfeil (größeres Dreieck) */
+            #popup::before {
+                content: "";
+                position: absolute;
+                left: -11px; /* Etwas weiter links, damit der Rahmen sichtbar ist */
+                top: 40px; /* Feste Position, z.B. 20px vom oberen Rand */
+                border-top: 11px solid transparent;
+                border-bottom: 11px solid transparent;
+                border-right: 11px solid gray; /* Rahmenfarbe */
+            }
 
-        /* Innerer Pfeil (kleineres Dreieck) */
-        #popup::after {
-            content: "";
-            position: absolute;
-            left: -10px;         /* Etwas nach innen verschoben, damit der Rahmen um den Pfeil entsteht */
-            top: 41px;
-            border-top: 10px solid transparent;
-            border-bottom: 10px solid transparent;
-            border-right: 10px solid white; /* Gleiche Hintergrundfarbe wie das Popup */
-        }
+            /* Innerer Pfeil (kleineres Dreieck) */
+            #popup::after {
+                content: "";
+                position: absolute;
+                left: -10px; /* Etwas nach innen verschoben, damit der Rahmen um den Pfeil entsteht */
+                top: 41px;
+                border-top: 10px solid transparent;
+                border-bottom: 10px solid transparent;
+                border-right: 10px solid white; /* Gleiche Hintergrundfarbe wie das Popup */
+            }
 
-        #popup h4 {
-            font-weight: bold;
-            margin: 5px;
-            color: #999999;
-        }
+            #popup h4 {
+                font-weight: bold;
+                margin: 5px;
+                color: #999999;
+            }
 
-        #popup p {
-            margin: 5px, 5px, 15px, 5px;
-        }
+            #popup p {
+                margin: 5px 5px 15px 5px;
+            }
 
         .popup-header {
             font-size: 14px;
@@ -75,9 +77,47 @@
             border-top: 1px solid #999999; /* Hier kannst du die Farbe anpassen */
             margin: 10px 0; /* Abstand um den Strich */
         }
+
+        .ol-scale-line {
+            background: rgba(255, 255, 255, 1);
+            border: 1px solid #999;
+            border-radius: 4px;
+            padding: 2px 8px;
+            bottom: 10px;
+            left: 10px;
+            font-family: "Aptos", "Segoe UI", sans-serif;
+            font-size: 14px;
+            color: #333;
+            box-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .ol-scale-line-inner {
+            color: #000;
+        }
+
+        .ol-zoom {
+            border: 1px solid #999;
+            border-radius: 4px;
+            top: 10px;
+            left: 10px;
+            background-color: rgba(255, 255, 255, 0.8);
+            box-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .ol-rotate {
+            border: 1px solid #999;
+            border-radius: 4px;
+            top: 10px;
+            right: 10px;
+            background-color: rgba(255, 255, 255, 0.8);
+            box-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
     </style>
-    <script src="https://cdn.jsdelivr.net/npm/ol@latest/dist/ol.js"></script>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ol@latest/ol.css">
+</head>
+
+<body onload="initMap()">
+    <div id="map"></div>
+    <div id="popup"></div>
     <script>
         var markers = [];          // Array für die Marker
         var mapReady = false;      // Karte ist anfangs noch nicht bereit
@@ -102,10 +142,10 @@
                     url: 'https://wms.geo.admin.ch/',
                     params: { 'LAYERS': '', 'TILED': true },
                     serverType: 'mapserver'
-                })
+                }),
             });
 
-            var map = new ol.Map({
+            map = new ol.Map({
                 target: 'map',
                 layers: [wmsLayer, overlayLayer],
                 view: new ol.View({
@@ -113,6 +153,15 @@
                     zoom: {mapzoom}
                 })
             });
+
+            var scaleLineControl = new ol.control.ScaleLine({
+                units: 'metric',
+                bar: false,
+                steps: 4,
+                text: true,
+                minWidth: 140
+            });
+            map.addControl(scaleLineControl);
 
             vectorSource = new ol.source.Vector();
 
@@ -225,20 +274,26 @@
 
         function setMultipleMarkers(positions) {
             positions.forEach(function (position) {
-                setMarkerPosition(position.lon, position.lat, position.pinname, position.pinlocation, position.pindesc, position.plankey, position.pinkey );
+                setMarkerPosition(position.lon, position.lat, position.pinname, position.pinlocation, position.pindesc, position.plankey, position.pinkey);
             });
         }
 
         function changeMapLayer(layer) {
+            var timestamp = new Date().getTime();
             wmsLayer.getSource().updateParams({
-                LAYERS: layer
+                LAYERS: layer,
+                'CACHEBUSTER': timestamp
             });
+            wmsLayer.getSource().refresh();
         }
 
         function changeOverlayLayer(layer) {
+            var timestamp = new Date().getTime();
             overlayLayer.getSource().updateParams({
-                LAYERS: layer
+                LAYERS: layer,
+                'CACHEBUSTER': timestamp
             });
+            overlayLayer.getSource().refresh();
         }
 
         function getMarkerCoordinates() {
@@ -258,19 +313,5 @@
             return null;
         }
     </script>
-</head>
-
-<body onload="initMap()">
-    <div id="map"></div>
-    <div id="popup">
-        <h4>Bezeichnung:</h4>
-        <p id="pinname"></p>
-        <hr class="solid">
-        <h4>Standort:</h4>
-        <p id="pinlocation"></p>
-        <hr class="solid">
-        <h4>Beschreibung:</h4>
-        <p id="pindesc"></p>
-    </div>
 </body>
 </html>

@@ -225,6 +225,11 @@ public partial class MapView : IQueryAttributable
 
             // save data to file
             GlobalJson.SaveToFile();
+
+            if (DeviceInfo.Platform == DevicePlatform.WinUI)
+                await Application.Current.Windows[0].Page.DisplayAlert("", "Positionen gespeichert", "OK");
+            else
+                await Toast.Make($"Positionen gespeichert").Show();
         }
     }
 
@@ -273,21 +278,6 @@ public partial class MapView : IQueryAttributable
 
         if (File.Exists(outputPath))
             File.Delete(outputPath);
-    }
-
-    private async void OnButtonPressed(object sender, EventArgs e)
-    {
-        var button = (Button)sender;
-        await button.ScaleTo(0.8, 150); // Animation für Button-Verkleinerung
-        button.Text = "gespeichert";
-    }
-
-    private async void OnButtonReleased(object sender, EventArgs e)
-    {
-        var button = (Button)sender;
-        await button.ScaleTo(1.0, 150); // Animation für Button-Rückkehr zur Normalgröße
-        await Task.Delay(1500);
-        button.Text = "Speichern";
     }
 
     private void MapLayerPicker_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)

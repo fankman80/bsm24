@@ -13,6 +13,9 @@
                 Title="swisstopo Karte">
 
     <ContentPage.ToolbarItems>
+        <ToolbarItem IconImageSource="{FontImageSource FontFamily=MaterialOutlined, Color={DynamicResource PrimaryDark}, Glyph={x:Static m:MaterialOutlined.Moved_location}}"             
+                     Text="KML exportieren"
+                     Clicked="KmlExportClicked"/>        
         <ToolbarItem x:Name ="SetPosBtn"
                      IsEnabled="False"
                      IconImageSource="{FontImageSource FontFamily=MaterialOutlined, Color={DynamicResource PrimaryDark}, Glyph={x:Static m:MaterialOutlined.Edit_location_alt}}"             
@@ -38,24 +41,23 @@
             </Border>
 
             <StackLayout Orientation="Vertical"
-                         Spacing="20"
+                         Spacing="14"
                          Padding="14"
-                         AbsoluteLayout.LayoutBounds="0,1,AutoSize,AutoSize"
+                         AbsoluteLayout.LayoutBounds="1,1,AutoSize,AutoSize"
                          AbsoluteLayout.LayoutFlags="PositionProportional">
-
                 <Border Grid.Column="0"
                         WidthRequest="60"
                         HeightRequest="60"
                         Stroke="{AppThemeBinding Light={DynamicResource PrimaryDarkText}, Dark={DynamicResource PrimaryText}}"
                         StrokeThickness="1"
                         BackgroundColor="White"
-                        StrokeShape="RoundRectangle 8">
+                        StrokeShape="RoundRectangle 30">
                     <Image Source="mapcolorbtn.png"/>
                     <Border.GestureRecognizers>
                         <TapGestureRecognizer Tapped="OnMapLayerColorClicked"/>
                     </Border.GestureRecognizers>
                     <Border.Shadow>
-                        <Shadow Brush="Black" Opacity="0.5" Offset="5,5" Radius="8"/>
+                        <Shadow Brush="Black" Opacity="0.4" Offset="4,4" Radius="6"/>
                     </Border.Shadow>
                 </Border>
                 <Border
@@ -64,43 +66,24 @@
                     Stroke="{AppThemeBinding Light={DynamicResource PrimaryDarkText}, Dark={DynamicResource PrimaryText}}"
                     StrokeThickness="1"
                     BackgroundColor="White"
-                    StrokeShape="RoundRectangle 8">
+                    StrokeShape="RoundRectangle 30">
                     <Image Source="maprealbtn.png"/>
                     <Border.GestureRecognizers>
                         <TapGestureRecognizer Tapped="OnMapLayerRealClicked"/>
                     </Border.GestureRecognizers>
                     <Border.Shadow>
-                        <Shadow Brush="Black" Opacity="0.5" Offset="5,5" Radius="8"/>
+                        <Shadow Brush="Black" Opacity="0.4" Offset="4,4" Radius="6"/>
                     </Border.Shadow>
                 </Border>
-            </StackLayout>
-
-            <StackLayout Orientation="Horizontal"
-                         Spacing="20"
-                         Padding="14"
-                         AbsoluteLayout.LayoutBounds="1,1,AutoSize,AutoSize"
-                         AbsoluteLayout.LayoutFlags="PositionProportional">
-                <Button Text="KML Export"
-                        BorderColor="{AppThemeBinding Light={DynamicResource PrimaryDarkText}, Dark={DynamicResource PrimaryText}}"
-                        BorderWidth="1"
+                <Button ImageSource="{FontImageSource FontFamily=MaterialOutlined, Color={AppThemeBinding Light={DynamicResource PrimaryDarkText}, Dark={DynamicResource PrimaryText}}, Glyph={x:Static m:MaterialOutlined.Save}}"
+                        WidthRequest="60"
+                        HeightRequest="60"
+                        CornerRadius="30"                      
                         BackgroundColor="{AppThemeBinding Light={DynamicResource Primary}, Dark={DynamicResource PrimaryDark}}"
                         TextColor="{AppThemeBinding Light={DynamicResource PrimaryDarkText}, Dark={DynamicResource PrimaryText}}"
-                        Clicked="KmlExportClicked">
-                    <Button.Shadow>
-                        <Shadow Brush="Black" Opacity="0.5" Offset="5,5" Radius="8"/>
-                    </Button.Shadow>
-                </Button>
-
-                <Button Text="Speichern"
-                        BorderColor="{AppThemeBinding Light={DynamicResource PrimaryDarkText}, Dark={DynamicResource PrimaryText}}"
-                        BorderWidth="1"
-                        BackgroundColor="{AppThemeBinding Light={DynamicResource Primary}, Dark={DynamicResource PrimaryDark}}"
-                        TextColor="{AppThemeBinding Light={DynamicResource PrimaryDarkText}, Dark={DynamicResource PrimaryText}}"
-                        Pressed="OnButtonPressed"
-                        Released="OnButtonReleased"
                         Clicked="GetCoordinatesClicked">
                     <Button.Shadow>
-                        <Shadow Brush="Black" Opacity="0.5" Offset="5,5" Radius="8"/>
+                        <Shadow Brush="Black" Opacity="0.4" Offset="4,4" Radius="6"/>
                     </Button.Shadow>
                 </Button>
             </StackLayout>
