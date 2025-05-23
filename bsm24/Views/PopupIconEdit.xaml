@@ -14,6 +14,7 @@
     <toolkit:Popup.Resources>
         <ResourceDictionary>
             <toolkit:ColorToColorForTextConverter x:Key="ColorToColorForTextConverter" />
+            <toolkit:MathExpressionConverter x:Key="MathExpressionConverter" />
         </ResourceDictionary>
     </toolkit:Popup.Resources>
 
@@ -36,30 +37,44 @@
                     <VerticalStackLayout>
                         <Grid>
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="100" />
+                                <ColumnDefinition Width="Auto" />
                                 <ColumnDefinition Width="*" />
                             </Grid.ColumnDefinitions>
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="*" />
-                                <RowDefinition Height="*" />
-                            </Grid.RowDefinitions>
 
-                            <Image Grid.Column="0" Grid.Row="0" Grid.RowSpan="2"
-                                x:Name="iconImage" Margin="10"/>
+                            <AbsoluteLayout WidthRequest="{Binding IconPreviewWidth, Converter={StaticResource MathExpressionConverter}, ConverterParameter='x+24'}"
+                                            HeightRequest="{Binding IconPreviewHeight, Converter={StaticResource MathExpressionConverter}, ConverterParameter='x+24'}">
+                                <Image x:Name="iconImage"
+                                       Margin="12"
+                                       WidthRequest="{Binding IconPreviewWidth}"                                         
+                                       HeightRequest="{Binding IconPreviewHeight}"
+                                       Aspect="AspectFit"/>
 
-                            <material:TextField Grid.Column="2" Grid.Row="0" 
-                                            x:Name="anchorX"
-                                            Title="Ankerpunkt X"
-                                            TextColor="{AppThemeBinding Light={DynamicResource PrimaryText}, Dark={DynamicResource PrimaryDarkText}}"
-                                            BorderColor="{AppThemeBinding Light={DynamicResource SecondaryBackground}, Dark={DynamicResource SecondaryBackground}}"
-                                            AccentColor="{AppThemeBinding Light={DynamicResource PrimaryAccent}, Dark={DynamicResource SecondaryDark}}"/>
+                                <Label x:Name="blinkingLabel"
+                                       FontFamily="MaterialRounded"        
+                                       Text="{x:Static m:MaterialRounded.Point_scan}"
+                                       FontSize="24"
+                                       HorizontalTextAlignment="Center"
+                                       VerticalTextAlignment="Center"
+                                       WidthRequest="24"
+                                       HeightRequest="24"
+                                       TranslationX="{Binding TransX}"
+                                       TranslationY="{Binding TransY}">
+                                </Label>
+                            </AbsoluteLayout>
+                            
+                            <VerticalStackLayout Grid.Column="1">
+                                <material:TextField Title="Anker X"
+                                                    Text="{Binding AnchorX}"
+                                                    TextColor="{AppThemeBinding Light={DynamicResource PrimaryText}, Dark={DynamicResource PrimaryDarkText}}"
+                                                    BorderColor="{AppThemeBinding Light={DynamicResource SecondaryBackground}, Dark={DynamicResource SecondaryBackground}}"
+                                                    AccentColor="{AppThemeBinding Light={DynamicResource PrimaryAccent}, Dark={DynamicResource SecondaryDark}}"/>
 
-                            <material:TextField Grid.Column="2" Grid.Row="1" 
-                                            x:Name="anchorY"
-                                            Title="Ankerpunkt Y"
-                                            TextColor="{AppThemeBinding Light={DynamicResource PrimaryText}, Dark={DynamicResource PrimaryDarkText}}"
-                                            BorderColor="{AppThemeBinding Light={DynamicResource SecondaryBackground}, Dark={DynamicResource SecondaryBackground}}"
-                                            AccentColor="{AppThemeBinding Light={DynamicResource PrimaryAccent}, Dark={DynamicResource SecondaryDark}}"/>
+                                <material:TextField Title="Anker Y"
+                                                    Text="{Binding AnchorY}"
+                                                    TextColor="{AppThemeBinding Light={DynamicResource PrimaryText}, Dark={DynamicResource PrimaryDarkText}}"
+                                                    BorderColor="{AppThemeBinding Light={DynamicResource SecondaryBackground}, Dark={DynamicResource SecondaryBackground}}"
+                                                    AccentColor="{AppThemeBinding Light={DynamicResource PrimaryAccent}, Dark={DynamicResource SecondaryDark}}"/>
+                            </VerticalStackLayout>
                         </Grid>
 
                         <material:TextField x:Name="iconName"

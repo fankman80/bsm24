@@ -3,7 +3,6 @@
 using CommunityToolkit.Maui.Views;
 using SkiaSharp;
 using System.ComponentModel;
-using System.Globalization;
 using System.Runtime.CompilerServices;
 
 namespace bsm24.Views;
@@ -12,18 +11,20 @@ public partial class PopupIconEdit : Popup, INotifyPropertyChanged
 {
     public string ReturnValue { get; set; }
     public IconItem iconItem;
+    public int IconPreviewWidth { get; set; } = 120;
+    public int IconPreviewHeight { get; set; }
 
     public PopupIconEdit(IconItem _iconItem)
     {
         InitializeComponent();
         iconItem = _iconItem;
         var file = iconItem.FileName;
-
         iconImage.Source = file;
         iconName.Text = iconItem.DisplayName;
         iconCategory.Text = iconItem.Category;
-        anchorX.Text = iconItem.AnchorPoint.X.ToString(CultureInfo.InvariantCulture);
-        anchorY.Text = iconItem.AnchorPoint.Y.ToString(CultureInfo.InvariantCulture);
+        IconPreviewHeight = (int)(IconPreviewWidth * iconItem.IconSize.Height / iconItem.IconSize.Width);
+        AnchorX = iconItem.AnchorPoint.X;
+        AnchorY = iconItem.AnchorPoint.Y;
         iconScale.Value = iconItem.IconScale * 100;
         sliderText.Text = "Voreinstellung Skalierung: " + (iconItem.IconScale * 100).ToString() + "%";
         allowRotate.IsChecked = iconItem.IsRotationLocked;
@@ -33,6 +34,8 @@ public partial class PopupIconEdit : Popup, INotifyPropertyChanged
             deleteIconContainer.IsVisible = true;
 
         BindingContext = this;
+
+        StartBlinking();
     }
 
     private Color selectedColor;
@@ -44,6 +47,64 @@ public partial class PopupIconEdit : Popup, INotifyPropertyChanged
             if (selectedColor != value)
             {
                 selectedColor = value;
+                OnPropertyChanged();
+            }
+        }
+    }
+
+    private double anchorX;
+    public double AnchorX
+    {
+        get => anchorX;
+        set
+        {
+            if (anchorX != value)
+            {
+                anchorX = value;
+                TransX = (int)(value * IconPreviewWidth);
+                OnPropertyChanged();
+            }
+        }
+    }
+
+    private double anchorY;
+    public double AnchorY
+    {
+        get => anchorY;
+        set
+        {
+            if (anchorY != value)
+            {
+                anchorY = value;
+                TransY = (int)(value * IconPreviewHeight);
+                OnPropertyChanged();
+            }
+        }
+    }
+
+    private int transX;
+    public int TransX
+    {
+        get => transX;
+        set
+        {
+            if (transX != value)
+            {
+                transX = value;
+                OnPropertyChanged();
+            }
+        }
+    }
+
+    private int transY;
+    public int TransY
+    {
+        get => transY;
+        set
+        {
+            if (transY != value)
+            {
+                transY = value;
                 OnPropertyChanged();
             }
         }
@@ -63,8 +124,7 @@ public partial class PopupIconEdit : Popup, INotifyPropertyChanged
             var updatedItem = new IconItem(
                 file,
                 iconName.Text,
-                new Point(string.IsNullOrEmpty(anchorX.Text) ? 0.0 : double.Parse(anchorX.Text, CultureInfo.InvariantCulture),
-                          string.IsNullOrEmpty(anchorY.Text) ? 0.0 : double.Parse(anchorY.Text, CultureInfo.InvariantCulture)),
+                new Point(AnchorX, AnchorY),
                 iconItem.IconSize,
                 allowRotate.IsChecked,
                 new SKColor((byte)(SelectedColor.Red * 255), (byte)(SelectedColor.Green * 255), (byte)(SelectedColor.Blue * 255)),
@@ -114,5 +174,22 @@ public partial class PopupIconEdit : Popup, INotifyPropertyChanged
 
         if (result.Item1 != null)
             SelectedColor = result.Item1;
+    }
+
+    private void StartBlinking()
+    {
+        var blinkAnimation = new Animation
+        {
+            {
+                0, 0.5,
+                new Animation(v => { blinkingLabel.TextColor = Color.FromRgb(v, v, v); }, 0, 1)
+            },
+            {
+                0.5, 1,
+                new Animation(v => { blinkingLabel.TextColor = Color.FromRgb(v, v, v); }, 1, 0)
+            }
+        };
+
+        blinkAnimation.Commit(blinkingLabel, "BlinkColor", length: 400, repeat: () => true);
     }
 }

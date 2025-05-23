@@ -42,26 +42,27 @@
                 </Grid.RowDefinitions>
                 <ScrollView Grid.Row="0" VerticalOptions="Start" MaximumHeightRequest="800">
                     <VerticalStackLayout x:DataType="views:PopupColorPicker" Spacing="0">
-                        <CollectionView x:Name="ColorListPicker"
-                        ItemsSource="{Binding ColorsList}"
-                        SelectionMode="None">
+                        <Label Text="zum Löschen gedrückt halten" FontSize="14" Margin="0,0,0,8"/>
+                        <CollectionView x:Name="ColorListPicker" Margin="-3"
+                                        ItemsSource="{Binding ColorsList}"
+                                        SelectionMode="None">
                             <CollectionView.ItemsLayout>
-                                <GridItemsLayout Orientation="Vertical" Span="6" />
+                                <GridItemsLayout Orientation="Vertical" Span="6"/>
                             </CollectionView.ItemsLayout>
                             <CollectionView.ItemTemplate>
                                 <DataTemplate x:DataType="views:ColorBoxItem">
                                     <Grid>
                                         <!-- Normales Farbfeld -->
                                         <mr:Border IsVisible="{Binding IsAddButton, Converter={StaticResource InvertedBoolConverter}}"
-                                                WidthRequest="40"
-                                                HeightRequest="40"
-                                                BackgroundColor="{Binding BackgroundColor}"
-                                                Stroke="{Binding IsSelected, Converter={StaticResource IsValidConverter}}"
-                                                StrokeThickness="1"
-                                                Tapped="OnColorTapped"
-                                                LongPressing="OnLongPressed">
+                                                   WidthRequest="40"
+                                                   HeightRequest="40"
+                                                   BackgroundColor="{Binding BackgroundColor}"
+                                                   Stroke="{Binding IsSelected, Converter={StaticResource IsValidConverter}}"                                                                                                      
+                                                   StrokeThickness="1"
+                                                   Tapped="OnColorTapped"
+                                                   LongPressing="OnLongPressed">
                                             <mr:Border.StrokeShape>
-                                                <RoundRectangle CornerRadius="{Binding IsSelected, Converter={StaticResource MathExpressionConverter}, ConverterParameter='x==true?20:0'}" />
+                                                <RoundRectangle CornerRadius="{Binding IsSelected, Converter={StaticResource MathExpressionConverter}, ConverterParameter='x==true?20:0'}"/>
                                             </mr:Border.StrokeShape>
                                         </mr:Border>
 
@@ -79,13 +80,12 @@
                                         </Border>
                                     </Grid>
                                 </DataTemplate>
-
                             </CollectionView.ItemTemplate>
                         </CollectionView>
                         
                         <toolkit:Expander Margin="0,10,0,0">
                             <toolkit:Expander.Header>
-                                <Label Text="▼ weitere Farbeinstellungen ▼"
+                                <Label Text="▼ Farbdefinition ▼"
                                        TextColor="{Binding SelectedColor, Converter={StaticResource ColorToColorForTextConverter}}"
                                        HorizontalTextAlignment="Center"
                                        VerticalTextAlignment="Center"
@@ -112,8 +112,8 @@
                                 <Slider Minimum="0" Maximum="1" Value="{Binding BlueValue, Mode=TwoWay}"
                                         ThumbColor="{DynamicResource Primary}"
                                         MinimumTrackColor="{DynamicResource Primary}"
-                                        MaximumTrackColor="{DynamicResource PrimaryDark}"/>     
-                                
+                                        MaximumTrackColor="{DynamicResource PrimaryDark}"/>
+
                                 <!-- Slider for Hue -->
                                 <Label Text="{Binding HueValue, Converter={StaticResource MathExpressionConverter}, ConverterParameter='x*360', StringFormat='Farbwert (H): {0:0}°'}"/>
                                 <Slider Minimum="0" Maximum="1" Value="{Binding HueValue, Mode=TwoWay}"
@@ -134,14 +134,14 @@
                                         ThumbColor="{DynamicResource Primary}"
                                         MinimumTrackColor="{DynamicResource Primary}"
                                     MaximumTrackColor="{DynamicResource PrimaryDark}"/>
+                                
+                                <BoxView IsVisible="{Binding LineWidthVisibility}"
+                                         BackgroundColor="Black"
+                                         HeightRequest="1"
+                                         Margin="0,16,0,16"/>
                             </VerticalStackLayout>
                         </toolkit:Expander>
                         
-                        <BoxView IsVisible="{Binding LineWidthVisibility}"
-                                 BackgroundColor="Black"
-                                 HeightRequest="1"
-                                 Margin="0,16,0,16"/>
-
                         <Label x:Name="sliderText"
                            IsVisible="{Binding LineWidthVisibility}"
                            HorizontalOptions="Start"
@@ -154,7 +154,6 @@
                             ThumbColor="{DynamicResource Primary}"
                             MinimumTrackColor="{DynamicResource Primary}"
                             MaximumTrackColor="{DynamicResource PrimaryDark}"/>
-
                     </VerticalStackLayout>
                 </ScrollView>
 
