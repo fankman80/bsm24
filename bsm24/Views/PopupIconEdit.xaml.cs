@@ -24,8 +24,8 @@ public partial class PopupIconEdit : Popup<string>, INotifyPropertyChanged
         iconName.Text = iconItem.DisplayName;
         iconCategory.Text = iconItem.Category;
         IconPreviewHeight = (int)(IconPreviewWidth * iconItem.IconSize.Height / iconItem.IconSize.Width);
-        AnchorX = iconItem.AnchorPoint.X;
-        AnchorY = iconItem.AnchorPoint.Y;
+        Anchor_X = iconItem.AnchorPoint.X;
+        Anchor_Y = iconItem.AnchorPoint.Y;
         iconScale.Value = iconItem.IconScale * 100;
         sliderText.Text = "Voreinstellung Skalierung: " + (iconItem.IconScale * 100).ToString() + "%";
         allowRotate.IsChecked = iconItem.IsRotationLocked;
@@ -53,30 +53,30 @@ public partial class PopupIconEdit : Popup<string>, INotifyPropertyChanged
         }
     }
 
-    private double anchorX;
-    public double AnchorX
+    private double anchor_X;
+    public double Anchor_X
     {
-        get => anchorX;
+        get => anchor_X;
         set
         {
-            if (anchorX != value)
+            if (anchor_X != value)
             {
-                anchorX = value;
+                anchor_X = value;
                 TransX = (int)(value * IconPreviewWidth);
                 OnPropertyChanged();
             }
         }
     }
 
-    private double anchorY;
-    public double AnchorY
+    private double anchor_Y;
+    public double Anchor_Y
     {
-        get => anchorY;
+        get => anchor_Y;
         set
         {
-            if (anchorY != value)
+            if (anchor_Y != value)
             {
-                anchorY = value;
+                anchor_Y = value;
                 TransY = (int)(value * IconPreviewHeight);
                 OnPropertyChanged();
             }
@@ -113,7 +113,6 @@ public partial class PopupIconEdit : Popup<string>, INotifyPropertyChanged
 
     private async void OnOkClicked(object sender, EventArgs e)
     {
-        var cts = new CancellationTokenSource(TimeSpan.FromSeconds(5));
         // Falls CustomIcon, dann wird Pfad relativ gesetzt
         var file = iconItem.FileName;
         string returnValue = null;
@@ -126,7 +125,7 @@ public partial class PopupIconEdit : Popup<string>, INotifyPropertyChanged
             var updatedItem = new IconItem(
                 file,
                 iconName.Text,
-                new Point(AnchorX, AnchorY),
+                new Point(Anchor_X, Anchor_Y),
                 iconItem.IconSize,
                 allowRotate.IsChecked,
                 new SKColor((byte)(SelectedColor.Red * 255), (byte)(SelectedColor.Green * 255), (byte)(SelectedColor.Blue * 255)),

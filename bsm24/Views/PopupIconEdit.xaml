@@ -19,7 +19,7 @@
         </ResourceDictionary>
     </toolkit:Popup.Resources>
 
-    <Grid WidthRequest="300" Padding="-10">
+    <Grid WidthRequest="300" Padding="-10" x:DataType="views:PopupIconEdit">
         <Grid.RowDefinitions>
             <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
@@ -35,33 +35,33 @@
                     <AbsoluteLayout WidthRequest="{Binding IconPreviewWidth, Converter={StaticResource MathExpressionConverter}, ConverterParameter='x+24'}"
                                     HeightRequest="{Binding IconPreviewHeight, Converter={StaticResource MathExpressionConverter}, ConverterParameter='x+24'}">
                         <Image x:Name="iconImage"
-                                Margin="12"
-                                WidthRequest="{Binding IconPreviewWidth}"                                         
-                                HeightRequest="{Binding IconPreviewHeight}"
-                                Aspect="AspectFit"/>
+                               Margin="12"
+                               WidthRequest="{Binding IconPreviewWidth}"                                         
+                               HeightRequest="{Binding IconPreviewHeight}"
+                               Aspect="AspectFit"/>
 
                         <Label x:Name="blinkingLabel"
-                                FontFamily="MaterialRounded"        
-                                Text="{x:Static m:MaterialRounded.Point_scan}"
-                                FontSize="24"
-                                HorizontalTextAlignment="Center"
-                                VerticalTextAlignment="Center"
-                                WidthRequest="24"
-                                HeightRequest="24"
-                                TranslationX="{Binding TransX}"
-                                TranslationY="{Binding TransY}">
+                               FontFamily="MaterialRounded"        
+                               Text="{x:Static m:MaterialRounded.Point_scan}"
+                               FontSize="24"
+                               HorizontalTextAlignment="Center"
+                               VerticalTextAlignment="Center"
+                               WidthRequest="24"
+                               HeightRequest="24"
+                               TranslationX="{Binding TransX}"
+                               TranslationY="{Binding TransY}">
                         </Label>
                     </AbsoluteLayout>
                             
                     <VerticalStackLayout Grid.Column="1">
                         <material:TextField Title="Anker X"
-                                            Text="{Binding AnchorX}"
+                                            Text="{Binding Anchor_X}"
                                             TextColor="{AppThemeBinding Light={DynamicResource PrimaryText}, Dark={DynamicResource PrimaryDarkText}}"
                                             BorderColor="{AppThemeBinding Light={DynamicResource SecondaryBackground}, Dark={DynamicResource SecondaryBackground}}"
                                             AccentColor="{AppThemeBinding Light={DynamicResource PrimaryAccent}, Dark={DynamicResource SecondaryDark}}"/>
 
                         <material:TextField Title="Anker Y"
-                                            Text="{Binding AnchorY}"
+                                            Text="{Binding Anchor_Y}"
                                             TextColor="{AppThemeBinding Light={DynamicResource PrimaryText}, Dark={DynamicResource PrimaryDarkText}}"
                                             BorderColor="{AppThemeBinding Light={DynamicResource SecondaryBackground}, Dark={DynamicResource SecondaryBackground}}"
                                             AccentColor="{AppThemeBinding Light={DynamicResource PrimaryAccent}, Dark={DynamicResource SecondaryDark}}"/>
@@ -86,20 +86,20 @@
                                 AllowClear="True"/>
 
                 <Button Text="Farbe wählen"
-                    BackgroundColor="{Binding SelectedColor}"
-                    TextColor="{Binding SelectedColor, Converter={StaticResource ColorToColorForTextConverter}}"
-                    Clicked="OnColorPickerClicked"/>
+                        BackgroundColor="{Binding SelectedColor}"
+                        TextColor="{Binding SelectedColor, Converter={StaticResource ColorToColorForTextConverter}}"
+                        Clicked="OnColorPickerClicked"/>
 
                 <VerticalStackLayout Spacing="0">
                     <Label x:Name="sliderText" Text="Skalierung:"/>
                     <Slider x:Name="iconScale"
-                        Maximum="100"
-                        Minimum="1"
-                        Value="100"
-                        ThumbColor="{DynamicResource Primary}"
-                        MinimumTrackColor="{DynamicResource Primary}"
-                        MaximumTrackColor="{DynamicResource PrimaryDark}"
-                        ValueChanged="OnSliderValueChanged"/>
+                            Maximum="100"
+                            Minimum="1"
+                            Value="100"
+                            ThumbColor="{DynamicResource Primary}"
+                            MinimumTrackColor="{DynamicResource Primary}"
+                            MaximumTrackColor="{DynamicResource PrimaryDark}"
+                            ValueChanged="OnSliderValueChanged"/>
 
                     <HorizontalStackLayout Spacing="0">
                         <CheckBox x:Name="allowRotate"
@@ -110,9 +110,9 @@
 
                     <HorizontalStackLayout x:Name="deleteIconContainer" Spacing="0" IsVisible="False">
                         <CheckBox x:Name="deleteIcon"
-                                IsChecked="False"
-                                Scale="1.2"
-                                Color="{DynamicResource Primary}"/>
+                                  IsChecked="False"
+                                  Scale="1.2"
+                                  Color="{DynamicResource Primary}"/>
                         <Label Text="Icon löschen" VerticalOptions="Center"/>
                     </HorizontalStackLayout>
                 </VerticalStackLayout>
@@ -125,17 +125,17 @@
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
             <Button Grid.Column="0"
-                        x:Name="cancelButtonText"
-                        Text="Abbrechen"
-                        BackgroundColor="{AppThemeBinding Light={DynamicResource Primary}, Dark={DynamicResource PrimaryDark}}"
-                        TextColor="{AppThemeBinding Light={DynamicResource PrimaryDarkText}, Dark={DynamicResource PrimaryText}}"                       
-                        Clicked="OnCancelClicked" />
+                    x:Name="cancelButtonText"
+                    Text="Abbrechen"
+                    BackgroundColor="{AppThemeBinding Light={DynamicResource Primary}, Dark={DynamicResource PrimaryDark}}"
+                    TextColor="{AppThemeBinding Light={DynamicResource PrimaryDarkText}, Dark={DynamicResource PrimaryText}}"                       
+                    Clicked="OnCancelClicked" />
             <Button Grid.Column="1"
-                        x:Name="okButtonText"
-                        Text="Ok"
-                        BackgroundColor="{AppThemeBinding Light={DynamicResource Primary}, Dark={DynamicResource PrimaryDark}}"
-                        TextColor="{AppThemeBinding Light={DynamicResource PrimaryDarkText}, Dark={DynamicResource PrimaryText}}"                     
-                        Clicked="OnOkClicked" />
+                    x:Name="okButtonText"
+                    Text="Ok"
+                    BackgroundColor="{AppThemeBinding Light={DynamicResource Primary}, Dark={DynamicResource PrimaryDark}}"
+                    TextColor="{AppThemeBinding Light={DynamicResource PrimaryDarkText}, Dark={DynamicResource PrimaryText}}"                     
+                    Clicked="OnOkClicked" />
         </Grid>
     </Grid>
 </toolkit:Popup>
