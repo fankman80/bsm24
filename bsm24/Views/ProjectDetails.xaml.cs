@@ -1,11 +1,10 @@
 ﻿#nullable disable
 
 using SkiaSharp;
-using UraniumUI.Pages;
 
 namespace bsm24.Views;
 
-public partial class ProjectDetails : UraniumContentPage
+public partial class ProjectDetails : ContentPage
 {
     public ProjectDetails()
     {

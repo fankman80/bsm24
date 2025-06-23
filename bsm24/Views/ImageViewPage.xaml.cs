@@ -2,7 +2,7 @@
 
 using bsm24.ViewModels;
 using CommunityToolkit.Maui.Core.Views;
-using CommunityToolkit.Maui.Views;
+using CommunityToolkit.Maui.Extensions;
 using MR.Gestures;
 using SkiaSharp;
 
@@ -140,16 +140,16 @@ public partial class ImageViewPage : IQueryAttributable
         isCleared = false;
     }
 
-    private async void PenSettingsClicked(object sender, EventArgs e)
+    private void PenSettingsClicked(object sender, EventArgs e)
     {
         var popup = new PopupColorPicker(lineWidth, selectedColor);
-        (Color, int) result = ((Color, int))await this.ShowPopupAsync(popup);
+        ColorPickerReturn result = (ColorPickerReturn)this.ShowPopupAsync(popup).Result;
 
-        selectedColor = result.Item1;
-        lineWidth = result.Item2;
+        selectedColor = result.penColor;
+        lineWidth = result.penWidth;
 
-        DrawView.LineColor = result.Item1;
-        DrawView.LineWidth = result.Item2;
+        DrawView.LineColor = result.penColor;
+        DrawView.LineWidth = result.penWidth;
     }
 
     private void DrawClicked(object sender, EventArgs e)
@@ -224,10 +224,9 @@ public partial class ImageViewPage : IQueryAttributable
     private async void OnDeleteButtonClicked(object sender, EventArgs e)
     {
         var popup = new PopupDualResponse("Wollen Sie dieses Bild wirklich löschen?");
-        this.ShowPopup(popup);
-        var result = await this.ShowPopupAsync(popup);
+        var result = await this.ShowPopupAsync<string>(popup);
 
-        if (result != null)
+        if (result.Result != null)
         {
             string file = Path.Combine(Settings.DataDirectory, GlobalJson.Data.ProjectPath, GlobalJson.Data.ImagePath, GlobalJson.Data.Plans[PlanId].Pins[PinId].Fotos[ImgSource].File);
             if (File.Exists(file))

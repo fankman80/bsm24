@@ -1,17 +1,17 @@
 ﻿#nullable disable
 
 using bsm24.Models;
+using CommunityToolkit.Maui;
 using CommunityToolkit.Maui.Core.Extensions;
-using CommunityToolkit.Maui.Views;
+using CommunityToolkit.Maui.Extensions;
 using FFImageLoading.Maui;
 using System.Collections.ObjectModel;
 using UraniumUI.Material.Controls;
-using UraniumUI.Pages;
 using CheckBox = Microsoft.Maui.Controls.CheckBox;
 
 namespace bsm24.Views;
 
-public partial class SetPin : UraniumContentPage, IQueryAttributable
+public partial class SetPin : ContentPage, IQueryAttributable
 {
     public ObservableCollection<ImageItem> Images { get; set; }
     public int DynamicSpan { get; set; } = 3; // Standardwert
@@ -119,20 +119,20 @@ public partial class SetPin : UraniumContentPage, IQueryAttributable
     private async void OnDeleteClick(object sender, EventArgs e)
     {
         var popup = new PopupDualResponse("Wollen Sie diesen Pin wirklich löschen?");
-        var result = await this.ShowPopupAsync(popup);
-        if (result != null)
+        var result = await this.ShowPopupAsync<string>(popup, new PopupOptions{ CanBeDismissedByTappingOutsideOfPopup = false });
+        if (result.Result != null)
             await Shell.Current.GoToAsync($"//{PlanId}?pinDelete={PinId}");
     }
 
     private async void OnEditClick(object sender, EventArgs e)
     {
         var popup = new PopupEntry(title: "Pin umbenennen...", inputTxt: GlobalJson.Data.Plans[PlanId].Pins[PinId].PinName);
-        var result = (string)await this.ShowPopupAsync(popup);
+        var result = await this.ShowPopupAsync<string>(popup, new PopupOptions{ CanBeDismissedByTappingOutsideOfPopup = false });
 
-        if (result != null)
+        if (result.Result != null)
         {
-            GlobalJson.Data.Plans[PlanId].Pins[PinId].PinName = result;
-            this.Title = result;
+            GlobalJson.Data.Plans[PlanId].Pins[PinId].PinName = result.Result;
+            this.Title = result.Result;
 
             // save data to file
             GlobalJson.SaveToFile();

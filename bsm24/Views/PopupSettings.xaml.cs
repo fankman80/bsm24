@@ -7,8 +7,6 @@ namespace bsm24.Views;
 
 public partial class PopupSettings : Popup
 {
-    public string ReturnValue { get; set; }
-
     public PopupSettings()
     {
         InitializeComponent();
@@ -22,6 +20,6 @@ public partial class PopupSettings : Popup
     private void OnOkClicked(object sender, EventArgs e)
     {
         SettingsService.Instance.SaveSettings();
-        Close();
+        CloseAsync();
     }
 }

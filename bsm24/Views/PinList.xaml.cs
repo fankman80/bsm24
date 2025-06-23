@@ -2,11 +2,10 @@
 
 using bsm24.Services;
 using System.ComponentModel;
-using UraniumUI.Pages;
 
 namespace bsm24.Views;
 
-public partial class PinList : UraniumContentPage
+public partial class PinList : ContentPage
 {
     public Command<IconItem> IconTappedCommand { get; }
     private List<PinItem> pinItems = [];

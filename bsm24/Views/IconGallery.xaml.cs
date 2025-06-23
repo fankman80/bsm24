@@ -1,15 +1,15 @@
 ﻿#nullable disable
 
 using bsm24.Services;
+using CommunityToolkit.Maui;
 using CommunityToolkit.Maui.Alerts;
-using CommunityToolkit.Maui.Views;
+using CommunityToolkit.Maui.Extensions;
 using SkiaSharp;
 using System.Collections.ObjectModel;
-using UraniumUI.Pages;
 
 namespace bsm24.Views;
 
-public partial class IconGallery : UraniumContentPage, IQueryAttributable
+public partial class IconGallery : ContentPage, IQueryAttributable
 {
     public ObservableCollection<IconItem> Icons { get; set; }
     private string PlanId;
@@ -102,9 +102,9 @@ public partial class IconGallery : UraniumContentPage, IQueryAttributable
         var iconItem = Settings.IconData.FirstOrDefault(item => item.FileName.Equals(fileName, StringComparison.OrdinalIgnoreCase));
 
         var popup = new PopupIconEdit(iconItem);
-        var result1 = await this.ShowPopupAsync(popup);
+        var result1 = await this.ShowPopupAsync<string>(popup, new PopupOptions{ CanBeDismissedByTappingOutsideOfPopup = false });
 
-        if (result1 != null)
+        if (result1.Result != null)
             IconSorting(OrderDirection);
     }
 
@@ -157,9 +157,9 @@ public partial class IconGallery : UraniumContentPage, IQueryAttributable
             );
 
             var popup = new PopupIconEdit(updatedItem);
-            var result2 = await this.ShowPopupAsync(popup);
+            var result2 = await this.ShowPopupAsync<string>(popup, new PopupOptions{ CanBeDismissedByTappingOutsideOfPopup = false });
 
-            if (result2 == null)
+            if (result2.Result == null)
                 File.Delete(localPath);  // Delete temporary Icon-File
 
             IconSorting(OrderDirection);

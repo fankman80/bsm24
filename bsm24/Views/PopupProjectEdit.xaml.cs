@@ -4,10 +4,8 @@ using CommunityToolkit.Maui.Views;
 
 namespace bsm24.Views;
 
-public partial class PopupProjectEdit : Popup
+public partial class PopupProjectEdit : Popup<string>
 {
-    public string ReturnValue { get; set; }
-
     public PopupProjectEdit(string entry, string okText = "Ok", string cancelText = "Abbrechen")
     {
         InitializeComponent();
@@ -16,38 +14,28 @@ public partial class PopupProjectEdit : Popup
         text_entry.Text = entry;
     }
 
-    private void OnOkClicked(object sender, EventArgs e)
+    private async void OnOkClicked(object sender, EventArgs e)
     {
-        var cts = new CancellationTokenSource(TimeSpan.FromSeconds(5));
-        ReturnValue = text_entry.Text;
-        CloseAsync(ReturnValue, cts.Token);
+        await CloseAsync(text_entry.Text);
     }
 
-    private void OnCancelClicked(object sender, EventArgs e)
+    private async void OnCancelClicked(object sender, EventArgs e)
     {
-        var cts = new CancellationTokenSource(TimeSpan.FromSeconds(5));
-        ReturnValue = null;
-        CloseAsync(ReturnValue, cts.Token);
+        await CloseAsync(null);
     }
 
-    private void OnDeleteClicked(object sender, EventArgs e)
+    private async void OnDeleteClicked(object sender, EventArgs e)
     {
-        var cts = new CancellationTokenSource(TimeSpan.FromSeconds(5));
-        ReturnValue = "delete";
-        CloseAsync(ReturnValue, cts.Token);
+        await CloseAsync("delete");
     }
 
-    private void OnSaveClicked(object sender, EventArgs e)
+    private async void OnSaveClicked(object sender, EventArgs e)
     {
-        var cts = new CancellationTokenSource(TimeSpan.FromSeconds(5));
-        ReturnValue = "zip";
-        CloseAsync(ReturnValue, cts.Token);
+        await CloseAsync("zip");
     }
 
-    private void OnOpenFolderClicked(object sender, EventArgs e)
+    private async void OnOpenFolderClicked(object sender, EventArgs e)
     {
-        var cts = new CancellationTokenSource(TimeSpan.FromSeconds(5));
-        ReturnValue = "folder";
-        CloseAsync(ReturnValue, cts.Token);
+        await CloseAsync("folder");
     }
 }

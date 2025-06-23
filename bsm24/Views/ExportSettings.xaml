@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<uranium:UraniumContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
-        xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-        xmlns:ff="clr-namespace:FFImageLoading.Maui;assembly=FFImageLoading.Maui" 
-        xmlns:views="clr-namespace:bsm24.Views"
-        xmlns:uranium="http://schemas.enisn-projects.io/dotnet/maui/uraniumui"
-        xmlns:material="http://schemas.enisn-projects.io/dotnet/maui/uraniumui/material"
-        xmlns:m="clr-namespace:UraniumUI.Icons.MaterialSymbols;assembly=UraniumUI.Icons.MaterialSymbols"  
-        xmlns:local="clr-namespace:bsm24"
-        xmlns:models="clr-namespace:bsm24.Models"
-        xmlns:services="clr-namespace:bsm24.Services"
-        x:Name="ExportSettingsPage"
-        Shell.TitleColor="{DynamicResource PrimaryDark}"
-        x:Class="bsm24.Views.ExportSettings"
-        Title="Bericht exportieren">
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:ff="clr-namespace:FFImageLoading.Maui;assembly=FFImageLoading.Maui" 
+             xmlns:uranium="http://schemas.enisn-projects.io/dotnet/maui/uraniumui"
+             xmlns:material="http://schemas.enisn-projects.io/dotnet/maui/uraniumui/material"
+             xmlns:m="clr-namespace:UraniumUI.Icons.MaterialSymbols;assembly=UraniumUI.Icons.MaterialSymbols"  
+             xmlns:models="clr-namespace:bsm24.Models"
+             xmlns:services="clr-namespace:bsm24.Services"
+             xmlns:views="clr-namespace:bsm24.Views"                            
+             xmlns:local="clr-namespace:bsm24"                            
+             x:Name="ExportSettingsPage"
+             Shell.TitleColor="{DynamicResource PrimaryDark}"
+             x:Class="bsm24.Views.ExportSettings"
+             Title="Bericht exportieren">
 
     <Shell.BackButtonBehavior>
         <BackButtonBehavior IsVisible="False" />
@@ -217,4 +217,4 @@
                                AbsoluteLayout.LayoutBounds="0,0,1,1"
                                AbsoluteLayout.LayoutFlags="All"/>
     </Grid>
-</uranium:UraniumContentPage>
+</ContentPage>

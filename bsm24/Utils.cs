@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using static Microsoft.Maui.ApplicationModel.Permissions;
+﻿using static Microsoft.Maui.ApplicationModel.Permissions;
 
 namespace bsm24;
 public static class Utils

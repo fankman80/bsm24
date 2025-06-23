@@ -3,12 +3,14 @@
 using bsm24.Models;
 using bsm24.Services;
 using bsm24.ViewModels;
+using CommunityToolkit.Maui;
 using CommunityToolkit.Maui.Core;
 using CommunityToolkit.Maui.Core.Views;
+using CommunityToolkit.Maui.Extensions;
 using CommunityToolkit.Maui.Views;
 using MR.Gestures;
-using SharpKml.Dom.GX;
 using SkiaSharp;
+
 
 #if WINDOWS
 using bsm24.Platforms.Windows;
@@ -45,7 +47,7 @@ public partial class NewPage : IQueryAttributable
         BindingContext = new TransformViewModel();
         PlanId = planId;
         planContainer = (TransformViewModel)PlanContainer.BindingContext;
-        PageTitle = GlobalJson.Data.Plans[PlanId].Name;
+        PageTitle = GlobalJson.Data.Plans[PlanId].Name;        
     }
 
     protected override bool OnBackButtonPressed()
@@ -724,12 +726,12 @@ public partial class NewPage : IQueryAttributable
     private async void PenSettingsClicked(object sender, EventArgs e)
     {
         var popup = new PopupColorPicker(lineWidth, selectedColor, lineWidthVisibility: true);
-        (Color, int) result = ((Color, int))await this.ShowPopupAsync(popup);
+        var result = await this.ShowPopupAsync<ColorPickerReturn>(popup, new PopupOptions{ CanBeDismissedByTappingOutsideOfPopup = false });
 
-        if (result.Item1 != null)
+        if (result.Result.penColor != null)
         {
-            selectedColor = result.Item1;
-            lineWidth = result.Item2;
+            selectedColor = result.Result.penColor;
+            lineWidth = result.Result.penWidth;
             if (drawingView != null)
             {
                 drawingView.LineColor = selectedColor;
@@ -837,9 +839,9 @@ public partial class NewPage : IQueryAttributable
                                       desc: GlobalJson.Data.Plans[PlanId].Description,
                                       gray: GlobalJson.Data.Plans[PlanId].IsGrayscale,
                                       export: GlobalJson.Data.Plans[PlanId].AllowExport);
-        (string, string, bool) result = ((string, string, bool))await this.ShowPopupAsync(popup);
+        var result = await this.ShowPopupAsync<PlanEditReturn>(popup, new PopupOptions{ CanBeDismissedByTappingOutsideOfPopup = false });
 
-        switch (result.Item1)
+        switch (result.Result.name_entry)
         {
             case "delete":
                 OnDeleteClick();
@@ -853,12 +855,12 @@ public partial class NewPage : IQueryAttributable
                 break;
 
             default:
-                (Application.Current.Windows[0].Page as AppShell).PlanItems.FirstOrDefault(i => i.PlanId == PlanId).Title = result.Item1;
-                Title = result.Item1;
+                (Application.Current.Windows[0].Page as AppShell).PlanItems.FirstOrDefault(i => i.PlanId == PlanId).Title = result.Result.name_entry;
+                Title = result.Result.name_entry;
 
-                GlobalJson.Data.Plans[PlanId].Name = result.Item1;
-                GlobalJson.Data.Plans[PlanId].Description = result.Item2;
-                GlobalJson.Data.Plans[PlanId].AllowExport = result.Item3;
+                GlobalJson.Data.Plans[PlanId].Name = result.Result.name_entry;
+                GlobalJson.Data.Plans[PlanId].Description = result.Result.desc_entry;
+                GlobalJson.Data.Plans[PlanId].AllowExport = result.Result.allow_export;
 
                 // save data to file
                 GlobalJson.SaveToFile();
@@ -869,8 +871,8 @@ public partial class NewPage : IQueryAttributable
     private async void OnDeleteClick()
     {
         var popup = new PopupDualResponse("Wollen Sie diesen Plan wirklich löschen?", okText: "Löschen", alert: true);
-        var result = await this.ShowPopupAsync(popup);
-        if (result != null)
+        var result = await this.ShowPopupAsync<string>(popup, new PopupOptions{ CanBeDismissedByTappingOutsideOfPopup = false });
+        if (result.Result != null)
         {
             var menuitem = (Application.Current.Windows[0].Page as AppShell).PlanItems.FirstOrDefault(i => i.PlanId == PlanId);
             if (menuitem != null)

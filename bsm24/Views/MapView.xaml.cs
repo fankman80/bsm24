@@ -8,8 +8,8 @@ using bsm24.Models;
 using bsm24.Services;
 using bsm24.ViewModels;
 using CommunityToolkit.Maui.Alerts;
+using CommunityToolkit.Maui.Extensions;
 using CommunityToolkit.Maui.Storage;
-using CommunityToolkit.Maui.Views;
 using System.Globalization;
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -108,34 +108,6 @@ public partial class MapView : IQueryAttributable
         };
 #endif
 
-        GeoAdminWebView.Navigating += (s, e) =>
-        {
-            var uri = new Uri(e.Url);
-            if (uri.Scheme == "invoke" && uri.Host == "navigateback")
-            {
-                e.Cancel = true;
-
-                var query = System.Web.HttpUtility.ParseQueryString(uri.Query);
-                var planKey = query["plankey"];
-                var pinKey = query["pinkey"];
-
-                Shell.Current.GoToAsync($"setpin?planId={planKey}&pinId={pinKey}");
-            }
-        };
-
-        // Evaluate platform
-        string platform =
-#if ANDROID
-        "android";
-#elif IOS
-        "ios";
-#elif WINDOWS
-        "windows";
-#else
-        "unknown";
-#endif
-        GeoAdminWebView.EvaluateJavaScriptAsync($"window.platform = '{platform}';");
-
         mapLayerPicker.ItemsSource = Settings.SwissTopoLayers.Select(item => item.Desc).ToList(); // load map-layers to picker
         mapLayerPicker.SelectedItem = Settings.SwissTopoLayers[0].Desc;
     }
@@ -215,8 +187,8 @@ public partial class MapView : IQueryAttributable
         if (GPSViewModel.Instance.IsRunning)
         {
             var popup = new PopupDualResponse("Sind Sie sicher dass Sie die Positionsdaten überschreiben wollen?");
-            var result = await this.ShowPopupAsync(popup);
-            if (result != null)
+            var result = await this.ShowPopupAsync<string>(popup);
+            if (result.Result != null)
             {
                 Location location = new();
                 if (GPSViewModel.Instance.IsRunning)

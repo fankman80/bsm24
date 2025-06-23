@@ -8,10 +8,9 @@ using System.Runtime.CompilerServices;
 
 namespace bsm24.Views;
 
-public partial class PopupColorPicker : Popup, INotifyPropertyChanged
+public partial class PopupColorPicker : Popup<ColorPickerReturn>, INotifyPropertyChanged
 {
     public ObservableCollection<ColorBoxItem> ColorsList { get; set; }
-    public (Color, int) ReturnValue { get; set; }
     public bool LineWidthVisibility { get; set; }
     private bool isUpdating = false;
     private double workR, workG, workB;
@@ -67,18 +66,14 @@ public partial class PopupColorPicker : Popup, INotifyPropertyChanged
         }
     }
 
-    private void OnCancelClicked(object sender, EventArgs e)
+    private async void OnCancelClicked(object sender, EventArgs e)
     {
-        var cts = new CancellationTokenSource(TimeSpan.FromSeconds(5));
-        ReturnValue = (null, 0);
-        CloseAsync(ReturnValue, cts.Token);
+        await CloseAsync(new ColorPickerReturn(null, 0));
     }
 
-    private void OnOkClicked(object sender, EventArgs e)
+    private async void OnOkClicked(object sender, EventArgs e)
     {
-        var cts = new CancellationTokenSource(TimeSpan.FromSeconds(5));
-        ReturnValue = (SelectedColor, LineWidth);
-        CloseAsync(ReturnValue, cts.Token);
+        await CloseAsync(new ColorPickerReturn(SelectedColor, LineWidth));
     }
 
     public void OnAddTapped(object sender, EventArgs e)

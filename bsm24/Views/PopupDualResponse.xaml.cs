@@ -4,9 +4,8 @@ using CommunityToolkit.Maui.Views;
 
 namespace bsm24.Views;
 
-public partial class PopupDualResponse : Popup
+public partial class PopupDualResponse : Popup<string>
 {
-    public string ReturnValue { get; set; }
     private int countdown = 5;
     private readonly string OkText;
 
@@ -20,18 +19,14 @@ public partial class PopupDualResponse : Popup
         if (alert)
             StartTimer();
     }
-    private void OnOkClicked(object sender, EventArgs e)
+    private async void OnOkClicked(object sender, EventArgs e)
     {
-        var cts = new CancellationTokenSource(TimeSpan.FromSeconds(5));
-        ReturnValue = "Ok";
-        CloseAsync(ReturnValue, cts.Token);
+        await CloseAsync("Ok");
     }
 
-    private void OnCancelClicked(object sender, EventArgs e)
+    private async void OnCancelClicked(object sender, EventArgs e)
     {
-        var cts = new CancellationTokenSource(TimeSpan.FromSeconds(5));
-        ReturnValue = null;
-        CloseAsync(ReturnValue, cts.Token);
+        await CloseAsync(null);
     }
 
     private void StartTimer()

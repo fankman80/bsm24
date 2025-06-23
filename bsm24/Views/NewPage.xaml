@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<mr:ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
-        xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-        xmlns:views="clr-namespace:bsm24.Views"
-        xmlns:mr="clr-namespace:MR.Gestures;assembly=MR.Gestures"
-        xmlns:m="clr-namespace:UraniumUI.Icons.MaterialSymbols;assembly=UraniumUI.Icons.MaterialSymbols"
-        xmlns:ff="clr-namespace:FFImageLoading.Maui;assembly=FFImageLoading.Maui"
-        xmlns:pc="clr-namespace:bsm24.ViewModels"
-        xmlns:local="clr-namespace:bsm24"                
-        BackgroundColor="DimGrey"
-        Shell.TitleColor="{DynamicResource PrimaryDark}"
-        x:Class="bsm24.Views.NewPage"
-        x:DataType="views:NewPage"
-        Title="{Binding PageTitle}">
-
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:mr="clr-namespace:MR.Gestures;assembly=MR.Gestures"
+             xmlns:m="clr-namespace:UraniumUI.Icons.MaterialSymbols;assembly=UraniumUI.Icons.MaterialSymbols"
+             xmlns:ff="clr-namespace:FFImageLoading.Maui;assembly=FFImageLoading.Maui"
+             xmlns:pc="clr-namespace:bsm24.ViewModels"
+             xmlns:views="clr-namespace:bsm24.Views"                
+             xmlns:local="clr-namespace:bsm24"      
+             Shell.TitleColor="{DynamicResource PrimaryDark}"
+             x:Class="bsm24.Views.NewPage"
+             x:DataType="views:NewPage"
+             BackgroundColor="DimGrey"             
+             Title="{Binding PageTitle}">
+             
     <ContentPage.ToolbarItems>
         <ToolbarItem
             x:Name ="btnPlanFit"
@@ -256,4 +256,4 @@
                                AbsoluteLayout.LayoutBounds="0,0,1,1"
                                AbsoluteLayout.LayoutFlags="All"/>
     </Grid>
-</mr:ContentPage>
+</ContentPage>

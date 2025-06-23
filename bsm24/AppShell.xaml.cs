@@ -2,6 +2,8 @@
 
 using bsm24.Services;
 using bsm24.Views;
+using CommunityToolkit.Maui;
+using CommunityToolkit.Maui.Extensions;
 using CommunityToolkit.Maui.Views;
 using System.Collections.ObjectModel;
 
@@ -29,10 +31,10 @@ public partial class AppShell : Shell
         BindingContext = this;
     }
 
-    private void OnSettingsClicked(object sender, EventArgs e)
+    private async void OnSettingsClicked(object sender, EventArgs e)
     {
         var popup = new PopupSettings();
-        this.ShowPopup(popup);
+        await this.ShowPopupAsync<string>(popup, new PopupOptions { CanBeDismissedByTappingOutsideOfPopup = false });
     }
 
     public void OnTitleClicked(object sender, EventArgs e)

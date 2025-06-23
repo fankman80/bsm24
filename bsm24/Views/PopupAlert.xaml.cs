@@ -13,8 +13,8 @@ public partial class PopupAlert : Popup
         okButtonText.Text = okText;
     }
 
-    private void OnOkClicked(object sender, EventArgs e)
+    private async void OnOkClicked(object sender, EventArgs e)
     {
-        Close();
+        await CloseAsync();
     }
 }

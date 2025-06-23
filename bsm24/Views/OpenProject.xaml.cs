@@ -1,11 +1,11 @@
 ﻿#nullable disable
 
+using System.Globalization;
+using bsm24.Services;
+using CommunityToolkit.Maui;
+using CommunityToolkit.Maui.Extensions;
 using CommunityToolkit.Maui.Alerts;
 using CommunityToolkit.Maui.Storage;
-using System.Globalization;
-using UraniumUI.Pages;
-using bsm24.Services;
-using CommunityToolkit.Maui.Views;
 
 
 #if WINDOWS
@@ -17,7 +17,7 @@ using Android.Content;
 #endif
 
 namespace bsm24.Views;
-public partial class OpenProject : UraniumContentPage
+public partial class OpenProject : ContentPage
 {
     public OpenProject()
     {
@@ -68,27 +68,26 @@ public partial class OpenProject : UraniumContentPage
         }
 
         // Liste der JSON-Dateien dem ListView zuweisen        
-        fileListView.ItemsSource = foundFiles;
-        fileListView.Footer = foundFiles.Count + " Projekt(e)";
+        FileListView.ItemsSource = foundFiles;
+        FileListView.Footer = foundFiles.Count + " Projekt(e)";
     }
 
     private async void OnNewClicked(object sender, EventArgs e)
     {
         var popup = new PopupEntry(title: "Neues Projekt eröffnen...", okText: "Erstellen");
-        var result = (string)await this.ShowPopupAsync(popup);
-        if (result != null)
+        var result = await this.ShowPopupAsync<string>(popup, new PopupOptions { CanBeDismissedByTappingOutsideOfPopup = false });
+        if (result.Result != null)
         {
             // Prüfe, ob die Datei existiert und hänge fortlaufend eine Nummer an
             int counter = 1;
-            string _result = result;
+            string _result = result.Result;
             while (Directory.Exists(Path.Combine(Settings.DataDirectory, _result)))
             {
-                _result = Path.Combine($"{result} ({counter})");
+                _result = Path.Combine($"{result.Result} ({counter})");
                 counter++;
             }
-            result = _result;
 
-            string filePath = Path.Combine(Settings.DataDirectory, result, result + ".json");
+            string filePath = Path.Combine(Settings.DataDirectory, _result, _result + ".json");
 
             LoadDataToView.ResetData();
 
@@ -99,8 +98,8 @@ public partial class OpenProject : UraniumContentPage
             GlobalJson.Data.Object_name = "";
             GlobalJson.Data.Creation_date = DateTime.Now;
             GlobalJson.Data.Project_manager = "";
-            GlobalJson.Data.ProjectPath = result;
-            GlobalJson.Data.JsonFile = result + ".json";
+            GlobalJson.Data.ProjectPath = _result;
+            GlobalJson.Data.JsonFile = _result + ".json";
             GlobalJson.Data.PlanPath = "plans";
             GlobalJson.Data.ImagePath = "images";
             GlobalJson.Data.ThumbnailPath = "thumbnails";
@@ -190,20 +189,20 @@ public partial class OpenProject : UraniumContentPage
         FileItem item = (FileItem)button.BindingContext;
 
         var _popup = new PopupProjectEdit(entry: item.FileName);
-        var _result = (string)await this.ShowPopupAsync(_popup);
+        var _result = await this.ShowPopupAsync<string>(_popup, new PopupOptions { CanBeDismissedByTappingOutsideOfPopup = false });
 
-        switch (_result)
+        switch (_result.Result)
         {
             case "delete":
                 var popup1 = new PopupDualResponse("Wollen Sie dieses Projekt wirklich löschen?", okText: "Löschen", alert: true);
-                var result1 = (string)await this.ShowPopupAsync(popup1);
-                if (result1 == "Ok")
+                var result1 = await this.ShowPopupAsync<string>(popup1, new PopupOptions { CanBeDismissedByTappingOutsideOfPopup = false });
+                if (result1.Result == "Ok")
                 {
-                    List<FileItem> tmp_list = (List<FileItem>)fileListView.ItemsSource;
+                    List<FileItem> tmp_list = (List<FileItem>)FileListView.ItemsSource;
                     tmp_list.Remove(item);
-                    fileListView.ItemsSource = null;
-                    fileListView.ItemsSource = tmp_list;
-                    fileListView.Footer = tmp_list.Count + " Projekte";
+                    FileListView.ItemsSource = null;
+                    FileListView.ItemsSource = tmp_list;
+                    FileListView.Footer = tmp_list.Count + " Projekte";
 
                     // Rekursives Löschen von Dateien in allen Unterverzeichnissen
                     string[] files = Directory.GetFiles(Path.GetDirectoryName(item.FilePath), "*", SearchOption.AllDirectories);
@@ -222,8 +221,8 @@ public partial class OpenProject : UraniumContentPage
 
             case "zip":
                 var popup2 = new PopupDualResponse("Wollen Sie dieses Projekt wirklich als Zip exportieren?");
-                var result2 = (string)await this.ShowPopupAsync(popup2);
-                if (result2 == "Ok")
+                var result2 = await this.ShowPopupAsync<string>(popup2, new PopupOptions { CanBeDismissedByTappingOutsideOfPopup = false });
+                if (result2.Result == "Ok")
                 {
                     string sourceDirectory = Path.GetDirectoryName(item.FilePath);
                     string outputPath = Path.Combine(Settings.DataDirectory, Path.GetFileNameWithoutExtension(item.FileName) + ".zip");
@@ -289,12 +288,12 @@ public partial class OpenProject : UraniumContentPage
             default:
                 if (Directory.Exists(Path.GetDirectoryName(item.FilePath)))
                 {
-                    var newFilePath = Path.Combine(Settings.DataDirectory, _result, _result + ".json");
+                    var newFilePath = Path.Combine(Settings.DataDirectory, _result.Result, _result.Result + ".json");
                     var oldFilePath = item.FilePath;
 
                     GlobalJson.LoadFromFile(oldFilePath);
-                    GlobalJson.Data.ProjectPath = _result;
-                    GlobalJson.Data.JsonFile = _result + ".json";
+                    GlobalJson.Data.ProjectPath = _result.Result;
+                    GlobalJson.Data.JsonFile = _result.Result + ".json";
                     GlobalJson.Data.PlanPath = "plans";
                     GlobalJson.Data.ImagePath = "images";
                     GlobalJson.Data.ThumbnailPath = "thumbnails";
@@ -306,7 +305,7 @@ public partial class OpenProject : UraniumContentPage
 
                     // Json verschieben (umbenennen)
                     Directory.Move(Path.Combine(Path.GetDirectoryName(newFilePath), item.FileName + ".json"),
-                                    Path.Combine(Path.GetDirectoryName(newFilePath), _result + ".json"));
+                                    Path.Combine(Path.GetDirectoryName(newFilePath), _result.Result + ".json"));
 
                     GlobalJson.UpdateFilePath(newFilePath);
 

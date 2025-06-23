@@ -3,6 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:local="clr-namespace:bsm24"
              x:Class="bsm24.App">
+    
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>

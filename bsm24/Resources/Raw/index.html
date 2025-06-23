@@ -112,20 +112,6 @@
             background-color: rgba(255, 255, 255, 0.8);
             box-shadow: 2px 2px 4px rgba(0,0,0,0.2);
         }
-
-        #popup button {
-            margin-top: 10px;
-            padding: 6px 12px;
-            background-color: #999999;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-
-        #popup button:hover {
-            background-color: #005fa3;
-        }
     </style>
 </head>
 
@@ -245,7 +231,7 @@
                     }
 
                     // Zeige das Popup immer an
-                    popupElement.innerHTML = content += `<button onclick="navigateBack('${plankey}', '${pinkey}')">Bearbeiten</button>`;
+                    popupElement.innerHTML = content;
                     popupElement.style.display = 'block';
                     popup.setPosition(coordinates);
                 } else {
@@ -327,16 +313,6 @@
                 return JSON.stringify(coordinatesList);
             }
             return null;
-        }
-
-        function navigateBack(plankey, pinkey) {
-            const url = `invoke://navigateback?plankey=${encodeURIComponent(plankey)}&pinkey=${encodeURIComponent(pinkey)}`;
-
-            if (window.platform === "android" || window.platform === "ios") {
-                window.external.notify(url);
-            } else {
-                window.location.href = url;
-            }   
         }
     </script>
 </body>

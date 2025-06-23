@@ -4,9 +4,8 @@ using CommunityToolkit.Maui.Views;
 
 namespace bsm24.Views;
 
-public partial class PopupPlanEdit : Popup
+public partial class PopupPlanEdit : Popup<PlanEditReturn>
 {
-    public (string, string, bool) ReturnValue { get; set; }
 
     public PopupPlanEdit(string name, string desc, bool gray, bool export = true, string okText = "Ok", string cancelText = "Abbrechen")
     {
@@ -23,30 +22,22 @@ public partial class PopupPlanEdit : Popup
             grayscaleButtonText.Text = "Farben entfernen";
     }
 
-    private void OnOkClicked(object sender, EventArgs e)
+    private async void OnOkClicked(object sender, EventArgs e)
     {
-        var cts = new CancellationTokenSource(TimeSpan.FromSeconds(5));
-        ReturnValue = (name_entry.Text, desc_entry.Text, allow_export.IsChecked);
-        CloseAsync(ReturnValue, cts.Token);
+        await CloseAsync(new PlanEditReturn(name_entry.Text, desc_entry.Text, allow_export.IsChecked));
     }
 
-    private void OnCancelClicked(object sender, EventArgs e)
+    private async void OnCancelClicked(object sender, EventArgs e)
     {
-        var cts = new CancellationTokenSource(TimeSpan.FromSeconds(5));
-        ReturnValue = (null, null, true);
-        CloseAsync(ReturnValue, cts.Token);
+        await CloseAsync(new PlanEditReturn(null, null, true));
     }
 
-    private void OnDeleteClicked(object sender, EventArgs e)
+    private async void OnDeleteClicked(object sender, EventArgs e)
     {
-        var cts = new CancellationTokenSource(TimeSpan.FromSeconds(5));
-        ReturnValue = ("delete", null, true);
-        CloseAsync(ReturnValue, cts.Token);
+        await CloseAsync(new PlanEditReturn("delete", null, true));
     }
-    private void OnGrayscaleClicked(object sender, EventArgs e)
+    private async void OnGrayscaleClicked(object sender, EventArgs e)
     {
-        var cts = new CancellationTokenSource(TimeSpan.FromSeconds(5));
-        ReturnValue = ("grayscale", null, true);
-        CloseAsync(ReturnValue, cts.Token);
+        await CloseAsync(new PlanEditReturn("grayscale", null, true));
     }
 }

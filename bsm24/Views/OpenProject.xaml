@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<uranium:UraniumContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:ff="clr-namespace:FFImageLoading.Maui;assembly=FFImageLoading.Maui" 
-             xmlns:views="clr-namespace:bsm24.Views"
              xmlns:uranium="http://schemas.enisn-projects.io/dotnet/maui/uraniumui"
              xmlns:m="clr-namespace:UraniumUI.Icons.MaterialSymbols;assembly=UraniumUI.Icons.MaterialSymbols"
+             xmlns:views="clr-namespace:bsm24.Views"                            
              xmlns:local="clr-namespace:bsm24"
              Shell.TitleColor="{DynamicResource PrimaryDark}"
              BackgroundColor="{AppThemeBinding Light={DynamicResource PrimaryBackground}, Dark={DynamicResource PrimaryBackgroundDark}}"
@@ -24,7 +24,7 @@
 
     <Grid>
         <Grid Margin="16,0,16,16">
-            <CollectionView x:Name="fileListView" ItemsLayout="VerticalGrid, 1">
+            <CollectionView x:Name="FileListView" ItemsLayout="VerticalGrid, 1">
                 <CollectionView.ItemTemplate>
                     <DataTemplate x:DataType="local:FileItem">
                         <Grid Padding="0, 6, 0, 6">
@@ -38,24 +38,24 @@
                                 <RowDefinition Height="35" />
                             </Grid.RowDefinitions>
                             <Label Grid.Column="1" Grid.Row="0"
-                                    VerticalTextAlignment="End"
-                                    TextColor="{AppThemeBinding Light={DynamicResource PrimaryText}, Dark={DynamicResource PrimaryDarkText}}"
-                                    FontSize="14"
-                                    Text="{Binding FileName}"/>
+                                   VerticalTextAlignment="End"
+                                   TextColor="{AppThemeBinding Light={DynamicResource PrimaryText}, Dark={DynamicResource PrimaryDarkText}}"
+                                   FontSize="14"
+                                   Text="{Binding FileName}"/>
                             <Label Grid.Column="1" Grid.Row="1"
-                                    FontSize="12"
-                                    Text="{Binding FileDate}"/>
+                                   FontSize="12"
+                                   Text="{Binding FileDate}"/>
                             <Image Grid.Column="0" Grid.RowSpan="2"
-                                    Source="{Binding ImagePath}"
-                                    Aspect="AspectFill"/>
+                                   Source="{Binding ImagePath}"
+                                   Aspect="AspectFill"/>
                             <Button Grid.Column="0" Grid.ColumnSpan="2" Grid.RowSpan="2"
-                                    Background="Transparent"
-                                    Clicked="OnProjectClicked"/>
+                                   Background="Transparent"
+                                   Clicked="OnProjectClicked"/>
                             <Button Grid.Column="2" Grid.RowSpan="2"
-                                    Padding="6"
-                                    Background="Transparent"
-                                    ImageSource="{FontImageSource FontFamily=MaterialOutlined, Color={AppThemeBinding Light={DynamicResource Primary}, Dark={DynamicResource PrimaryDark}}, Glyph={x:Static m:MaterialOutlined.Edit_square}}"
-                                    Clicked="OnEditClicked"/>
+                                   Padding="6"
+                                   Background="Transparent"
+                                   ImageSource="{FontImageSource FontFamily=MaterialOutlined, Color={AppThemeBinding Light={DynamicResource Primary}, Dark={DynamicResource PrimaryDark}}, Glyph={x:Static m:MaterialOutlined.Edit_square}}"
+                                   Clicked="OnEditClicked"/>
                         </Grid>
                     </DataTemplate>
                 </CollectionView.ItemTemplate>
@@ -67,4 +67,4 @@
                                AbsoluteLayout.LayoutBounds="0,0,1,1"
                                AbsoluteLayout.LayoutFlags="All"/>
     </Grid>
-</uranium:UraniumContentPage>
+</ContentPage>

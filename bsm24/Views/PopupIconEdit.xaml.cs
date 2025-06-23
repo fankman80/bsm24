@@ -1,5 +1,7 @@
 #nullable disable
 
+using CommunityToolkit.Maui;
+using CommunityToolkit.Maui.Extensions;
 using CommunityToolkit.Maui.Views;
 using SkiaSharp;
 using System.ComponentModel;
@@ -7,9 +9,8 @@ using System.Runtime.CompilerServices;
 
 namespace bsm24.Views;
 
-public partial class PopupIconEdit : Popup, INotifyPropertyChanged
+public partial class PopupIconEdit : Popup<string>, INotifyPropertyChanged
 {
-    public string ReturnValue { get; set; }
     public IconItem iconItem;
     public int IconPreviewWidth { get; set; } = 120;
     public int IconPreviewHeight { get; set; }
@@ -110,11 +111,12 @@ public partial class PopupIconEdit : Popup, INotifyPropertyChanged
         }
     }
 
-    private void OnOkClicked(object sender, EventArgs e)
+    private async void OnOkClicked(object sender, EventArgs e)
     {
         var cts = new CancellationTokenSource(TimeSpan.FromSeconds(5));
         // Falls CustomIcon, dann wird Pfad relativ gesetzt
         var file = iconItem.FileName;
+        string returnValue = null;
         int index = file.IndexOf("customicons", StringComparison.OrdinalIgnoreCase);
         if (index >= 0)
             file = file[index..];
@@ -132,7 +134,7 @@ public partial class PopupIconEdit : Popup, INotifyPropertyChanged
                 iconCategory.Text
             );
             Helper.UpdateIconItem(Path.Combine(Settings.TemplateDirectory, "IconData.xml"), updatedItem);
-            ReturnValue = file;
+            returnValue = file;
         }
         else
         {
@@ -141,17 +143,15 @@ public partial class PopupIconEdit : Popup, INotifyPropertyChanged
             {
                 File.Delete(iconFile);
                 Helper.DeleteIconItem(Path.Combine(Settings.TemplateDirectory, "IconData.xml"), file);
-                ReturnValue = "deleted";
+                returnValue = "deleted";
             }
         }
-        CloseAsync(ReturnValue, cts.Token);
+        await CloseAsync(returnValue);
     }
 
-    private void OnCancelClicked(object sender, EventArgs e)
+    private async void OnCancelClicked(object sender, EventArgs e)
     {
-        var cts = new CancellationTokenSource(TimeSpan.FromSeconds(5));
-        ReturnValue = null;
-        CloseAsync(ReturnValue, cts.Token);
+        await CloseAsync(null);
     }
 
     private void OnSliderValueChanged(object sender, EventArgs e)
@@ -170,10 +170,10 @@ public partial class PopupIconEdit : Popup, INotifyPropertyChanged
     private async void OnColorPickerClicked(object sender, EventArgs e)
     {
         var popup = new PopupColorPicker(0, SelectedColor, lineWidthVisibility: false);
-        (Color, int) result = ((Color, int))await Application.Current.Windows[0].Page.ShowPopupAsync(popup, CancellationToken.None);
+        var result = await Application.Current.Windows[0].Page.ShowPopupAsync<ColorPickerReturn>(popup, new PopupOptions { CanBeDismissedByTappingOutsideOfPopup = false });
 
-        if (result.Item1 != null)
-            SelectedColor = result.Item1;
+        if (result.Result.penColor != null)
+            SelectedColor = result.Result.penColor;
     }
 
     private void StartBlinking()

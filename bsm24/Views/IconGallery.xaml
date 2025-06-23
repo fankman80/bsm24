@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<uranium:UraniumContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:ff="clr-namespace:FFImageLoading.Maui;assembly=FFImageLoading.Maui" 
-             xmlns:views="clr-namespace:bsm24.Views"
              xmlns:mr="clr-namespace:MR.Gestures;assembly=MR.Gestures"
              xmlns:uranium="http://schemas.enisn-projects.io/dotnet/maui/uraniumui"
              xmlns:material="http://schemas.enisn-projects.io/dotnet/maui/uraniumui/material"
              xmlns:m="clr-namespace:UraniumUI.Icons.MaterialSymbols;assembly=UraniumUI.Icons.MaterialSymbols"            
              xmlns:services="clr-namespace:bsm24.Services"
+             xmlns:views="clr-namespace:bsm24.Views"                            
              xmlns:local="clr-namespace:bsm24"
              x:Name="IconGalleryPage"
              x:Class="bsm24.Views.IconGallery"
@@ -15,7 +15,7 @@
              Shell.TitleColor="{DynamicResource PrimaryDark}"
              Title="Icon auswählen">
 
-    <uranium:UraniumContentPage.Resources>
+    <ContentPage.Resources>
         <ResourceDictionary>
             <!-- Template für Liste (Label sichtbar) -->
             <DataTemplate x:Key="IconListTemplate" x:DataType="local:IconItem">
@@ -66,7 +66,7 @@
             </DataTemplate>
             <services:SkColorToHexConverter x:Key="SkColorToHexConverter"/>
         </ResourceDictionary>
-    </uranium:UraniumContentPage.Resources>
+    </ContentPage.Resources>
 
 
     <ContentPage.ToolbarItems>
@@ -134,4 +134,4 @@
                Text="Gedrückt halten um Icon zu editieren."
                FontSize="12"/>
     </Grid>
-</uranium:UraniumContentPage>
+</ContentPage>

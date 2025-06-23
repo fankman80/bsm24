@@ -1,26 +1,26 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<uranium:UraniumContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
-                            xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-                            xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
-                            xmlns:ff="clr-namespace:FFImageLoading.Maui;assembly=FFImageLoading.Maui" 
-                            xmlns:views="clr-namespace:bsm24.Views"
-                            xmlns:uranium="http://schemas.enisn-projects.io/dotnet/maui/uraniumui"
-                            xmlns:material="http://schemas.enisn-projects.io/dotnet/maui/uraniumui/material"
-                            xmlns:m="clr-namespace:UraniumUI.Icons.MaterialSymbols;assembly=UraniumUI.Icons.MaterialSymbols"  
-                            Shell.TitleColor="{DynamicResource PrimaryDark}"
-                            BackgroundColor="{AppThemeBinding Light={DynamicResource PrimaryBackground}, Dark={DynamicResource PrimaryBackgroundDark}}"
-                            xmlns:local="clr-namespace:bsm24"
-                            xmlns:models="clr-namespace:bsm24.Models"
-                            xmlns:services="clr-namespace:bsm24.Services"                          
-                            x:Name="PinListPage"
-                            x:Class="bsm24.Views.PinList"
-                            Title="Pin Liste">
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+             xmlns:ff="clr-namespace:FFImageLoading.Maui;assembly=FFImageLoading.Maui" 
+             xmlns:uranium="http://schemas.enisn-projects.io/dotnet/maui/uraniumui"
+             xmlns:material="http://schemas.enisn-projects.io/dotnet/maui/uraniumui/material"
+             xmlns:m="clr-namespace:UraniumUI.Icons.MaterialSymbols;assembly=UraniumUI.Icons.MaterialSymbols"  
+             xmlns:models="clr-namespace:bsm24.Models"
+             xmlns:services="clr-namespace:bsm24.Services"  
+             xmlns:views="clr-namespace:bsm24.Views"                            
+             xmlns:local="clr-namespace:bsm24"                            
+             x:Name="PinListPage"
+             x:Class="bsm24.Views.PinList"
+             Shell.TitleColor="{DynamicResource PrimaryDark}"
+             BackgroundColor="{AppThemeBinding Light={DynamicResource PrimaryBackground}, Dark={DynamicResource PrimaryBackgroundDark}}"             
+             Title="Pin Liste">
     
-    <uranium:UraniumContentPage.Resources>
+    <ContentPage.Resources>
         <ResourceDictionary>
             <toolkit:InvertedBoolConverter x:Key="InvertedBoolConverter" />
         </ResourceDictionary>
-    </uranium:UraniumContentPage.Resources>
+    </ContentPage.Resources>
 
     <Grid Margin="10">
         <Grid.RowDefinitions>
@@ -156,4 +156,4 @@
             </CollectionView>
         </Grid>
     </Grid>
-</uranium:UraniumContentPage>
+</ContentPage>

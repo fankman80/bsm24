@@ -1,17 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<uranium:UraniumContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
-                            xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-                            xmlns:ff="clr-namespace:FFImageLoading.Maui;assembly=FFImageLoading.Maui"                             
-                            xmlns:views="clr-namespace:bsm24.Views"
-                            xmlns:uranium="http://schemas.enisn-projects.io/dotnet/maui/uraniumui"
-                            xmlns:material="http://schemas.enisn-projects.io/dotnet/maui/uraniumui/material"
-                            xmlns:m="clr-namespace:UraniumUI.Icons.MaterialSymbols;assembly=UraniumUI.Icons.MaterialSymbols"
-                            xmlns:local="clr-namespace:bsm24.Views"  
-                            xmlns:services="clr-namespace:bsm24.Services"
-                            x:DataType="views:SetPin"
-                            Shell.TitleColor="{DynamicResource PrimaryDark}"
-                            x:Class="bsm24.Views.SetPin"
-                            Title="Pin bearbeiten">
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:ff="clr-namespace:FFImageLoading.Maui;assembly=FFImageLoading.Maui"                             
+             xmlns:views="clr-namespace:bsm24.Views"
+             xmlns:uranium="clr-namespace:UraniumUI.Pages;assembly=UraniumUI"
+             xmlns:material="http://schemas.enisn-projects.io/dotnet/maui/uraniumui/material"
+             xmlns:m="clr-namespace:UraniumUI.Icons.MaterialSymbols;assembly=UraniumUI.Icons.MaterialSymbols"
+             xmlns:services="clr-namespace:bsm24.Services"
+             x:DataType="views:SetPin"
+             Shell.TitleColor="{DynamicResource PrimaryDark}"
+             x:Class="bsm24.Views.SetPin"
+             Title="Pin bearbeiten">
     
     <Shell.BackButtonBehavior>
         <BackButtonBehavior IsVisible="False" />
@@ -44,7 +43,7 @@
                 <GridItemsLayout Orientation="Vertical" Span="{Binding DynamicSpan}" />
             </CollectionView.ItemsLayout>
             <CollectionView.ItemTemplate>
-                <DataTemplate x:DataType="local:ImageItem">
+                <DataTemplate x:DataType="views:ImageItem">
                     <VerticalStackLayout>
                         <Grid>
                             <views:SquareView Margin="4">
@@ -182,4 +181,4 @@
         </StackLayout>
     </Grid>
 
-</uranium:UraniumContentPage>
+</ContentPage>

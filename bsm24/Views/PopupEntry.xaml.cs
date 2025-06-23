@@ -4,10 +4,8 @@ using CommunityToolkit.Maui.Views;
 
 namespace bsm24.Views;
 
-public partial class PopupEntry : Popup
+public partial class PopupEntry : Popup<string>
 {
-    public string ReturnValue { get; set; }
-
     public PopupEntry(string title, string inputTxt = "", string okText = "Ok", string cancelText = "Abbrechen")
     {
         InitializeComponent();
@@ -17,17 +15,13 @@ public partial class PopupEntry : Popup
         text_entry.Text = inputTxt;
     }
 
-    private void OnOkClicked(object sender, EventArgs e)
+    private async void OnOkClicked(object sender, EventArgs e)
     {
-        var cts = new CancellationTokenSource(TimeSpan.FromSeconds(5));
-        ReturnValue = text_entry.Text;
-        CloseAsync(ReturnValue, cts.Token);
+        await CloseAsync(text_entry.Text);
     }
 
-    private void OnCancelClicked(object sender, EventArgs e)
+    private async void OnCancelClicked(object sender, EventArgs e)
     {
-        var cts = new CancellationTokenSource(TimeSpan.FromSeconds(5));
-        ReturnValue = null;
-        CloseAsync(ReturnValue, cts.Token);
+        await CloseAsync(null);
     }
 }

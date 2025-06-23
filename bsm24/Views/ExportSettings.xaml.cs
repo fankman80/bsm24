@@ -3,12 +3,12 @@
 using bsm24.Services;
 using CommunityToolkit.Maui.Alerts;
 using CommunityToolkit.Maui.Storage;
-using CommunityToolkit.Maui.Views;
+using CommunityToolkit.Maui.Extensions;
 using UraniumUI.Pages;
 
 namespace bsm24.Views;
 
-public partial class ExportSettings : UraniumContentPage
+public partial class ExportSettings : ContentPage
 {
     private static readonly string[] iOSFileTypes = ["com.microsoft.word.doc", "org.openxmlformats.wordprocessingml.document"];
     private static readonly string[] AndroidFileTypes = ["application/msword", "application/vnd.openxmlformats-officedocument.wordprocessingml.document"];
@@ -46,8 +46,8 @@ public partial class ExportSettings : UraniumContentPage
         if (SettingsService.Instance.SelectedTemplate == null)
         {
             var popup = new PopupDualResponse("Wählen Sie eine Exportvorlage oder importieren Sie eine neue.");
-            var result = await this.ShowPopupAsync(popup);
-            if (result != null)
+            var result = await this.ShowPopupAsync<string>(popup);
+            if (result.Result != null)
                 return;
         }
 
@@ -92,8 +92,8 @@ public partial class ExportSettings : UraniumContentPage
         if (SettingsService.Instance.SelectedTemplate == null)
         {
             var popup = new PopupDualResponse("Wählen Sie eine Exportvorlage oder importieren Sie eine neue.");
-            var result = await this.ShowPopupAsync(popup);
-            if (result != null)
+            var result = await this.ShowPopupAsync<string>(popup);
+            if (result.Result != null)
                 return;
         }
 

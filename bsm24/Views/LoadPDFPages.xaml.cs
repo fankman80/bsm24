@@ -4,10 +4,9 @@ using bsm24.Models;
 using bsm24.Services;
 using PDFtoImage;
 using SkiaSharp;
-using UraniumUI.Pages;
 
 namespace bsm24.Views;
-public partial class LoadPDFPages : UraniumContentPage
+public partial class LoadPDFPages : ContentPage
 {
     FileResult result;
     public int DynamicSpan { get; set; } = 0; // Standardwert
