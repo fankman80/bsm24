@@ -265,6 +265,7 @@ public class ImageItem
     public bool IsChecked { get; set; }
     public DateTime DateTime { get; set; }
     public int Dpi { get; set; }
+    public string DisplayName { get; set; }
 }
 
 public partial class SquareView : ContentView

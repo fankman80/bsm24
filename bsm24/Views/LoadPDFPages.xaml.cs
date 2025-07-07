@@ -8,7 +8,7 @@ using SkiaSharp;
 namespace bsm24.Views;
 public partial class LoadPDFPages : ContentPage
 {
-    FileResult result;
+    IEnumerable<FileResult> resultList;
     public int DynamicSpan { get; set; } = 0; // Standardwert
     private int targetDpi = SettingsService.Instance.PdfQuality;
 
@@ -33,8 +33,8 @@ public partial class LoadPDFPages : ContentPage
 
     private async void LoadPreviewPDFImages()
     {
-        result = await PickPdfFileAsync();
-        if (result != null)
+        resultList = await PickPdfFileAsync(); // neue Methode gibt IEnumerable<FileResult> zurück
+        if (resultList != null && resultList.Any())
         {
             List<ImageItem> pdfImages = [];
             busyOverlay.IsOverlayVisible = true;
@@ -43,46 +43,56 @@ public partial class LoadPDFPages : ContentPage
 
             await Task.Run(() =>
             {
-                byte[] bytearray = File.ReadAllBytes(result.FullPath);
-                int pagecount = Conversion.GetPageCount(bytearray);
-
                 if (!Directory.Exists(Settings.CacheDirectory))
                     Directory.CreateDirectory(Settings.CacheDirectory);
 
-                for (int i = 0; i < pagecount; i++)
+                int pdfIndex = 0;
+
+                foreach (var file in resultList)
                 {
-                    string imgPath = Path.Combine(Settings.DataDirectory, Settings.CacheDirectory, "plan_" + i + ".jpg");
-                    string previewPath = Path.Combine(Settings.DataDirectory, Settings.CacheDirectory, "preview_" + i + ".jpg");
-                    var renderOptions = new RenderOptions()
+                    byte[] bytearray = File.ReadAllBytes(file.FullPath);
+                    int pagecount = Conversion.GetPageCount(bytearray);
+
+                    for (int i = 0; i < pagecount; i++)
                     {
-                        AntiAliasing = PdfAntiAliasing.None,
-                        Dpi = 72,
-                        WithAnnotations = false,
-                        WithFormFill = false,
-                    };
-                    Conversion.SaveJpeg(previewPath, bytearray, i, options: renderOptions);
+                        string imgBaseName = $"pdf_{pdfIndex}_page_{i}";
+                        string imgPath = Path.Combine(Settings.DataDirectory, Settings.CacheDirectory, imgBaseName + ".jpg");
+                        string previewPath = Path.Combine(Settings.DataDirectory, Settings.CacheDirectory, "preview_" + imgBaseName + ".jpg");
 
-                    var stream = File.OpenRead(previewPath);
-                    var skBitmap = SKBitmap.Decode(stream);
-                    Size _imgSize = new(skBitmap.Width, skBitmap.Height);
+                        var renderOptions = new RenderOptions
+                        {
+                            AntiAliasing = PdfAntiAliasing.None,
+                            Dpi = 72,
+                            WithAnnotations = false,
+                            WithFormFill = false,
+                        };
 
-                    int widthHighDpi = skBitmap.Width * targetDpi / 72;
-                    int heightHighDpi = skBitmap.Height * targetDpi / 72;
+                        Conversion.SaveJpeg(previewPath, bytearray, i, options: renderOptions);
 
-                    if (widthHighDpi > Settings.MaxPdfImageSizeW || heightHighDpi > Settings.MaxPdfImageSizeH)
-                    {
-                        widthHighDpi = targetDpi * Settings.MaxPdfImageSizeW / widthHighDpi;
-                        heightHighDpi = targetDpi * Settings.MaxPdfImageSizeH / heightHighDpi;
-                        targetDpi = Math.Min(widthHighDpi, heightHighDpi);
+                        using var stream = File.OpenRead(previewPath);
+                        using var skBitmap = SKBitmap.Decode(stream);
+
+                        int widthHighDpi = skBitmap.Width * targetDpi / 72;
+                        int heightHighDpi = skBitmap.Height * targetDpi / 72;
+
+                        if (widthHighDpi > Settings.MaxPdfImageSizeW || heightHighDpi > Settings.MaxPdfImageSizeH)
+                        {
+                            widthHighDpi = targetDpi * Settings.MaxPdfImageSizeW / widthHighDpi;
+                            heightHighDpi = targetDpi * Settings.MaxPdfImageSizeH / heightHighDpi;
+                            targetDpi = Math.Min(widthHighDpi, heightHighDpi);
+                        }
+
+                        pdfImages.Add(new ImageItem
+                        {
+                            ImagePath = imgPath,
+                            PreviewPath = previewPath,
+                            IsChecked = true,
+                            Dpi = targetDpi,
+                            DisplayName = $"PDF {pdfIndex + 1} – Seite {i + 1}"
+                        });
                     }
 
-                    pdfImages.Add(new ImageItem
-                    {
-                        ImagePath = imgPath,
-                        PreviewPath = previewPath,
-                        IsChecked = true,
-                        Dpi = targetDpi
-                    });
+                    pdfIndex++;
                 }
             });
 
@@ -91,8 +101,11 @@ public partial class LoadPDFPages : ContentPage
             busyOverlay.IsOverlayVisible = false;
         }
         else
+        {
             await Shell.Current.GoToAsync("..");
+        }
     }
+
 
     private async Task LoadPDFImages()
     {
@@ -103,31 +116,41 @@ public partial class LoadPDFPages : ContentPage
 
         await Task.Run(() =>
         {
-            byte[] bytearray = File.ReadAllBytes(result.FullPath);
-            int pagecount = Conversion.GetPageCount(bytearray);
+            int pdfIndex = 0;
 
-            if (!Directory.Exists(Settings.CacheDirectory))
-                Directory.CreateDirectory(Settings.CacheDirectory);
-
-            for (int i = 0; i < pagecount; i++)
+            foreach (var file in resultList)
             {
-                string imgPath = Path.Combine(Settings.DataDirectory, Settings.CacheDirectory, "plan_" + i + ".jpg");
-                string previewImgPath = Path.Combine(Settings.DataDirectory, Settings.CacheDirectory, "preview_" + i + ".jpg");
-                var renderOptions = new RenderOptions()
-                {
-                    AntiAliasing = PdfAntiAliasing.All,
-                    Dpi = targetDpi,
-                    WithAnnotations = true,
-                    WithFormFill = true,
-                    UseTiling = true,
-                };
-                Conversion.SaveJpeg(imgPath, bytearray, i, options: renderOptions);
+                byte[] bytearray = File.ReadAllBytes(file.FullPath);
+                int pagecount = Conversion.GetPageCount(bytearray);
 
-                var stream = File.OpenRead(imgPath);
-                var skBitmap = SKBitmap.Decode(stream);
-                Size _imgSize = new(skBitmap.Width, skBitmap.Height);
-                if (File.Exists(previewImgPath))
-                    File.Delete(previewImgPath);
+                if (!Directory.Exists(Settings.CacheDirectory))
+                    Directory.CreateDirectory(Settings.CacheDirectory);
+
+                for (int i = 0; i < pagecount; i++)
+                {
+                    string imgBaseName = $"pdf_{pdfIndex}_page_{i}";
+                    string imgPath = Path.Combine(Settings.DataDirectory, Settings.CacheDirectory, imgBaseName + ".jpg");
+                    string previewPath = Path.Combine(Settings.DataDirectory, Settings.CacheDirectory, "preview_" + imgBaseName + ".jpg");
+
+                    var renderOptions = new RenderOptions()
+                    {
+                        AntiAliasing = PdfAntiAliasing.All,
+                        Dpi = targetDpi,
+                        WithAnnotations = true,
+                        WithFormFill = true,
+                        UseTiling = true,
+                    };
+                    Conversion.SaveJpeg(imgPath, bytearray, i, options: renderOptions);
+
+                    var stream = File.OpenRead(imgPath);
+                    var skBitmap = SKBitmap.Decode(stream);
+                    Size _imgSize = new(skBitmap.Width, skBitmap.Height);
+
+                    if (File.Exists(previewPath))
+                        File.Delete(previewPath);
+                }
+
+                pdfIndex++;
             }
         });
 
@@ -135,14 +158,14 @@ public partial class LoadPDFPages : ContentPage
         busyOverlay.IsOverlayVisible = false;
     }
 
-    public static async Task<FileResult> PickPdfFileAsync()
+    public static async Task<IEnumerable<FileResult>> PickPdfFileAsync()
     {
         try
         {
-            var fileResult = await FilePicker.Default.PickAsync(new PickOptions
-            {
-                PickerTitle = "Bitte wähle eine PDF-Datei aus",
-                FileTypes = FilePickerFileType.Pdf // Nur PDF-Dateien anzeigen
+            var fileResult = await FilePicker.Default.PickMultipleAsync(new PickOptions
+            {                
+                PickerTitle = "Eine oder mehrere PDF-Dateien auswählen",
+                FileTypes = FilePickerFileType.Pdf // Nur PDF-Dateien anzeigen                
             });
 
             if (fileResult != null)
@@ -188,25 +211,14 @@ public partial class LoadPDFPages : ContentPage
                 string fileName = "plan_" + DateTime.Now.ToString("yyyyMMdd_HHmmss") + "_" + i + ".jpg";
                 string planId = "plan_" + DateTime.Now.ToString("yyyyMMdd_HHmmss") + "_" + i;
                 string destinationFilePath = Path.Combine(imageDirectory, fileName);
-                string planSourceName = "plan_" + i + ".jpg";
 
-                var stream = File.OpenRead(Path.Combine(Settings.CacheDirectory, planSourceName));
+                var stream = File.OpenRead(Path.Combine(Settings.CacheDirectory, item.ImagePath));
                 var skBitmap = SKBitmap.Decode(stream);
                 Size _imgSize = new(skBitmap.Width, skBitmap.Height);
 
-                // Schleife, bis ein einzigartiger Name gefunden wird
-                string planName;
-                int j = 0;
-                do
-                {
-                    planName = "Plan " + j;
-                    j++;
-                }
-                while (GlobalJson.Data.Plans.Values.Any(p => p.Name == planName));
-
                 Plan plan = new()
                 {
-                    Name = planName,
+                    Name = item.DisplayName,
                     File = fileName,
                     ImageSize = _imgSize,
                     IsGrayscale = false,
@@ -226,11 +238,6 @@ public partial class LoadPDFPages : ContentPage
                 LoadDataToView.AddPlan(newPlan);
             }
         }
-
-        GlobalJson.Data.PlanPdf = new Pdf
-        {
-            File = result.FileName,
-        };
 
         GlobalJson.SaveToFile();
 

@@ -1,6 +1,4 @@
 ﻿#nullable disable
-using Codeuctivity.OpenXmlPowerTools;
-using DocumentFormat.OpenXml.InkML;
 using SkiaSharp;
 using System.ComponentModel;
 
@@ -14,7 +12,6 @@ public class JsonDataModel
     public string Object_name { get; set; }
     public DateTime Creation_date { get; set; }
     public string Project_manager { get; set; }
-    public Pdf PlanPdf { get; set; }
     public Dictionary<string, Plan> Plans { get; set; }
     public string PlanPath { get; set; }
     public string ImagePath { get; set; }
@@ -24,11 +21,6 @@ public class JsonDataModel
     public string JsonFile { get; set; }
     public string TitleImage { get; set; }
     public Size TitleImageSize { get; set; }
-}
-
-public class Pdf
-{
-    public string File { get; set; }
 }
 
 public class Plan

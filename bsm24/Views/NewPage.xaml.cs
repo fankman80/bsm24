@@ -861,6 +861,12 @@ public partial class NewPage : IQueryAttributable
                     GlobalJson.Data.Plans[PlanId].Description = result.Result.DescEntry;
                     GlobalJson.Data.Plans[PlanId].AllowExport = result.Result.AllowExport;
 
+                    // Rotate Plan
+                    if (result.Result.PlanRotate != 0)
+                    {
+                        PlanRotate(result.Result.PlanRotate);
+                    }
+
                     // save data to file
                     GlobalJson.SaveToFile();
                     break;
@@ -925,6 +931,95 @@ public partial class NewPage : IQueryAttributable
         isFirstLoad = true;
 
         PlanImage.Source = Path.Combine(Settings.DataDirectory, GlobalJson.Data.ProjectPath, GlobalJson.Data.PlanPath, GlobalJson.Data.Plans[PlanId].File);
+    }
+
+    private void PlanRotate(int angle)
+    {
+        var imagePath = Path.Combine(Settings.DataDirectory, GlobalJson.Data.ProjectPath, GlobalJson.Data.PlanPath, GlobalJson.Data.Plans[PlanId].File);
+        
+        // Dateiname ändern, damit das Bild als neue Source erkannt wird
+        var imagefile = Path.GetFileNameWithoutExtension(imagePath);
+        if (imagefile.EndsWith("_r"))
+            imagefile = imagefile.Replace("_r", "");
+        else
+            imagefile = imagefile + "_r";
+        imagefile = imagefile + Path.GetExtension(imagePath);
+        var outputPath = Path.Combine(Settings.DataDirectory, GlobalJson.Data.ProjectPath, GlobalJson.Data.PlanPath, imagefile);
+
+        using var inputStream = File.OpenRead(imagePath);
+        using var originalBitmap = SKBitmap.Decode(inputStream);
+
+        int width = originalBitmap.Width;
+        int height = originalBitmap.Height;
+
+        // Zielgröße: nur bei 90/270 Breite/Höhe tauschen
+        int rotatedWidth = angle % 180 == 0 ? width : height;
+        int rotatedHeight = angle % 180 == 0 ? height : width;
+
+        using var rotatedBitmap = new SKBitmap(rotatedWidth, rotatedHeight);
+
+        using var canvas = new SKCanvas(rotatedBitmap);
+        canvas.Clear(SKColors.White); // optional: Hintergrundfarbe setzen
+
+        // Mittelpunkt berechnen
+        float cx = width / 2f;
+        float cy = height / 2f;
+
+        // Zielmitte
+        float dx = rotatedWidth / 2f;
+        float dy = rotatedHeight / 2f;
+
+        // Transformation: Zielmitte → Ursprung → Rotation → Originalbild
+        canvas.Translate(dx, dy);
+        canvas.RotateDegrees(angle);
+        canvas.Translate(-cx, -cy);
+
+        canvas.DrawBitmap(originalBitmap, 0, 0);
+
+        using var image = SKImage.FromBitmap(rotatedBitmap);
+        using var data = image.Encode(SKEncodedImageFormat.Jpeg, 80);
+        using var outputStream = File.Open(outputPath, FileMode.Create);
+        data.SaveTo(outputStream);
+
+        GlobalJson.Data.Plans[PlanId].ImageSize = new Size(rotatedBitmap.Width, rotatedBitmap.Height);
+        GlobalJson.Data.Plans[PlanId].File = imagefile;
+
+        // alle Pins auf dem Plan transformieren
+        foreach (var pin in GlobalJson.Data.Plans[PlanId].Pins)
+        {
+            GlobalJson.Data.Plans[PlanId].Pins[pin.Key].Pos = RotatePin(GlobalJson.Data.Plans[PlanId].Pins[pin.Key].Pos, angle); // z. B. 90
+        }
+
+        // save data to file
+        GlobalJson.SaveToFile();
+
+        AddPlan();
+
+        // Umpositionierung der Pins
+        foreach (var pinId in GlobalJson.Data.Plans[PlanId].Pins.Keys)
+        {
+            var delPin = PlanContainer.Children
+                .OfType<MR.Gestures.Image>()
+                .FirstOrDefault(i => i.AutomationId == pinId);
+            PlanContainer.Remove(delPin);
+
+            var pinIcon = GlobalJson.Data.Plans[PlanId].Pins[pinId].PinIcon;
+            AddPin(pinId, pinIcon);
+        }
+    }
+
+    static Point RotatePin(Point oldPos, int angle)
+    {
+        angle = ((angle % 360) + 360) % 360; // Normalisiere auf 0..359
+
+        return angle switch
+        {
+            0 => new Point(oldPos.X, oldPos.Y),
+            90 => new Point(1 - oldPos.Y, oldPos.X),
+            180 => new Point(1 - oldPos.X, 1 - oldPos.Y),
+            270 => new Point(oldPos.Y, 1 - oldPos.X),
+            _ => throw new NotSupportedException($"Nur 0/90/180/270 Grad werden unterstützt (nicht: {angle})."),
+        };
     }
 }
 

@@ -68,11 +68,12 @@ namespace bsm24
         public int PenWidth { get; set; } = width;
     }
 
-    public class PlanEditReturn(string nameEntry, string descEntry, bool allowExport)
+    public class PlanEditReturn(string nameEntry, string descEntry, bool allowExport, int planRotate)
     {
         public string NameEntry { get; set; } = nameEntry;
         public string DescEntry { get; set; } = descEntry;
         public bool AllowExport { get; set; } = allowExport;
+        public int PlanRotate { get; set; } = planRotate;
     }
 
     public class PriorityItem
