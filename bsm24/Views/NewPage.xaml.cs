@@ -3,7 +3,6 @@
 using bsm24.Models;
 using bsm24.Services;
 using bsm24.ViewModels;
-using CommunityToolkit.Maui;
 using CommunityToolkit.Maui.Core;
 using CommunityToolkit.Maui.Core.Views;
 using CommunityToolkit.Maui.Extensions;
@@ -56,13 +55,13 @@ public partial class NewPage : IQueryAttributable
         return true;
     }
 
-    protected override void OnAppearing()
+    protected async override void OnAppearing()
     {
         base.OnAppearing();
 
         if (isFirstLoad)
         {
-            AddPlan();
+            await AddPlan();
             PlanImage.PropertyChanged += PlanImage_PropertyChanged;
         }
         else
@@ -147,7 +146,7 @@ public partial class NewPage : IQueryAttributable
         }
     }
 
-    private void AddPlan()
+    private Task AddPlan()
     {
         //calculate aspect-ratio, resolution and imagesize
         if (GlobalJson.Data.Plans[PlanId].ImageSize.Width > 7168 || GlobalJson.Data.Plans[PlanId].ImageSize.Height > 7168)
@@ -197,6 +196,7 @@ public partial class NewPage : IQueryAttributable
                 }
             }
         };
+        return Task.CompletedTask;
     }
 
     private void AddPins()
@@ -591,8 +591,8 @@ public partial class NewPage : IQueryAttributable
         planContainer.Scale = Math.Min(this.Width / PlanContainer.Width, this.Height / PlanContainer.Height);
         planContainer.TranslationX = (this.Width - PlanContainer.Width) / 2;
         planContainer.TranslationY = (this.Height - PlanContainer.Height) / 2;
-        planContainer.AnchorX = 1 / PlanContainer.Width * ((this.Width / 2) - PlanContainer.TranslationX);
-        planContainer.AnchorY = 1 / PlanContainer.Height * ((this.Height / 2) - PlanContainer.TranslationY);
+        planContainer.AnchorX = 1 / PlanContainer.Width * ((this.Width / 2) - planContainer.TranslationX);
+        planContainer.AnchorY = 1 / PlanContainer.Height * ((this.Height / 2) - planContainer.TranslationY);
     }
 
     private double PinScaling(string pinId)
@@ -933,7 +933,7 @@ public partial class NewPage : IQueryAttributable
         PlanImage.Source = Path.Combine(Settings.DataDirectory, GlobalJson.Data.ProjectPath, GlobalJson.Data.PlanPath, GlobalJson.Data.Plans[PlanId].File);
     }
 
-    private void PlanRotate(int angle)
+    private async void PlanRotate(int angle)
     {
         var imagePath = Path.Combine(Settings.DataDirectory, GlobalJson.Data.ProjectPath, GlobalJson.Data.PlanPath, GlobalJson.Data.Plans[PlanId].File);
         
@@ -984,16 +984,7 @@ public partial class NewPage : IQueryAttributable
         GlobalJson.Data.Plans[PlanId].ImageSize = new Size(rotatedBitmap.Width, rotatedBitmap.Height);
         GlobalJson.Data.Plans[PlanId].File = imagefile;
 
-        // alle Pins auf dem Plan transformieren
-        foreach (var pin in GlobalJson.Data.Plans[PlanId].Pins)
-        {
-            GlobalJson.Data.Plans[PlanId].Pins[pin.Key].Pos = RotatePin(GlobalJson.Data.Plans[PlanId].Pins[pin.Key].Pos, angle); // z. B. 90
-        }
-
-        // save data to file
-        GlobalJson.SaveToFile();
-
-        AddPlan();
+        await AddPlan();
 
         // Umpositionierung der Pins
         foreach (var pinId in GlobalJson.Data.Plans[PlanId].Pins.Keys)
@@ -1003,9 +994,16 @@ public partial class NewPage : IQueryAttributable
                 .FirstOrDefault(i => i.AutomationId == pinId);
             PlanContainer.Remove(delPin);
 
+            GlobalJson.Data.Plans[PlanId].Pins[pinId].Pos = RotatePin(GlobalJson.Data.Plans[PlanId].Pins[pinId].Pos, angle);
+
             var pinIcon = GlobalJson.Data.Plans[PlanId].Pins[pinId].PinIcon;
             AddPin(pinId, pinIcon);
         }
+
+        // save data to file
+        GlobalJson.SaveToFile();
+
+        ImageFit(null, null);
     }
 
     static Point RotatePin(Point oldPos, int angle)
