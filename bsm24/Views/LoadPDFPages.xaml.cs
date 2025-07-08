@@ -1,7 +1,6 @@
 ﻿#nullable disable
 
 using bsm24.Models;
-using bsm24.Services;
 using PDFtoImage;
 using SkiaSharp;
 
@@ -10,7 +9,6 @@ public partial class LoadPDFPages : ContentPage
 {
     IEnumerable<FileResult> resultList;
     public int DynamicSpan { get; set; } = 0; // Standardwert
-    private int targetDpi = SettingsService.Instance.PdfQuality;
 
     public LoadPDFPages()
     {
@@ -59,39 +57,37 @@ public partial class LoadPDFPages : ContentPage
                         string imgPath = Path.Combine(Settings.DataDirectory, Settings.CacheDirectory, imgBaseName + ".jpg");
                         string previewPath = Path.Combine(Settings.DataDirectory, Settings.CacheDirectory, "preview_" + imgBaseName + ".jpg");
 
-                        var renderOptions = new RenderOptions
+                        // Schritt 1: Seite bei 72 DPI rendern, um Größe zu ermitteln
+                        var probeRenderOptions = new RenderOptions
                         {
                             AntiAliasing = PdfAntiAliasing.None,
                             Dpi = 72,
                             WithAnnotations = false,
                             WithFormFill = false,
                         };
+                        Conversion.SaveJpeg(previewPath, bytearray, i, options: probeRenderOptions);
 
-                        Conversion.SaveJpeg(previewPath, bytearray, i, options: renderOptions);
+                        using var probeStream = File.OpenRead(previewPath);
+                        using var probeBitmap = SKBitmap.Decode(probeStream);
 
-                        using var stream = File.OpenRead(previewPath);
-                        using var skBitmap = SKBitmap.Decode(stream);
+                        int width72dpi = probeBitmap.Width;
+                        int height72dpi = probeBitmap.Height;
 
-                        int widthHighDpi = skBitmap.Width * targetDpi / 72;
-                        int heightHighDpi = skBitmap.Height * targetDpi / 72;
-
-                        if (widthHighDpi > Settings.MaxPdfImageSizeW || heightHighDpi > Settings.MaxPdfImageSizeH)
-                        {
-                            widthHighDpi = targetDpi * Settings.MaxPdfImageSizeW / widthHighDpi;
-                            heightHighDpi = targetDpi * Settings.MaxPdfImageSizeH / heightHighDpi;
-                            targetDpi = Math.Min(widthHighDpi, heightHighDpi);
-                        }
+                        // Schritt 2: DPI berechnen anhand MaxPixelCount
+                        int targetDpi = CalculateMaxDpiFromPixelLimit(width72dpi, height72dpi, Settings.MaxPdfPixelCount);
 
                         pdfImages.Add(new ImageItem
                         {
                             ImagePath = imgPath,
                             PreviewPath = previewPath,
+                            PdfPath = file.FullPath,
                             IsChecked = true,
                             Dpi = targetDpi,
-                            DisplayName = $"PDF {pdfIndex + 1} – Seite {i + 1}"
+                            DisplayName = $"PDF {pdfIndex + 1} – Seite {i + 1}",
+                            ImageName = imgBaseName,
+                            PdfPage = i,
                         });
                     }
-
                     pdfIndex++;
                 }
             });
@@ -106,51 +102,49 @@ public partial class LoadPDFPages : ContentPage
         }
     }
 
+    private static int CalculateMaxDpiFromPixelLimit(int width72dpi, int height72dpi, int maxPixelCount)
+    {
+        if (width72dpi <= 0 || height72dpi <= 0)
+            throw new ArgumentException("PDF-Seitenbreite und -höhe müssen > 0 sein.");
+
+        double dpi = 72 * Math.Sqrt((double)maxPixelCount / (width72dpi * height72dpi));
+        return Math.Max(10, (int)Math.Floor(dpi)); // Mindestwert 10 dpi zur Sicherheit
+    }
 
     private async Task LoadPDFImages()
     {
-        List<ImageItem> pdfImages = [];
+        //List<ImageItem> pdfImages = [];
         busyOverlay.IsOverlayVisible = true;
         busyOverlay.IsActivityRunning = true;
         busyOverlay.BusyMessage = "PDF wird konvertiert...";
 
+        if (!Directory.Exists(Settings.CacheDirectory))
+            Directory.CreateDirectory(Settings.CacheDirectory);
+
         await Task.Run(() =>
         {
-            int pdfIndex = 0;
-
-            foreach (var file in resultList)
+            foreach (var item in fileListView.ItemsSource.Cast<ImageItem>())
             {
-                byte[] bytearray = File.ReadAllBytes(file.FullPath);
-                int pagecount = Conversion.GetPageCount(bytearray);
+                byte[] bytearray = File.ReadAllBytes(item.PdfPath);
+                //int pagecount = Conversion.GetPageCount(bytearray);
+                string imgPath = Path.Combine(Settings.DataDirectory, Settings.CacheDirectory, item.ImageName + ".jpg");
 
-                if (!Directory.Exists(Settings.CacheDirectory))
-                    Directory.CreateDirectory(Settings.CacheDirectory);
-
-                for (int i = 0; i < pagecount; i++)
+                var renderOptions = new RenderOptions()
                 {
-                    string imgBaseName = $"pdf_{pdfIndex}_page_{i}";
-                    string imgPath = Path.Combine(Settings.DataDirectory, Settings.CacheDirectory, imgBaseName + ".jpg");
-                    string previewPath = Path.Combine(Settings.DataDirectory, Settings.CacheDirectory, "preview_" + imgBaseName + ".jpg");
+                    AntiAliasing = PdfAntiAliasing.All,
+                    Dpi = item.Dpi,
+                    WithAnnotations = true,
+                    WithFormFill = true,
+                    UseTiling = true,
+                };
+                Conversion.SaveJpeg(imgPath, bytearray, item.PdfPage, options: renderOptions);
 
-                    var renderOptions = new RenderOptions()
-                    {
-                        AntiAliasing = PdfAntiAliasing.All,
-                        Dpi = targetDpi,
-                        WithAnnotations = true,
-                        WithFormFill = true,
-                        UseTiling = true,
-                    };
-                    Conversion.SaveJpeg(imgPath, bytearray, i, options: renderOptions);
+                var stream = File.OpenRead(imgPath);
+                var skBitmap = SKBitmap.Decode(stream);
+                Size _imgSize = new(skBitmap.Width, skBitmap.Height);
 
-                    var stream = File.OpenRead(imgPath);
-                    var skBitmap = SKBitmap.Decode(stream);
-                    Size _imgSize = new(skBitmap.Width, skBitmap.Height);
-
-                    if (File.Exists(previewPath))
-                        File.Delete(previewPath);
-                }
-
-                pdfIndex++;
+                if (File.Exists(item.PreviewPath))
+                    File.Delete(item.PreviewPath);
             }
         });
 

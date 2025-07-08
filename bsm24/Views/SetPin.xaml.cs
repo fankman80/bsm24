@@ -262,10 +262,13 @@ public class ImageItem
 {
     public string ImagePath { get; set; }
     public string PreviewPath { get; set; }
+    public string PdfPath { get; set; }
     public bool IsChecked { get; set; }
     public DateTime DateTime { get; set; }
     public int Dpi { get; set; }
     public string DisplayName { get; set; }
+    public string ImageName { get; set; }
+    public int PdfPage { get; set; }
 }
 
 public partial class SquareView : ContentView

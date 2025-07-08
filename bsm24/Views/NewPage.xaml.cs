@@ -149,24 +149,24 @@ public partial class NewPage : IQueryAttributable
     private Task AddPlan()
     {
         //calculate aspect-ratio, resolution and imagesize
-        if (GlobalJson.Data.Plans[PlanId].ImageSize.Width > 7168 || GlobalJson.Data.Plans[PlanId].ImageSize.Height > 7168)
+        if (GlobalJson.Data.Plans[PlanId].ImageSize.Width > 8192 || GlobalJson.Data.Plans[PlanId].ImageSize.Height > 8192)
         {
             PlanImage.DownsampleToViewSize = true;
-            PlanImage.DownsampleWidth = 7168;
-            PlanImage.DownsampleHeight = 7168;
+            PlanImage.DownsampleWidth = 8192;
+            PlanImage.DownsampleHeight = 8192;
 
             var scaleFac = Math.Min(GlobalJson.Data.Plans[PlanId].ImageSize.Width, GlobalJson.Data.Plans[PlanId].ImageSize.Height) /
                            Math.Max(GlobalJson.Data.Plans[PlanId].ImageSize.Width, GlobalJson.Data.Plans[PlanId].ImageSize.Height);
 
             if (GlobalJson.Data.Plans[PlanId].ImageSize.Width > GlobalJson.Data.Plans[PlanId].ImageSize.Height)
             {
-                PlanImage.WidthRequest = 7168;
-                PlanImage.HeightRequest = 7168 * scaleFac;
+                PlanImage.WidthRequest = 8192;
+                PlanImage.HeightRequest = 8192 * scaleFac;
             }
             else
             {
-                PlanImage.WidthRequest = 7168 * scaleFac;
-                PlanImage.HeightRequest = 7168;
+                PlanImage.WidthRequest = 8192 * scaleFac;
+                PlanImage.HeightRequest = 8192;
             }
         }
         else
