@@ -230,7 +230,7 @@
         <ContentView x:DataType="local:AppShell">
             <CollectionView ItemsSource="{Binding PlanItems}"
                             CanReorderItems="True"
-                            Margin="14,0,20,0"
+                            Margin="14,0,14,0"
                             ReorderCompleted="OnReorderCompleted">
                 <CollectionView.ItemTemplate>
                     <DataTemplate x:DataType="local:PlanItem">
@@ -238,7 +238,11 @@
                             <Grid.GestureRecognizers>
                                 <TapGestureRecognizer Tapped="OnPlanTapped" CommandParameter="{Binding PlanRoute}" />
                             </Grid.GestureRecognizers>
-                            
+
+                            <Border Grid.Column="0" Grid.ColumnSpan="3"
+                                    BackgroundColor="{Binding PlanColor}"
+                                    StrokeThickness="0"/>
+
                             <Label Grid.Column="0"
                                    Text="{Binding IconGlyph}" 
                                    FontFamily="MaterialOutlined"
@@ -252,8 +256,9 @@
                                    FontSize="14" 
                                    VerticalOptions="Center" 
                                    TextColor="{AppThemeBinding Light={DynamicResource Primary}, Dark={DynamicResource PrimaryDark}}" />
-                            
+
                             <Label Grid.Column="2"
+                                   Margin="0,0,8,0"
                                    IsVisible="{Binding AllowExport, Converter={StaticResource InvertedBoolConverter}}"
                                    Text="{x:Static m:MaterialOutlined.Visibility_off}"
                                    FontFamily="MaterialOutlined"

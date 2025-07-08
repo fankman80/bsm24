@@ -50,13 +50,13 @@
                                 <Grid>
                                     <!-- Normales Farbfeld -->
                                     <mr:Border IsVisible="{Binding IsAddButton, Converter={StaticResource InvertedBoolConverter}}"
-                                                WidthRequest="40"
-                                                HeightRequest="40"
-                                                BackgroundColor="{Binding BackgroundColor}"
-                                                Stroke="{Binding IsSelected, Converter={StaticResource IsValidConverter}}"                                                                                                      
-                                                StrokeThickness="1"
-                                                Tapped="OnColorTapped"
-                                                LongPressing="OnLongPressed">
+                                               WidthRequest="40"
+                                               HeightRequest="40"
+                                               BackgroundColor="{Binding BackgroundColor}"
+                                               Stroke="{Binding IsSelected, Converter={StaticResource IsValidConverter}}"                                                                                                      
+                                               StrokeThickness="1"
+                                               Tapped="OnColorTapped"
+                                               LongPressing="OnLongPressed">
                                         <mr:Border.StrokeShape>
                                             <RoundRectangle CornerRadius="{Binding IsSelected, Converter={StaticResource MathExpressionConverter}, ConverterParameter='x==true?20:0'}"/>
                                         </mr:Border.StrokeShape>
@@ -82,11 +82,11 @@
                     <toolkit:Expander Margin="0,10,0,0">
                         <toolkit:Expander.Header>
                             <Label Text="▼ Farbdefinition ▼"
-                                    TextColor="{Binding SelectedColor, Converter={StaticResource ColorToColorForTextConverter}}"
-                                    HorizontalTextAlignment="Center"
-                                    VerticalTextAlignment="Center"
-                                    BackgroundColor="{Binding SelectedColor}"
-                                    HeightRequest="40"/>
+                                   TextColor="{Binding SelectedColor, Converter={StaticResource ColorToColorForTextConverter}}"
+                                   HorizontalTextAlignment="Center"
+                                   VerticalTextAlignment="Center"
+                                   BackgroundColor="{Binding SelectedColor}"
+                                   HeightRequest="40"/>
                         </toolkit:Expander.Header>
                         <VerticalStackLayout Spacing="0">
                             <!-- Slider for Red -->
@@ -130,7 +130,6 @@
                                     ThumbColor="{DynamicResource Primary}"
                                     MinimumTrackColor="{DynamicResource Primary}"
                                     MaximumTrackColor="{DynamicResource PrimaryDark}"/>
-
                         </VerticalStackLayout>
                     </toolkit:Expander>
 

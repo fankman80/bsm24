@@ -15,6 +15,12 @@
                x:TypeArguments="local:PlanEditReturn"
                x:Class="bsm24.Views.PopupPlanEdit">
 
+    <toolkit:Popup.Resources>
+        <ResourceDictionary>
+            <toolkit:ColorToColorForTextConverter x:Key="ColorToColorForTextConverter" />
+        </ResourceDictionary>
+    </toolkit:Popup.Resources>
+    
     <Grid x:DataType="views:PopupPlanEdit">
         <VerticalStackLayout>
             <material:TextField x:Name="name_entry"
@@ -30,11 +36,35 @@
                                 BorderColor="{AppThemeBinding Light={DynamicResource SecondaryBackground}, Dark={DynamicResource SecondaryBackground}}"
                                 AccentColor="{AppThemeBinding Light={DynamicResource PrimaryAccent}, Dark={DynamicResource SecondaryDark}}"
                                 AllowClear="True"/>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <Button Grid.Column="0"
+                        WidthRequest="60"
+                        BorderWidth="1"
+                        BorderColor="Black"
+                        BackgroundColor="{Binding SelectedColor}"
+                        Clicked="OnColorPickerClicked"/>
+                <VerticalStackLayout Grid.Column="1">
+                    <Label Text="Farbe und Transparenz"/>
+                    <Slider x:Name="TransparencySlider"
+                            Value="{Binding Transparency}"
+                            Maximum="1"
+                            Minimum="0"
+                            Margin="0,-14,0,0"
+                            ThumbColor="{DynamicResource Primary}"
+                            MinimumTrackColor="{DynamicResource Primary}"
+                            MaximumTrackColor="{DynamicResource PrimaryDark}"/>
+                </VerticalStackLayout>
+            </Grid>
+            
             <HorizontalStackLayout>
                 <CheckBox x:Name="allow_export"
                           Scale="1.2"
                           Color="{DynamicResource Primary}"/>
-                <Label Text="Bericht Export" VerticalTextAlignment="Center"/>
+                <Label Text="Plan in den Bericht exportieren" VerticalTextAlignment="Center"/>
             </HorizontalStackLayout>
 
             <Grid>

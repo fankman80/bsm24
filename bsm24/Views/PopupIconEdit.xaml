@@ -89,6 +89,8 @@
                                 AllowClear="True"/>
 
                 <Button Text="Farbe wählen"
+                        BorderWidth="1"
+                        BorderColor="Black"
                         BackgroundColor="{Binding SelectedColor}"
                         TextColor="{Binding SelectedColor, Converter={StaticResource ColorToColorForTextConverter}}"
                         Clicked="OnColorPickerClicked"/>

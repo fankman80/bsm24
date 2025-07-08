@@ -31,6 +31,7 @@ public class Plan
     public bool IsGrayscale { get; set; }
     public string Description { get; set; }
     public Dictionary<string, Pin> Pins { get; set; }
+
     private bool _allowExport;
     public bool AllowExport
     {
@@ -41,6 +42,19 @@ public class Plan
             {
                 _allowExport = value;
                 OnPropertyChanged(nameof(AllowExport));
+            }
+        }
+    }
+    private string _planColor;
+    public string PlanColor
+    {
+        get => _planColor;
+        set
+        {
+            if (_planColor != value)
+            {
+                _planColor = value;
+                OnPropertyChanged(nameof(PlanColor));
             }
         }
     }

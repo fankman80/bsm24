@@ -1,5 +1,6 @@
 #nullable disable
 
+using CommunityToolkit.Maui.Extensions;
 using CommunityToolkit.Maui.Views;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
@@ -8,7 +9,7 @@ namespace bsm24.Views;
 
 public partial class PopupPlanEdit : Popup<PlanEditReturn>, INotifyPropertyChanged
 {
-    public PopupPlanEdit(string name, string desc, bool gray, bool export = true, string okText = "Ok", string cancelText = "Abbrechen")
+    public PopupPlanEdit(string name, string desc, bool gray, string planColor, bool export = true, string okText = "Ok", string cancelText = "Abbrechen")
     {
         InitializeComponent();
         okButtonText.Text = okText;
@@ -16,6 +17,8 @@ public partial class PopupPlanEdit : Popup<PlanEditReturn>, INotifyPropertyChang
         name_entry.Text = name;
         desc_entry.Text = desc;
         allow_export.IsChecked = export;
+        SelectedColor = Color.FromArgb(planColor);
+        Transparency = SelectedColor.Alpha; // Set transparency based on alpha value
 
         if (gray)
             grayscaleButtonText.Text = "Farben hinzufügen";
@@ -27,7 +30,7 @@ public partial class PopupPlanEdit : Popup<PlanEditReturn>, INotifyPropertyChang
 
     private async void OnOkClicked(object sender, EventArgs e)
     {
-        await CloseAsync(new PlanEditReturn(name_entry.Text, desc_entry.Text, allow_export.IsChecked, PlanRotate));
+        await CloseAsync(new PlanEditReturn(name_entry.Text, desc_entry.Text, allow_export.IsChecked, PlanRotate, SelectedColor.ToArgbHex()));
     }
 
     private async void OnCancelClicked(object sender, EventArgs e)
@@ -37,11 +40,21 @@ public partial class PopupPlanEdit : Popup<PlanEditReturn>, INotifyPropertyChang
 
     private async void OnDeleteClicked(object sender, EventArgs e)
     {
-        await CloseAsync(new PlanEditReturn("delete", null, true, PlanRotate));
+        await CloseAsync(new PlanEditReturn("delete", null, true, PlanRotate, SelectedColor.ToArgbHex()));
     }
+
     private async void OnGrayscaleClicked(object sender, EventArgs e)
     {
-        await CloseAsync(new PlanEditReturn("grayscale", null, true, PlanRotate));
+        await CloseAsync(new PlanEditReturn("grayscale", null, true, PlanRotate, SelectedColor.ToArgbHex()));
+    }
+
+    private async void OnColorPickerClicked(object sender, EventArgs e)
+    {
+        var popup = new PopupColorPicker(0, SelectedColor, lineWidthVisibility: false);
+        var result = await Application.Current.Windows[0].Page.ShowPopupAsync<ColorPickerReturn>(popup, Settings.PopupOptions);
+
+        if (result.Result != null)
+            SelectedColor = Color.FromArgb(result.Result.PenColorHex);
     }
 
     private void PlanRotateLeft(object sender, EventArgs e)
@@ -70,6 +83,35 @@ public partial class PopupPlanEdit : Popup<PlanEditReturn>, INotifyPropertyChang
             {
                 _planRotate = value;
                 OnPropertyChanged(nameof(PlanRotate));
+            }
+        }
+    }
+
+    private Color selectedColor;
+    public Color SelectedColor
+    {
+        get => selectedColor;
+        set
+        {
+            if (selectedColor != value)
+            {
+                selectedColor = value;
+                OnPropertyChanged();
+            }
+        }
+    }
+
+    private float transparency;
+    public float Transparency
+    {
+        get => transparency;
+        set
+        {
+            if (transparency != value)
+            {
+                SelectedColor = new Color(SelectedColor.Red, SelectedColor.Green, SelectedColor.Blue, value);
+                transparency = value;
+                OnPropertyChanged();
             }
         }
     }

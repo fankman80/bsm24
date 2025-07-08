@@ -10,7 +10,6 @@ using CommunityToolkit.Maui.Views;
 using MR.Gestures;
 using SkiaSharp;
 
-
 #if WINDOWS
 using bsm24.Platforms.Windows;
 #endif
@@ -838,7 +837,8 @@ public partial class NewPage : IQueryAttributable
         var popup = new PopupPlanEdit(name: GlobalJson.Data.Plans[PlanId].Name,
                                       desc: GlobalJson.Data.Plans[PlanId].Description,
                                       gray: GlobalJson.Data.Plans[PlanId].IsGrayscale,
-                                      export: GlobalJson.Data.Plans[PlanId].AllowExport);
+                                      export: GlobalJson.Data.Plans[PlanId].AllowExport,
+                                      planColor: GlobalJson.Data.Plans[PlanId].PlanColor);
         var result = await this.ShowPopupAsync<PlanEditReturn>(popup, Settings.PopupOptions);
 
         if (result.Result != null)
@@ -860,6 +860,7 @@ public partial class NewPage : IQueryAttributable
                     GlobalJson.Data.Plans[PlanId].Name = result.Result.NameEntry;
                     GlobalJson.Data.Plans[PlanId].Description = result.Result.DescEntry;
                     GlobalJson.Data.Plans[PlanId].AllowExport = result.Result.AllowExport;
+                    GlobalJson.Data.Plans[PlanId].PlanColor = result.Result.PlanColor;
 
                     // Rotate Plan
                     if (result.Result.PlanRotate != 0)

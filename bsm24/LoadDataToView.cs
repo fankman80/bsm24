@@ -1,6 +1,4 @@
 ﻿#nullable disable
-using bsm24.Views;
-
 namespace bsm24;
 
 public partial class LoadDataToView
@@ -49,7 +47,7 @@ public partial class LoadDataToView
             Title = planTitle,
             PlanId = planId,
             IconGlyph = UraniumUI.Icons.MaterialSymbols.MaterialOutlined.Layers,
-            PlanRoute = planId
+            PlanRoute = planId,
         });
     }
 

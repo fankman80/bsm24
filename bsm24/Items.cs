@@ -68,12 +68,13 @@ namespace bsm24
         public int PenWidth { get; set; } = width;
     }
 
-    public class PlanEditReturn(string nameEntry, string descEntry, bool allowExport, int planRotate)
+    public class PlanEditReturn(string nameEntry, string descEntry, bool allowExport, int planRotate, string planColor)
     {
         public string NameEntry { get; set; } = nameEntry;
         public string DescEntry { get; set; } = descEntry;
         public bool AllowExport { get; set; } = allowExport;
         public int PlanRotate { get; set; } = planRotate;
+        public string PlanColor { get; set; } = planColor;
     }
 
     public class PriorityItem
@@ -100,9 +101,13 @@ namespace bsm24
             {
                 if (e.PropertyName == nameof(Plan.AllowExport))
                     OnPropertyChanged(nameof(AllowExport));
+
+                if (e.PropertyName == nameof(Plan.PlanColor))
+                    OnPropertyChanged(nameof(PlanColor));
             };
         }
 
+        private string _title;
         public string Title
         {
             get => _title;
@@ -115,7 +120,6 @@ namespace bsm24
                 }
             }
         }
-        private string _title;
 
         public string PlanId { get; set; }
         public string IconGlyph { get; set; }
@@ -129,6 +133,19 @@ namespace bsm24
                 {
                     _plan.AllowExport = value;
                     OnPropertyChanged(nameof(AllowExport));
+                }
+            }
+        }
+
+        public string PlanColor
+        {
+            get => _plan.PlanColor;
+            set
+            {
+                if (_plan.PlanColor != value)
+                {
+                    _plan.PlanColor = value;
+                    OnPropertyChanged(nameof(PlanColor));
                 }
             }
         }

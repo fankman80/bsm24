@@ -6,9 +6,7 @@ using CommunityToolkit.Maui.Alerts;
 using SkiaSharp;
 using System.Globalization;
 using System.IO.Compression;
-using System.Reflection;
 using System.Xml.Linq;
-using bsm24.Views;
 
 namespace bsm24;
 
