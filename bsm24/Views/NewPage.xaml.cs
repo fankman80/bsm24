@@ -942,8 +942,8 @@ public partial class NewPage : IQueryAttributable
         if (imagefile.EndsWith("_r"))
             imagefile = imagefile.Replace("_r", "");
         else
-            imagefile = imagefile + "_r";
-        imagefile = imagefile + Path.GetExtension(imagePath);
+            imagefile += "_r";
+        imagefile += Path.GetExtension(imagePath);
         var outputPath = Path.Combine(Settings.DataDirectory, GlobalJson.Data.ProjectPath, GlobalJson.Data.PlanPath, imagefile);
 
         using var inputStream = File.OpenRead(imagePath);
@@ -980,29 +980,41 @@ public partial class NewPage : IQueryAttributable
         using var data = image.Encode(SKEncodedImageFormat.Jpeg, 80);
         using var outputStream = File.Open(outputPath, FileMode.Create);
         data.SaveTo(outputStream);
+        outputStream.Close();
 
         GlobalJson.Data.Plans[PlanId].ImageSize = new Size(rotatedBitmap.Width, rotatedBitmap.Height);
         GlobalJson.Data.Plans[PlanId].File = imagefile;
 
+        PlanContainer.SizeChanged += OnPlanContainerReady;
         await AddPlan();
 
         // Umpositionierung der Pins
-        foreach (var pinId in GlobalJson.Data.Plans[PlanId].Pins.Keys)
+        if (GlobalJson.Data.Plans[PlanId].Pins != null)
         {
-            var delPin = PlanContainer.Children
-                .OfType<MR.Gestures.Image>()
-                .FirstOrDefault(i => i.AutomationId == pinId);
-            PlanContainer.Remove(delPin);
+            foreach (var pinId in GlobalJson.Data.Plans[PlanId].Pins.Keys)
+            {
+                var delPin = PlanContainer.Children
+                    .OfType<MR.Gestures.Image>()
+                    .FirstOrDefault(i => i.AutomationId == pinId);
+                PlanContainer.Remove(delPin);
 
-            GlobalJson.Data.Plans[PlanId].Pins[pinId].Pos = RotatePin(GlobalJson.Data.Plans[PlanId].Pins[pinId].Pos, angle);
+                GlobalJson.Data.Plans[PlanId].Pins[pinId].Pos = RotatePin(GlobalJson.Data.Plans[PlanId].Pins[pinId].Pos, angle);
 
-            var pinIcon = GlobalJson.Data.Plans[PlanId].Pins[pinId].PinIcon;
-            AddPin(pinId, pinIcon);
+                if (GlobalJson.Data.Plans[PlanId].Pins[pinId].IsLockRotate)
+                    GlobalJson.Data.Plans[PlanId].Pins[pinId].PinRotation = (GlobalJson.Data.Plans[PlanId].Pins[pinId].PinRotation + angle) % 360;
+
+                var pinIcon = GlobalJson.Data.Plans[PlanId].Pins[pinId].PinIcon;
+                AddPin(pinId, pinIcon);
+            }
         }
 
         // save data to file
         GlobalJson.SaveToFile();
+    }
 
+    private void OnPlanContainerReady(object sender, EventArgs e)
+    {
+        PlanContainer.SizeChanged -= OnPlanContainerReady; // einmalig
         ImageFit(null, null);
     }
 

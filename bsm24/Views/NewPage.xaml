@@ -43,7 +43,7 @@
 				                TranslationY="{Binding TranslationY}"
 				                AnchorX="{Binding AnchorX}"
 				                AnchorY="{Binding AnchorY}">
-                    <ff:CachedImageView x:Name="PlanImage"
+                    <ff:CachedImageView x:Name="PlanImage"                                        
                                         CacheType="All"
                                         DownsampleUseDipUnits="False"
                                         DownsampleToViewSize="False"
