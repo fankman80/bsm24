@@ -219,7 +219,7 @@ public partial class LoadPDFPages : ContentPage
                     IsGrayscale = false,
                     Description = "",
                     AllowExport = true,
-                    PlanColor = "#FFFFFFFF"
+                    PlanColor = "#00FFFFFF"
                 };
 
                 // Überprüfen, ob die Plans-Struktur initialisiert ist
