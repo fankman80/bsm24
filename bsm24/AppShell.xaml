@@ -268,7 +268,7 @@
                                     VerticalOptions="Center"
                                     BackgroundColor="Transparent"
                                     TextColor="{Binding AllowExport, Converter={StaticResource AllowExportToColorConverter}, ConverterParameter={StaticResource Primary}}"
-                                    Clicked="OnEditClicked"/>
+                                    Clicked="OnAllowExportClicked"/>
                         </Grid>
                     </DataTemplate>
                 </CollectionView.ItemTemplate>

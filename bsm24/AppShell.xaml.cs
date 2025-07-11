@@ -103,7 +103,7 @@ public partial class AppShell : Shell
         GlobalJson.Data.Plans = reorderedPlans.ToDictionary(p => p.Key, p => p.Value);
     }
 
-    private void OnEditClicked(object sender, EventArgs e)
+    private void OnAllowExportClicked(object sender, EventArgs e)
     {
         var button = sender as Button;
 

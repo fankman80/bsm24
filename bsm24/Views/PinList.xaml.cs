@@ -134,6 +134,21 @@ public partial class PinList : ContentPage
         await Shell.Current.GoToAsync($"setpin?planId={planId}&pinId={pinId}");
     }
 
+    private void OnAllowExportClicked(object sender, EventArgs e)
+    {
+        var button = sender as Button;
+
+        PinItem item = (PinItem)button.BindingContext;
+
+        if (item != null)
+        {
+            item.AllowExport = !item.AllowExport;
+
+            // save data to file
+            GlobalJson.SaveToFile();
+        }
+    }
+
     private void OnSortPickerChanged(object sender, EventArgs e)
     {
         var currentSelectedItem = SortPicker.SelectedItem;

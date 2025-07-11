@@ -19,6 +19,8 @@
     <ContentPage.Resources>
         <ResourceDictionary>
             <toolkit:InvertedBoolConverter x:Key="InvertedBoolConverter" />
+            <services:ExportToGlyphConverter x:Key="ExportToGlyphConverter" />
+            <toolkit:MathExpressionConverter x:Key="MathExpressionConverter" />
         </ResourceDictionary>
     </ContentPage.Resources>
 
@@ -55,7 +57,8 @@
                 </CollectionView.ItemsLayout>
                 <CollectionView.ItemTemplate>
                     <DataTemplate x:DataType="local:PinItem">
-                        <Grid RowSpacing="0" ColumnSpacing="0">
+                        <Grid RowSpacing="0"
+                              ColumnSpacing="0" Opacity="{Binding AllowExport, Converter={StaticResource MathExpressionConverter}, ConverterParameter='x==true?1:0.3'}">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="64" />
                                 <ColumnDefinition Width="*" />
@@ -65,13 +68,7 @@
                                 <RowDefinition Height="Auto"/>
                                 <RowDefinition Height="Auto"/>
                             </Grid.RowDefinitions>
-                            
-                            <Border Grid.ColumnSpan="4" Grid.RowSpan="4"
-                                    IsVisible="{Binding AllowExport, Converter={StaticResource InvertedBoolConverter}}"
-                                    Opacity="0.7"
-                                    BackgroundColor="LightGray"
-                                    StrokeShape="RoundRectangle 10"/>
-                            
+
                             <Grid Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="2" RowSpacing="0" ColumnSpacing="0">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="Auto" />
@@ -111,10 +108,17 @@
                                         Background="Transparent"
                                         ImageSource="{FontImageSource FontFamily=MaterialOutlined, Color={AppThemeBinding Light={DynamicResource Primary}, Dark={DynamicResource PrimaryDarkAccent}}, Glyph={x:Static m:MaterialOutlined.Recenter}}"
                                         Clicked="OnPinClicked"/>
-                                <CheckBox Grid.Column="4" Grid.Row="0" Grid.RowSpan="2"
-                                          Scale="1.2"
-                                          Color="{AppThemeBinding Light={DynamicResource Primary}, Dark={DynamicResource PrimaryDarkAccent}}"
-                                          IsChecked="{Binding AllowExport, Mode=TwoWay}"/>
+
+                                <Button Grid.Column="4" Grid.Row="0" Grid.RowSpan="2"
+                                        Text="{Binding AllowExport, Converter={StaticResource ExportToGlyphConverter}}"
+                                        Padding="0,0,10,0"
+                                        FontFamily="MaterialOutlined"
+                                        FontSize="30"
+                                        HorizontalOptions="Center"
+                                        VerticalOptions="Center"
+                                        BackgroundColor="Transparent"
+                                        TextColor="{AppThemeBinding Light={DynamicResource Primary}, Dark={DynamicResource PrimaryDarkAccent}}"
+                                        Clicked="OnAllowExportClicked"/>
                             </Grid>
 
                             <BoxView Grid.Column="0" Grid.Row="1" Grid.ColumnSpan="4"
