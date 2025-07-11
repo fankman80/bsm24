@@ -57,8 +57,7 @@
                 </CollectionView.ItemsLayout>
                 <CollectionView.ItemTemplate>
                     <DataTemplate x:DataType="local:PinItem">
-                        <Grid RowSpacing="0"
-                              ColumnSpacing="0" Opacity="{Binding AllowExport, Converter={StaticResource MathExpressionConverter}, ConverterParameter='x==true?1:0.3'}">
+                        <Grid RowSpacing="0">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="64" />
                                 <ColumnDefinition Width="*" />
@@ -154,6 +153,12 @@
                                     StrokeThickness="1"
                                     Stroke="{AppThemeBinding Light={DynamicResource Primary}, Dark={DynamicResource PrimaryDarkAccent}}"
                                     StrokeShape="RoundRectangle 10"/>
+                            
+                            <!-- This BoxView is used to control the opacity of the CollectionView-Item based on AllowExport property -->
+                            <BoxView Grid.ColumnSpan="2" Grid.RowSpan="3"
+                                     BackgroundColor="{AppThemeBinding Light={DynamicResource PrimaryBackground}, Dark={DynamicResource PrimaryBackgroundDark}}"
+                                     Opacity="{Binding AllowExport, Converter={StaticResource MathExpressionConverter}, ConverterParameter='x==true?0:70/100'}"
+                                     InputTransparent="True" />
                         </Grid>
                     </DataTemplate>
                 </CollectionView.ItemTemplate>
