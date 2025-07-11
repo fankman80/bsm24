@@ -20,7 +20,6 @@
         <ResourceDictionary>
             <toolkit:InvertedBoolConverter x:Key="InvertedBoolConverter" />
             <services:ExportToGlyphConverter x:Key="ExportToGlyphConverter" />
-            <toolkit:MathExpressionConverter x:Key="MathExpressionConverter" />
         </ResourceDictionary>
     </ContentPage.Resources>
 
@@ -156,8 +155,9 @@
                             
                             <!-- This BoxView is used to control the opacity of the CollectionView-Item based on AllowExport property -->
                             <BoxView Grid.ColumnSpan="2" Grid.RowSpan="3"
+                                     IsVisible="{Binding AllowExport, Converter={StaticResource InvertedBoolConverter}}"
                                      BackgroundColor="{AppThemeBinding Light={DynamicResource PrimaryBackground}, Dark={DynamicResource PrimaryBackgroundDark}}"
-                                     Opacity="{Binding AllowExport, Converter={StaticResource MathExpressionConverter}, ConverterParameter='x==true?0:70/100'}"
+                                     Opacity="0.7"
                                      InputTransparent="True" />
                         </Grid>
                     </DataTemplate>
