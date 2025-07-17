@@ -46,7 +46,6 @@ public partial class LoadDataToView
         {
             Title = planTitle,
             PlanId = planId,
-            IconGlyph = UraniumUI.Icons.MaterialSymbols.MaterialOutlined.Layers,
             PlanRoute = planId,
         });
     }

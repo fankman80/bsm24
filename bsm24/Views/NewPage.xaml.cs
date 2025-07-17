@@ -552,6 +552,10 @@ public partial class NewPage : IQueryAttributable
 
     private void OnMouseScroll(object sender, ScrollWheelEventArgs e)
     {
+#if WINDOWS
+        if (mousePos.X <0 )
+            return; // Ignore scroll events when mouse is onto the flyout
+
         // Dynamischer Zoomfaktor basierend auf der aktuellen Skalierung
         double zoomFactor;
         if (planContainer.Scale > 2) // Sehr stark vergrößert
@@ -572,6 +576,7 @@ public partial class NewPage : IQueryAttributable
         planContainer.TranslationX -= deltaTranslationX;
         planContainer.TranslationY -= deltaTranslationY;
         planContainer.Scale = targetScale;
+#endif
     }
 
     private void ZoomToPin(string pinId)

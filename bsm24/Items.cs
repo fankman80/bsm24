@@ -53,7 +53,6 @@ namespace bsm24
             }
         }
 
-
         public event PropertyChangedEventHandler PropertyChanged;
 
         protected virtual void OnPropertyChanged(string propertyName)
@@ -122,7 +121,6 @@ namespace bsm24
         }
 
         public string PlanId { get; set; }
-        public string IconGlyph { get; set; }
         public string PlanRoute { get; set; }
         public bool AllowExport
         {
@@ -146,6 +144,20 @@ namespace bsm24
                 {
                     _plan.PlanColor = value;
                     OnPropertyChanged(nameof(PlanColor));
+                }
+            }
+        }
+
+        private bool _isSelected;
+        public bool IsSelected
+        {
+            get => _isSelected;
+            set
+            {
+                if (_isSelected != value)
+                {
+                    _isSelected = value;
+                    OnPropertyChanged(nameof(IsSelected));
                 }
             }
         }

@@ -117,4 +117,31 @@ public partial class AppShell : Shell
             GlobalJson.SaveToFile();
         }
     }
+
+    private PlanItem _selectedPlanItem;
+    public PlanItem SelectedPlanItem
+    {
+        get => _selectedPlanItem;
+        set
+        {
+            if (_selectedPlanItem != value)
+            {
+                if (_selectedPlanItem != null)
+                    _selectedPlanItem.IsSelected = false;
+
+                _selectedPlanItem = value;
+
+                if (_selectedPlanItem != null)
+                    _selectedPlanItem.IsSelected = true;
+            }
+        }
+    }
+
+    private void OnPlanSelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        if (e.CurrentSelection != null && e.CurrentSelection.Count > 0 && e.CurrentSelection[0] is PlanItem selected)
+        {
+            SelectedPlanItem = selected;
+        }
+    }
 }

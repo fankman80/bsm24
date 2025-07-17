@@ -21,6 +21,7 @@
         <ResourceDictionary>
             <toolkit:InvertedBoolConverter x:Key="InvertedBoolConverter" />
             <services:ExportToGlyphConverter x:Key="ExportToGlyphConverter" />
+            <services:SelectedToGlyphConverter x:Key="SelectedToGlyphConverter" />
             <services:AllowExportToColorConverter x:Key="AllowExportToColorConverter"/>
         </ResourceDictionary>
     </Shell.Resources>
@@ -233,7 +234,9 @@
             <CollectionView ItemsSource="{Binding PlanItems}"
                             CanReorderItems="True"
                             Margin="14,0,14,0"
-                            ReorderCompleted="OnReorderCompleted">
+                            SelectionMode="Single"
+                            ReorderCompleted="OnReorderCompleted"
+                            SelectionChanged="OnPlanSelectionChanged">
                 <CollectionView.ItemTemplate>
                     <DataTemplate x:DataType="local:PlanItem">
                         <Grid ColumnDefinitions="Auto,*,Auto" HeightRequest="44">
@@ -246,7 +249,7 @@
                                     StrokeThickness="0"/>
 
                             <Label Grid.Column="0"
-                                   Text="{Binding IconGlyph}" 
+                                   Text="{Binding IsSelected, Converter={StaticResource SelectedToGlyphConverter}}" 
                                    FontFamily="MaterialOutlined"
                                    FontSize="22" 
                                    HorizontalOptions="Center"
@@ -255,7 +258,7 @@
 
                             <Label Grid.Column="1"
                                    Text="{Binding Title}" 
-                                   FontSize="14" 
+                                   FontSize="14"
                                    VerticalOptions="Center" 
                                    TextColor="{Binding AllowExport, Converter={StaticResource AllowExportToColorConverter}, ConverterParameter={StaticResource Primary}}" />
 

@@ -68,6 +68,18 @@ public class ExportToGlyphConverter : IValueConverter
         => throw new NotImplementedException();
 }
 
+public class SelectedToGlyphConverter : IValueConverter
+{
+    public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+    {
+        bool allow = value is bool b && b;
+        return allow ? UraniumUI.Icons.MaterialSymbols.MaterialOutlined.Check_box : UraniumUI.Icons.MaterialSymbols.MaterialOutlined.Layers;
+    }
+
+    public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        => throw new NotImplementedException();
+}
+
 public class AllowExportToColorConverter : IValueConverter
 {
     public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
