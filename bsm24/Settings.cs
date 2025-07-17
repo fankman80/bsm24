@@ -82,7 +82,7 @@ public static class Settings
         "nach Pin",
         "nach Standort",
         "nach Bezeichnung",
-        "nach aktiv/deaktiv",
+        "nach aktiv/inaktiv",
         "nach Aufnahmedatum"
     ];
 
