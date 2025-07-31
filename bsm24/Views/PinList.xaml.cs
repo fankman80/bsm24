@@ -1,6 +1,7 @@
 ﻿#nullable disable
 
 using bsm24.Services;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 
 namespace bsm24.Views;
@@ -12,6 +13,7 @@ public partial class PinList : ContentPage
     private List<PinItem> originalPinItems = []; // Originalreihenfolge speichern
     private object previousSelectedItem;
     private string OrderDirection = "asc";
+    private ObservableCollection<PinItem> filteredPinItems;
 
     public PinList()
     {
@@ -94,9 +96,10 @@ public partial class PinList : ContentPage
             GlobalJson.SaveToFile();
 
         originalPinItems = [.. pinItems];
+        filteredPinItems = [.. pinItems];
 
         pinListView.ItemsSource = pinItems;
-        pinListView.Footer = "Pins: " + pincounter;
+        PinCounterLabel.Text = $"Pins: {pinItems.Count}";
 
         IconSorting(OrderDirection);
     }
@@ -239,5 +242,27 @@ public partial class PinList : ContentPage
 
         pinListView.ItemsSource = null;
         pinListView.ItemsSource = pinItems;
+    }
+
+    private void SearchEntry_TextChanged(object sender, TextChangedEventArgs e)
+    {
+        string searchText = e.NewTextValue?.ToLower() ?? string.Empty;
+
+        filteredPinItems.Clear();
+        foreach (var pin in pinItems)
+        {
+            if (
+                pin.OnPlanName.Contains(searchText, StringComparison.OrdinalIgnoreCase) ||
+                pin.PinLocation.Contains(searchText, StringComparison.OrdinalIgnoreCase) ||
+                pin.PinName.Contains(searchText, StringComparison.OrdinalIgnoreCase) ||
+                pin.PinDesc.Contains(searchText, StringComparison.OrdinalIgnoreCase)
+            )
+            {
+                filteredPinItems.Add(pin);
+                continue;
+            }
+        }
+        pinListView.ItemsSource = filteredPinItems;
+        PinCounterLabel.Text = $"Pins: {filteredPinItems.Count}";
     }
 }

@@ -688,7 +688,7 @@ public partial class NewPage : IQueryAttributable
                 await imageStream.CopyToAsync(memoryStream);
                 memoryStream.Seek(0, SeekOrigin.Begin);
                 using var _skBitmap = SKBitmap.Decode(memoryStream);
-                var skBitmap = CropBitmap(_skBitmap, 4);
+                var skBitmap = CropBitmap(_skBitmap);
                 var resizedBitmap = new SKBitmap(pinBound.Width + (int)drawingView.LineWidth, pinBound.Height + (int)drawingView.LineWidth);
                 var samplingOptions = new SKSamplingOptions(SKFilterMode.Linear);
                 skBitmap.ScalePixels(resizedBitmap, samplingOptions);
@@ -715,10 +715,10 @@ public partial class NewPage : IQueryAttributable
         DrawBtn.IsVisible = true;
     }
 
-    public static SKBitmap CropBitmap(SKBitmap originalBitmap, int cropWidth)
+    public static SKBitmap CropBitmap(SKBitmap originalBitmap)
     {
-        int newWidth = originalBitmap.Width - (2 * cropWidth);
-        int newHeight = originalBitmap.Height - (2 * cropWidth);
+        int newWidth = originalBitmap.Width;
+        int newHeight = originalBitmap.Height;
 
         if (newWidth <= 0 || newHeight <= 0)
             throw new ArgumentException("Die neue Bildgröße ist ungültig.");
@@ -726,7 +726,7 @@ public partial class NewPage : IQueryAttributable
         var croppedBitmap = new SKBitmap(newWidth, newHeight);
         using (var canvas = new SKCanvas(croppedBitmap))
         {
-            canvas.DrawBitmap(originalBitmap, new SKRect(-5, -5, originalBitmap.Width - 5, originalBitmap.Height - 5));
+            canvas.DrawBitmap(originalBitmap, new SKRect(0, 0, originalBitmap.Width, originalBitmap.Height));
         }
         return croppedBitmap;
     }
@@ -1041,11 +1041,4 @@ public partial class NewPage : IQueryAttributable
             _ => throw new NotSupportedException($"Nur 0/90/180/270 Grad werden unterstützt (nicht: {angle})."),
         };
     }
-}
-
-public class MaskResult
-{
-    public SKBitmap MaskBitmap { get; set; }
-    public int OffsetX { get; set; }
-    public int OffsetY { get; set; }
 }

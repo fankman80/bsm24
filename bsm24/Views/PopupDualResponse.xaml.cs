@@ -33,6 +33,7 @@ public partial class PopupDualResponse : Popup<string>
     {
         // Button deaktivieren und Countdown-Text anzeigen
         okButtonText.IsEnabled = false;
+        okButtonText.Opacity = 0.5;
         okButtonText.Text = OkText + " ("+ countdown +")";
 
         // Dispatcher-Timer starten
@@ -50,6 +51,7 @@ public partial class PopupDualResponse : Popup<string>
             {
                 // Timer stoppen, Button aktivieren und Text zurücksetzen
                 timer.Stop();
+                okButtonText.Opacity = 1.0;
                 okButtonText.Text = OkText;
                 okButtonText.IsEnabled = true;
             }

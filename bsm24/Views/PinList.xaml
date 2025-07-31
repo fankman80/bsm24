@@ -27,8 +27,20 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />            
         </Grid.RowDefinitions>
 
+        <Border Grid.Row="0" HorizontalOptions="Start" Scale="0.8" AnchorX="0"
+                WidthRequest="220"
+                Stroke="{AppThemeBinding Light={DynamicResource Primary}, Dark={DynamicResource PrimaryDarkAccent}}"
+                StrokeThickness="1"
+                StrokeShape="RoundRectangle 4">
+            <Entry x:Name="SearchEntry"
+                   Placeholder="Suche..."
+                   TextChanged="SearchEntry_TextChanged"
+                   TextColor="{AppThemeBinding Light={DynamicResource PrimaryText}, Dark={DynamicResource PrimaryDarkText}}"/>
+        </Border>
+        
         <HorizontalStackLayout Grid.Row="0" HorizontalOptions="End" Scale="0.8" AnchorX="1">
             <Button x:Name="SortDirection"
                     Padding="0"
@@ -43,12 +55,12 @@
                     StrokeThickness="1"
                     StrokeShape="RoundRectangle 4">
                 <uranium:Dropdown x:Name="SortPicker" x:DataType="services:SettingsService" BindingContext="{x:Static services:SettingsService.Instance}"
-                                  FontSize="12"
-                                  ItemsSource="{Binding PinSortCrits}"
-                                  SelectedItem="{Binding PinSortCrit}"/>
+                                    FontSize="12"
+                                    ItemsSource="{Binding PinSortCrits}"
+                                    SelectedItem="{Binding PinSortCrit}"/>
             </Border>
         </HorizontalStackLayout>
-        
+
         <Grid Grid.Row="1">
             <CollectionView x:Name="pinListView" SelectionMode="Single">
                 <CollectionView.ItemsLayout>
@@ -164,5 +176,8 @@
                 </CollectionView.ItemTemplate>
             </CollectionView>
         </Grid>
+        <Label Grid.Row="2"
+               x:Name="PinCounterLabel"
+               FontSize="12"/>
     </Grid>
 </ContentPage>
