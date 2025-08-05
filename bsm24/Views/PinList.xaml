@@ -42,15 +42,17 @@
         </Border>
         
         <HorizontalStackLayout Grid.Row="0" HorizontalOptions="End" Scale="0.8" AnchorX="1">
-            <Button x:Name="SortDirection"
+            <Border Stroke="{AppThemeBinding Light={DynamicResource Primary}, Dark={DynamicResource PrimaryDarkAccent}}"
+                    StrokeThickness="1"
+                    StrokeShape="RoundRectangle 4">
+                <Button x:Name="SortDirection"
                     Padding="0"
                     ImageSource="{FontImageSource FontFamily=MaterialOutlined, Color={AppThemeBinding Light={DynamicResource Primary}, Dark={DynamicResource PrimaryDarkAccent}}, Glyph={x:Static m:MaterialOutlined.Sort}}"                   
-                    BorderColor="{AppThemeBinding Light={DynamicResource Primary}, Dark={DynamicResource PrimaryDarkAccent}}"
-                    BorderWidth="0.5"
+                    BorderWidth="0"
                     HorizontalOptions="Start"
                     BackgroundColor="Transparent"
-                    CornerRadius="4"
                     Clicked="OnSortDirectionClicked"/>
+            </Border>
             <Border Stroke="{AppThemeBinding Light={DynamicResource Primary}, Dark={DynamicResource PrimaryDarkAccent}}"
                     StrokeThickness="1"
                     StrokeShape="RoundRectangle 4">
