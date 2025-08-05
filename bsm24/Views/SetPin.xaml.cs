@@ -3,7 +3,6 @@
 using bsm24.Models;
 using CommunityToolkit.Maui.Core.Extensions;
 using CommunityToolkit.Maui.Extensions;
-using FFImageLoading.Maui;
 using System.Collections.ObjectModel;
 using UraniumUI.Material.Controls;
 
@@ -122,7 +121,7 @@ public partial class SetPin : ContentPage, IQueryAttributable
 
     private async void OnImageTapped(object sender, EventArgs e)
     {
-        var tappedImage = sender as CachedImage;
+        var tappedImage = sender as Image;
         var filePath = ((FileImageSource)tappedImage.Source).File;
         var fileName = new FileResult(filePath).FileName;
 
