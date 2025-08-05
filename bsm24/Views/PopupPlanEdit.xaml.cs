@@ -16,7 +16,7 @@ public partial class PopupPlanEdit : Popup<PlanEditReturn>, INotifyPropertyChang
         cancelButtonText.Text = cancelText;
         name_entry.Text = name;
         desc_entry.Text = desc;
-        allow_export.IsChecked = export;
+        allow_export.IsToggled = export;
         SelectedColor = String.IsNullOrEmpty(planColor) ? Colors.White : Color.FromArgb(planColor);
         Transparency = String.IsNullOrEmpty(planColor) ? 0 : SelectedColor.Alpha;
 
@@ -30,7 +30,7 @@ public partial class PopupPlanEdit : Popup<PlanEditReturn>, INotifyPropertyChang
 
     private async void OnOkClicked(object sender, EventArgs e)
     {
-        await CloseAsync(new PlanEditReturn(name_entry.Text, desc_entry.Text, allow_export.IsChecked, PlanRotate, SelectedColor.ToArgbHex()));
+        await CloseAsync(new PlanEditReturn(name_entry.Text, desc_entry.Text, allow_export.IsToggled, PlanRotate, SelectedColor.ToArgbHex()));
     }
 
     private async void OnCancelClicked(object sender, EventArgs e)

@@ -32,10 +32,10 @@ public partial class LoadPDFPages : ContentPage
 
     private async void LoadPreviewPDFImages()
     {
-        resultList = await PickPdfFileAsync(); // neue Methode gibt IEnumerable<FileResult> zurück
+        resultList = await PickPdfFileAsync();
         if (resultList != null && resultList.Any())
         {
-            List<ImageItem> pdfImages = [];
+            List<PdfItem> pdfImages = [];
             busyOverlay.IsOverlayVisible = true;
             busyOverlay.IsActivityRunning = true;
             busyOverlay.BusyMessage = "Lade PDF Seiten...";
@@ -77,7 +77,7 @@ public partial class LoadPDFPages : ContentPage
                         // Schritt 2: DPI berechnen anhand MaxPixelCount
                         int targetDpi = CalculateMaxDpiFromPixelLimit(width72dpi, height72dpi, SettingsService.Instance.MaxPdfPixelCount);
 
-                        pdfImages.Add(new ImageItem
+                        pdfImages.Add(new PdfItem
                         {
                             ImagePath = imgPath,
                             PreviewPath = previewPath,
@@ -124,7 +124,7 @@ public partial class LoadPDFPages : ContentPage
 
         await Task.Run(() =>
         {
-            foreach (var item in fileListView.ItemsSource.Cast<ImageItem>())
+            foreach (var item in fileListView.ItemsSource.Cast<PdfItem>())
             {
                 byte[] bytearray = File.ReadAllBytes(item.PdfPath);
                 //int pagecount = Conversion.GetPageCount(bytearray);
@@ -198,7 +198,7 @@ public partial class LoadPDFPages : ContentPage
         // Überprüfen, ob Plans null ist, und es gegebenenfalls initialisieren
         GlobalJson.Data.Plans ??= [];  // Initialisiere Plans, wenn es null ist
 
-        foreach (var item in fileListView.ItemsSource.Cast<ImageItem>())
+        foreach (var item in fileListView.ItemsSource.Cast<PdfItem>())
         {
             if (item.IsChecked)
             {

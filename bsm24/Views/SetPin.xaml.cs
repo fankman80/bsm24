@@ -6,20 +6,19 @@ using CommunityToolkit.Maui.Extensions;
 using FFImageLoading.Maui;
 using System.Collections.ObjectModel;
 using UraniumUI.Material.Controls;
-using CheckBox =  Microsoft.Maui.Controls.CheckBox;
 
 namespace bsm24.Views;
 
 public partial class SetPin : ContentPage, IQueryAttributable
 {
-    public ObservableCollection<ImageItem> Images { get; set; }
+    public ObservableCollection<FotoItem> Images { get; set; }
     public int DynamicSpan { get; set; } = 3; // Standardwert
     public int DynamicSize;
     public string PlanId;
     public string PinId;
     public string PinIcon;
 
-    private Color priorityColor = Color.FromArgb("#000000");
+    private Color priorityColor;
     public Color PriorityColor
     {
         get => priorityColor;
@@ -39,6 +38,14 @@ public partial class SetPin : ContentPage, IQueryAttributable
         UpdateSpan();
         SizeChanged += OnSizeChanged;
         priorityPicker.PropertyChanged += OnSelectedItemChanged;
+    }
+
+    protected override void OnDisappearing()
+    {
+        base.OnDisappearing();
+
+        SizeChanged -= OnSizeChanged;
+        priorityPicker.PropertyChanged -= OnSelectedItemChanged;
     }
 
     protected override bool OnBackButtonPressed()
@@ -63,10 +70,10 @@ public partial class SetPin : ContentPage, IQueryAttributable
     private void MyView_Load()
     {
         Images = GlobalJson.Data.Plans[PlanId].Pins[PinId].Fotos
-            .Select(img => new ImageItem
+            .Select(img => new FotoItem
             {
                 ImagePath = Path.Combine(Settings.DataDirectory, GlobalJson.Data.ProjectPath, GlobalJson.Data.ThumbnailPath, img.Value.File),
-                IsChecked = img.Value.IsChecked,
+                AllowExport = img.Value.AllowExport,
                 DateTime = img.Value.DateTime
             })
             .ToObservableCollection();
@@ -81,8 +88,8 @@ public partial class SetPin : ContentPage, IQueryAttributable
         PinDesc.Text = GlobalJson.Data.Plans[PlanId].Pins[PinId].PinDesc;
         PinLocation.Text = GlobalJson.Data.Plans[PlanId].Pins[PinId].PinLocation;
         PinImage.Source = file;
-        LockSwitch.IsChecked = GlobalJson.Data.Plans[PlanId].Pins[PinId].IsLocked;
-        AllowExport.IsChecked = GlobalJson.Data.Plans[PlanId].Pins[PinId].AllowExport;
+        LockSwitch.IsToggled = GlobalJson.Data.Plans[PlanId].Pins[PinId].IsLocked;
+        AllowExport.IsToggled = GlobalJson.Data.Plans[PlanId].Pins[PinId].AllowExport;
         priorityPicker.SelectedIndex = GlobalJson.Data.Plans[PlanId].Pins[PinId].PinPriority;
         GeoLocButton.Text = GlobalJson.Data.Plans[PlanId].Pins[PinId].GeoLocation != null ?
                       GlobalJson.Data.Plans[PlanId].Pins[PinId].GeoLocation.Accuracy.ToString() :
@@ -104,6 +111,13 @@ public partial class SetPin : ContentPage, IQueryAttributable
         {
             PinImageContainer.IsVisible = false;
         }
+
+        if (priorityPicker.SelectedIndex == 0)
+        {
+            PriorityColor = Application.Current.RequestedTheme == AppTheme.Dark
+                        ? (Color)Application.Current.Resources["PrimaryDarkText"]
+                        : (Color)Application.Current.Resources["PrimaryText"];
+        }
     }
 
     private async void OnImageTapped(object sender, EventArgs e)
@@ -120,7 +134,7 @@ public partial class SetPin : ContentPage, IQueryAttributable
         var popup = new PopupDualResponse("Wollen Sie diesen Pin wirklich löschen?");
         var result = await this.ShowPopupAsync<string>(popup, Settings.PopupOptions);
         if (result.Result != null)
-            await Shell.Current.GoToAsync($"//{PlanId}?pinDelete={PinId}");
+            await Shell.Current.GoToAsync($"///{PlanId}?pinDelete={PinId}");
     }
 
     private async void OnEditClick(object sender, EventArgs e)
@@ -143,30 +157,13 @@ public partial class SetPin : ContentPage, IQueryAttributable
         await Shell.Current.GoToAsync($"icongallery?planId={PlanId}&pinId={PinId}");
     }
 
-    private void OnCheckedChanged(object sender, CheckedChangedEventArgs e)
-    {
-        bool isChecked = e.Value;
-
-        if (sender is CheckBox checkBox)
-        {
-            if (checkBox.BindingContext is ImageItem item)
-            {
-                var fileName = Path.GetFileName(item.ImagePath);
-                GlobalJson.Data.Plans[PlanId].Pins[PinId].Fotos[fileName].IsChecked = isChecked;
-
-                // save data to file
-                GlobalJson.SaveToFile();
-            }
-        }
-    }
-
     private async void OnOkayClick(object sender, EventArgs e)
     {
         GlobalJson.Data.Plans[PlanId].Pins[PinId].PinName = this.Title;
         GlobalJson.Data.Plans[PlanId].Pins[PinId].PinDesc = PinDesc.Text;
         GlobalJson.Data.Plans[PlanId].Pins[PinId].PinLocation = PinLocation.Text;
-        GlobalJson.Data.Plans[PlanId].Pins[PinId].IsLocked = LockSwitch.IsChecked;
-        GlobalJson.Data.Plans[PlanId].Pins[PinId].AllowExport = AllowExport.IsChecked;
+        GlobalJson.Data.Plans[PlanId].Pins[PinId].IsLocked = LockSwitch.IsToggled;
+        GlobalJson.Data.Plans[PlanId].Pins[PinId].AllowExport = AllowExport.IsToggled;
         GlobalJson.Data.Plans[PlanId].Pins[PinId].PinPriority = priorityPicker.SelectedIndex;
 
         // save data to file
@@ -191,7 +188,7 @@ public partial class SetPin : ContentPage, IQueryAttributable
         {      
             Foto newImageData = new()
             {
-                IsChecked = true,
+                AllowExport = true,
                 File = path.FileName,
                 DateTime = DateTime.Now,
                 ImageSize = imgSize
@@ -200,10 +197,10 @@ public partial class SetPin : ContentPage, IQueryAttributable
             var pin = GlobalJson.Data.Plans[PlanId].Pins[PinId];
             pin.Fotos[path.FileName] = newImageData;
 
-            Images.Add(new ImageItem
+            Images.Add(new FotoItem
             {
                 ImagePath = path.FullPath,
-                IsChecked = true,
+                AllowExport = true,
                 DateTime = DateTime.Now
             });
 
@@ -239,13 +236,13 @@ public partial class SetPin : ContentPage, IQueryAttributable
 
     private void OnReorderCompleted(object sender, EventArgs e)
     {
-        if ((sender as CollectionView).ItemsSource is ObservableCollection<ImageItem> reorderedItems)
+        if ((sender as CollectionView).ItemsSource is ObservableCollection<FotoItem> reorderedItems)
         {
             var newFotosDict = reorderedItems
                 .ToDictionary(img => Path.GetFileName(img.ImagePath), img => new Foto
                 {
                     File = Path.GetFileName(Path.GetFileName(img.ImagePath)),
-                    IsChecked = img.IsChecked,
+                    AllowExport = img.AllowExport,
                     DateTime = img.DateTime
                 });
 
@@ -254,20 +251,23 @@ public partial class SetPin : ContentPage, IQueryAttributable
         }
     }
 
+    private void OnAllowExportClicked(object sender, EventArgs e)
+    {
+        var button = sender as Button;
 
-}
+        FotoItem item = (FotoItem)button.BindingContext;
 
-public class ImageItem
-{
-    public string ImagePath { get; set; }
-    public string PreviewPath { get; set; }
-    public string PdfPath { get; set; }
-    public bool IsChecked { get; set; }
-    public DateTime DateTime { get; set; }
-    public int Dpi { get; set; }
-    public string DisplayName { get; set; }
-    public string ImageName { get; set; }
-    public int PdfPage { get; set; }
+        if (item != null)
+        {
+            item.AllowExport = !item.AllowExport;
+
+            var fileName = Path.GetFileName(item.ImagePath);
+            GlobalJson.Data.Plans[PlanId].Pins[PinId].Fotos[fileName].AllowExport = !GlobalJson.Data.Plans[PlanId].Pins[PinId].Fotos[fileName].AllowExport;
+
+            // save data to file
+            GlobalJson.SaveToFile();
+        }
+    }
 }
 
 public partial class SquareView : ContentView
@@ -279,4 +279,3 @@ public partial class SquareView : ContentView
         HeightRequest = Width;
     }
 }
-

@@ -1,21 +1,29 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
              xmlns:ff="clr-namespace:FFImageLoading.Maui;assembly=FFImageLoading.Maui"                             
-             xmlns:views="clr-namespace:bsm24.Views"
-             xmlns:uranium="clr-namespace:UraniumUI.Pages;assembly=UraniumUI"
-             xmlns:material="http://schemas.enisn-projects.io/dotnet/maui/uraniumui/material"
+             xmlns:material="http://schemas.enisn-projects.io/dotnet/maui/uraniumui/material"         
              xmlns:m="clr-namespace:UraniumUI.Icons.MaterialSymbols;assembly=UraniumUI.Icons.MaterialSymbols"
              xmlns:services="clr-namespace:bsm24.Services"
-             x:DataType="views:SetPin"
-             Shell.TitleColor="{DynamicResource PrimaryDark}"
-             BackgroundColor="{AppThemeBinding Light={DynamicResource PrimaryBackground}, Dark={DynamicResource PrimaryBackgroundDark}}"
+             xmlns:views="clr-namespace:bsm24.Views"             
+             xmlns:local="clr-namespace:bsm24"
+             x:DataType="views:SetPin"             
              x:Class="bsm24.Views.SetPin"
+             Shell.TitleColor="{DynamicResource PrimaryDark}"
+             BackgroundColor="{AppThemeBinding Light={DynamicResource PrimaryBackground}, Dark={DynamicResource PrimaryBackgroundDark}}"             
              Title="Pin bearbeiten">
-    
+
     <Shell.BackButtonBehavior>
         <BackButtonBehavior IsVisible="False" />
     </Shell.BackButtonBehavior>
+
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <services:ExportToGlyphConverter x:Key="ExportToGlyphConverter" />
+            <toolkit:MathExpressionConverter x:Key="MathExpressionConverter" />
+        </ResourceDictionary>
+    </ContentPage.Resources>
 
     <ContentPage.ToolbarItems>
         <ToolbarItem
@@ -27,13 +35,13 @@
             Text="Pin löschen"
             Clicked="OnDeleteClick"/>
     </ContentPage.ToolbarItems>
-    
+
     <Grid Margin="16">
         <Grid.RowDefinitions>
             <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
-        
+
         <CollectionView Grid.Row="0"
                         x:Name="ImageGallery"
                         Margin="-4"
@@ -44,10 +52,12 @@
                 <GridItemsLayout Orientation="Vertical" Span="{Binding DynamicSpan}" />
             </CollectionView.ItemsLayout>
             <CollectionView.ItemTemplate>
-                <DataTemplate x:DataType="views:ImageItem">
+                <DataTemplate x:DataType="local:FotoItem">
                     <VerticalStackLayout>
                         <Grid>
-                            <views:SquareView Margin="4">
+                            <views:SquareView
+                                Margin="4"
+                                Opacity="{Binding AllowExport, Converter={StaticResource MathExpressionConverter}, ConverterParameter='x==true?1:0.3'}">
                                 <ff:CachedImage Source="{Binding ImagePath}"
                                                 CacheType="Memory"
                                                 FadeAnimationEnabled ="False"
@@ -58,11 +68,15 @@
                                     </ff:CachedImage.GestureRecognizers>
                                 </ff:CachedImage>
                             </views:SquareView>
-                            <CheckBox IsChecked="{Binding IsChecked}"
-                                      Color="{DynamicResource Primary}"
-                                      VerticalOptions="End"
-                                      HorizontalOptions="End"
-                                      CheckedChanged="OnCheckedChanged"/>
+                            <Button Text="{Binding AllowExport, Converter={StaticResource ExportToGlyphConverter}}"
+                                    FontFamily="MaterialOutlined"
+                                    Padding="6"
+                                    FontSize="24"
+                                    HorizontalOptions="End"
+                                    VerticalOptions="End"
+                                    BackgroundColor="Transparent"
+                                    TextColor="{AppThemeBinding Light={DynamicResource Primary}, Dark={DynamicResource PrimaryDarkAccent}}"
+                                    Clicked="OnAllowExportClicked"/>
                         </Grid>
                         <Label Text="{Binding DateTime, StringFormat='{}{0:dd.MM.yy \\/ HH:mm}'}"
                                FontSize="12"
@@ -89,7 +103,7 @@
                                   AccentColor="{AppThemeBinding Light={DynamicResource Primary}, Dark={DynamicResource PrimaryDark}}"
                                   Title="Beschreibung"
                                   Icon="{FontImageSource FontFamily=MaterialOutlined, Color={AppThemeBinding Light={DynamicResource SecondaryAccent}, Dark={DynamicResource PrimaryDark}}, Glyph={x:Static m:MaterialOutlined.Description}}" />
-
+            
             <Grid ColumnSpacing="6" RowSpacing="0">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" />
@@ -100,21 +114,18 @@
                     <RowDefinition Height="50" />
                     <RowDefinition Height="50" />
                 </Grid.RowDefinitions>
-                
-                <HorizontalStackLayout Grid.Column="0" Grid.Row="0" Spacing="0">
-                    <material:CheckBox x:Name="AllowExport"
-                              BorderColor="{AppThemeBinding Light={DynamicResource SecondaryBackground}, Dark={DynamicResource PrimaryDarkAccent}}"
-                              Color="{AppThemeBinding Light={DynamicResource Primary}, Dark={DynamicResource PrimaryDarkAccent}}"/>
-                    <Label Text="Pin exportieren" VerticalTextAlignment="Center"/>
-                </HorizontalStackLayout>
-
-                <HorizontalStackLayout Grid.Column="0" Grid.Row="1" Spacing="0">
-                    <material:CheckBox x:Name="LockSwitch"
-                              BorderColor="{AppThemeBinding Light={DynamicResource SecondaryBackground}, Dark={DynamicResource PrimaryDarkAccent}}"
-                              Color="{AppThemeBinding Light={DynamicResource Primary}, Dark={DynamicResource PrimaryDarkAccent}}"/>
-                    <Label Text="Position sperren" VerticalTextAlignment="Center"/>
-                </HorizontalStackLayout>
-
+                <Grid ColumnDefinitions="50, Auto" Grid.Column="0" Grid.Row="0">
+                    <Switch x:Name="AllowExport" Grid.Column="0" HorizontalOptions="End"
+                            ThumbColor="{AppThemeBinding Light={DynamicResource Primary}, Dark={DynamicResource PrimaryDark}}"
+                            OnColor="{AppThemeBinding Light={DynamicResource Secondary}, Dark={DynamicResource Secondary}}"/>
+                    <Label Text="Pin exportieren" Grid.Column="1" VerticalOptions="Center" />
+                </Grid>
+                <Grid ColumnDefinitions="50, Auto" Grid.Column="0" Grid.Row="1">
+                    <Switch x:Name="LockSwitch" Grid.Column="0" HorizontalOptions="End"
+                            ThumbColor="{AppThemeBinding Light={DynamicResource Primary}, Dark={DynamicResource PrimaryDark}}"
+                            OnColor="{AppThemeBinding Light={DynamicResource Secondary}, Dark={DynamicResource Secondary}}"/>
+                    <Label Text="Position sperren" Grid.Column="1" VerticalOptions="Center" />
+                </Grid>
                 <Border Grid.Column="2" Grid.Row="0" Grid.RowSpan="3"
                         x:Name="PinImageContainer"
                         WidthRequest="100"
@@ -142,19 +153,19 @@
                        FontFamily="MaterialOutlined"
                        TextColor="{Binding PriorityColor}"
                        FontSize="40"/>
-
                 <material:PickerField Grid.Column="1"
                                       x:Name="priorityPicker" 
-                                      Title="Priorität"   
+                                      Title="Priorität"
+                                      AllowClear="False"
                                       TextColor="{AppThemeBinding Light={DynamicResource PrimaryText}, Dark={DynamicResource PrimaryDarkText}}"
                                       TitleColor="{AppThemeBinding Light={DynamicResource PrimaryAccent}, Dark={DynamicResource PrimaryDarkAccent}}"
                                       BorderColor="{AppThemeBinding Light={DynamicResource SecondaryBackground}, Dark={DynamicResource PrimaryDarkAccent}}"
                                       AccentColor="{AppThemeBinding Light={DynamicResource Primary}, Dark={DynamicResource PrimaryDark}}"/>
             </Grid>
-            
+
             <Grid>
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*" />                    
+                    <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="Auto" />
@@ -167,12 +178,11 @@
                         ImageSource="{FontImageSource FontFamily=MaterialOutlined, Color={AppThemeBinding Light={DynamicResource PrimaryDarkText}, Dark={DynamicResource PrimaryText}}, Glyph={x:Static m:MaterialOutlined.Not_listed_location}}"
                         Clicked="ShowGeoLoc"/>
                 <Button Grid.Column="2"
-                        Text="Foto"
                         Padding="16,0,16,0"
                         BackgroundColor="{AppThemeBinding Light={DynamicResource Primary}, Dark={DynamicResource PrimaryDark}}"
                         TextColor="{AppThemeBinding Light={DynamicResource PrimaryDarkText}, Dark={DynamicResource PrimaryText}}"
                         ImageSource="{FontImageSource FontFamily=MaterialOutlined, Color={AppThemeBinding Light={DynamicResource PrimaryDarkText}, Dark={DynamicResource PrimaryText}}, Glyph={x:Static m:MaterialOutlined.Photo_camera}}"
-                        Clicked="TakePhoto"/>                
+                        Clicked="TakePhoto"/>
                 <Button Grid.Column="3"
                         Text="OK"
                         MinimumWidthRequest="100"
@@ -183,5 +193,4 @@
             </Grid>
         </StackLayout>
     </Grid>
-
 </ContentPage>

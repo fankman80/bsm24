@@ -201,7 +201,7 @@ public partial class ExportReport
                                                             foreach (KeyValuePair<string, Foto> img in GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].Fotos)
                                                             {
                                                             Run newRun = new();
-                                                                if (GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].Fotos[img.Key].IsChecked)
+                                                                if (GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].Fotos[img.Key].AllowExport)
                                                                 {
                                                                     string imgName = GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].Fotos[img.Key].File;
                                                                     string imgPath = System.IO.Path.Combine(Settings.DataDirectory, GlobalJson.Data.ProjectPath, GlobalJson.Data.ImagePath, imgName);

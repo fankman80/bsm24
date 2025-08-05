@@ -35,7 +35,7 @@
                     <GridItemsLayout Orientation="Vertical" Span="{Binding DynamicSpan}" />
                 </CollectionView.ItemsLayout>
                 <CollectionView.ItemTemplate>
-                    <DataTemplate x:DataType="views:ImageItem">
+                    <DataTemplate x:DataType="local:PdfItem">
                         <VerticalStackLayout>
                             <Grid Margin="8">
                                 <ff:CachedImage Source="{Binding PreviewPath}"

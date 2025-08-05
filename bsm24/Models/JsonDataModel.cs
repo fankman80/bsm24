@@ -112,9 +112,28 @@ public class Foto
 {
     public string File { get; set; }
     public bool HasOverlay { get; set; }
-    public bool IsChecked { get; set; }
     public DateTime DateTime { get; set; }
     public Size ImageSize { get; set; }
+
+    private bool _allowExport;
+    public bool AllowExport
+    {
+        get => _allowExport;
+        set
+        {
+            if (_allowExport != value)
+            {
+                _allowExport = value;
+                OnPropertyChanged(nameof(AllowExport));
+            }
+        }
+    }
+
+    public event PropertyChangedEventHandler PropertyChanged;
+    protected virtual void OnPropertyChanged(string propertyName)
+    {
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+    }
 }
 
 public class GeoLocData

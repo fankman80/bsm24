@@ -167,4 +167,42 @@ namespace bsm24
             => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }
 
+    public class FotoItem : INotifyPropertyChanged
+    {
+        public string ImagePath { get; set; }
+        public DateTime DateTime { get; set; }
+
+        private bool allowExport;
+        public bool AllowExport
+        {
+            get => allowExport;
+            set
+            {
+                if (allowExport != value)
+                {
+                    allowExport = value;
+                    OnPropertyChanged(nameof(AllowExport)); // Hier wird die Änderung gemeldet
+                }
+            }
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        protected virtual void OnPropertyChanged(string propertyName)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+    }
+
+    public class PdfItem
+    {
+        public string ImagePath { get; set; }
+        public string PreviewPath { get; set; }
+        public string PdfPath { get; set; }
+        public bool IsChecked { get; set; }
+        public int Dpi { get; set; }
+        public string DisplayName { get; set; }
+        public string ImageName { get; set; }
+        public int PdfPage { get; set; }
+    }
 }

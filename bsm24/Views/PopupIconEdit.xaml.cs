@@ -27,7 +27,7 @@ public partial class PopupIconEdit : Popup<string>, INotifyPropertyChanged
         Anchor_Y = iconItem.AnchorPoint.Y;
         iconScale.Value = iconItem.IconScale * 100;
         sliderText.Text = "Voreinstellung Skalierung: " + (iconItem.IconScale * 100).ToString() + "%";
-        allowRotate.IsChecked = iconItem.IsRotationLocked;
+        allowRotate.IsToggled = iconItem.IsRotationLocked;
         SelectedColor = new Color(iconItem.PinColor.Red, iconItem.PinColor.Green, iconItem.PinColor.Blue);
 
         if (file.Contains("customicons", StringComparison.OrdinalIgnoreCase))
@@ -119,14 +119,14 @@ public partial class PopupIconEdit : Popup<string>, INotifyPropertyChanged
         if (index >= 0)
             file = file[index..];
 
-        if (deleteIcon.IsChecked == false)
+        if (deleteIcon.IsToggled == false)
         {
             var updatedItem = new IconItem(
                 file,
                 iconName.Text,
                 new Point(Anchor_X, Anchor_Y),
                 iconItem.IconSize,
-                allowRotate.IsChecked,
+                allowRotate.IsToggled,
                 new SKColor((byte)(SelectedColor.Red * 255), (byte)(SelectedColor.Green * 255), (byte)(SelectedColor.Blue * 255)),
                 Math.Round(iconScale.Value / 100, 1),
                 iconCategory.Text

@@ -53,50 +53,52 @@
                                 ImageSource="{FontImageSource FontFamily=MaterialOutlined, Color={AppThemeBinding Light={DynamicResource Primary}, Dark={DynamicResource PrimaryDarkAccent}}, Glyph={x:Static m:MaterialOutlined.Delete}}"
                                 Clicked="OnDeleteDocument"/>
                     </Grid>
+                    <VerticalStackLayout Spacing="0">
+                        <Grid ColumnDefinitions="50, Auto">
+                            <Switch Grid.Column="0" HorizontalOptions="End"
+                                    IsToggled="{Binding IsPlanExport}"
+                                    ThumbColor="{AppThemeBinding Light={DynamicResource Primary}, Dark={DynamicResource PrimaryDark}}"
+                                    OnColor="{AppThemeBinding Light={DynamicResource Secondary}, Dark={DynamicResource Secondary}}"/>
+                            <Label Text="Exportiere Pläne" Grid.Column="1" VerticalOptions="Center" />
+                        </Grid>
+                        <Grid ColumnDefinitions="50, Auto">
+                            <Switch Grid.Column="0" HorizontalOptions="End"
+                                    IsToggled="{Binding IsPosImageExport}"
+                                    ThumbColor="{AppThemeBinding Light={DynamicResource Primary}, Dark={DynamicResource PrimaryDark}}"
+                                    OnColor="{AppThemeBinding Light={DynamicResource Secondary}, Dark={DynamicResource Secondary}}"/>
+                            <Label Text="Exportiere Positionsbilder" Grid.Column="1" VerticalOptions="Center" />
+                        </Grid>
+                        <Grid ColumnDefinitions="50, Auto">
+                            <Switch Grid.Column="0" HorizontalOptions="End"
+                                    IsToggled="{Binding IsPinIconExport}"
+                                    ThumbColor="{AppThemeBinding Light={DynamicResource Primary}, Dark={DynamicResource PrimaryDark}}"
+                                    OnColor="{AppThemeBinding Light={DynamicResource Secondary}, Dark={DynamicResource Secondary}}"/>
+                            <Label Text="Exportiere Pin-Icons" Grid.Column="1" VerticalOptions="Center" />
+                        </Grid>
+                        <Grid ColumnDefinitions="50, Auto">
+                            <Switch Grid.Column="0" HorizontalOptions="End"
+                                    IsToggled="{Binding IsImageExport}"
+                                    ThumbColor="{AppThemeBinding Light={DynamicResource Primary}, Dark={DynamicResource PrimaryDark}}"
+                                    OnColor="{AppThemeBinding Light={DynamicResource Secondary}, Dark={DynamicResource Secondary}}"/>
+                            <Label Text="Exportiere Fotos" Grid.Column="1" VerticalOptions="Center" />
+                        </Grid>
+                        <Grid ColumnDefinitions="50, Auto">
+                            <Switch Grid.Column="0" HorizontalOptions="End"
+                                    IsVisible="{Binding IsImageExport}"
+                                    IsToggled="{Binding IsFotoOverlayExport}"
+                                    ThumbColor="{AppThemeBinding Light={DynamicResource Primary}, Dark={DynamicResource PrimaryDark}}"
+                                    OnColor="{AppThemeBinding Light={DynamicResource Secondary}, Dark={DynamicResource Secondary}}"/>
+                            <Label Text="Exportiere Foto-Overlays" Grid.Column="1" VerticalOptions="Center" IsVisible="{Binding IsImageExport}"/>
+                        </Grid>
+                        <Grid ColumnDefinitions="50, Auto">
+                            <Switch Grid.Column="0" HorizontalOptions="End"
+                                    IsToggled="{Binding IsFotoCompressed}"
+                                    ThumbColor="{AppThemeBinding Light={DynamicResource Primary}, Dark={DynamicResource PrimaryDark}}"
+                                    OnColor="{AppThemeBinding Light={DynamicResource Secondary}, Dark={DynamicResource Secondary}}"/>
+                            <Label Text="Bildkomprimierung" Grid.Column="1" VerticalOptions="Center" />
+                        </Grid>
+                    </VerticalStackLayout>
 
-                    <HorizontalStackLayout Spacing="0">
-                        <material:CheckBox BorderColor="{AppThemeBinding Light={DynamicResource SecondaryBackground}, Dark={DynamicResource PrimaryDarkAccent}}"
-                                           Color="{AppThemeBinding Light={DynamicResource Primary}, Dark={DynamicResource PrimaryDarkAccent}}"
-                                           IsChecked="{Binding IsPlanExport}"/>                            
-                        <Label Text="Exportiere Pläne" VerticalTextAlignment="Center"/>                            
-                    </HorizontalStackLayout>
-
-                    <HorizontalStackLayout Spacing="0">
-                        <material:CheckBox BorderColor="{AppThemeBinding Light={DynamicResource SecondaryBackground}, Dark={DynamicResource PrimaryDarkAccent}}"
-                                           Color="{AppThemeBinding Light={DynamicResource Primary}, Dark={DynamicResource PrimaryDarkAccent}}"
-                                           IsChecked="{Binding IsPosImageExport}"/>
-                        <Label Text="Exportiere Positionsbilder" VerticalTextAlignment="Center"/> 
-                    </HorizontalStackLayout>
-
-                    <HorizontalStackLayout Spacing="0">
-                        <material:CheckBox BorderColor="{AppThemeBinding Light={DynamicResource SecondaryBackground}, Dark={DynamicResource PrimaryDarkAccent}}"
-                                           Color="{AppThemeBinding Light={DynamicResource Primary}, Dark={DynamicResource PrimaryDarkAccent}}"
-                                           IsChecked="{Binding IsPinIconExport}"/>
-                        <Label Text="Exportiere Pin-Icons" VerticalTextAlignment="Center"/>                            
-                    </HorizontalStackLayout>
-
-                    <HorizontalStackLayout Spacing="0">
-                        <material:CheckBox BorderColor="{AppThemeBinding Light={DynamicResource SecondaryBackground}, Dark={DynamicResource PrimaryDarkAccent}}"
-                                           Color="{AppThemeBinding Light={DynamicResource Primary}, Dark={DynamicResource PrimaryDarkAccent}}"
-                                           IsChecked="{Binding IsImageExport}"/>
-                        <Label Text="Exportiere Fotos" VerticalTextAlignment="Center"/>                            
-                    </HorizontalStackLayout>
-
-                    <HorizontalStackLayout Spacing="0">
-                        <material:CheckBox BorderColor="{AppThemeBinding Light={DynamicResource SecondaryBackground}, Dark={DynamicResource PrimaryDarkAccent}}"
-                                           IsVisible="{Binding IsImageExport}"
-                                           Color="{AppThemeBinding Light={DynamicResource Primary}, Dark={DynamicResource PrimaryDarkAccent}}"
-                                           IsChecked="{Binding IsFotoOverlayExport}"/>
-                        <Label Text="Exportiere Foto-Overlays" VerticalTextAlignment="Center" IsVisible="{Binding IsImageExport}"/>
-                    </HorizontalStackLayout>
-
-                    <HorizontalStackLayout Spacing="0">
-                        <material:CheckBox BorderColor="{AppThemeBinding Light={DynamicResource SecondaryBackground}, Dark={DynamicResource PrimaryDarkAccent}}"
-                                           Color="{AppThemeBinding Light={DynamicResource Primary}, Dark={DynamicResource PrimaryDarkAccent}}"
-                                           IsChecked="{Binding IsFotoCompressed}"/>
-                        <Label Text="Bildkomprimierung" VerticalTextAlignment="Center"/>
-                    </HorizontalStackLayout>                       
-                    
                     <Label Text="{Binding FotoCompressValue, StringFormat='Bildkomprimierung: {0:0.##}%'}"
                            Margin="0, 0, 0, -12"
                            IsVisible="{Binding IsFotoCompressed}"/>
