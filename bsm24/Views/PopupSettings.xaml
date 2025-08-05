@@ -54,7 +54,8 @@
                         MaximumTrackColor="{AppThemeBinding Light={DynamicResource PrimaryDark}, Dark={DynamicResource Secondary}}"
                         Value="{Binding MaxPdfPixelCount}"/>
                 <Grid ColumnDefinitions="50, Auto">
-                    <Switch x:Name="isPlanRotateLocked" Grid.Column="0" HorizontalOptions="End"
+                    <Switch Grid.Column="0" HorizontalOptions="End"
+                            IsToggled={Binding IsPlanRotateLocked}
                             ThumbColor="{AppThemeBinding Light={DynamicResource Primary}, Dark={DynamicResource PrimaryDark}}"
                             OnColor="{AppThemeBinding Light={DynamicResource Secondary}, Dark={DynamicResource Secondary}}"/>
                     <Label Text="Planrotation sperren" Grid.Column="1" VerticalOptions="Center" />
