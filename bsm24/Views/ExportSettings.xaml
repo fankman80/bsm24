@@ -27,7 +27,7 @@
                 <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
             
-            <ScrollView Grid.Row="0" VerticalScrollBarVisibility="Always">
+            <ScrollView Grid.Row="0">
                 <VerticalStackLayout>
                     <Grid>
                         <Grid.ColumnDefinitions>
@@ -35,21 +35,23 @@
                             <ColumnDefinition Width="Auto" />
                             <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
-                        <material:PickerField Grid.Column="0" 
+                        <material:PickerField
+                                Grid.Column="0" 
+                                x:Name="templatePicker"                                               
                                 Title="Export-Vorlage"
+                                AllowClear="False"
                                 TitleColor="{AppThemeBinding Light={DynamicResource PrimaryAccent}, Dark={DynamicResource PrimaryDarkAccent}}"
                                 BorderColor="{AppThemeBinding Light={DynamicResource SecondaryBackground}, Dark={DynamicResource PrimaryDarkAccent}}"
                                 AccentColor="{AppThemeBinding Light={DynamicResource PrimaryAccent}, Dark={DynamicResource PrimaryDarkAccent}}"
-                                x:Name="templatePicker" 
                                 ItemsSource="{Binding Templates}"
                                 SelectedItem="{Binding SelectedTemplate}"/>
                         <Button Grid.Column="1"
-                                HorizontalOptions="End"
+                                Padding="0"
                                 BackgroundColor="Transparent"
                                 ImageSource="{FontImageSource FontFamily=MaterialOutlined, Color={AppThemeBinding Light={DynamicResource Primary}, Dark={DynamicResource PrimaryDarkAccent}}, Glyph={x:Static m:MaterialOutlined.Note_add}}"
                                 Clicked="OnAddDocument" />
-                        <Button Grid.Column="2" 
-                                HorizontalOptions="End"
+                        <Button Grid.Column="2"
+                                Padding="0"
                                 BackgroundColor="Transparent"
                                 ImageSource="{FontImageSource FontFamily=MaterialOutlined, Color={AppThemeBinding Light={DynamicResource Primary}, Dark={DynamicResource PrimaryDarkAccent}}, Glyph={x:Static m:MaterialOutlined.Delete}}"
                                 Clicked="OnDeleteDocument"/>

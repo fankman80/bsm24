@@ -151,16 +151,9 @@
 
             <Grid x:DataType="views:SetPin">
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
-                <Label Grid.Column="0"
-                       Text="{x:Static m:MaterialOutlined.Traffic}"
-                       VerticalTextAlignment="Center"
-                       FontFamily="MaterialOutlined"
-                       TextColor="{Binding PriorityColor}"
-                       FontSize="40"/>
-                <material:PickerField Grid.Column="1"
+                <material:PickerField Grid.Column="0"
                                       x:Name="priorityPicker" 
                                       Title="Priorität"
                                       AllowClear="False"
@@ -168,31 +161,41 @@
                                       TitleColor="{AppThemeBinding Light={DynamicResource PrimaryAccent}, Dark={DynamicResource PrimaryDarkAccent}}"
                                       BorderColor="{AppThemeBinding Light={DynamicResource SecondaryBackground}, Dark={DynamicResource PrimaryDarkAccent}}"
                                       AccentColor="{AppThemeBinding Light={DynamicResource Primary}, Dark={DynamicResource PrimaryDark}}"/>
+                <Label Grid.Column="0"
+                       Text="{x:Static m:MaterialOutlined.Traffic}"                       
+                       Margin="0,0,0,4"
+                       HorizontalOptions="End"
+                       WidthRequest="50"
+                       HorizontalTextAlignment="Start"
+                       VerticalTextAlignment="Center"
+                       FontFamily="MaterialOutlined"
+                       TextColor="{Binding PriorityColor}"
+                       FontSize="40"/>
             </Grid>
 
             <Grid>
                 <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
-                <Button Grid.Column="1"
+                <Button Grid.Column="0"
                         x:Name="GeoLocButton"
-                        Text="100m"                    
+                        MinimumWidthRequest="80"
                         BackgroundColor="{AppThemeBinding Light={DynamicResource Primary}, Dark={DynamicResource PrimaryDark}}"
                         TextColor="{AppThemeBinding Light={DynamicResource PrimaryDarkText}, Dark={DynamicResource PrimaryText}}"                        
                         ImageSource="{FontImageSource FontFamily=MaterialOutlined, Color={AppThemeBinding Light={DynamicResource PrimaryDarkText}, Dark={DynamicResource PrimaryText}}, Glyph={x:Static m:MaterialOutlined.Not_listed_location}}"
                         Clicked="ShowGeoLoc"/>
                 <Button Grid.Column="2"
-                        Padding="16,0,16,0"
+                        MinimumWidthRequest="80"
                         BackgroundColor="{AppThemeBinding Light={DynamicResource Primary}, Dark={DynamicResource PrimaryDark}}"
                         TextColor="{AppThemeBinding Light={DynamicResource PrimaryDarkText}, Dark={DynamicResource PrimaryText}}"
                         ImageSource="{FontImageSource FontFamily=MaterialOutlined, Color={AppThemeBinding Light={DynamicResource PrimaryDarkText}, Dark={DynamicResource PrimaryText}}, Glyph={x:Static m:MaterialOutlined.Photo_camera}}"
                         Clicked="TakePhoto"/>
                 <Button Grid.Column="3"
                         Text="OK"
-                        MinimumWidthRequest="100"
+                        MinimumWidthRequest="80"
                         BackgroundColor="{AppThemeBinding Light={DynamicResource Primary}, Dark={DynamicResource PrimaryDark}}"
                         TextColor="{AppThemeBinding Light={DynamicResource PrimaryDarkText}, Dark={DynamicResource PrimaryText}}"                       
                         Clicked="OnOkayClick"/>
