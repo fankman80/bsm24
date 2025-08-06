@@ -140,6 +140,12 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <Compile Update="Controls\Switch.xaml.cs">
+	    <DependentUpon>Switch.xaml</DependentUpon>
+	  </Compile>
+	</ItemGroup>
+
+	<ItemGroup>
 	<MauiXaml Update="App.xaml">
 		<Generator>MSBuild:Compile</Generator>
 	</MauiXaml>
@@ -150,6 +156,10 @@
 		
 	<MauiXaml Update="BusyOverlayView.xaml">
 		<Generator>MSBuild:Compile</Generator>
+	</MauiXaml>
+		
+	<MauiXaml Update="Controls\Switch.xaml">
+	  <Generator>MSBuild:Compile</Generator>
 	</MauiXaml>
 		
 	<MauiXaml Update="Views\MapView.xaml">

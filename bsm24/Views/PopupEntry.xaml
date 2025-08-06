@@ -16,8 +16,8 @@
     <Grid>
         <VerticalStackLayout>
             <Label x:Name="titleText"
-                       HorizontalOptions="Start"
-                       Text=""/>
+                   HorizontalOptions="Start"
+                   Text=""/>
 
             <material:TextField x:Name="text_entry"
                                 TextColor="{AppThemeBinding Light={DynamicResource PrimaryText}, Dark={DynamicResource PrimaryDarkText}}"

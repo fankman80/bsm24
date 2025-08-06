@@ -6,6 +6,7 @@
                xmlns:material="http://schemas.enisn-projects.io/dotnet/maui/uraniumui/material"
                xmlns:m="clr-namespace:UraniumUI.Icons.MaterialSymbols;assembly=UraniumUI.Icons.MaterialSymbols"
                xmlns:services="clr-namespace:bsm24.Services"
+               xmlns:controls="clr-namespace:bsm24.Controls"
                xmlns:views="clr-namespace:bsm24.Views"
                BackgroundColor="{AppThemeBinding Light={DynamicResource PrimaryBackground}, Dark={DynamicResource PrimaryBackgroundDark}}"     
                Padding="0"
@@ -109,17 +110,25 @@
                             MinimumTrackColor="{AppThemeBinding Light={DynamicResource Primary}, Dark={DynamicResource PrimaryDarkAccent}}"
                             MaximumTrackColor="{AppThemeBinding Light={DynamicResource PrimaryDark}, Dark={DynamicResource Secondary}}"
                             ValueChanged="OnSliderValueChanged"/>
-                    <Grid ColumnDefinitions="50, Auto">
-                        <Switch x:Name="allowRotate" Grid.Column="0" HorizontalOptions="End"
-                            ThumbColor="{AppThemeBinding Light={DynamicResource Primary}, Dark={DynamicResource PrimaryDark}}"
-                            OnColor="{AppThemeBinding Light={DynamicResource Secondary}, Dark={DynamicResource Secondary}}"/>
+                    <Grid ColumnDefinitions="50, Auto" HeightRequest="40">
+                        <controls:Switch x:Name="allowRotate"
+                                         Grid.Column="0"
+                                         HorizontalOptions="Start"
+                                         VerticalOptions="Center"
+                                         KnobColorOn="{AppThemeBinding Light={DynamicResource Primary}, Dark={DynamicResource Primary}}"
+                                         SwitchColorOn="{AppThemeBinding Light={DynamicResource Secondary}, Dark={DynamicResource Secondary}}"
+                                         SwitchColorOff="{AppThemeBinding Light={DynamicResource PrimaryBackground}, Dark={DynamicResource SecondaryBackground}}"/>
                         <Label Text="Rotation sperren" Grid.Column="1" VerticalOptions="Center" />
                     </Grid>
-                    <Grid ColumnDefinitions="50, Auto" x:Name="deleteIconContainer" IsVisible="False">
-                        <Switch x:Name="deleteIcon" Grid.Column="0" HorizontalOptions="End"
-                                IsToggled="False"
-                                ThumbColor="{AppThemeBinding Light={DynamicResource Primary}, Dark={DynamicResource PrimaryDark}}"
-                                OnColor="{AppThemeBinding Light={DynamicResource Secondary}, Dark={DynamicResource Secondary}}"/>
+                    <Grid ColumnDefinitions="50, Auto" HeightRequest="40" x:Name="deleteIconContainer" IsVisible="False">
+                        <controls:Switch x:Name="deleteIcon"
+                                         Grid.Column="0"
+                                         IsToggled="False"
+                                         HorizontalOptions="Start"
+                                         VerticalOptions="Center"
+                                         KnobColorOn="{AppThemeBinding Light={DynamicResource Primary}, Dark={DynamicResource Primary}}"
+                                         SwitchColorOn="{AppThemeBinding Light={DynamicResource Secondary}, Dark={DynamicResource Secondary}}"
+                                         SwitchColorOff="{AppThemeBinding Light={DynamicResource PrimaryBackground}, Dark={DynamicResource SecondaryBackground}}"/>
                         <Label Text="Icon löschen" Grid.Column="1" VerticalOptions="Center" />
                     </Grid>
                 </VerticalStackLayout>

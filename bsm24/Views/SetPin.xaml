@@ -5,6 +5,7 @@
              xmlns:material="http://schemas.enisn-projects.io/dotnet/maui/uraniumui/material"
              xmlns:m="clr-namespace:UraniumUI.Icons.MaterialSymbols;assembly=UraniumUI.Icons.MaterialSymbols"
              xmlns:services="clr-namespace:bsm24.Services"
+             xmlns:controls="clr-namespace:bsm24.Controls"
              xmlns:views="clr-namespace:bsm24.Views" 
              xmlns:local="clr-namespace:bsm24"
              x:DataType="views:SetPin"
@@ -108,16 +109,24 @@
                     <RowDefinition Height="50" />
                     <RowDefinition Height="50" />
                 </Grid.RowDefinitions>
-                <Grid ColumnDefinitions="50, Auto" Grid.Column="0" Grid.Row="0">
-                    <Switch x:Name="AllowExport" Grid.Column="0" HorizontalOptions="End"
-                            ThumbColor="{AppThemeBinding Light={DynamicResource Primary}, Dark={DynamicResource PrimaryDark}}"
-                            OnColor="{AppThemeBinding Light={DynamicResource Secondary}, Dark={DynamicResource Secondary}}"/>
+                <Grid ColumnDefinitions="50, Auto" HeightRequest="40" Grid.Column="0" Grid.Row="0">
+                    <controls:Switch x:Name="AllowExport"
+                                     Grid.Column="0"
+                                     HorizontalOptions="Start"
+                                     VerticalOptions="Center"
+                                     KnobColorOn="{AppThemeBinding Light={DynamicResource Primary}, Dark={DynamicResource Primary}}"
+                                     SwitchColorOn="{AppThemeBinding Light={DynamicResource Secondary}, Dark={DynamicResource Secondary}}"
+                                     SwitchColorOff="{AppThemeBinding Light={DynamicResource PrimaryBackground}, Dark={DynamicResource SecondaryBackground}}"/>
                     <Label Text="Pin exportieren" Grid.Column="1" VerticalOptions="Center" />
                 </Grid>
-                <Grid ColumnDefinitions="50, Auto" Grid.Column="0" Grid.Row="1">
-                    <Switch x:Name="LockSwitch" Grid.Column="0" HorizontalOptions="End"
-                            ThumbColor="{AppThemeBinding Light={DynamicResource Primary}, Dark={DynamicResource PrimaryDark}}"
-                            OnColor="{AppThemeBinding Light={DynamicResource Secondary}, Dark={DynamicResource Secondary}}"/>
+                <Grid ColumnDefinitions="50, Auto" HeightRequest="40" Grid.Column="0" Grid.Row="1">
+                    <controls:Switch x:Name="LockSwitch"
+                                     Grid.Column="0"
+                                     HorizontalOptions="Start"
+                                     VerticalOptions="Center"
+                                     KnobColorOn="{AppThemeBinding Light={DynamicResource Primary}, Dark={DynamicResource Primary}}"
+                                     SwitchColorOn="{AppThemeBinding Light={DynamicResource Secondary}, Dark={DynamicResource Secondary}}"
+                                     SwitchColorOff="{AppThemeBinding Light={DynamicResource PrimaryBackground}, Dark={DynamicResource SecondaryBackground}}"/>
                     <Label Text="Position sperren" Grid.Column="1" VerticalOptions="Center" />
                 </Grid>
                 <Border Grid.Column="2" Grid.Row="0" Grid.RowSpan="3"

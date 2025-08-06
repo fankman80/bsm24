@@ -533,7 +533,7 @@ public partial class NewPage : IQueryAttributable
         mousePos = e.Center;
 
 #if WINDOWS
-        if (KeyboardHelper.IsShiftPressed())
+        if (KeyboardHelper.IsShiftPressed() && !SettingsService.Instance.IsPlanRotateLocked)
         {
             double centerX = this.Width / 2;
             double centerY = this.Height / 2;
