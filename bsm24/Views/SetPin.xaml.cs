@@ -90,9 +90,6 @@ public partial class SetPin : ContentPage, IQueryAttributable
         LockSwitch.IsToggled = GlobalJson.Data.Plans[PlanId].Pins[PinId].IsLocked;
         AllowExport.IsToggled = GlobalJson.Data.Plans[PlanId].Pins[PinId].AllowExport;
         priorityPicker.SelectedIndex = GlobalJson.Data.Plans[PlanId].Pins[PinId].PinPriority;
-        GeoLocButton.Text = GlobalJson.Data.Plans[PlanId].Pins[PinId].GeoLocation != null ?
-                      GlobalJson.Data.Plans[PlanId].Pins[PinId].GeoLocation.Accuracy.ToString() :
-                      "N/A";
 
         if (GlobalJson.Data.Plans[PlanId].Pins[PinId].GeoLocation != null)
         {

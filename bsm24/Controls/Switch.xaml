@@ -23,14 +23,7 @@
                 HorizontalOptions="Start"
                 VerticalOptions="Center"
                 WidthRequest="{Binding KnobSize, Source={x:Reference this}}"
-                HeightRequest="{Binding KnobSize, Source={x:Reference this}}">
-            <Border.Shadow>
-                <Shadow Brush="Black"
-                Opacity="0.4"
-                Radius="3"
-                Offset="2,2" />
-            </Border.Shadow>
-        </Border>
+                HeightRequest="{Binding KnobSize, Source={x:Reference this}}"/>
 
         <!-- Dünne Linie als Path -->
         <Path x:Name="CustomPath"
