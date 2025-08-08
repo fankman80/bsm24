@@ -1,6 +1,8 @@
 ﻿#nullable disable
 
+using bsm24.Messages;
 using bsm24.Services;
+using CommunityToolkit.Mvvm.Messaging;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 
@@ -126,15 +128,24 @@ public partial class PinList : ContentPage
         await Shell.Current.GoToAsync($"///{planId}?pinZoom={pinId}");
     }
 
+    private async void OnPinIconClicked(object sender, EventArgs e)
+    {
+        var button = sender as Image;
+        string planId = button.AutomationId;
+        string pinId = button.ClassId;
+
+        await Shell.Current.GoToAsync($"icongallery?planId={planId}&pinId={pinId}&sender=pinList");
+    }
+
     private async void OnEditClicked(object sender, EventArgs e)
     {
         var button = sender as Button;
         string planId = button.AutomationId;
         string pinId = button.ClassId;
 
-        await Shell.Current.GoToAsync($"///{planId}");
-        await Shell.Current.Navigation.PopToRootAsync();
-        await Shell.Current.GoToAsync($"setpin?planId={planId}&pinId={pinId}");
+        //await Shell.Current.GoToAsync($"///{planId}");
+        //await Shell.Current.Navigation.PopToRootAsync();
+        await Shell.Current.GoToAsync($"setpin?planId={planId}&pinId={pinId}&sender=pinList");
     }
 
     private void OnAllowExportClicked(object sender, EventArgs e)

@@ -2,7 +2,6 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
-             xmlns:ff="clr-namespace:FFImageLoading.Maui;assembly=FFImageLoading.Maui" 
              xmlns:uranium="http://schemas.enisn-projects.io/dotnet/maui/uraniumui"
              xmlns:material="http://schemas.enisn-projects.io/dotnet/maui/uraniumui/material"
              xmlns:m="clr-namespace:UraniumUI.Icons.MaterialSymbols;assembly=UraniumUI.Icons.MaterialSymbols"  
@@ -138,13 +137,6 @@
                                      HeightRequest="1"
                                      Margin="10,2,10,2"/>
 
-                            <ff:CachedImage Grid.Column="0" Grid.Row="2"
-                                            VerticalOptions="Center"
-                                            Source="{Binding PinIcon}"
-                                            CacheType="Memory"
-                                            Aspect="AspectFit"
-                                            Margin="12,0,6,0"/>
-
                             <Label Grid.Column="1" Grid.Row="2" Grid.ColumnSpan="3"
                                    MaxLines="4"
                                    LineBreakMode="WordWrap"
@@ -161,6 +153,18 @@
                                     BorderColor="Transparent"
                                     Background="Transparent"
                                     Clicked="OnEditClicked"/>
+
+                            <Image Grid.Column="0" Grid.Row="2"
+                                   VerticalOptions="Center"
+                                   ClassId="{Binding SelfId}"
+                                   AutomationId = "{Binding OnPlanId}"  
+                                   Source="{Binding PinIcon}"
+                                   Aspect="AspectFit"
+                                   Margin="12,0,6,0">
+                                <Image.GestureRecognizers>
+                                    <TapGestureRecognizer Tapped="OnPinIconClicked"/>
+                                </Image.GestureRecognizers>
+                            </Image>
 
                             <Border Grid.ColumnSpan="4" Grid.RowSpan="4"
                                     StrokeThickness="1"

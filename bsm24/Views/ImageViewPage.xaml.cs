@@ -243,7 +243,7 @@ public partial class ImageViewPage : IQueryAttributable
             // save data to file
             GlobalJson.SaveToFile();
 
-            await Shell.Current.GoToAsync($"setpin?planId={PlanId}&pinId={PinId}&pinIcon={PinIcon}");
+            await Shell.Current.GoToAsync($"setpin?planId={PlanId}&pinId={PinId}");
         }
     }
 

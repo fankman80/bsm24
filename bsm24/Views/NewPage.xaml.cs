@@ -9,6 +9,10 @@ using CommunityToolkit.Maui.Extensions;
 using CommunityToolkit.Maui.Views;
 using MR.Gestures;
 using SkiaSharp;
+using CommunityToolkit.Mvvm.Messaging;
+using bsm24.Messages;
+
+
 
 #if WINDOWS
 using bsm24.Platforms.Windows;
@@ -75,33 +79,38 @@ public partial class NewPage : IQueryAttributable
         // selektiere den aktuellen Plan im CollectionView im Shellmenü
         var appShell = Application.Current.Windows[0].Page as AppShell;
         appShell?.HighlightCurrentPlan(this.PlanId);
-    }
 
-    public void ApplyQueryAttributes(IDictionary<string, object> query)
-    {
-        if (query.TryGetValue("pinUpdate", out object value1))
+        WeakReferenceMessenger.Default.Unregister<PinChangedMessage>(this);
+        WeakReferenceMessenger.Default.Register<PinChangedMessage>(this, (r, m) =>
         {
-            PinUpdate = value1 as string;
+            var pinId = m.Value;
+
             var image = PlanContainer.Children
-                .OfType<MR.Gestures.Image>()
-                .FirstOrDefault(i => i.AutomationId == PinUpdate);
+                    .OfType<MR.Gestures.Image>()
+                    .FirstOrDefault(i => i.AutomationId == pinId);
             if (image != null)
             {
-                var pinIcon = GlobalJson.Data.Plans[PlanId].Pins[PinUpdate].PinIcon;
+                var pinIcon = GlobalJson.Data.Plans[PlanId].Pins[pinId].PinIcon;
                 if (pinIcon.StartsWith("customicons", StringComparison.OrdinalIgnoreCase))
                     pinIcon = Path.Combine(Settings.DataDirectory, pinIcon);
 
                 image.Source = pinIcon;
-                image.AnchorX = GlobalJson.Data.Plans[PlanId].Pins[PinUpdate].Anchor.X;
-                image.AnchorY = GlobalJson.Data.Plans[PlanId].Pins[PinUpdate].Anchor.Y;
-                image.Rotation = GlobalJson.Data.Plans[PlanId].Pins[PinUpdate].IsLockRotate ?
-                                 GlobalJson.Data.Plans[PlanId].Pins[PinUpdate].PinRotation :
-                                 PlanContainer.Rotation * -1 + GlobalJson.Data.Plans[PlanId].Pins[PinUpdate].PinRotation;
-                image.Scale = PinScaling(PinUpdate);
+                image.AnchorX = GlobalJson.Data.Plans[PlanId].Pins[pinId].Anchor.X;
+                image.AnchorY = GlobalJson.Data.Plans[PlanId].Pins[pinId].Anchor.Y;
+                image.Rotation = GlobalJson.Data.Plans[PlanId].Pins[pinId].IsLockRotate ?
+                                 GlobalJson.Data.Plans[PlanId].Pins[pinId].PinRotation :
+                                 PlanContainer.Rotation * -1 + GlobalJson.Data.Plans[PlanId].Pins[pinId].PinRotation;
+                image.Scale = PinScaling(pinId);
 
                 AdjustImagePosition(image);
             }
-        }
+
+            WeakReferenceMessenger.Default.Unregister<PinChangedMessage>(this);
+        });
+    }
+
+    public void ApplyQueryAttributes(IDictionary<string, object> query)
+    {
         if (query.TryGetValue("pinDelete", out object value2))
         {
             PinDelete = value2 as string;
@@ -294,7 +303,7 @@ public partial class NewPage : IQueryAttributable
             isTappedHandled = true;
 
             var _pinIcon = GlobalJson.Data.Plans[PlanId].Pins[pinId].PinIcon;
-            await Shell.Current.GoToAsync($"setpin?planId={PlanId}&pinId={pinId}");
+            await Shell.Current.GoToAsync($"setpin?planId={PlanId}&pinId={pinId}&sender=///{PlanId}");
 
             isTappedHandled = false;
         };

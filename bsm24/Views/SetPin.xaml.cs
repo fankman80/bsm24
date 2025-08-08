@@ -1,8 +1,11 @@
 ﻿#nullable disable
 
+using bsm24.Messages;
 using bsm24.Models;
 using CommunityToolkit.Maui.Core.Extensions;
 using CommunityToolkit.Maui.Extensions;
+using CommunityToolkit.Mvvm.Messaging;
+using DocumentFormat.OpenXml.Office2016.Drawing.ChartDrawing;
 using System.Collections.ObjectModel;
 using UraniumUI.Material.Controls;
 
@@ -13,9 +16,9 @@ public partial class SetPin : ContentPage, IQueryAttributable
     public ObservableCollection<FotoItem> Images { get; set; }
     public int DynamicSpan { get; set; } = 3; // Standardwert
     public int DynamicSize;
-    public string PlanId;
-    public string PinId;
-    public string PinIcon;
+    private string PlanId;
+    private string PinId;
+    private string SenderView;
 
     private Color priorityColor;
     public Color PriorityColor
@@ -59,6 +62,8 @@ public partial class SetPin : ContentPage, IQueryAttributable
             PlanId = value1 as string;
         if (query.TryGetValue("pinId", out object value2))
             PinId = value2 as string;
+        if (query.TryGetValue("sender", out object value3))
+            SenderView = value3 as string;
 
         PinImage.Source = GlobalJson.Data.Plans[PlanId].Pins[PinId].PinIcon;
 
@@ -122,7 +127,7 @@ public partial class SetPin : ContentPage, IQueryAttributable
         var filePath = ((FileImageSource)tappedImage.Source).File;
         var fileName = new FileResult(filePath).FileName;
 
-        await Shell.Current.GoToAsync($"imageview?imgSource={fileName}&planId={PlanId}&pinId={PinId}&pinIcon={PinIcon}");
+        await Shell.Current.GoToAsync($"imageview?imgSource={fileName}&planId={PlanId}&pinId={PinId}");
     }
 
     private async void OnDeleteClick(object sender, EventArgs e)
@@ -150,7 +155,7 @@ public partial class SetPin : ContentPage, IQueryAttributable
 
     private async void OnPinSelectClick(object sender, EventArgs e)
     {
-        await Shell.Current.GoToAsync($"icongallery?planId={PlanId}&pinId={PinId}");
+        await Shell.Current.GoToAsync($"icongallery?planId={PlanId}&pinId={PinId}&sender=setpin");
     }
 
     private async void OnOkayClick(object sender, EventArgs e)
@@ -165,10 +170,8 @@ public partial class SetPin : ContentPage, IQueryAttributable
         // save data to file
         GlobalJson.SaveToFile();
 
-        if (GlobalJson.Data.Plans[PlanId].Pins[PinId].IsCustomPin)
-            await Shell.Current.GoToAsync($"///{PlanId}");
-        else
-            await Shell.Current.GoToAsync($"///{PlanId}?pinUpdate={PinId}");
+        SenderView ??= $"//{PlanId}";
+        await Shell.Current.GoToAsync($"{SenderView}");
     }
 
     private async void ShowGeoLoc(object sender, EventArgs e)
