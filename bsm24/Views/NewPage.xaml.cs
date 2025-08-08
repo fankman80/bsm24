@@ -75,9 +75,7 @@ public partial class NewPage : IQueryAttributable
             }
         }
 
-        var appShell = Application.Current.Windows[0].Page as AppShell;
-        appShell?.HighlightCurrentPlan(this.PlanId);
-
+        // aktualisiere PinIcons
         if (!isPinChangedRegistered)
         {
             WeakReferenceMessenger.Default.Register<PinChangedMessage>(this, (r, m) =>
@@ -110,9 +108,12 @@ public partial class NewPage : IQueryAttributable
                     }
                 });
             });
-
             isPinChangedRegistered = true;
         }
+
+        // Setze den Titel der Seite und markiere den Plan im ShellManü
+        var appShell = Application.Current.Windows[0].Page as AppShell;
+        appShell?.HighlightCurrentPlan(this.PlanId);
     }
 
     public void ApplyQueryAttributes(IDictionary<string, object> query)
