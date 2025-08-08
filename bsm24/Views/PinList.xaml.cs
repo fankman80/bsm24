@@ -1,8 +1,6 @@
 ﻿#nullable disable
 
-using bsm24.Messages;
 using bsm24.Services;
-using CommunityToolkit.Mvvm.Messaging;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 
