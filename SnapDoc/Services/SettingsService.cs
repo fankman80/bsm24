@@ -11,7 +11,7 @@ public partial class SettingsService : INotifyPropertyChanged
     private const string SettingsFileName = "appsettings.ini";
     private SettingsService()
     {
-        ColorThemes = ["EBBE", "Lachs", "Gras", "Ozean", "Feuer", "Flower", "Barbie"];
+        ColorThemes = ["Minimalist", "Wine", "Grass", "EBBE", "Fire", "Flower", "Pink"];
         AppThemes = ["Light", "Dark"];
         SelectedColorTheme = ColorThemes[0]; // Standardauswahl
         SelectedAppTheme = AppThemes[0]; // Standardauswahl
@@ -496,7 +496,7 @@ public partial class SettingsService : INotifyPropertyChanged
                 // Logik für das Anwenden der Farben basierend auf der Auswahl
                 switch (_selectedColorTheme)
                 {
-                    case "Monocrome":
+                    case "Minimalist":
                         App.Current.Resources["Primary"] = Color.FromArgb("#000000");
                         App.Current.Resources["PrimaryText"] = Color.FromArgb("#000000");
                         App.Current.Resources["PrimaryAccent"] = Color.FromArgb("#000000");
