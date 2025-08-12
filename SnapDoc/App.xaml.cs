@@ -28,32 +28,11 @@ public partial class App : Application
         System.Globalization.CultureInfo.CurrentCulture = new System.Globalization.CultureInfo("de-DE");
         System.Globalization.CultureInfo.CurrentUICulture = new System.Globalization.CultureInfo("de-DE");
 
-        // Warten, bis die Speicherberechtigung erteilt wurde
-        await EnsureStoragePermissionAsync();
-
         // Asynchronen Initialisierungsprozess starten
         await InitializeAsync();
     }
 
-    private async static Task EnsureStoragePermissionAsync()
-    {
-#if ANDROID
-        // Auf Android 11+ muss geprüft werden, ob MANAGE_EXTERNAL_STORAGE erteilt wurde.
-        while (Build.VERSION.SdkInt >= BuildVersionCodes.R && !Android.OS.Environment.IsExternalStorageManager)
-        {
-            // Gib dem Benutzer Zeit, die Einstellung zu ändern (oder leite ihn in die Einstellungen)
-            await Task.Delay(2000);
-        }
-#endif
 
-        // Für andere Plattformen oder ältere Android-Versionen
-        var status = await Permissions.RequestAsync<Permissions.StorageWrite>();
-        while (status != PermissionStatus.Granted)
-        {
-            await Task.Delay(2000);
-            status = await Permissions.RequestAsync<Permissions.StorageWrite>();
-        }
-    }
 
     private async static Task InitializeAsync()
     {
