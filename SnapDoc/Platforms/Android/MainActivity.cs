@@ -10,6 +10,8 @@ namespace SnapDoc.Platforms.Android
         protected override void OnCreate(Bundle? savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
+
+            AndroidX.Activity.EdgeToEdge.Enable(this);
         }
     }
 }
