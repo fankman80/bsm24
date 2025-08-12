@@ -11,7 +11,7 @@ public partial class SettingsService : INotifyPropertyChanged
     private const string SettingsFileName = "appsettings.ini";
     private SettingsService()
     {
-        ColorThemes = ["Minimalist", "Wine", "Grass", "EBBE", "Fire", "Flower", "Pink"];
+        ColorThemes = ["EBBE", "Minimalist", "Wine", "Grass", "Fire", "Flower", "Pink"];
         AppThemes = ["Light", "Dark"];
         SelectedColorTheme = ColorThemes[0]; // Standardauswahl
         SelectedAppTheme = AppThemes[0]; // Standardauswahl

@@ -89,8 +89,8 @@
             <Border Stroke="{DynamicResource Primary}"
                     StrokeThickness="1"
                     StrokeShape="RoundRectangle 4">
-                <uranium:Dropdown x:DataType="services:SettingsService" BindingContext="{x:Static services:SettingsService.Instance}"
-                                  x:Name="CategoryPicker" 
+                <uranium:Dropdown x:Name="CategoryPicker"
+                                  x:DataType="services:SettingsService" BindingContext="{x:Static services:SettingsService.Instance}"
                                   FontSize="12"
                                   TextColor="Black"
                                   ItemsSource="{Binding IconCategories}"
@@ -111,11 +111,12 @@
             <Border Stroke="{DynamicResource Primary}"
                     StrokeThickness="1"
                     StrokeShape="RoundRectangle 4">
-                <uranium:Dropdown x:Name="SortPicker" x:DataType="services:SettingsService" BindingContext="{x:Static services:SettingsService.Instance}"
-                                FontSize="12"
-                                TextColor="Black"
-                                ItemsSource="{Binding IconSortCrits}"
-                                SelectedItem="{Binding IconSortCrit}"/>
+                <uranium:Dropdown x:Name="SortPicker"
+                                  x:DataType="services:SettingsService" BindingContext="{x:Static services:SettingsService.Instance}"
+                                  FontSize="12"
+                                  TextColor="Black"
+                                  ItemsSource="{Binding IconSortCrits}"
+                                  SelectedItem="{Binding IconSortCrit}"/>
             </Border>
         </HorizontalStackLayout>
 

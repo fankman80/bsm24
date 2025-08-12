@@ -108,7 +108,7 @@ public partial class ExportReport
                     int i = 1;
                     foreach (KeyValuePair<string, Plan> plan in GlobalJson.Data.Plans)
                     {
-                        if (GlobalJson.Data.Plans[plan.Key].Pins != null)
+                        if (GlobalJson.Data.Plans[plan.Key].Pins != null && GlobalJson.Data.Plans[plan.Key].AllowExport)
                         {
                             foreach (KeyValuePair<string, Pin> pin in GlobalJson.Data.Plans[plan.Key].Pins)
                             {
@@ -443,16 +443,6 @@ public partial class ExportReport
                                             paragraph.Append(pageBreakParagraph);
                                         }
                                         planCounter--;
-                                    }
-                                    else // lasse den Pin-Zähler weiter laufen, aber zeichne keine Pins oder Pläne
-                                    {
-                                        if (GlobalJson.Data.Plans[plan.Key].Pins != null)
-                                        {
-                                            foreach (KeyValuePair<string, Pin> pin in GlobalJson.Data.Plans[plan.Key].Pins)
-                                            {
-                                                i++;
-                                            }
-                                        }
                                     }
                                 }
                             }

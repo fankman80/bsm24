@@ -25,15 +25,17 @@ public partial class IconGallery : ContentPage, IQueryAttributable
     public IconGallery()
     {
         InitializeComponent(); 
-        SizeChanged += OnSizeChanged;
-        SortPicker.PropertyChanged += OnSortPickerChanged;
-        CategoryPicker.PropertyChanged += OnCategoryPickerChanged;
+
         BindingContext = this;
     }
 
     protected override void OnAppearing()
     {
         base.OnAppearing();
+
+        SizeChanged += OnSizeChanged;
+        SortPicker.PropertyChanged += OnSortPickerChanged;
+        CategoryPicker.PropertyChanged += OnCategoryPickerChanged;
 
         IconCollectionView.ItemTemplate = (DataTemplate)Resources[SettingsService.Instance.IconGalleryMode];
         UpdateButton();
