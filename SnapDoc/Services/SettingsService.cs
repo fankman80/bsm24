@@ -44,7 +44,7 @@ public partial class SettingsService : INotifyPropertyChanged
         }
     }
 
-    private string _flyoutHeaderTitle = "";
+    private string _flyoutHeaderTitle = "by Emch+Berger AG Bern";
     public string FlyoutHeaderTitle
     {
         get => _flyoutHeaderTitle;

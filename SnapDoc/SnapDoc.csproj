@@ -87,14 +87,20 @@
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net9.0-android|AnyCPU'">
-	  <AndroidPackageFormat>apk</AndroidPackageFormat>
+	  <AndroidPackageFormat>aab</AndroidPackageFormat>
 	  <ApplicationId>com.ebbe.snapdoc</ApplicationId>
 	  <ApplicationTitle>SnapDoc</ApplicationTitle>
+	  <AndroidUseAapt2>True</AndroidUseAapt2>
+	  <AndroidCreatePackagePerAbi>False</AndroidCreatePackagePerAbi>
+	  <AndroidLinkTool>r8</AndroidLinkTool>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net9.0-android|AnyCPU'">
 	  <ApplicationId>com.ebbe.snapdoc</ApplicationId>
 	  <ApplicationTitle>SnapDoc</ApplicationTitle>
+	  <AndroidUseAapt2>True</AndroidUseAapt2>
+	  <AndroidCreatePackagePerAbi>False</AndroidCreatePackagePerAbi>
+	  <AndroidPackageFormat>aab</AndroidPackageFormat>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -131,8 +137,8 @@
 	<ItemGroup>
 		<PackageReference Include="Camera.MAUI" Version="1.5.1" />
 		<PackageReference Include="Codeuctivity.OpenXmlPowerTools" Version="8.0.374" />
-		<PackageReference Include="CommunityToolkit.Maui" Version="12.1.0" />
-		<PackageReference Include="CommunityToolkit.Maui.Core" Version="12.1.0" />
+		<PackageReference Include="CommunityToolkit.Maui" Version="12.2.0" />
+		<PackageReference Include="CommunityToolkit.Maui.Core" Version="12.2.0" />
 		<PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
 		<PackageReference Include="DocumentFormat.OpenXml" Version="3.3.0" />
 		<PackageReference Include="FFImageLoading.Maui" Version="1.3.1" />
