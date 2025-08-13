@@ -38,6 +38,9 @@ public partial class PinList : ContentPage
 
     private void LoadPins()
     {
+        if (GlobalJson.Data.Plans != null)
+            return;
+            
         int pincounter = 0;
         pinListView.ItemsSource = null;
         bool saveRequested = false;
