@@ -9,8 +9,6 @@ namespace SnapDoc.Platforms.Android
     {
         protected override void OnCreate(Bundle? savedInstanceState)
         {
-            SetTheme(Resource.Style.MainThemeEdgeToEdge);
-
             base.OnCreate(savedInstanceState);
         }
     }
