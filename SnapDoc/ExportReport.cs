@@ -16,6 +16,9 @@ namespace SnapDoc;
 
 public partial class ExportReport
 {
+    if (GlobalJson.Data.Plans != null)
+        return;
+    
     [GeneratedRegex(@"\$\{plan_images/(\d+)/(\d+)\}")]
     private static partial Regex PlanImagesRegex();
 
