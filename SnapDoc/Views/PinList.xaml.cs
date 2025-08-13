@@ -19,7 +19,6 @@ public partial class PinList : ContentPage
     {
         InitializeComponent();
         BindingContext = this;
-        LoadPins();
     }
 
     protected override void OnAppearing()
@@ -27,6 +26,7 @@ public partial class PinList : ContentPage
         base.OnAppearing();
 
         SortPicker.PropertyChanged += OnSortPickerChanged;
+        LoadPins();
     }
 
     protected override void OnDisappearing()
