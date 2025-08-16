@@ -158,7 +158,7 @@ public partial class SettingsService : INotifyPropertyChanged
         }
     }
 
-    private double _pinMaxScaleLimit = 80;
+    private double _pinMaxScaleLimit = 100;
     public double PinMaxScaleLimit
     {
         get => _pinMaxScaleLimit;
