@@ -13,31 +13,29 @@
                 Title="swisstopo Karte">
 
     <ContentPage.ToolbarItems>
-        <ToolbarItem IconImageSource="{FontImageSource FontFamily=MaterialOutlined, Color={DynamicResource PrimaryDark}, Glyph={x:Static m:MaterialOutlined.Moved_location}}"             
+        <ToolbarItem IconImageSource="{FontImageSource FontFamily=MaterialOutlined, Color={DynamicResource PrimaryDark}, Glyph={x:Static m:MaterialOutlined.Moved_location}}"
                      Text="KML exportieren"
                      Clicked="KmlExportClicked"/>        
-        <ToolbarItem x:Name ="SetPosBtn"
-                     IsEnabled="False"
-                     IconImageSource="{FontImageSource FontFamily=MaterialOutlined, Color={DynamicResource PrimaryDark}, Glyph={x:Static m:MaterialOutlined.Edit_location_alt}}"             
-                     Text="Position aktualisieren"
-                     Clicked="SetPosClicked"/>
     </ContentPage.ToolbarItems>
 
     <Grid>
         <AbsoluteLayout>
             <WebView x:Name="GeoAdminWebView" 
-                 AbsoluteLayout.LayoutBounds="0,0,1,1"
-                 AbsoluteLayout.LayoutFlags="All" />
+                     AbsoluteLayout.LayoutBounds="0,0,1,1"
+                     AbsoluteLayout.LayoutFlags="All" />
 
-            <Border
-                BackgroundColor="White"
-                VerticalOptions="Center"
-                Margin="8"
-                Stroke="DarkGrey"
-                StrokeThickness="0.5"
-                AbsoluteLayout.LayoutBounds="0.5,0,AutoSize,AutoSize"
-                AbsoluteLayout.LayoutFlags="PositionProportional">
-                <uranium:Dropdown x:Name="mapLayerPicker" FontSize="10"/>
+            <Border BackgroundColor="White"
+                    Scale="0.8"
+                    Margin="8"
+                    Stroke="DarkGrey"
+                    StrokeThickness="1"
+                    StrokeShape="RoundRectangle 4"
+                    AbsoluteLayout.LayoutBounds="0.5,0,AutoSize,AutoSize"
+                    AbsoluteLayout.LayoutFlags="PositionProportional">
+                <Picker x:Name="mapLayerPicker" FontSize="12"/>
+                <Border.Shadow>
+                    <Shadow Brush="Black" Opacity="0.4" Offset="4,4" Radius="6"/>
+                </Border.Shadow>
             </Border>
 
             <StackLayout Orientation="Vertical"
@@ -50,6 +48,7 @@
                         HeightRequest="60"
                         Stroke="{AppThemeBinding Light={DynamicResource PrimaryDarkText}, Dark={DynamicResource PrimaryText}}"
                         StrokeThickness="1"
+                        HorizontalOptions="End"
                         BackgroundColor="White"
                         StrokeShape="RoundRectangle 30">
                     <Image Source="mapcolorbtn.png"/>
@@ -65,6 +64,7 @@
                     HeightRequest="60"
                     Stroke="{AppThemeBinding Light={DynamicResource PrimaryDarkText}, Dark={DynamicResource PrimaryText}}"
                     StrokeThickness="1"
+                    HorizontalOptions="End"
                     BackgroundColor="White"
                     StrokeShape="RoundRectangle 30">
                     <Image Source="maprealbtn.png"/>
@@ -78,10 +78,23 @@
                 <Button ImageSource="{FontImageSource FontFamily=MaterialOutlined, Color={AppThemeBinding Light={DynamicResource PrimaryDarkText}, Dark={DynamicResource PrimaryText}}, Glyph={x:Static m:MaterialOutlined.Save}}"
                         WidthRequest="60"
                         HeightRequest="60"
-                        CornerRadius="30"                      
+                        CornerRadius="30"
+                        HorizontalOptions="End"
                         BackgroundColor="{AppThemeBinding Light={DynamicResource Primary}, Dark={DynamicResource PrimaryDark}}"
                         TextColor="{AppThemeBinding Light={DynamicResource PrimaryDarkText}, Dark={DynamicResource PrimaryText}}"
                         Clicked="GetCoordinatesClicked">
+                    <Button.Shadow>
+                        <Shadow Brush="Black" Opacity="0.4" Offset="4,4" Radius="6"/>
+                    </Button.Shadow>
+                </Button>
+                <Button x:Name="SetPosBtn"
+                        Text="auf aktuelle&#10;Position setzen"
+                        IsVisible="false"
+                        HeightRequest="60"
+                        CornerRadius="30"
+                        BackgroundColor="{AppThemeBinding Light={DynamicResource Primary}, Dark={DynamicResource PrimaryDark}}"
+                        TextColor="{AppThemeBinding Light={DynamicResource PrimaryDarkText}, Dark={DynamicResource PrimaryText}}"
+                        Clicked="SetPosClicked">
                     <Button.Shadow>
                         <Shadow Brush="Black" Opacity="0.4" Offset="4,4" Radius="6"/>
                     </Button.Shadow>

@@ -55,7 +55,9 @@ public partial class MapView : IQueryAttributable
 
         if (PinId != null)
         {
-            SetPosBtn.IsEnabled = true;
+            SetPosBtn.IsVisible = true;
+            SetPosBtn.ImageSource = GlobalJson.Data.Plans[PlanId].Pins[PinId].PinIcon;
+
             if (GlobalJson.Data.Plans[PlanId].Pins[PinId].GeoLocation != null)
             {
                 lon = GlobalJson.Data.Plans[PlanId].Pins[PinId].GeoLocation.WGS84.Longitude;
@@ -232,9 +234,9 @@ public partial class MapView : IQueryAttributable
             GlobalJson.SaveToFile();
 
             if (DeviceInfo.Platform == DevicePlatform.WinUI)
-                await Application.Current.Windows[0].Page.DisplayAlert("", "Positionen gespeichert", "OK");
+                await Application.Current.Windows[0].Page.DisplayAlert("", "Die Positionen aller Pins auf der Karte wurden aktualisiert.", "OK");
             else
-                await Toast.Make($"Positionen gespeichert").Show();
+                await Toast.Make($"Die Positionen aller Pins auf der Karte wurden aktualisiert.").Show();
         }
     }
 

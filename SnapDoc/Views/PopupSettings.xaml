@@ -57,27 +57,27 @@
                             MaximumTrackColor="{AppThemeBinding Light=LightGray, Dark=Gray}"
                             Value="{Binding MaxPdfPixelCount}"/>
                 </VerticalStackLayout>
-                <Label Text="App-Modus und Thema:"/>
-                <Grid ColumnDefinitions="*,*">
-                    <Border Grid.Column="0"
-                        Stroke="{DynamicResource SecondaryBackground}"
-                        StrokeThickness="1"
-                        StrokeShape="RoundRectangle 8">
-                        <Picker x:Name="darkModePicker"
-                                ItemsSource="{Binding AppThemes}"
-                                SelectedItem="{Binding SelectedAppTheme}"/>
-                    </Border>
-
-                    <Border Grid.Column="1"
-                        Stroke="{DynamicResource SecondaryBackground}"
-                        StrokeThickness="1"
-                        StrokeShape="RoundRectangle 8">                
-                        <Picker x:Name="colorThemePicker"
-                                ItemsSource="{Binding ColorThemes}"
-                                SelectedItem="{Binding SelectedColorTheme}"/>
-                    </Border>
-                </Grid>
-
+                <VerticalStackLayout Spacing="4">
+                    <Label Text="App-Modus und Thema" FontSize="12" Margin="8,0,0,0"/>
+                    <Grid ColumnDefinitions="*,*">
+                        <Border Grid.Column="0"
+                                Stroke="{DynamicResource SecondaryBackground}"
+                                StrokeThickness="1"
+                                StrokeShape="RoundRectangle 8">
+                            <Picker x:Name="darkModePicker"
+                                    ItemsSource="{Binding AppThemes}"
+                                    SelectedItem="{Binding SelectedAppTheme}"/>
+                        </Border>
+                        <Border Grid.Column="1"
+                                Stroke="{DynamicResource SecondaryBackground}"
+                                StrokeThickness="1"
+                                StrokeShape="RoundRectangle 8">                
+                            <Picker x:Name="colorThemePicker"
+                                    ItemsSource="{Binding ColorThemes}"
+                                    SelectedItem="{Binding SelectedColorTheme}"/>
+                        </Border>
+                    </Grid>
+                </VerticalStackLayout>
                 <Label Text="Modus für Pinplatzierung:"/>
                 <material:RadioButtonGroupView Spacing="10"
                                                SelectedIndex="{Binding PinPlaceMode, Mode=TwoWay}"
