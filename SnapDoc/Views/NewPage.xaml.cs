@@ -12,6 +12,7 @@ using SnapDoc.Models;
 using SnapDoc.Services;
 using SnapDoc.ViewModels;
 using System.ComponentModel;
+using System.Collections.ObjectModel;
 
 #if WINDOWS
 using SnapDoc.Platforms.Windows;
@@ -502,7 +503,8 @@ public partial class NewPage : IQueryAttributable, INotifyPropertyChanged
                         string customName = null,
                         int customPinSizeWidth = 0,
                         int customPinSizeHeight = 0,
-                        SKColor? pinColor = null)
+                        SKColor? pinColor = null,
+                        double customScale = 1)
     {
         var currentPage = (NewPage)Shell.Current.CurrentPage;
         if (currentPage != null)
@@ -527,7 +529,6 @@ public partial class NewPage : IQueryAttributable, INotifyPropertyChanged
                 location = null;
 
             pinColor ??= SKColors.Red;
-            //Point _pos = new(PlanContainer.AnchorX, PlanContainer.AnchorY);
             Point _anchorPoint = iconItem.AnchorPoint;
             Size _size = iconItem.IconSize;
             bool _isRotationLocked = iconItem.IsRotationLocked;
@@ -535,6 +536,7 @@ public partial class NewPage : IQueryAttributable, INotifyPropertyChanged
             bool _isCustomPin = false;
             bool _isAllowExport = true;
             string _displayName = iconItem.DisplayName;
+            double _scale = iconItem.IconScale;
 
             if (customName != null)
             {
@@ -545,7 +547,8 @@ public partial class NewPage : IQueryAttributable, INotifyPropertyChanged
                 _isCustomPin = true;
                 _newPin = customName;
                 _displayName = "";
-                _isAllowExport = false;
+                _isAllowExport = true;
+                _scale = customScale;
             }
 
             Pin newPinData = new()
@@ -566,7 +569,7 @@ public partial class NewPage : IQueryAttributable, INotifyPropertyChanged
                 SelfId = currentDateTime,
                 DateTime = DateTime.Now,
                 PinColor = (SKColor)pinColor,
-                PinScale = iconItem.IconScale,
+                PinScale = _scale,
                 PinRotation = 0,
                 GeoLocation = location != null ? new GeoLocData(location) : null,
                 AllowExport = _isAllowExport,
@@ -586,8 +589,7 @@ public partial class NewPage : IQueryAttributable, INotifyPropertyChanged
                 Console.WriteLine($"Plan mit ID {PlanId} existiert nicht.");
 
             AddPin(currentDateTime, newPinData.PinIcon);
-        }
-        ;
+        };
     }
 
     private void OnMouseMoved(object sender, MouseEventArgs e)
@@ -680,7 +682,7 @@ public partial class NewPage : IQueryAttributable, INotifyPropertyChanged
                 return scaleLimit * GlobalJson.Data.Plans[PlanId].Pins[pinId].PinScale;
         }
         else
-            return 1;
+            return GlobalJson.Data.Plans[PlanId].Pins[pinId].PinScale;
     }
 
     private void AddDrawingView()
@@ -709,6 +711,7 @@ public partial class NewPage : IQueryAttributable, INotifyPropertyChanged
 
         // Füge die EventHandler hinzu
         drawingView.PointDrawn += OnDrawingLineUpdated;
+
         var absoluteLayout = this.FindByName<Microsoft.Maui.Controls.AbsoluteLayout>("PlanView");
         absoluteLayout.Children.Add(drawingView);
     }
@@ -740,10 +743,28 @@ public partial class NewPage : IQueryAttributable, INotifyPropertyChanged
             var customPinName = "custompin_" + DateTime.Now.ToString("yyyyMMdd_HHmmss") + ".png";
             string filePath = Path.Combine(customPinPath, customPinName);
 
+
+            // Basisgröße als Referenz
+            int referenceSize = 200; // px
+            float maxFactor = 6f;    // maximale Vergrößerung
+            float minFactor = 1f;    // mindestens 1× (keine Skalierung)
+
+            // kleinere Seitenlänge von pinBound
+            int smallerSide = Math.Min(pinBound.Width, pinBound.Height);
+
+            // Faktor berechnen (je kleiner das Bild, desto größer der Faktor)
+            float scaleFactor = referenceSize / (float)smallerSide;
+
+            // Faktor in Grenzen halten
+            scaleFactor = Math.Clamp(scaleFactor, minFactor, maxFactor);
+
+            var neueListe = ScaleLines(drawingView.Lines, scaleFactor);
+
             await using var imageStream = await DrawingViewService.GetImageStream(
-                                                ImageLineOptions.JustLines(drawingView.Lines,
-                                                new Size(pinBound.Width, pinBound.Height),
-                                                Brush.Transparent));
+                ImageLineOptions.JustLines(neueListe,
+                new Size(pinBound.Width, pinBound.Height),
+                Brush.Transparent));
+
             if (imageStream != null)
             {
                 if (!Directory.Exists(customPinPath))
@@ -752,26 +773,29 @@ public partial class NewPage : IQueryAttributable, INotifyPropertyChanged
                 using var memoryStream = new MemoryStream();
                 await imageStream.CopyToAsync(memoryStream);
                 memoryStream.Seek(0, SeekOrigin.Begin);
-                using var _skBitmap = SKBitmap.Decode(memoryStream);
-                var skBitmap = CropBitmap(_skBitmap);
-                var resizedBitmap = new SKBitmap(pinBound.Width + (int)drawingView.LineWidth, pinBound.Height + (int)drawingView.LineWidth);
-                var samplingOptions = new SKSamplingOptions(SKFilterMode.Linear);
-                skBitmap.ScalePixels(resizedBitmap, samplingOptions);
 
-                using var imageData = resizedBitmap.Encode(SKEncodedImageFormat.Png, 90); // 90 = Qualität
+                // --- Direktes Speichern ohne ScalePixels ---
+                using var skBitmap = SKBitmap.Decode(memoryStream);
+                using var imageData = skBitmap.Encode(SKEncodedImageFormat.Png, 90); // Qualität 90
                 using (var fileStream = new FileStream(filePath, FileMode.Create, FileAccess.Write))
                 {
                     imageData.SaveTo(fileStream);
                 }
 
-                SetPin(new Point((pinBound.Left + pinBound.Width / 2) / GlobalJson.Data.Plans[PlanId].ImageSize.Width * densityX,
-                                 (pinBound.Top + pinBound.Height / 2) / GlobalJson.Data.Plans[PlanId].ImageSize.Height * densityY),
-                                 customPinName,
-                                 resizedBitmap.Width,
-                                 resizedBitmap.Height,
-                                 new SKColor(drawingView.LineColor.ToUint()));
+                // --- Pin-Position beibehalten, Größe anpassen ---
+                SetPin(
+                    new Point(
+                        (pinBound.Left + pinBound.Width / 2) / GlobalJson.Data.Plans[PlanId].ImageSize.Width * densityX,
+                        (pinBound.Top + pinBound.Height / 2) / GlobalJson.Data.Plans[PlanId].ImageSize.Height * densityY),
+                    customPinName,
+                    skBitmap.Width,
+                    skBitmap.Height,
+                    new SKColor(drawingView.LineColor.ToUint()),
+                    1 / scaleFactor
+                );
             }
         }
+
         RemoveDrawingView();
 
         planContainer.IsPanningEnabled = true;
@@ -781,6 +805,29 @@ public partial class NewPage : IQueryAttributable, INotifyPropertyChanged
         SetPinBtn.IsVisible = SettingsService.Instance.PinPlaceMode != 2;
         DrawBtn.IsVisible = true;
     }
+
+    private static List<IDrawingLine> ScaleLines(IEnumerable<IDrawingLine> originalLines, float scaleFactor)
+    {
+        var scaledLines = new List<IDrawingLine>();
+
+        foreach (var line in originalLines)
+        {
+            // Neue Punkteliste als ObservableCollection
+            var scaledPoints = new ObservableCollection<PointF>(
+                line.Points.Select(p => new PointF((float)(p.X * scaleFactor), (float)(p.Y * scaleFactor))));
+
+            // Neue Line erzeugen (CommunityToolkit.Maui.Views.DrawingLine)
+            var scaledLine = new DrawingLine
+            {
+                Points = scaledPoints,
+                LineWidth = line.LineWidth * scaleFactor,
+                LineColor = line.LineColor
+            };
+            scaledLines.Add(scaledLine);
+        }
+        return scaledLines;
+    }
+
 
     public static SKBitmap CropBitmap(SKBitmap originalBitmap)
     {
