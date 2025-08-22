@@ -21,7 +21,7 @@
         }
 
         #popup {
-            position: absolute; /* Damit das Pseudo-Element relativ zum Popup positioniert wird */
+            position: absolute;
             background-color: white;
             padding: 10px;
             border-radius: 10px;
@@ -33,6 +33,23 @@
             word-wrap: break-word;
             z-index: 9999;
             border: 1px solid gray;
+        }
+
+        #popupContent {
+            margin-bottom: 10px; /* Abstand zum Button */
+        }
+
+        #sendButton {
+            display: block;
+            margin-left: auto; /* rechts ausrichten */
+            margin-right: 0; /* rechts ausrichten */
+            padding: 6px 10px;
+            font-size: 14px;
+            border-radius: 4px;
+            border: none;
+            background-color: #999999;
+            color: #888888;
+            cursor: pointer;
         }
 
         /* Rahmen-Pfeil (größeres Dreieck) */
@@ -115,35 +132,22 @@
     </style>
 </head>
 
-<body onload="initMap()">
+<body>
     <div id="map"></div>
-    <div id="popup"></div>
+    <div id="popup">
+        <div id="popupContent"></div> <!-- dynamischer Pin-Inhalt -->
+        <button id="sendButton">Pin ansehen</button> <!-- bleibt immer unten rechts -->
+    </div>
+
     <script>
-        var markers = [];          // Array für die Marker
-        var mapReady = false;      // Karte ist anfangs noch nicht bereit
-        var pendingPositions = []; // Positionen, die gesetzt werden sollen, wenn die Karte bereit ist
-        var vectorSource;          // Globale Variable für die Vektorquelle
-        var vectorLayer;           // Globale Variable für den Vektor-Layer
-        var wmsLayer;              // Globale Variable für den WMS-Layer
-        var overlayLayer;          // Globale Variable für den WMS-Layer
-        var map;                   // Globale Variable für die Karte
+        var map, vectorSource, vectorLayer, wmsLayer, overlayLayer, mapReady = false;
+        var pendingPositions = [];
+        let currentPinkey = null;
+        let currentPlankey = null;
 
         function initMap() {
-            wmsLayer = new ol.layer.Tile({
-                source: new ol.source.TileWMS({
-                    url: 'https://wms.geo.admin.ch/',
-                    params: { 'LAYERS': 'ch.swisstopo.pixelkarte-farbe', 'TILED': true },
-                    serverType: 'mapserver'
-                })
-            });
-
-            overlayLayer = new ol.layer.Tile({
-                source: new ol.source.TileWMS({
-                    url: 'https://wms.geo.admin.ch/',
-                    params: { 'LAYERS': '', 'TILED': true },
-                    serverType: 'mapserver'
-                }),
-            });
+            wmsLayer = new ol.layer.Tile({ source: new ol.source.TileWMS({ url: 'https://wms.geo.admin.ch/', params: { LAYERS: 'ch.swisstopo.pixelkarte-farbe', TILED: true }, serverType: 'mapserver' }) });
+            overlayLayer = new ol.layer.Tile({ source: new ol.source.TileWMS({ url: 'https://wms.geo.admin.ch/', params: { LAYERS: '', TILED: true }, serverType: 'mapserver' }) });
 
             map = new ol.Map({
                 target: 'map',
@@ -154,36 +158,17 @@
                 })
             });
 
-            var scaleLineControl = new ol.control.ScaleLine({
-                units: 'metric',
-                bar: false,
-                steps: 6,
-                text: true,
-                minWidth: 80,
-                maxWidth: 140
-            });
+            var scaleLineControl = new ol.control.ScaleLine({ units: 'metric', bar: false, steps: 6, text: true, minWidth: 80, maxWidth: 140 });
             map.addControl(scaleLineControl);
 
             vectorSource = new ol.source.Vector();
-
-            vectorLayer = new ol.layer.Vector({
-                source: vectorSource
-            });
-
+            vectorLayer = new ol.layer.Vector({ source: vectorSource });
             map.addLayer(vectorLayer);
-            mapReady = true;
-
-            if (pendingPositions.length > 0) {
-                pendingPositions.forEach(function (position) {
-                    setMarkerPosition(position.lon, position.lat);
-                });
-                pendingPositions = [];  // Lösche die gespeicherten Positionen
-            }
 
             var popup = new ol.Overlay({
                 element: document.getElementById('popup'),
                 positioning: 'bottom-center',
-                stopEvent: false,
+                stopEvent: true,
                 offset: [30, -50]
             });
             map.addOverlay(popup);
@@ -194,15 +179,26 @@
             });
             map.addInteraction(modify);
 
+            mapReady = true;
+
+            // pendingPositions verarbeiten
+            if (pendingPositions.length > 0) {
+                pendingPositions.forEach(p => setMarkerPosition(p.lon, p.lat, p.pinname, p.pinlocation, p.pindesc, p.plankey, p.pinkey));
+                pendingPositions = [];
+            }
+
             map.on('click', function (evt) {
                 var feature = map.forEachFeatureAtPixel(evt.pixel, function (feature) {
                     return feature;
                 });
 
                 var popupElement = document.getElementById('popup');
+                var popupContent = document.getElementById('popupContent');
 
                 if (feature && feature.get('pinname') !== undefined) {
                     var coordinates = feature.getGeometry().getCoordinates();
+                    currentPinkey = feature.get('pinkey'); // aktuellen pinkey merken
+                    currentPlankey = feature.get('plankey'); // aktuellen plankey merken
                     let content = '';
 
                     let pinname = feature.get('pinname')?.trim();
@@ -232,89 +228,84 @@
                     }
 
                     // Zeige das Popup immer an
-                    popupElement.innerHTML = content;
+                    popupContent.innerHTML = content;
                     popupElement.style.display = 'block';
                     popup.setPosition(coordinates);
                 } else {
                     popupElement.style.display = 'none';
+                    currentPinkey = null; // kein Marker ausgewählt
+                    currentPlankey = null;
                 }
             });
         }
 
         function setMarkerPosition(lon, lat, pinname, pinlocation, pindesc, plankey, pinkey) {
-            if (mapReady) {
-                var iconStyle = new ol.style.Style({
-                    image: new ol.style.Icon({
-                        src: '{icon}',
-                        scale: {iconzoom},
-                        anchor: [0.5, 1],
-                        anchorXUnits: 'fraction',
-                        anchorYUnits: 'fraction'
-                    })
-                });
-
-                // Erstelle den Marker mit einem benutzerdefinierten Icon
-                var marker = new ol.Feature({
-                    geometry: new ol.geom.Point(ol.proj.fromLonLat([lon, lat])),
-                    pinname: pinname,
-                    pinlocation: pinlocation,
-                    pindesc: pindesc,
-                    plankey: plankey,
-                    pinkey: pinkey
-                });
-
-                // Wende den Icon-Style auf den Marker an
-                marker.setStyle(iconStyle);
-
-                // Füge den Marker zur Vektorquelle hinzu
-                vectorSource.addFeature(marker);
-                markers.push(marker);  // Füge den Marker zum Array der Marker hinzu
-            } else {
-                // Speichere die Position, wenn die Karte noch nicht bereit ist
-                pendingPositions.push({ lon: lon, lat: lat, pinname: pinname, pinlocation: pinlocation, pindesc: pindesc, plankey: plankey, pinkey: pinkey });
+            if (!mapReady) {
+                pendingPositions.push({ lon, lat, pinname, pinlocation, pindesc, plankey, pinkey });
+                return;
             }
+
+            var iconStyle = new ol.style.Style({
+                image: new ol.style.Icon({ src: '{icon}', scale: {iconzoom}, anchor: [0.5, 1], anchorXUnits: 'fraction', anchorYUnits: 'fraction' })
+            });
+
+            var marker = new ol.Feature({ geometry: new ol.geom.Point(ol.proj.fromLonLat([lon, lat])), pinname, pinlocation, pindesc, plankey, pinkey });
+            marker.setStyle(iconStyle);
+            vectorSource.addFeature(marker);
         }
 
         function setMultipleMarkers(positions) {
             positions.forEach(function (position) {
-                setMarkerPosition(position.lon, position.lat, position.pinname, position.pinlocation, position.pindesc, position.plankey, position.pinkey);
+                setMarkerPosition(
+                    position.lon,
+                    position.lat,
+                    position.pinname,
+                    position.pinlocation,
+                    position.pindesc,
+                    position.plankey,
+                    position.pinkey
+                );
             });
         }
 
-        function changeMapLayer(layer) {
-            var timestamp = new Date().getTime();
-            wmsLayer.getSource().updateParams({
-                LAYERS: layer,
-                'CACHEBUSTER': timestamp
-            });
-            wmsLayer.getSource().refresh();
-        }
-
-        function changeOverlayLayer(layer) {
-            var timestamp = new Date().getTime();
-            overlayLayer.getSource().updateParams({
-                LAYERS: layer,
-                'CACHEBUSTER': timestamp
-            });
-            overlayLayer.getSource().refresh();
-        }
+        function changeMapLayer(layer) { wmsLayer.getSource().updateParams({ LAYERS: layer, CACHEBUSTER: new Date().getTime() }); wmsLayer.getSource().refresh(); }
+        function changeOverlayLayer(layer) { overlayLayer.getSource().updateParams({ LAYERS: layer, CACHEBUSTER: new Date().getTime() }); overlayLayer.getSource().refresh(); }
 
         function getMarkerCoordinates() {
             var features = vectorSource.getFeatures();
-            if (features.length > 0) {
-                var coordinatesList = features.map(function (feature) {
-                    var coordinates = ol.proj.toLonLat(feature.getGeometry().getCoordinates());
-                    return {
-                        lon: coordinates[0],
-                        lat: coordinates[1],
-                        pinkey: feature.get('pinkey'),
-                        plankey: feature.get('plankey')
-                    };
-                });
-                return JSON.stringify(coordinatesList);
-            }
-            return null;
+            return features.length ? JSON.stringify(features.map(f => { var c = ol.proj.toLonLat(f.getGeometry().getCoordinates()); return { lon: c[0], lat: c[1], pinkey: f.get('pinkey'), plankey: f.get('plankey') }; })) : null;
         }
+        window.onload = function () {
+            initMap();
+
+            const sendButton = document.getElementById('sendButton');
+            //sendButton.addEventListener('click', function () {
+            //    if (window.jsBridge && window.jsBridge.invokeAction) {
+            //        window.jsBridge.invokeAction("Hallo aus JS"); // Nachricht an C#
+            //    } else {
+            //        alert("Bridge noch nicht verfügbar!");
+            //    }
+            //});
+
+            sendButton.addEventListener('click', function () {
+                if (!currentPinkey || !currentPlankey) return;
+
+                const payload = { pinkey: currentPinkey, plankey: currentPlankey };
+
+                // Android: jsBridge existiert
+                if (window.jsBridge && typeof window.jsBridge.invokeAction === 'function') {
+                    window.jsBridge.invokeAction(JSON.stringify(payload));
+
+                    // Windows: WebView2 Bridge
+                } else if (window.chrome?.webview && typeof window.chrome.webview.postMessage === 'function') {
+                    window.chrome.webview.postMessage(JSON.stringify(payload));
+
+                    // Fallback
+                } else {
+                    alert("Bridge noch nicht verfügbar!");
+                }
+            });
+        };
     </script>
 </body>
 </html>

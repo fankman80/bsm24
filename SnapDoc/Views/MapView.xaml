@@ -8,6 +8,7 @@
                 xmlns:m="clr-namespace:UraniumUI.Icons.MaterialSymbols;assembly=UraniumUI.Icons.MaterialSymbols"
                 xmlns:services="clr-namespace:SnapDoc.Services"
                 xmlns:local="clr-namespace:SnapDoc"
+                xmlns:controls="clr-namespace:SnapDoc.Controls"
                 Shell.TitleColor="{DynamicResource PrimaryDark}"
                 x:Class="SnapDoc.Views.MapView"
                 Title="swisstopo Karte">
@@ -20,7 +21,7 @@
 
     <Grid>
         <AbsoluteLayout>
-            <WebView x:Name="GeoAdminWebView"
+            <controls:CustomWebView x:Name="GeoAdminWebView"
                      AbsoluteLayout.LayoutBounds="0,0,1,1"
                      AbsoluteLayout.LayoutFlags="All" />
 

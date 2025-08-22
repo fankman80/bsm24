@@ -3,13 +3,12 @@
 #if ANDROID
 using Android.Webkit;
 #endif
-
-using SnapDoc.Models;
-using SnapDoc.Services;
-using SnapDoc.ViewModels;
 using CommunityToolkit.Maui.Alerts;
 using CommunityToolkit.Maui.Extensions;
 using CommunityToolkit.Maui.Storage;
+using SnapDoc.Models;
+using SnapDoc.Services;
+using SnapDoc.ViewModels;
 using System.Globalization;
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -18,170 +17,197 @@ namespace SnapDoc.Views;
 
 public partial class MapView : IQueryAttributable
 {
-    public string PlanId;
-    public string PinId;
+    public string PlanId = string.Empty;
+    public string PinId = string.Empty;
+
     public MapView()
     {
-#if ANDROID
-        Microsoft.Maui.Handlers.WebViewHandler.Mapper.AppendToMapping("MyCustomization", (handler, view) =>
-        {
-            handler.PlatformView.Settings.JavaScriptEnabled = true;
-            handler.PlatformView.Settings.DomStorageEnabled = true;
-            handler.PlatformView.Settings.SetGeolocationEnabled(true);
-            handler.PlatformView.Settings.JavaScriptCanOpenWindowsAutomatically = true;
-            handler.PlatformView.Settings.AllowContentAccess = true;
-            handler.PlatformView.Settings.AllowFileAccess = true;
-            handler.PlatformView.Settings.MixedContentMode = MixedContentHandling.AlwaysAllow;
-            handler.PlatformView.SetWebViewClient(new CustomWebViewClient());
-        });
-#endif
         InitializeComponent();
-        mapLayerPicker.PropertyChanged += MapLayerPicker_PropertyChanged;
+
+#if WINDOWS
+        GeoAdminWebView.HandlerChanged += (s, e) =>
+        {
+            if (GeoAdminWebView.Handler.PlatformView is Microsoft.UI.Xaml.Controls.WebView2 webview2)
+            {
+                webview2.WebMessageReceived += (sender2, args2) =>
+                {
+                    MainThread.BeginInvokeOnMainThread(() =>
+                    {
+                        string message = args2.TryGetWebMessageAsString();
+                        //DisplayAlert("Nachricht aus JS", message, "OK");
+                        var data = JsonSerializer.Deserialize<Dictionary<string, string>>(message);
+                        string pinkey = data["pinkey"];
+                        string plankey = data["plankey"];
+                        Shell.Current.GoToAsync($"setpin?planId={plankey}&pinId={pinkey}");
+                    });
+                };
+
+                webview2.NavigationCompleted += async (sender2, args2) =>
+                {
+                    string json = GeneratePinJson();
+                    await GeoAdminWebView.EvaluateJavaScriptAsync($"setMultipleMarkers({json});");
+                };
+            }
+        };
+#endif
+
+#if ANDROID
+        GeoAdminWebView.HandlerChanged += (s, e) =>
+        {
+            if (GeoAdminWebView.Handler?.PlatformView is Android.Webkit.WebView nativeWebView)
+            {
+                nativeWebView.Settings.JavaScriptEnabled = true;
+                nativeWebView.Settings.DomStorageEnabled = true;
+                nativeWebView.Settings.SetGeolocationEnabled(true);
+                nativeWebView.Settings.JavaScriptCanOpenWindowsAutomatically = true;
+                nativeWebView.Settings.AllowContentAccess = true;
+                nativeWebView.Settings.AllowFileAccess = true;
+                nativeWebView.Settings.MixedContentMode = MixedContentHandling.AlwaysAllow;
+
+                // JS Bridge registrieren
+                nativeWebView.AddJavascriptInterface(new JsBridge(this), "jsBridge");
+
+                // PageFinished überschreiben
+                nativeWebView.SetWebViewClient(new CustomWebViewClient(this));
+            }
+        };
+#endif
     }
+
+#if ANDROID
+    // Bridge-Klasse
+    public class JsBridge(MapView mapView) : Java.Lang.Object
+    {
+        readonly MapView _mapView = mapView;
+
+        [JavascriptInterface]
+        [Java.Interop.Export("invokeAction")]
+        public void InvokeAction(string message)
+        {
+            MainThread.BeginInvokeOnMainThread(() =>
+            {
+                //_mapView.DisplayAlert("Nachricht aus JS", message, "OK");
+                var data = JsonSerializer.Deserialize<Dictionary<string, string>>(message);
+                string pinkey = data["pinkey"];
+                string plankey = data["plankey"];
+                Shell.Current.GoToAsync($"setpin?planId={plankey}&pinId={pinkey}");
+            });
+        }
+    }
+
+    public class CustomWebViewClient : WebViewClient
+    {
+        readonly MapView _mapView;
+
+        public CustomWebViewClient(MapView mapView)
+        {
+            _mapView = mapView;
+        }
+
+        public override void OnPageFinished(Android.Webkit.WebView view, string url)
+        {
+            base.OnPageFinished(view, url);
+
+            // Marker setzen
+            string pinJson = MapView.GeneratePinJson();
+            view.EvaluateJavascript($"setMultipleMarkers({pinJson});", null);
+
+            // JS-Funktion für C# definieren
+            view.EvaluateJavascript("function sendToCSharp(msg) { jsBridge.invokeAction(msg); }", null);
+        }
+    }
+#endif
 
     public void ApplyQueryAttributes(IDictionary<string, object> query)
     {
-        if (query.TryGetValue("planId", out object value1))
-            PlanId = value1 as string;
-        if (query.TryGetValue("pinId", out object value2))
-            PinId = value2 as string;
+        if (query.TryGetValue("planId", out var planIdObj)) PlanId = planIdObj as string ?? string.Empty;
+        if (query.TryGetValue("pinId", out var pinIdObj)) PinId = pinIdObj as string ?? string.Empty;
     }
+
 
     protected override void OnAppearing()
     {
         base.OnAppearing();
 
-        double lon, lat, zoom;
+        var (lon, lat, zoom) = GetInitialMapCoordinates();
 
-        if (PinId != null)
-        {
-            SetPosBtn.IsVisible = true;
-            SetPosBtn.FindByName<Image>("SetPosBtnIcon").Source = GlobalJson.Data.Plans[PlanId].Pins[PinId].PinIcon;
-
-            if (GlobalJson.Data.Plans[PlanId].Pins[PinId].GeoLocation != null)
-            {
-                lon = GlobalJson.Data.Plans[PlanId].Pins[PinId].GeoLocation.WGS84.Longitude;
-                lat = GlobalJson.Data.Plans[PlanId].Pins[PinId].GeoLocation.WGS84.Latitude;
-                zoom = 18;
-            }
-            else
-            {
-                if (GPSViewModel.Instance.IsRunning)
-                {
-                    lon = GPSViewModel.Instance.Lon;
-                    lat = GPSViewModel.Instance.Lat;
-                    zoom = 18;
-                }
-                else
-                {
-                    lon = 8.226692;
-                    lat = 46.80121;
-                    zoom = 8;
-                }
-            }
-        }
-        else
-        {
-            if (GPSViewModel.Instance.IsRunning)
-            {
-                lon = GPSViewModel.Instance.Lon;
-                lat = GPSViewModel.Instance.Lat;
-                zoom = 18;
-            }
-            else
-            {
-                lon = 8.226692;
-                lat = 46.80121;
-                zoom = 8;
-            }
-        }
-
-        var htmlSource = new HtmlWebViewSource
+        GeoAdminWebView.Source = new HtmlWebViewSource
         {
             Html = LoadHtmlFromFile(lon, lat, zoom)
         };
 
-        GeoAdminWebView.Source = htmlSource;
-
-#if WINDOWS
-        GeoAdminWebView.Navigated += (s, e) =>
-        {
-            GeoAdminWebView.EvaluateJavaScriptAsync(Generatescript());
-        };
-#endif
-
-        mapLayerPicker.ItemsSource = Settings.SwissTopoLayers.Select(item => item.Desc).ToList(); // load map-layers to picker
-        mapLayerPicker.SelectedItem = Settings.SwissTopoLayers[0].Desc;
+        mapLayerPicker.ItemsSource = Settings.SwissTopoLayers.Select(item => item.Desc).ToList();
+        mapLayerPicker.SelectedItem = Settings.SwissTopoLayers.FirstOrDefault()?.Desc;
     }
 
-
-#if ANDROID
-    public class CustomWebViewClient : WebViewClient
+    private (double lon, double lat, double zoom) GetInitialMapCoordinates()
     {
-        public override void OnPageFinished(Android.Webkit.WebView view, string url)
+        double lon, lat, zoom;
+
+        if (!string.IsNullOrEmpty(PinId) && GlobalJson.Data.Plans[PlanId].Pins[PinId].GeoLocation != null)
         {
-            base.OnPageFinished(view, url);
-            view.EvaluateJavascript(Generatescript(), null);
+            var loc = GlobalJson.Data.Plans[PlanId].Pins[PinId].GeoLocation.WGS84;
+            lon = loc.Longitude;
+            lat = loc.Latitude;
+            zoom = 18;
         }
+        else if (GPSViewModel.Instance.IsRunning)
+        {
+            lon = GPSViewModel.Instance.Lon;
+            lat = GPSViewModel.Instance.Lat;
+            zoom = 18;
+        }
+        else
+        {
+            lon = 8.226692;
+            lat = 46.80121;
+            zoom = 8;
+        }
+
+        return (lon, lat, zoom);
     }
-#endif
 
     private static string LoadHtmlFromFile(double lon, double lat, double zoom)
     {
-        // Lade das HTML-Template
         var assembly = typeof(MapView).Assembly;
-        using var stream = assembly.GetManifestResourceStream("SnapDoc.Resources.Raw.index.html");
+        using var stream = assembly.GetManifestResourceStream("SnapDoc.Resources.Raw.index.html")!;
         using var reader = new StreamReader(stream);
         string htmlContent = reader.ReadToEnd();
 
-        // Ersetze die Platzhalter für die Koordinaten im HTML
-        string _center_koord = lon.ToString(CultureInfo.InvariantCulture) + ", " + lat.ToString(CultureInfo.InvariantCulture);
-        string _zoom = zoom.ToString();
-
-        htmlContent = htmlContent.Replace("{center_koord}", _center_koord);
-        htmlContent = htmlContent.Replace("{mapzoom}", _zoom);
+        htmlContent = htmlContent.Replace("{center_koord}", $"{lon.ToString(CultureInfo.InvariantCulture)}, {lat.ToString(CultureInfo.InvariantCulture)}");
+        htmlContent = htmlContent.Replace("{mapzoom}", zoom.ToString());
         htmlContent = htmlContent.Replace("{icon}", SettingsService.Instance.MapIcons[SettingsService.Instance.MapIcon]);
         htmlContent = htmlContent.Replace("{iconzoom}", ((double)SettingsService.Instance.MapIconSize / 100).ToString(CultureInfo.InvariantCulture));
         htmlContent = htmlContent.Replace("#999999", ((Color)Application.Current.Resources["Primary"]).ToRgbaHex());
+        htmlContent = htmlContent.Replace("#888888", ((Color)Application.Current.Resources["PrimaryDarkText"]).ToRgbaHex());
 
         return htmlContent;
     }
 
-    private static string Generatescript()
+    private static string GeneratePinJson()
     {
-        string positionsJson = "[";
+        var positions = new List<object>();
         foreach (var plan in GlobalJson.Data.Plans)
         {
-            if (GlobalJson.Data.Plans[plan.Key].Pins != null)
+            foreach (var pin in plan.Value.Pins ?? new Dictionary<string, Pin>())
             {
-                foreach (var pin in GlobalJson.Data.Plans[plan.Key].Pins)
+                if (pin.Value.GeoLocation != null)
                 {
-                    if (GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].GeoLocation != null)
+                    var loc = pin.Value.GeoLocation.WGS84;
+                    positions.Add(new
                     {
-                        var lon = GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].GeoLocation.WGS84.Longitude;
-                        var lat = GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].GeoLocation.WGS84.Latitude;
-                        var pindesc = EscapeForJs(GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].PinDesc);
-                        var pinlocation = GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].PinLocation;
-                        var pinname = GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].PinName;
-                        positionsJson += $"{{ lon: {lon.ToString(CultureInfo.InvariantCulture)}, " +
-                                            $"lat: {lat.ToString(CultureInfo.InvariantCulture)}," +
-                                            $"pinname: '{pinname}', pinlocation: '{pinlocation}'," +
-                                            $"pindesc: '{pindesc}'," +
-                                            $"plankey: '{plan.Key}'," +
-                                            $"pinkey: '{pin.Key}'}},";
-                    }
+                        lon = loc.Longitude,
+                        lat = loc.Latitude,
+                        pinname = pin.Value.PinName,
+                        pinlocation = pin.Value.PinLocation,
+                        pindesc = pin.Value.PinDesc,
+                        plankey = plan.Key,
+                        pinkey = pin.Key
+                    });
                 }
             }
         }
-        positionsJson = positionsJson.TrimEnd(',') + "]";
-        return $"setMultipleMarkers({positionsJson});";
-    }
-
-    static string EscapeForJs(string value)
-    {
-        return value?
-            .Replace("\r", "<br>")
-            .Replace("\n", "<br>");
+        return JsonSerializer.Serialize(positions);
     }
 
     private async void SetPosClicked(object sender, EventArgs e)
@@ -318,15 +344,8 @@ public partial class MapView : IQueryAttributable
 
 public class Coordinate
 {
-    [JsonPropertyName("lon")]
-    public double Lon { get; set; }
-
-    [JsonPropertyName("lat")]
-    public double Lat { get; set; }
-
-    [JsonPropertyName("plankey")]
-    public string PlanKey { get; set; }
-
-    [JsonPropertyName("pinkey")]
-    public string PinKey { get; set; }
+    [JsonPropertyName("lon")] public double Lon { get; set; }
+    [JsonPropertyName("lat")] public double Lat { get; set; }
+    [JsonPropertyName("plankey")] public string PlanKey { get; set; } = string.Empty;
+    [JsonPropertyName("pinkey")] public string PinKey { get; set; } = string.Empty;
 }
