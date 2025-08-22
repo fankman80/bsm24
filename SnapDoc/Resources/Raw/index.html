@@ -144,6 +144,23 @@
         var pendingPositions = [];
         let currentPinkey = null;
         let currentPlankey = null;
+        var initialCenter = [0, 0];
+        var initialZoom = 1;
+        var initialIcon = 'https://upload.wikimedia.org/wikipedia/commons/e/ec/RedDot.svg';
+        var initialIconScale = 1;
+
+        function initMarkersFromBridge(center, zoom, icon, scale, markers) {
+            initialCenter = center;
+            initialZoom = zoom;
+            initialIcon = icon;
+            initialIconScale = scale;
+
+            if (!map) initMap();
+
+            if (markers && markers.length > 0) {
+                setMultipleMarkers(markers);
+            }
+        }
 
         function initMap() {
             wmsLayer = new ol.layer.Tile({ source: new ol.source.TileWMS({ url: 'https://wms.geo.admin.ch/', params: { LAYERS: 'ch.swisstopo.pixelkarte-farbe', TILED: true }, serverType: 'mapserver' }) });
@@ -153,8 +170,8 @@
                 target: 'map',
                 layers: [wmsLayer, overlayLayer],
                 view: new ol.View({
-                    center: ol.proj.fromLonLat([{center_koord}]),
-                    zoom: {mapzoom}
+                    center: ol.proj.fromLonLat(initialCenter),
+                    zoom: initialZoom
                 })
             });
 
@@ -246,7 +263,7 @@
             }
 
             var iconStyle = new ol.style.Style({
-                image: new ol.style.Icon({ src: '{icon}', scale: {iconzoom}, anchor: [0.5, 1], anchorXUnits: 'fraction', anchorYUnits: 'fraction' })
+                image: new ol.style.Icon({ src: initialIcon, scale: initialIconScale, anchor: [0.5, 1], anchorXUnits: 'fraction', anchorYUnits: 'fraction' })
             });
 
             var marker = new ol.Feature({ geometry: new ol.geom.Point(ol.proj.fromLonLat([lon, lat])), pinname, pinlocation, pindesc, plankey, pinkey });
@@ -275,17 +292,9 @@
             var features = vectorSource.getFeatures();
             return features.length ? JSON.stringify(features.map(f => { var c = ol.proj.toLonLat(f.getGeometry().getCoordinates()); return { lon: c[0], lat: c[1], pinkey: f.get('pinkey'), plankey: f.get('plankey') }; })) : null;
         }
-        window.onload = function () {
-            initMap();
 
+        window.onload = function () {
             const sendButton = document.getElementById('sendButton');
-            //sendButton.addEventListener('click', function () {
-            //    if (window.jsBridge && window.jsBridge.invokeAction) {
-            //        window.jsBridge.invokeAction("Hallo aus JS"); // Nachricht an C#
-            //    } else {
-            //        alert("Bridge noch nicht verfügbar!");
-            //    }
-            //});
 
             sendButton.addEventListener('click', function () {
                 if (!currentPinkey || !currentPlankey) return;

@@ -87,7 +87,6 @@ public partial class MapView : IQueryAttributable
         {
             MainThread.BeginInvokeOnMainThread(() =>
             {
-                //_mapView.DisplayAlert("Nachricht aus JS", message, "OK");
                 var data = JsonSerializer.Deserialize<Dictionary<string, string>>(message);
                 string pinkey = data["pinkey"];
                 string plankey = data["plankey"];
@@ -98,17 +97,25 @@ public partial class MapView : IQueryAttributable
 
     public class CustomWebViewClient(MapView mapView) : WebViewClient
     {
-        readonly MapView _mapView = mapView;
-
         public override void OnPageFinished(Android.Webkit.WebView view, string url)
         {
             base.OnPageFinished(view, url);
 
-            // Marker setzen
+            var (lon, lat, zoom) = mapView.GetInitialMapCoordinates();
+            string icon = SettingsService.Instance.MapIcons[SettingsService.Instance.MapIcon];
+            double scale = (double)SettingsService.Instance.MapIconSize / 100;
             string pinJson = MapView.GeneratePinJson();
-            view.EvaluateJavascript($"setMultipleMarkers({pinJson});", null);
 
-            // JS-Funktion für C# definieren
+            string js = $@"initMarkersFromBridge(
+                            [{lon.ToString(CultureInfo.InvariantCulture)}, {lat.ToString(CultureInfo.InvariantCulture)}],
+                            {zoom},
+                            '{icon}',
+                            {scale.ToString(CultureInfo.InvariantCulture)},
+                            {pinJson});";
+
+            view.EvaluateJavascript(js, null);
+
+            // JS-Bridge definieren
             view.EvaluateJavascript("function sendToCSharp(msg) { jsBridge.invokeAction(msg); }", null);
         }
     }
@@ -129,7 +136,7 @@ public partial class MapView : IQueryAttributable
 
         GeoAdminWebView.Source = new HtmlWebViewSource
         {
-            Html = LoadHtmlFromFile(lon, lat, zoom)
+            Html = LoadHtmlFromFile()
         };
 
         mapLayerPicker.ItemsSource = Settings.SwissTopoLayers.Select(item => item.Desc).ToList();
@@ -163,17 +170,12 @@ public partial class MapView : IQueryAttributable
         return (lon, lat, zoom);
     }
 
-    private static string LoadHtmlFromFile(double lon, double lat, double zoom)
+    private static string LoadHtmlFromFile()
     {
         var assembly = typeof(MapView).Assembly;
         using var stream = assembly.GetManifestResourceStream("SnapDoc.Resources.Raw.index.html")!;
         using var reader = new StreamReader(stream);
         string htmlContent = reader.ReadToEnd();
-
-        htmlContent = htmlContent.Replace("{center_koord}", $"{lon.ToString(CultureInfo.InvariantCulture)}, {lat.ToString(CultureInfo.InvariantCulture)}");
-        htmlContent = htmlContent.Replace("{mapzoom}", zoom.ToString());
-        htmlContent = htmlContent.Replace("{icon}", SettingsService.Instance.MapIcons[SettingsService.Instance.MapIcon]);
-        htmlContent = htmlContent.Replace("{iconzoom}", ((double)SettingsService.Instance.MapIconSize / 100).ToString(CultureInfo.InvariantCulture));
         htmlContent = htmlContent.Replace("#999999", ((Color)Application.Current.Resources["Primary"]).ToRgbaHex());
         htmlContent = htmlContent.Replace("#888888", ((Color)Application.Current.Resources["PrimaryDarkText"]).ToRgbaHex());
 
