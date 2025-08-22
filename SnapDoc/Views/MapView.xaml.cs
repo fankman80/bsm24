@@ -26,16 +26,16 @@ public partial class MapView : IQueryAttributable
         InitializeComponent();
 
 #if WINDOWS
-        GeoAdminWebView.HandlerChanged += (s, e) =>
+        GeoAdminWebView.HandlerChanged += async (s, e) =>
         {
-            if (GeoAdminWebView.Handler.PlatformView is Microsoft.UI.Xaml.Controls.WebView2 webview2)
+            if (GeoAdminWebView.Handler?.PlatformView is Microsoft.UI.Xaml.Controls.WebView2 webview2)
             {
+                // Nachrichten von JS abfangen
                 webview2.WebMessageReceived += (sender2, args2) =>
                 {
                     MainThread.BeginInvokeOnMainThread(() =>
                     {
                         string message = args2.TryGetWebMessageAsString();
-                        //DisplayAlert("Nachricht aus JS", message, "OK");
                         var data = JsonSerializer.Deserialize<Dictionary<string, string>>(message);
                         string pinkey = data["pinkey"];
                         string plankey = data["plankey"];
@@ -43,10 +43,26 @@ public partial class MapView : IQueryAttributable
                     });
                 };
 
-                webview2.NavigationCompleted += async (sender2, args2) =>
+                // Erst CoreWebView2 initialisieren
+                if (webview2.CoreWebView2 == null)
+                    await webview2.EnsureCoreWebView2Async();
+
+                // JS ausführen, sobald das DOM geladen ist
+                webview2.CoreWebView2.DOMContentLoaded += async (sender2, args2) =>
                 {
-                    string json = GeneratePinJson();
-                    await GeoAdminWebView.EvaluateJavaScriptAsync($"setMultipleMarkers({json});");
+                    var (lon, lat, zoom) = GetInitialMapCoordinates();
+                    string icon = SettingsService.Instance.MapIcons[SettingsService.Instance.MapIcon];
+                    double scale = (double)SettingsService.Instance.MapIconSize / 100;
+                    string pinJson = GeneratePinJson();
+
+                    string js = $@"initMarkersFromBridge(
+                                [{lon.ToString(CultureInfo.InvariantCulture)}, {lat.ToString(CultureInfo.InvariantCulture)}],
+                                {zoom},
+                                '{icon}',
+                                {scale.ToString(CultureInfo.InvariantCulture)},
+                                {pinJson});";
+
+                    await webview2.ExecuteScriptAsync(js);
                 };
             }
         };
@@ -107,11 +123,11 @@ public partial class MapView : IQueryAttributable
             string pinJson = MapView.GeneratePinJson();
 
             string js = $@"initMarkersFromBridge(
-                            [{lon.ToString(CultureInfo.InvariantCulture)}, {lat.ToString(CultureInfo.InvariantCulture)}],
-                            {zoom},
-                            '{icon}',
-                            {scale.ToString(CultureInfo.InvariantCulture)},
-                            {pinJson});";
+                        [{lon.ToString(CultureInfo.InvariantCulture)}, {lat.ToString(CultureInfo.InvariantCulture)}],
+                        {zoom},
+                        '{icon}',
+                        {scale.ToString(CultureInfo.InvariantCulture)},
+                        {pinJson});";
 
             view.EvaluateJavascript(js, null);
 
