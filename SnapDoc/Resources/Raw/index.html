@@ -36,13 +36,13 @@
         }
 
         #popupContent {
-            margin-bottom: 10px; /* Abstand zum Button */
+            margin-bottom: 10px;
         }
 
         #sendButton {
             display: block;
-            margin-left: auto; /* rechts ausrichten */
-            margin-right: 0; /* rechts ausrichten */
+            margin-left: auto;
+            margin-right: 0;
             padding: 6px 10px;
             font-size: 14px;
             border-radius: 4px;
@@ -56,22 +56,22 @@
         #popup::before {
             content: "";
             position: absolute;
-            left: -11px; /* Etwas weiter links, damit der Rahmen sichtbar ist */
-            top: 40px; /* Feste Position, z.B. 20px vom oberen Rand */
+            left: -11px;
+            top: 40px;
             border-top: 11px solid transparent;
             border-bottom: 11px solid transparent;
-            border-right: 11px solid gray; /* Rahmenfarbe */
+            border-right: 11px solid gray;
         }
 
         /* Innerer Pfeil (kleineres Dreieck) */
         #popup::after {
             content: "";
             position: absolute;
-            left: -10px; /* Etwas nach innen verschoben, damit der Rahmen um den Pfeil entsteht */
+            left: -10px;
             top: 41px;
             border-top: 10px solid transparent;
             border-bottom: 10px solid transparent;
-            border-right: 10px solid white; /* Gleiche Hintergrundfarbe wie das Popup */
+            border-right: 10px solid white;
         }
 
         #popup h4 {
@@ -91,8 +91,8 @@
 
         hr.solid {
             border: none;
-            border-top: 1px solid #999999; /* Diese Farbe wird themenbezogen ersetzt */
-            margin: 10px 0; /* Abstand um den Strich */
+            border-top: 1px solid #999999;
+            margin: 10px 0;
         }
 
         .ol-scale-line {
@@ -135,8 +135,8 @@
 <body>
     <div id="map"></div>
     <div id="popup">
-        <div id="popupContent"></div> <!-- dynamischer Pin-Inhalt -->
-        <button id="sendButton">Pin ansehen</button> <!-- bleibt immer unten rechts -->
+        <div id="popupContent"></div>
+        <button id="sendButton">Bearbeiten</button>
     </div>
 
     <script>
@@ -240,7 +240,6 @@
                     if (!content) {
                         content = '<h4 class="popup-header">Hinweis:</h4><p class="popup-header">Für diesen Pin sind noch keine Informationen verfügbar.</p>';
                     } else {
-                        // Entferne das letzte `<hr>` falls vorhanden
                         content = content.replace(/<hr class="solid">$/, '');
                     }
 
@@ -250,7 +249,7 @@
                     popup.setPosition(coordinates);
                 } else {
                     popupElement.style.display = 'none';
-                    currentPinkey = null; // kein Marker ausgewählt
+                    currentPinkey = null;
                     currentPlankey = null;
                 }
             });
