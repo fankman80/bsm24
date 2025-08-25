@@ -20,6 +20,9 @@ public partial class MapView : IQueryAttributable
 {
     public string PlanId = string.Empty;
     public string PinId = string.Empty;
+    private double lon = 8.226692;  // Default: Schweiz
+    private double lat = 46.80121;
+    private int zoom = 8;
 
     public MapView()
     {
@@ -50,7 +53,6 @@ public partial class MapView : IQueryAttributable
                 // JS ausführen, sobald das DOM geladen ist
                 webview2.CoreWebView2.DOMContentLoaded += async (sender2, args2) =>
                 {
-                    var (lon, lat, zoom) = GetInitialMapCoordinates();
                     string icon = SettingsService.Instance.MapIcons[SettingsService.Instance.MapIcon];
                     double scale = (double)SettingsService.Instance.MapIconSize / 100;
                     string pinJson = GeneratePinJson();
@@ -117,14 +119,13 @@ public partial class MapView : IQueryAttributable
         {
             base.OnPageFinished(view, url);
 
-            var (lon, lat, zoom) = mapView.GetInitialMapCoordinates();
             string icon = SettingsService.Instance.MapIcons[SettingsService.Instance.MapIcon];
             double scale = (double)SettingsService.Instance.MapIconSize / 100;
             string pinJson = MapView.GeneratePinJson();
 
             string js = $@"initMarkersFromBridge(
-                        [{lon.ToString(CultureInfo.InvariantCulture)}, {lat.ToString(CultureInfo.InvariantCulture)}],
-                        {zoom},
+                        [{mapView.lon.ToString(CultureInfo.InvariantCulture)}, {mapView.lat.ToString(CultureInfo.InvariantCulture)}],
+                        {mapView.zoom},
                         '{icon}',
                         {scale.ToString(CultureInfo.InvariantCulture)},
                         {pinJson});";
@@ -139,14 +140,20 @@ public partial class MapView : IQueryAttributable
 
     public void ApplyQueryAttributes(IDictionary<string, object> query)
     {
-        if (query.TryGetValue("planId", out var planIdObj)) PlanId = planIdObj as string ?? string.Empty;
-        if (query.TryGetValue("pinId", out var pinIdObj)) PinId = pinIdObj as string ?? string.Empty;
+        if (query.TryGetValue("planId", out var planIdObj))
+            PlanId = planIdObj as string ?? string.Empty;
+        if (query.TryGetValue("pinId", out var pinIdObj)) 
+            PinId = pinIdObj as string ?? string.Empty;
+
+        UpdateUiFromQuery();
     }
 
 
     protected override void OnAppearing()
     {
         base.OnAppearing();
+
+        UpdateUiFromQuery();
 
         GeoAdminWebView.Source = new HtmlWebViewSource
         {
@@ -157,30 +164,26 @@ public partial class MapView : IQueryAttributable
         mapLayerPicker.SelectedItem = Settings.SwissTopoLayers.FirstOrDefault()?.Desc;
     }
 
-    private (double lon, double lat, double zoom) GetInitialMapCoordinates()
+    private void UpdateUiFromQuery()
     {
-        // Standard: Zoom ganze Schweiz
-        double lon = 8.226692;
-        double lat = 46.80121;
-        double zoom = 8;
-
-        if (!string.IsNullOrEmpty(PinId))
+        if (!string.IsNullOrEmpty(PlanId) &&
+            !string.IsNullOrEmpty(PinId) &&
+            GlobalJson.Data.Plans.TryGetValue(PlanId, out var plan) &&
+            plan.Pins.TryGetValue(PinId, out var pin))
         {
             SetPosBtn.IsVisible = true;
-            SetPosBtn.FindByName<Image>("SetPosBtnIcon").Source =
-                GlobalJson.Data.Plans[PlanId].Pins[PinId].PinIcon;
+            SetPosBtn.FindByName<Image>("SetPosBtnIcon").Source = pin.PinIcon;
 
-            var geo = GlobalJson.Data.Plans[PlanId].Pins[PinId].GeoLocation;
-            if (geo != null)
+            if (pin.GeoLocation != null)
             {
-                // Pin-Position
-                lon = geo.WGS84.Longitude;
-                lat = geo.WGS84.Latitude;
+                // Zoom auf Pin
+                lon = pin.GeoLocation.WGS84.Longitude;
+                lat = pin.GeoLocation.WGS84.Latitude;
                 zoom = 18;
             }
             else if (GPSViewModel.Instance.IsRunning)
             {
-                // GPS-Position
+                // Zoom auf GPS
                 lon = GPSViewModel.Instance.Lon;
                 lat = GPSViewModel.Instance.Lat;
                 zoom = 18;
@@ -188,13 +191,11 @@ public partial class MapView : IQueryAttributable
         }
         else if (GPSViewModel.Instance.IsRunning)
         {
-            // GPS-Position
+            // Zoom auf GPS (wenn kein Pin)
             lon = GPSViewModel.Instance.Lon;
             lat = GPSViewModel.Instance.Lat;
             zoom = 18;
         }
-
-        return (lon, lat, zoom);
     }
 
     private static string LoadHtmlFromFile()
@@ -237,38 +238,40 @@ public partial class MapView : IQueryAttributable
 
     private async void SetPosClicked(object sender, EventArgs e)
     {
-        if (GPSViewModel.Instance.IsRunning)
+        if (!GPSViewModel.Instance.IsRunning)
         {
-            var popup = new PopupDualResponse("Sind Sie sicher dass Sie die Positionsdaten überschreiben wollen?");
-            var result = await this.ShowPopupAsync<string>(popup, Settings.PopupOptions);
-            if (result.Result != null)
-            {
-                Location location = new();
-                if (GPSViewModel.Instance.IsRunning)
-                {
-                    location.Longitude = GPSViewModel.Instance.Lon;
-                    location.Latitude = GPSViewModel.Instance.Lat;
-                    location.Accuracy = GPSViewModel.Instance.Acc;
-                }
-                else
-                    location = null;
-
-                if (location != null)
-                    GlobalJson.Data.Plans[PlanId].Pins[PinId].GeoLocation = new GeoLocData(location);
-
-                GeoAdminWebView.Reload();
-            }
+            var popup = new PopupAlert("Aktivieren Sie zuerst die Ortungsdienste, damit der Standort aktualisiert werden kann.");
+            this.ShowPopup(popup, Settings.PopupOptions);
+            return;
         }
-        else
+
+        var confirmPopup = new PopupDualResponse("Sind Sie sicher, dass Sie die Positionsdaten überschreiben wollen?");
+        var result = await this.ShowPopupAsync<string>(confirmPopup, Settings.PopupOptions);
+
+        if (result.Result == null)
+            return;
+
+        var location = new Location
         {
-            var popup1 = new PopupAlert("Aktivieren Sie zuerst die Ortungsdienste, damit der Standort aktualisiert werden kann?");
-            this.ShowPopup(popup1, Settings.PopupOptions);
-        }
+            Longitude = GPSViewModel.Instance.Lon,
+            Latitude = GPSViewModel.Instance.Lat,
+            Accuracy = GPSViewModel.Instance.Acc
+        };
+
+        lon = location.Longitude;
+        lat = location.Latitude;
+        zoom = 18;
+
+        GlobalJson.Data.Plans[PlanId].Pins[PinId].GeoLocation = new GeoLocData(location);
+
+        GeoAdminWebView.Reload();
     }
+
 
     private async void GetCoordinatesClicked(object sender, EventArgs e)
     {
         string result = await GeoAdminWebView.EvaluateJavaScriptAsync("getMarkerCoordinates()");
+
         if (!string.IsNullOrEmpty(result))
         {
             result = result.Replace("\\\"", "\"");
