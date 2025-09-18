@@ -40,6 +40,7 @@ public partial class PinList : ContentPage
     {
         int pincounter = 0;
         pinListView.ItemsSource = null;
+        pinItems.Clear();
         bool saveRequested = false;
 
         foreach (var plan in GlobalJson.Data.Plans)
@@ -102,6 +103,9 @@ public partial class PinList : ContentPage
         PinCounterLabel.Text = $"Pins: {pinItems.Count}";
 
         IconSorting(OrderDirection);
+
+        if (!string.IsNullOrEmpty(SearchEntry.Text))
+            SearchEntry_TextChanged(null, new TextChangedEventArgs(SearchEntry.Text, SearchEntry.Text));
     }
 
     private void Pin_PropertyChanged(object sender, PropertyChangedEventArgs e)

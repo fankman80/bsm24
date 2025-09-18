@@ -1017,7 +1017,7 @@ public partial class NewPage : IQueryAttributable, INotifyPropertyChanged
     private async void PlanRotate(int angle)
     {
         var imagePath = Path.Combine(Settings.DataDirectory, GlobalJson.Data.ProjectPath, GlobalJson.Data.PlanPath, GlobalJson.Data.Plans[PlanId].File);
-        
+
         // Dateiname ändern, damit das Bild als neue Source erkannt wird
         var imagefile = Path.GetFileNameWithoutExtension(imagePath);
         if (imagefile.EndsWith("_r"))

@@ -1,12 +1,13 @@
 ﻿#nullable disable
-
-using SnapDoc.Models;
-using SnapDoc.Services;
 using DocumentFormat.OpenXml;
+using DocumentFormat.OpenXml.CustomXmlDataProperties;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Vml;
 using DocumentFormat.OpenXml.Wordprocessing;
 using SkiaSharp;
+using SnapDoc.Models;
+using SnapDoc.Services;
+using System.Text;
 using System.Text.RegularExpressions;
 using DDW = DocumentFormat.OpenXml.Drawing.Wordprocessing;
 using DW = DocumentFormat.OpenXml.Wordprocessing;
@@ -15,11 +16,13 @@ using OXML = DocumentFormat.OpenXml;
 namespace SnapDoc;
 
 public partial class ExportReport
-{ 
+{
     [GeneratedRegex(@"\$\{plan_images/(\d+)/(\d+)\}")]
     private static partial Regex PlanImagesRegex();
 
     private static readonly Dictionary<string, string> imageRelationshipIds = [];
+
+    private static string storeItemId;
 
     public static async Task DocX(string templateDoc, string savePath)
     {
@@ -35,7 +38,7 @@ public partial class ExportReport
         Dictionary<string, string> placeholders_lists = new()
         {
             {"${plan_indexes}", "${plan_indexes}"},         //bereinige splitted runs
-            {"${plan_images/", "${plan_images/"},           //bereinige splitted runs  
+            {"${plan_images/", "${plan_images/"},           //bereinige splitted runs
             {"${title_image}", "${title_image}"},           //bereinige splitted runs
         };
         Dictionary<string, string> placeholders_table = new()
@@ -83,6 +86,45 @@ public partial class ExportReport
 
             MainDocumentPart mainPart = wordDoc.MainDocumentPart;
 
+            // CustomXmlPart erzeugen
+            var customXmlPart = mainPart.CustomXmlParts
+                                        .FirstOrDefault()
+                             ?? mainPart.AddCustomXmlPart(CustomXmlPartType.CustomXml);
+
+            // Positionsdaten für alle Pins schreiben
+            var xml = "<positions>";
+            int i = 1;
+            foreach (KeyValuePair<string, Plan> plan in GlobalJson.Data.Plans)
+            {
+                if (GlobalJson.Data.Plans[plan.Key].Pins != null && GlobalJson.Data.Plans[plan.Key].AllowExport)
+                {
+                    foreach (KeyValuePair<string, Pin> pin in GlobalJson.Data.Plans[plan.Key].Pins)
+                    {
+                        if (GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].AllowExport)
+                        {
+                            xml += $"<pos id='{i}'>{i}</pos>";
+                            i += 1;
+                        }
+                    }
+                }
+            }
+            xml += "</positions>";
+
+            using (var ms = new MemoryStream(Encoding.UTF8.GetBytes(xml)))
+                customXmlPart.FeedData(ms);
+
+            // Properties mit StoreItemId erzeugen
+            var propPart = customXmlPart.CustomXmlPropertiesPart
+                           ?? customXmlPart.AddNewPart<CustomXmlPropertiesPart>();
+
+            if (string.IsNullOrEmpty(storeItemId))
+            {
+                storeItemId = "{" + Guid.NewGuid().ToString().ToUpper() + "}";
+            }
+
+            propPart.DataStoreItem ??= new DataStoreItem { ItemId = storeItemId };
+
+
             // suche Tabelle mit Namen "Pin_Table"
             string tableTitle = "Pin_Table";
             Table table = mainPart?.Document?.Body?.Elements<Table>()
@@ -105,7 +147,7 @@ public partial class ExportReport
                 if (table != null)
                 {
                     List<(int, int, string)> columnList = SearchTableColumns(table, placeholders_table); // Suche SpaltenNummern
-                    int i = 1;
+                    i = 1;
                     foreach (KeyValuePair<string, Plan> plan in GlobalJson.Data.Plans)
                     {
                         if (GlobalJson.Data.Plans[plan.Key].Pins != null && GlobalJson.Data.Plans[plan.Key].AllowExport)
@@ -142,8 +184,14 @@ public partial class ExportReport
                                                 switch (_placeholder.Item3)
                                                 {
                                                     case "${pin_nr}":
-                                                        text = i.ToString();
-                                                        break;
+                                                        {
+                                                            string tag = $"Pos_{i}";
+                                                            string xpath = $"/positions/pos[@id='{i}']";
+                                                            var sdt = CreateBoundSDTRun(tag, xpath, i.ToString());
+
+                                                            newParagraph = new Paragraph(sdt);
+                                                            break;
+                                                        }
 
                                                     case "${pin_planName}":
                                                         text = GlobalJson.Data.Plans[plan.Key].Name;
@@ -220,7 +268,7 @@ public partial class ExportReport
                                                                     {
                                                                         var newPath = System.IO.Path.Combine(Settings.CacheDirectory, System.IO.Path.GetFileName(imgName));
                                                                         Helper.BitmapResizer(imgPath, newPath, SettingsService.Instance.FotoCompressValue / 100f);
-                                                                        imgPath = newPath; 
+                                                                        imgPath = newPath;
                                                                     }
 
                                                                     Drawing _img = GetImageElement(mainPart, imgPath, scaledSize, new Point(0, 0), 0, "inline");
@@ -375,7 +423,7 @@ public partial class ExportReport
                                 paragraph.Append(new Run());
 
                                 int planCounter = GlobalJson.Data.Plans.Count;
-                                int i = 1;
+                                i = 1;
                                 foreach (KeyValuePair<string, Plan> plan in GlobalJson.Data.Plans)
                                 {
                                     if (GlobalJson.Data.Plans[plan.Key].AllowExport)
@@ -424,7 +472,10 @@ public partial class ExportReport
                                                     float rotationAngle = (float)GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].PinRotation;
 
                                                     run.Append(GetImageElement(mainPart, pinImage, new SizeF(scaledPinSize.Width, scaledPinSize.Height), posOnPlan, rotationAngle, "anchor"));
-                                                    run.Append(CreateTextBoxWithShape(SettingsService.Instance.PlanLabelPrefix + i.ToString(),
+                                                    run.Append(CreateTextBoxWithShape(SettingsService.Instance.PlanLabelPrefix,
+                                                                                      i,
+                                                                                      storeItemId,
+                                                                                      $"/positions/pos[@id='{i}']",
                                                                                       new Point(posOnPlan.X + scaledPinSize.Width + 1, posOnPlan.Y - scaledPinSize.Height), // offset 1mm to right
                                                                                       SettingsService.Instance.PlanLabelFontSize,
                                                                                       pinColor.ToString()[3..]));
@@ -471,6 +522,20 @@ public partial class ExportReport
         // lösche den Bild-Cache
         if (Directory.Exists(Settings.CacheDirectory))
             Directory.Delete(Settings.CacheDirectory, true);
+    }
+
+    private static SdtRun CreateBoundSDTRun(string tag, string xpath, string initialValue)
+    {
+        return new SdtRun(
+            new SdtProperties(
+                new SdtAlias { Val = tag },
+                new Tag { Val = tag },
+                new DataBinding { StoreItemId = storeItemId, XPath = xpath, PrefixMappings = "" }
+            ),
+            new SdtContentRun(
+                new Run(new Text(initialValue) { Space = SpaceProcessingModeValues.Preserve })
+            )
+        );
     }
 
     private static Drawing GetImageElement(MainDocumentPart mainPart, string imgPath, SizeF size, Point pos, float rotationAngle, string wrap, SKRectI? crop = null)
@@ -853,86 +918,111 @@ public partial class ExportReport
         return columnList;
     }
 
-    private static Picture CreateTextBoxWithShape(string text, Point coordinateMM, double fontSizePt, string fontColorHex)
+
+    private static Picture CreateTextBoxWithShape(
+        string preText,
+        int posNr,
+        string storeItemId,
+        string xpath,
+        Point coordinateMM,
+        double fontSizePt,
+        string fontColorHex)
     {
-        double xCoordinatePt = coordinateMM.X * 2.83465;
-        double yCoordinatePt = coordinateMM.Y * 2.83465;
-        double textWidthPt = GetTextWidthInPoints(text, "Arial", fontSizePt, 96) * 2;
+        double xPt = coordinateMM.X * 2.83465;
+        double yPt = coordinateMM.Y * 2.83465;
 
-        Picture picture1 = new();
+        Picture picture = new();
 
-        Shape shape1 = new()
+        // VML-Shape
+        Shape shape = new()
         {
             Id = "TextBoxShape",
-            Style = $"position:absolute;margin-left:{xCoordinatePt}pt;margin-top:{yCoordinatePt}pt;width:{textWidthPt}pt;mso-fit-shape-to-text:t;mso-wrap-style:square;",
+            Style = $"position:absolute;margin-left:{xPt}pt;margin-top:{yPt}pt;" +
+                    "mso-fit-shape-to-text:t;mso-wrap-style:none;",
+            Stroked = TrueFalseValue.FromBoolean(true),
+            Filled = TrueFalseValue.FromBoolean(true)
         };
 
-        Fill fill1 = new() { Color = "#FFFFFF" };
-        Stroke stroke1 = new() { Color = fontColorHex, Weight = "1pt" };
+        shape.Append(
+            new Fill { Color = "#FFFFFF", On = TrueFalseValue.FromBoolean(true) },
+            new Stroke { Color = fontColorHex, Weight = "1pt", On = TrueFalseValue.FromBoolean(true) }
+        );
 
-        TextBox textBox1 = new()
+        // TextBox innerhalb der Shape
+        TextBox textBox = new()
         {
-            Style = "mso-fit-shape-to-text:t;mso-wrap-style:square;",
-            Inset = "0pt, 0pt, 0pt, 0pt"
+            Style = "mso-fit-shape-to-text:t;mso-wrap-style:none;",
+            Inset = "0pt,0pt,0pt,0pt"
         };
-        TextBoxContent textBoxContent1 = new();
+        TextBoxContent textBoxContent = new();
 
-        Paragraph paragraph2 = new();
+        // Paragraph
+        DW.Paragraph paragraph = new();
         ParagraphProperties paragraphProperties = new();
 
+        // Rahmen + Hintergrundfarbe
         Shading paragraphShading = new()
         {
             Fill = "FFFFFF",
             Val = ShadingPatternValues.Clear
         };
-
         ParagraphBorders paragraphBorders = new()
         {
-            TopBorder = new OXML.Wordprocessing.TopBorder() { Val = OXML.Wordprocessing.BorderValues.Single, Color = fontColorHex.Replace("#", ""), Size = 6U },  // Obere Linie
-            BottomBorder = new OXML.Wordprocessing.BottomBorder() { Val = OXML.Wordprocessing.BorderValues.Single, Color = fontColorHex.Replace("#", ""), Size = 6U },  // Untere Linie
-            LeftBorder = new OXML.Wordprocessing.LeftBorder() { Val = OXML.Wordprocessing.BorderValues.Single, Color = fontColorHex.Replace("#", ""), Size = 6U },  // Linke Linie
-            RightBorder = new OXML.Wordprocessing.RightBorder() { Val = OXML.Wordprocessing.BorderValues.Single, Color = fontColorHex.Replace("#", ""), Size = 6U }  // Rechte Linie
+            TopBorder = new TopBorder { Val = BorderValues.Single, Color = fontColorHex.Replace("#", ""), Size = 6U },
+            BottomBorder = new BottomBorder { Val = BorderValues.Single, Color = fontColorHex.Replace("#", ""), Size = 6U },
+            LeftBorder = new LeftBorder { Val = BorderValues.Single, Color = fontColorHex.Replace("#", ""), Size = 6U },
+            RightBorder = new RightBorder { Val = BorderValues.Single, Color = fontColorHex.Replace("#", ""), Size = 6U }
         };
+        paragraphProperties.Append(paragraphShading);
+        paragraphProperties.Append(paragraphBorders);
+        paragraph.Append(paragraphProperties);
 
-        // Füge die Hintergrundfarbe und die Rahmen zu den Absatzeigenschaften hinzu
-        paragraphProperties.Append(paragraphShading);  // Hintergrundfarbe des Absatzes
-        paragraphProperties.Append(paragraphBorders);  // Rahmen um den Absatz
-
-        // Definiere den Text und seine Eigenschaften (Größe und Farbe)
-        Run run2 = new();
-        RunProperties runProperties = new()
+        // Präfixtext
+        if (!string.IsNullOrEmpty(preText))
         {
-            FontSize = new DW.FontSize() { Val = (fontSizePt * 2).ToString() },  // Schriftgröße
-            Color = new DW.Color() { Val = fontColorHex.Replace("#", "") },  // Schriftfarbe
-            RunFonts = new DW.RunFonts() { Ascii = "Arial" }  // Schriftart auf Arial setzen
-        };
+            paragraph.Append(
+                new DW.Run(
+                    new DW.RunProperties(
+                        new DW.RunFonts { Ascii = "Arial", HighAnsi = "Arial", EastAsia = "Arial" },
+                        new DW.FontSize { Val = (fontSizePt * 2).ToString() },
+                        new DW.Color { Val = fontColorHex.TrimStart('#') }
+                    ),
+                    new DW.Text(preText) { Space = SpaceProcessingModeValues.Preserve }
+                )
+            );
+        }
 
-        // Füge den Textinhalt hinzu
-        DW.Text text2 = new() { Text = text };
+        // SDT
+        var sdtRun = new DW.SdtRun(
+            new DW.SdtProperties(
+                new DW.SdtAlias { Val = $"Pos_{posNr}" },
+                new DW.Tag { Val = $"Pos_{posNr}" },
+                new DW.DataBinding { StoreItemId = storeItemId, XPath = xpath, PrefixMappings = "" },
+                new DW.RunProperties(
+                    new DW.RunFonts { Ascii = "Arial", HighAnsi = "Arial", EastAsia = "Arial" },
+                    new DW.FontSize { Val = (fontSizePt * 2).ToString() },
+                    new DW.Color { Val = fontColorHex.TrimStart('#') }
+                )
+            ),
+            new DW.SdtContentRun(
+                new DW.Run(
+                    new DW.RunProperties(
+                        new DW.RunFonts { Ascii = "Arial", HighAnsi = "Arial", EastAsia = "Arial" },
+                        new DW.FontSize { Val = (fontSizePt * 2).ToString() },
+                        new DW.Color { Val = fontColorHex.TrimStart('#') }
+                    ),
+                    new DW.Text(posNr.ToString()) { Space = SpaceProcessingModeValues.Preserve }
+                )
+            )
+        );
+        paragraph.Append(sdtRun);
 
-        // Setze die Formatierungen auf den Text und füge ihn hinzu
-        run2.Append(runProperties);
-        run2.Append(text2);
-        paragraph2.Append(paragraphProperties);  // Füge die Absatz-Eigenschaften hinzu
-        paragraph2.Append(run2);
-        textBoxContent1.Append(paragraph2);
+        textBoxContent.Append(paragraph);
+        textBox.Append(textBoxContent);
+        shape.Append(textBox);
+        picture.Append(shape);
 
-        // Füge den Textinhalt zur TextBox hinzu
-        textBox1.Append(textBoxContent1);
-        shape1.Append(textBox1);
-        shape1.Append(fill1);  // Hintergrundfarbe der Form
-        shape1.Append(stroke1);  // Rand der Form
-        picture1.Append(shape1);
-
-        return picture1;
-    }
-
-    private static double GetTextWidthInPoints(string text, string fontName, double fontSizePt, double dpi)
-    {
-        using SKFont font = new(SKTypeface.FromFamilyName(fontName), (float)fontSizePt);
-        float textWidthInPixels = font.MeasureText(text + " ");
-        double textWidthInPoints = textWidthInPixels * 72 / dpi;
-        return textWidthInPoints;
+        return picture;
     }
 
     private static SizeF ScaleToFit(Size originalSize, SizeF maxTargetSize)
