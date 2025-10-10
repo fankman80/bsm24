@@ -167,7 +167,7 @@ public partial class Switch : ContentView
 
         // Position des Knobs animiert verschieben
         double maxTranslate = SwitchWidth - KnobSize - (2 * KnobMargin);
-        Knob.TranslateTo(IsToggled ? maxTranslate : 0, 0, 100, Easing.SinInOut);
+        Knob.TranslateToAsync(IsToggled ? maxTranslate : 0, 0, 100, Easing.SinInOut);
 
         CustomPath.Stroke = IsToggled ? BorderColorOn : BorderColorOff;
 

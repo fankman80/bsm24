@@ -134,13 +134,11 @@ public partial class AppShell : Shell
         {
             if (_selectedPlanItem != value)
             {
-                if (_selectedPlanItem != null)
-                    _selectedPlanItem.IsSelected = false;
+                _selectedPlanItem?.IsSelected = false;
 
                 _selectedPlanItem = value;
 
-                if (_selectedPlanItem != null)
-                    _selectedPlanItem.IsSelected = true;
+                _selectedPlanItem?.IsSelected = true;
             }
         }
     }

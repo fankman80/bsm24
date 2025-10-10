@@ -67,7 +67,7 @@
 	</PropertyGroup>
 
 	<PropertyGroup>
-		<TargetFrameworks>net9.0-windows10.0.26100.0;net9.0-android</TargetFrameworks>
+		<TargetFrameworks>net10.0-android</TargetFrameworks>
 		<UseMaui>true</UseMaui>
 		<SingleProject>true</SingleProject>
 		<AndroidSigningKeyStore>SnapDoc.keystore</AndroidSigningKeyStore>
@@ -101,6 +101,10 @@
 	  <AndroidUseAapt2>True</AndroidUseAapt2>
 	  <AndroidCreatePackagePerAbi>False</AndroidCreatePackagePerAbi>
 	  <AndroidPackageFormat>aab</AndroidPackageFormat>
+	</PropertyGroup>
+
+	<PropertyGroup>
+	  <TargetFrameworks Condition="$([MSBuild]::IsOSPlatform('windows'))">$(TargetFrameworks);net10.0-windows10.0.26100.0</TargetFrameworks>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -143,15 +147,15 @@
 		<PackageReference Include="DocumentFormat.OpenXml" Version="3.3.0" />
 		<PackageReference Include="FFImageLoading.Maui" Version="1.3.2" />
 		<PackageReference Include="Geolocator.Plugin" Version="1.0.2" />
-		<PackageReference Include="HarfBuzzSharp" Version="8.3.1.1" />
-		<PackageReference Include="MetadataExtractor" Version="2.9.0-rc3" />
-		<PackageReference Include="Microsoft.Maui.Controls" Version="9.0.110" />
-		<PackageReference Include="Microsoft.Maui.Controls.Compatibility" Version="9.0.110" />
-		<PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="9.0.9" />
+		<PackageReference Include="HarfBuzzSharp" Version="8.3.1.2" />
+		<PackageReference Include="MetadataExtractor" Version="2.9.0" />
+		<PackageReference Include="Microsoft.Maui.Controls" Version="10.0.0-rc.1.25452.6" />
+		<PackageReference Include="Microsoft.Maui.Controls.Compatibility" Version="10.0.0-rc.1.25452.6" />
+		<PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="10.0.0-rc.1.25451.107" />
 		<PackageReference Include="MR.Gestures" Version="5.0.0" />
 		<PackageReference Include="PDFtoImage" Version="5.1.1" />
 		<PackageReference Include="SharpKml.Core" Version="6.1.0" />
-		<PackageReference Include="SkiaSharp.Views.Maui.Controls" Version="3.119.0" />
+		<PackageReference Include="SkiaSharp.Views.Maui.Controls" Version="3.119.1" />
 		<PackageReference Include="UraniumUI" Version="2.12.1" />
 		<PackageReference Include="UraniumUI.Icons.MaterialSymbols" Version="2.12.1" />
 		<PackageReference Include="UraniumUI.Material" Version="2.12.1" />
@@ -160,6 +164,9 @@
 	<ItemGroup>
 	  <Compile Update="Controls\Switch.xaml.cs">
 	    <DependentUpon>Switch.xaml</DependentUpon>
+	  </Compile>
+	  <Compile Update="Views\PopupPlanSelector.xaml.cs">
+	    <DependentUpon>PopupPlanSelector.xaml</DependentUpon>
 	  </Compile>
 	</ItemGroup>
 
@@ -194,6 +201,10 @@
 		
 	<MauiXaml Update="Views\LoadPDFPages.xaml">
 		<Generator>MSBuild:Compile</Generator>
+	</MauiXaml>
+		
+	<MauiXaml Update="Views\PopupPlanSelector.xaml">
+	  <Generator>MSBuild:Compile</Generator>
 	</MauiXaml>
 		
 	<MauiXaml Update="Views\PopupIconEdit.xaml">

@@ -38,6 +38,7 @@ public partial class NewPage : IQueryAttributable, INotifyPropertyChanged
     bool isTappedHandled = false;
     SKRectI pinBound;
     private bool isPinChangedRegistered = false;
+    private bool isPinDeletedRegistered = false;
 
 #if WINDOWS
     private bool shiftKeyDown = false;
@@ -121,6 +122,27 @@ public partial class NewPage : IQueryAttributable, INotifyPropertyChanged
             isPinChangedRegistered = true;
         }
 
+        // lösche Pins
+        if (!isPinDeletedRegistered)
+        {
+            WeakReferenceMessenger.Default.Register<PinDeletedMessage>(this, (r, m) =>
+            {
+                var pinId = m.Value;
+
+                MainThread.BeginInvokeOnMainThread(() =>
+                {
+                    // remove pin-icon on plan
+                    var image = PlanContainer.Children
+                        .OfType<MR.Gestures.Image>()
+                        .FirstOrDefault(i => i.AutomationId == pinId);
+
+                    if (image != null)
+                        PlanContainer.Remove(image);
+                });
+            });
+            isPinDeletedRegistered = true;
+        }
+
         // Setze den Titel der Seite und markiere den Plan im ShellManü
         var appShell = Application.Current.Windows[0].Page as AppShell;
         appShell?.HighlightCurrentPlan(this.PlanId);
@@ -128,50 +150,23 @@ public partial class NewPage : IQueryAttributable, INotifyPropertyChanged
 
     public void ApplyQueryAttributes(IDictionary<string, object> query)
     {
-        if (query.TryGetValue("pinDelete", out object value2))
+        if (query.TryGetValue("pinZoom", out object value1))
         {
-            PinDelete = value2 as string;
-
-            if (GlobalJson.Data.Plans[PlanId].Pins.TryGetValue(PinDelete, out var pin)) // check if pin exists
-            {
-                // remove pin-icon on plan
-                var image = PlanContainer.Children
-                    .OfType<MR.Gestures.Image>()
-                    .FirstOrDefault(i => i.AutomationId == PinDelete);
-                PlanContainer.Remove(image);
-
-                // delete all images
-                foreach (var del_image in GlobalJson.Data.Plans[PlanId].Pins[PinDelete].Fotos)
-                {
-                    string file;
-                    file = Path.Combine(Settings.DataDirectory, GlobalJson.Data.ProjectPath, GlobalJson.Data.ImagePath, GlobalJson.Data.Plans[PlanId].Pins[PinDelete].Fotos[del_image.Key].File);
-                    if (File.Exists(file))
-                        File.Delete(file);
-
-                    file = Path.Combine(Settings.DataDirectory, GlobalJson.Data.ProjectPath, GlobalJson.Data.ThumbnailPath, GlobalJson.Data.Plans[PlanId].Pins[PinDelete].Fotos[del_image.Key].File);
-                    if (File.Exists(file))
-                        File.Delete(file);
-                }
-
-                // remove custom pin image
-                if (GlobalJson.Data.Plans[PlanId].Pins[PinDelete].IsCustomPin)
-                {
-                    String file = Path.Combine(Settings.DataDirectory, GlobalJson.Data.ProjectPath, GlobalJson.Data.CustomPinsPath, GlobalJson.Data.Plans[PlanId].Pins[PinDelete].PinIcon);
-                    if (File.Exists(file))
-                        File.Delete(file);
-                }
-
-                // remove pin from database
-                var plan = GlobalJson.Data.Plans[PlanId];
-                plan.Pins.Remove(PinDelete);
-
-                // save data to file
-                GlobalJson.SaveToFile();
-            }
+            PinZoom = value1 as string;
         }
-        if (query.TryGetValue("pinZoom", out object value3))
+
+        if (query.TryGetValue("pinMove", out object value2))
         {
-            PinZoom = value3 as string;
+            var pinId = value2 as string;
+            PinZoom = value2 as string;
+
+            // add pin-icon on plan
+            var image = PlanContainer.Children
+                .OfType<MR.Gestures.Image>()
+                .FirstOrDefault(i => i.AutomationId == pinId);
+
+            if (image == null && isFirstLoad == false)
+                AddPin(pinId, GlobalJson.Data.Plans[PlanId].Pins[pinId].PinIcon);
         }
     }
 

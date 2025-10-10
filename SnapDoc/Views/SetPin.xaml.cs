@@ -1,11 +1,11 @@
 ﻿#nullable disable
 
-using SnapDoc.Messages;
-using SnapDoc.Models;
 using CommunityToolkit.Maui.Core.Extensions;
 using CommunityToolkit.Maui.Extensions;
 using CommunityToolkit.Mvvm.Messaging;
-using DocumentFormat.OpenXml.Office2016.Drawing.ChartDrawing;
+using SnapDoc.Messages;
+using SnapDoc.Models;
+using SnapDoc.Services;
 using System.Collections.ObjectModel;
 using UraniumUI.Material.Controls;
 
@@ -129,7 +129,11 @@ public partial class SetPin : ContentPage, IQueryAttributable
         var popup = new PopupDualResponse("Wollen Sie diesen Pin wirklich löschen?");
         var result = await this.ShowPopupAsync<string>(popup, Settings.PopupOptions);
         if (result.Result != null)
-            await Shell.Current.GoToAsync($"///{PlanId}?pinDelete={PinId}");
+        {
+            DeletePinData(PinId);
+            WeakReferenceMessenger.Default.Send(new PinDeletedMessage(PinId));
+            await Shell.Current.GoToAsync($"///{PlanId}");
+        }
     }
 
     private async void OnEditClick(object sender, EventArgs e)
@@ -144,6 +148,32 @@ public partial class SetPin : ContentPage, IQueryAttributable
 
             // save data to file
             GlobalJson.SaveToFile();
+        }
+    }
+
+    private async void OnMoveClick(object sender, EventArgs e)
+    {
+        var popup = new PopupPlanSelector(PlanId);
+        var result = await this.ShowPopupAsync<string>(popup, Settings.PopupOptions);
+
+        if (result.Result != null)
+        {
+            // Sicherstellen, dass der Plan existiert
+            if (GlobalJson.Data.Plans.TryGetValue(result.Result, out Plan plan))
+            {
+                string currentDateTime = DateTime.Now.ToString("yyyyMMdd_HHmmss");
+                var newPin = GlobalJson.Data.Plans[PlanId].Pins[PinId];
+                newPin.OnPlanId = result.Result;
+                newPin.SelfId = currentDateTime;
+
+                plan.Pins ??= [];
+                plan.Pins[currentDateTime] = newPin;
+
+                DeletePinData(PinId);
+
+                WeakReferenceMessenger.Default.Send(new PinDeletedMessage(PinId));
+                await Shell.Current.GoToAsync($"///{result.Result}?pinMove={newPin.SelfId}");
+            }
         }
     }
 
@@ -166,6 +196,37 @@ public partial class SetPin : ContentPage, IQueryAttributable
 
         SenderView ??= $"//{PlanId}";
         await Shell.Current.GoToAsync($"{SenderView}");
+    }
+
+    private void DeletePinData(string pinId)
+    {
+        // delete all images
+        foreach (var del_image in GlobalJson.Data.Plans[PlanId].Pins[pinId].Fotos)
+        {
+            string file;
+            file = Path.Combine(Settings.DataDirectory, GlobalJson.Data.ProjectPath, GlobalJson.Data.ImagePath, GlobalJson.Data.Plans[PlanId].Pins[pinId].Fotos[del_image.Key].File);
+            if (File.Exists(file))
+                File.Delete(file);
+
+            file = Path.Combine(Settings.DataDirectory, GlobalJson.Data.ProjectPath, GlobalJson.Data.ThumbnailPath, GlobalJson.Data.Plans[PlanId].Pins[pinId].Fotos[del_image.Key].File);
+            if (File.Exists(file))
+                File.Delete(file);
+        }
+
+        // remove custom pin image
+        if (GlobalJson.Data.Plans[PlanId].Pins[pinId].IsCustomPin)
+        {
+            String file = Path.Combine(Settings.DataDirectory, GlobalJson.Data.ProjectPath, GlobalJson.Data.CustomPinsPath, GlobalJson.Data.Plans[PlanId].Pins[pinId].PinIcon);
+            if (File.Exists(file))
+                File.Delete(file);
+        }
+
+        // remove pin from database
+        var plan = GlobalJson.Data.Plans[PlanId];
+        plan.Pins.Remove(pinId);
+
+        // save data to file
+        GlobalJson.SaveToFile();
     }
 
     private async void ShowGeoLoc(object sender, EventArgs e)

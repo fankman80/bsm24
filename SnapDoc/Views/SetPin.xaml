@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/maui/global"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
              xmlns:material="http://schemas.enisn-projects.io/dotnet/maui/uraniumui/material"
@@ -22,6 +22,10 @@
     </ContentPage.Resources>
 
     <ContentPage.ToolbarItems>
+        <ToolbarItem
+            IconImageSource="{FontImageSource FontFamily=MaterialOutlined, Color={DynamicResource PrimaryDark}, Glyph={x:Static m:MaterialOutlined.Move_down}}" 
+            Text="Auf anderen Plan verschieben"
+            Clicked="OnMoveClick"/>        
         <ToolbarItem
             IconImageSource="{FontImageSource FontFamily=MaterialOutlined, Color={DynamicResource PrimaryDark}, Glyph={x:Static m:MaterialOutlined.Edit_square}}" 
             Text="Umbenennen"
@@ -143,7 +147,7 @@
                                  Padding="12"/>
                 </Border>
             </Grid>
-
+            
             <Grid x:DataType="views:SetPin">
                 <material:PickerField x:Name="priorityPicker" 
                                       Title="Priorität"

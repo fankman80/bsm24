@@ -288,7 +288,7 @@ public partial class MapView : IQueryAttributable
             GlobalJson.SaveToFile();
 
             if (DeviceInfo.Platform == DevicePlatform.WinUI)
-                await Application.Current.Windows[0].Page.DisplayAlert("", "Die Positionen aller Pins auf der Karte wurden aktualisiert.", "OK");
+                await Application.Current.Windows[0].Page.DisplayAlertAsync("", "Die Positionen aller Pins auf der Karte wurden aktualisiert.", "OK");
             else
                 await Toast.Make($"Die Positionen aller Pins auf der Karte wurden aktualisiert.").Show();
         }
@@ -324,14 +324,14 @@ public partial class MapView : IQueryAttributable
         if (fileSaveResult.IsSuccessful)
         {
             if (DeviceInfo.Platform == DevicePlatform.WinUI)
-                await Application.Current.Windows[0].Page.DisplayAlert("", "KML-Datei wurde gespeichert", "OK");
+                await Application.Current.Windows[0].Page.DisplayAlertAsync("", "KML-Datei wurde gespeichert", "OK");
             else
                 await Toast.Make($"KML-Datei wurde gespeichert").Show();
         }
         else
         {
             if (DeviceInfo.Platform == DevicePlatform.WinUI)
-                await Application.Current.Windows[0].Page.DisplayAlert("", "KML-Datei wurde nicht gespeichert", "OK");
+                await Application.Current.Windows[0].Page.DisplayAlertAsync("", "KML-Datei wurde nicht gespeichert", "OK");
             else
                 await Toast.Make($"KML-Datei wurde nicht gespeichert").Show();
         }

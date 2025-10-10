@@ -12,6 +12,7 @@ using System.Text.RegularExpressions;
 using DDW = DocumentFormat.OpenXml.Drawing.Wordprocessing;
 using DW = DocumentFormat.OpenXml.Wordprocessing;
 using OXML = DocumentFormat.OpenXml;
+using Path = System.IO.Path;
 
 namespace SnapDoc;
 
@@ -58,9 +59,9 @@ public partial class ExportReport
         List<string> uniquePinIcons = GetUniquePinIcons(GlobalJson.Data);
         foreach (string icon in uniquePinIcons)
             if (icon.Contains("custompin_", StringComparison.OrdinalIgnoreCase)) //check if icon is a custompin
-                CopyImageToDirectory(Settings.CacheDirectory, System.IO.Path.Combine(GlobalJson.Data.ProjectPath, GlobalJson.Data.CustomPinsPath), icon);
+                CopyImageToDirectory(Settings.CacheDirectory, Path.Combine(GlobalJson.Data.ProjectPath, GlobalJson.Data.CustomPinsPath), icon);
             else if (icon.Contains("customicons", StringComparison.OrdinalIgnoreCase)) //check if icon is a customicon
-                CopyImageToDirectory(System.IO.Path.Combine(Settings.CacheDirectory, "customicons"), "customicons", System.IO.Path.GetFileName(icon));
+                CopyImageToDirectory(Path.Combine(Settings.CacheDirectory, "customicons"), "customicons", Path.GetFileName(icon));
             else
                 await CopyImageToDirectoryAsync(Settings.CacheDirectory, icon);
 
@@ -157,176 +158,192 @@ public partial class ExportReport
                                 if (GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].AllowExport)
                                 {
                                     // Anzahl Spalten ermitteln
-                                    int columnCount = 0;
-                                    TableRow firstRow = table.Elements<TableRow>().FirstOrDefault();
-                                    if (firstRow != null)
-                                        columnCount = firstRow.Elements<TableCell>().Count();
+                                    int columnCount = table.Elements<TableRow>().FirstOrDefault()?.Elements<TableCell>().Count() ?? 0;
 
                                     TableRow newRow = new();
+
                                     for (int column = 0; column < columnCount; column++)
                                     {
-                                        List<(int, int, string)> _columnPlaceholders = columnList.FindAll(item => item.Item1 == column);
+                                        var _columnPlaceholders = columnList.FindAll(item => item.Item1 == column);
                                         TableCell newTableCell = new();
+                                        Paragraph newParagraph = new();
 
-                                        if (_columnPlaceholders.Count == 0)
+                                        if (_columnPlaceholders.Count > 0)
                                         {
-                                            // Falls keine Platzhalter vorhanden sind, füge einen leeren Paragraph hinzu
-                                            Paragraph emptyParagraph = new();
-                                            emptyParagraph.Append(new Run(new Text("")));
-                                            newTableCell.Append(emptyParagraph);
-                                        }
-                                        else
-                                        {
-                                            foreach ((int, int, string) _placeholder in _columnPlaceholders)
+                                            foreach ((int, int, string) ph in _columnPlaceholders)
                                             {
-                                                Paragraph newParagraph = new();
-                                                String text = "";
-                                                switch (_placeholder.Item3)
+                                                // Hilfsfunktion: Text + Break anhängen
+                                                void AddText(string text)
+                                                {
+                                                    if (!string.IsNullOrEmpty(text))
+                                                    {
+                                                        newParagraph.Append(new Run(new Text(text)));
+                                                        newParagraph.Append(new Run(new Break()));   // Zeilenumbruch nur nach Text
+                                                    }
+                                                }
+
+                                                switch (ph.Item3)
                                                 {
                                                     case "${pin_nr}":
                                                         {
                                                             string tag = $"Pos_{i}";
                                                             string xpath = $"/positions/pos[@id='{i}']";
-                                                            var sdt = CreateBoundSDTRun(tag, xpath, i.ToString());
-
-                                                            newParagraph = new Paragraph(sdt);
+                                                            newParagraph.Append(new Run(CreateBoundSDTRun(tag, xpath, i.ToString())));
+                                                            newParagraph.Append(new Run(new Break()));
                                                             break;
                                                         }
 
                                                     case "${pin_planName}":
-                                                        text = GlobalJson.Data.Plans[plan.Key].Name;
+                                                        AddText(GlobalJson.Data.Plans[plan.Key].Name);
                                                         break;
 
                                                     case "${pin_posImage}":
-                                                        if (SettingsService.Instance.IsPosImageExport && !GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].IsCustomPin)
+                                                        if (SettingsService.Instance.IsPosImageExport &&
+                                                            !GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].IsCustomPin)
                                                         {
-                                                            // add Part of Plan Image
+                                                            // Bild des Plans + Pin einfügen
                                                             string planName = GlobalJson.Data.Plans[plan.Key].File;
-                                                            string planPath = System.IO.Path.Combine(Settings.DataDirectory, GlobalJson.Data.ProjectPath, GlobalJson.Data.PlanPath, planName);
+                                                            string planPath = Path.Combine(Settings.DataDirectory,
+                                                                                           GlobalJson.Data.ProjectPath,
+                                                                                           GlobalJson.Data.PlanPath,
+                                                                                           planName);
+
                                                             Point pinPos = GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].Pos;
-                                                            string pinImage = System.IO.Path.Combine(Settings.CacheDirectory, GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].PinIcon);
+                                                            string pinImage = Path.Combine(Settings.CacheDirectory,
+                                                                                           GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].PinIcon);
                                                             Point pinAnchor = GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].Anchor;
                                                             float pinRotation = (float)GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].PinRotation;
                                                             Size pinSize = GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].Size;
-                                                            var cropPos = new SKPoint((float)pinPos.X, (float)pinPos.Y);
+
                                                             var planSize = GlobalJson.Data.Plans[plan.Key].ImageSize;
-                                                            var cropFactor = new Point((1 / planSize.Width * 300) / 2, (1 / planSize.Height * 300) / 2);
+                                                            var cropFactor = new Point((1 / planSize.Width * 300) / 2,
+                                                                                       (1 / planSize.Height * 300) / 2);
                                                             var crop = new SKRectI
                                                             {
-                                                                Left = (int)((cropPos.X - cropFactor.X) * 100000),
-                                                                Top = (int)((cropPos.Y - cropFactor.Y) * 100000),
-                                                                Right = (int)((1 - cropPos.X - cropFactor.X) * 100000),
-                                                                Bottom = (int)((1 - cropPos.Y - cropFactor.Y) * 100000),
+                                                                Left = (int)((pinPos.X - cropFactor.X) * 100000),
+                                                                Top = (int)((pinPos.Y - cropFactor.Y) * 100000),
+                                                                Right = (int)((1 - pinPos.X - cropFactor.X) * 100000),
+                                                                Bottom = (int)((1 - pinPos.Y - cropFactor.Y) * 100000),
                                                             };
+
                                                             var exportSize = new SizeF
-                                                            { 
+                                                            {
                                                                 Width = SettingsService.Instance.PinPosExportSize,
                                                                 Height = SettingsService.Instance.PinPosExportSize
                                                             };
+
                                                             var scaledPinSize = new Size
                                                             {
-                                                                Width = pinSize.Width * exportSize.Width / SettingsService.Instance.PinPosCropExportSize * GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].PinScale,
-                                                                Height = pinSize.Height * exportSize.Height / SettingsService.Instance.PinPosCropExportSize * GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].PinScale
+                                                                Width = pinSize.Width * exportSize.Width /
+                                                                         SettingsService.Instance.PinPosCropExportSize *
+                                                                         GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].PinScale,
+                                                                Height = pinSize.Height * exportSize.Height /
+                                                                         SettingsService.Instance.PinPosCropExportSize *
+                                                                         GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].PinScale
                                                             };
+
                                                             var pinPoint = new Point
                                                             {
                                                                 X = (exportSize.Width / 2) - (scaledPinSize.Width * pinAnchor.X),
                                                                 Y = (exportSize.Height / 2) - (scaledPinSize.Height * pinAnchor.Y)
                                                             };
 
-                                                            Drawing _imgPlan = GetImageElement(mainPart, planPath, exportSize, new Point(0, 0), 0, "anchor", crop);
-                                                            Drawing _imgPin = GetImageElement(mainPart, pinImage, scaledPinSize, pinPoint, pinRotation, "anchor");
-
-                                                            newParagraph.Append(new Run(_imgPlan));
-                                                            newParagraph.Append(new Run(_imgPin));
+                                                            newParagraph.Append(new Run(GetImageElement(mainPart, planPath, exportSize,
+                                                                                                        new Point(0, 0), 0, "anchor", crop)));
+                                                            newParagraph.Append(new Run(GetImageElement(mainPart, pinImage, scaledPinSize,
+                                                                                                        pinPoint, pinRotation, "anchor")));
+                                                            newParagraph.Append(new Run(new Break()));
                                                         }
                                                         break;
 
                                                     case "${pin_fotoList}":
                                                         if (SettingsService.Instance.IsImageExport)
                                                         {
-                                                            // add Pictures
-                                                            foreach (KeyValuePair<string, Foto> img in GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].Fotos)
+                                                            foreach (var img in GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].Fotos)
                                                             {
-                                                            Run newRun = new();
-                                                                if (GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].Fotos[img.Key].AllowExport)
+                                                                if (!img.Value.AllowExport) continue;
+
+                                                                string imgPath = Path.Combine(Settings.DataDirectory,
+                                                                                              GlobalJson.Data.ProjectPath,
+                                                                                              GlobalJson.Data.ImagePath,
+                                                                                              img.Value.File);
+
+                                                                if (!SettingsService.Instance.IsFotoOverlayExport &&
+                                                                    img.Value.HasOverlay)
                                                                 {
-                                                                    string imgName = GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].Fotos[img.Key].File;
-                                                                    string imgPath = System.IO.Path.Combine(Settings.DataDirectory, GlobalJson.Data.ProjectPath, GlobalJson.Data.ImagePath, imgName);
-                                                                    if (!SettingsService.Instance.IsFotoOverlayExport)
-                                                                        if (GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].Fotos[img.Key].HasOverlay)
-                                                                            imgPath = System.IO.Path.Combine(Settings.DataDirectory, GlobalJson.Data.ProjectPath, GlobalJson.Data.ImagePath, "originals", imgName);
-
-                                                                    var factor = GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].Fotos[img.Key].ImageSize.Width / GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].Fotos[img.Key].ImageSize.Height;
-                                                                    var scaledSize = new Size
-                                                                    {
-                                                                        Width = SettingsService.Instance.ImageExportSize,
-                                                                        Height = SettingsService.Instance.ImageExportSize / factor
-                                                                    };
-
-                                                                    if (SettingsService.Instance.IsFotoCompressed)
-                                                                    {
-                                                                        var newPath = System.IO.Path.Combine(Settings.CacheDirectory, System.IO.Path.GetFileName(imgName));
-                                                                        Helper.BitmapResizer(imgPath, newPath, SettingsService.Instance.FotoCompressValue / 100f);
-                                                                        imgPath = newPath;
-                                                                    }
-
-                                                                    Drawing _img = GetImageElement(mainPart, imgPath, scaledSize, new Point(0, 0), 0, "inline");
-
-                                                                    newRun.Append(_img);
+                                                                    imgPath = Path.Combine(Settings.DataDirectory,
+                                                                                           GlobalJson.Data.ProjectPath,
+                                                                                           GlobalJson.Data.ImagePath,
+                                                                                           "originals",
+                                                                                           img.Value.File);
                                                                 }
-                                                            newParagraph.Append(newRun);
+
+                                                                var factor = img.Value.ImageSize.Width / img.Value.ImageSize.Height;
+                                                                var scaledSize = new Size
+                                                                {
+                                                                    Width = SettingsService.Instance.ImageExportSize,
+                                                                    Height = SettingsService.Instance.ImageExportSize / factor
+                                                                };
+
+                                                                if (SettingsService.Instance.IsFotoCompressed)
+                                                                {
+                                                                    var newPath = Path.Combine(Settings.CacheDirectory,
+                                                                                               Path.GetFileName(img.Value.File));
+                                                                    Helper.BitmapResizer(imgPath, newPath,
+                                                                                         SettingsService.Instance.FotoCompressValue / 100f);
+                                                                    imgPath = newPath;
+                                                                }
+
+                                                                newParagraph.Append(new Run(GetImageElement(mainPart, imgPath,
+                                                                                                            scaledSize,
+                                                                                                            new Point(0, 0), 0, "inline")));
                                                             }
                                                         }
                                                         break;
 
                                                     case "${pin_name}":
-                                                        text = GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].PinName;
+                                                        AddText(GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].PinName);
                                                         break;
 
                                                     case "${pin_desc}":
-                                                        text = GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].PinDesc.Replace("\r\n", "\n").Replace("\r", "\n").Replace("\n", "{linebreak}");
+                                                        AddText(GlobalJson.Data.Plans[plan.Key].Pins[pin.Key]
+                                                                .PinDesc.Replace("\r\n", "\n")
+                                                                .Replace("\r", "\n"));
                                                         break;
 
                                                     case "${pin_location}":
-                                                        text = GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].PinLocation;
+                                                        AddText(GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].PinLocation);
                                                         break;
 
                                                     case "${pin_priority}":
                                                         if (GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].PinPriority != 0)
                                                         {
-                                                            string fillColor = Settings.PriorityItems[GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].PinPriority].Color;
-                                                            TableCellProperties cellColor = new(new Shading() { Fill = fillColor.Replace("#", "") });
-                                                            newTableCell.Append(cellColor);
+                                                            string fillColor = Settings.PriorityItems[
+                                                                GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].PinPriority].Color;
+                                                            newTableCell.TableCellProperties =
+                                                                new TableCellProperties(new Shading { Fill = fillColor.Replace("#", "") });
                                                         }
-                                                        newParagraph.Append(new Run(new Text(Settings.PriorityItems[GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].PinPriority].Key)));
                                                         break;
 
                                                     case "${pin_geolocWGS84}":
                                                         if (GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].GeoLocation != null)
-                                                            text = GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].GeoLocation.WGS84.ToString();
+                                                            AddText(GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].GeoLocation.WGS84.ToString());
                                                         break;
 
                                                     case "${pin_geolocCH1903}":
                                                         if (GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].GeoLocation != null)
-                                                            text = GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].GeoLocation.CH1903.ToString();
-                                                        break;
-
-                                                    default:
-                                                        text = "";
+                                                            AddText(GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].GeoLocation.CH1903.ToString());
                                                         break;
                                                 }
-
-                                                newParagraph.Append(new Run(new Text(text)));
-
-                                                if (newParagraph.Elements<Run>().Any())
-                                                    newTableCell.Append(newParagraph);
                                             }
                                         }
+
+                                        newTableCell.Append(newParagraph);
                                         newRow.Append(newTableCell);
                                     }
+
                                     table.Append(newRow);
-                                    i += 1;
+                                    i++;
                                 }
                             }
                         }
@@ -346,7 +363,7 @@ public partial class ExportReport
                                 if (text.Text.Contains("${title_image"))
                                 {
                                     text.Text = ""; // Lösche den Platzhaltertext
-                                    string imgPath = System.IO.Path.Combine(Settings.DataDirectory, GlobalJson.Data.ProjectPath, GlobalJson.Data.ImagePath, GlobalJson.Data.TitleImage);
+                                    string imgPath = Path.Combine(Settings.DataDirectory, GlobalJson.Data.ProjectPath, GlobalJson.Data.ImagePath, GlobalJson.Data.TitleImage);
                                     if (File.Exists(imgPath))
                                     {
                                         var factor = GlobalJson.Data.TitleImageSize.Width / GlobalJson.Data.TitleImageSize.Height;
@@ -442,7 +459,7 @@ public partial class ExportReport
                                         // Zweiter Paragraph für das Plan-Image und Pins
                                         Paragraph imageAndPinsParagraph = new();
                                         run = new Run();
-                                        string planImage = System.IO.Path.Combine(Settings.DataDirectory, GlobalJson.Data.ProjectPath, GlobalJson.Data.PlanPath, GlobalJson.Data.Plans[plan.Key].File);
+                                        string planImage = Path.Combine(Settings.DataDirectory, GlobalJson.Data.ProjectPath, GlobalJson.Data.PlanPath, GlobalJson.Data.Plans[plan.Key].File);
                                         Size planSize = GlobalJson.Data.Plans[plan.Key].ImageSize;
                                         SizeF scaledPlanSize = ScaleToFit(planSize, planMaxSize);
                                         SizeF scaleFactor = new(scaledPlanSize.Width / (float)planSize.Width, scaledPlanSize.Height / (float)planSize.Height);
@@ -455,7 +472,7 @@ public partial class ExportReport
                                             {
                                                 if (GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].AllowExport)
                                                 {
-                                                    string pinImage = System.IO.Path.Combine(Settings.CacheDirectory, GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].PinIcon);
+                                                    string pinImage = Path.Combine(Settings.CacheDirectory, GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].PinIcon);
                                                     Point pinPos = GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].Pos;
                                                     Point pinAnchor = GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].Anchor;
                                                     Size pinSize = GlobalJson.Data.Plans[plan.Key].Pins[pin.Key].Size;
@@ -1059,21 +1076,48 @@ public partial class ExportReport
 
     public static void CopyImageToDirectory(string destinationPath, string path, string icon)
     {
-        string destinationFilePath = System.IO.Path.Combine(destinationPath, icon);
-        string sourceFilePath = System.IO.Path.Combine(Settings.DataDirectory, path, icon);
+        string destinationFilePath = Path.Combine(destinationPath, icon);
+        string sourceFilePath = Path.Combine(Settings.DataDirectory, path, icon);
 
         if (!Directory.Exists(destinationPath))
         {
             Directory.CreateDirectory(destinationPath);
-            Directory.CreateDirectory(System.IO.Path.Combine(destinationPath, "customicons"));
+            Directory.CreateDirectory(Path.Combine(destinationPath, "customicons"));
         }
 
         File.Copy(sourceFilePath, destinationFilePath, true);
     }
 
-    public static async Task CopyImageToDirectoryAsync(string destinationPath, string icon)
+    public static async Task CopyImageToDirectoryAsync(string targetDirectory, string sourceFilename)
     {
-        string destinationFilePath = System.IO.Path.Combine(destinationPath, icon);
+        string targetPath = Path.Combine(targetDirectory, sourceFilename);
+
+        try
+        {
+            Directory.CreateDirectory(targetDirectory);
+
+            if (File.Exists(targetPath))
+            {
+                File.Delete(targetPath);
+            }
+
+            using Stream inputStream = await FileSystem.Current.OpenAppPackageFileAsync(sourceFilename);
+            using FileStream outputStream = File.Create(targetPath);
+            await inputStream.CopyToAsync(outputStream);
+        }
+        catch (FileNotFoundException)
+        {
+            System.Diagnostics.Debug.WriteLine($"Fehler: Die Datei '{sourceFilename}' wurde im App-Paket nicht gefunden.");
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"Fehler beim Kopieren der Datei: {ex.Message}");
+        }
+    }
+
+    public static async Task CopyImageToDirectoryAsync_BAK(string destinationPath, string icon)
+    {
+        string destinationFilePath = Path.Combine(destinationPath, icon);
 
         if (!Directory.Exists(destinationPath))
             Directory.CreateDirectory(destinationPath);
@@ -1083,7 +1127,7 @@ public partial class ExportReport
         try
         {
             // Überprüfen, ob der Stream geöffnet werden kann
-            if (System.IO.Path.IsPathRooted(icon) && File.Exists(icon))
+            if (Path.IsPathRooted(icon) && File.Exists(icon))
             {
                 stream = File.OpenRead(icon);
             }
@@ -1093,7 +1137,7 @@ public partial class ExportReport
                 var context = Android.App.Application.Context;
                 var resources = context.Resources;
 
-                var resourceId = resources.GetIdentifier(System.IO.Path.GetFileNameWithoutExtension(icon), "drawable", context.PackageName);
+                var resourceId = resources.GetIdentifier(Path.GetFileNameWithoutExtension(icon), "drawable", context.PackageName);
                 if (resourceId > 0)
                 {
                     var imageUri = new Android.Net.Uri.Builder()
@@ -1130,7 +1174,7 @@ public partial class ExportReport
                 else if (stream == null)
                 {
                     string root = AppContext.BaseDirectory;
-                    icon = System.IO.Path.Combine(root, icon);
+                    icon = Path.Combine(root, icon);
                     if (File.Exists(icon))
                         stream = File.OpenRead(icon);
                 }

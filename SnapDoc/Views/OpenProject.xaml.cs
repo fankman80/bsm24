@@ -241,7 +241,7 @@ public partial class OpenProject : ContentPage
                     {
                         var fileSaveResult = await FileSaver.Default.SaveAsync(Path.GetFileNameWithoutExtension(item.FileName) + ".zip", saveStream);
                         if (DeviceInfo.Platform == DevicePlatform.WinUI)
-                            await Application.Current.Windows[0].Page.DisplayAlert("", "Zip wurde exportiert", "OK");
+                            await Application.Current.Windows[0].Page.DisplayAlertAsync("", "Zip wurde exportiert", "OK");
                         else
                             await Toast.Make($"Zip wurde exportiert").Show();
                     }
