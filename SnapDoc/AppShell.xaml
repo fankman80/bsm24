@@ -19,6 +19,7 @@
     <Shell.Resources>
         <ResourceDictionary>
             <toolkit:InvertedBoolConverter x:Key="InvertedBoolConverter" />
+            <toolkit:MathExpressionConverter x:Key="MathExpressionConverter" />
             <services:ExportToGlyphConverter x:Key="ExportToGlyphConverter" />
             <services:SelectedToGlyphConverter x:Key="SelectedToGlyphConverter" />
             <services:BoolToFontAttributesConverter x:Key="BoolToFontAttributesConverter" />
@@ -279,6 +280,7 @@
 
                             <Label Grid.Column="2"
                                    Text="{Binding PinCount}"
+                                   IsVisible="{Binding PinCount, Converter={StaticResource MathExpressionConverter}, ConverterParameter='x>0?true:false'}"
                                    HeightRequest="44"
                                    WidthRequest="32"
                                    VerticalTextAlignment="Center"
