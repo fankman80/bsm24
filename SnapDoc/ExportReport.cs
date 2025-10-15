@@ -58,15 +58,8 @@ public partial class ExportReport
             {"${pin_geolocCH1903}", "${pin_geolocCH1903}"}, //bereinige splitted runs
         };
 
+        // create a list with all icons, each icon only one times
         List<string> uniquePinIcons = GetUniquePinIcons(GlobalJson.Data);
-        //foreach (string icon in uniquePinIcons)
-        //    if (icon.Contains("custompin_", StringComparison.OrdinalIgnoreCase)) //check if icon is a custompin
-        //        CopyImageToDirectory(Settings.CacheDirectory, Path.Combine(GlobalJson.Data.ProjectPath, GlobalJson.Data.CustomPinsPath), icon);
-        //    else if (icon.Contains("customicons", StringComparison.OrdinalIgnoreCase)) //check if icon is a customicon
-        //        CopyImageToDirectory(Path.Combine(Settings.CacheDirectory, "customicons"), "customicons", Path.GetFileName(icon));
-        //    else
-        //        await CopyImageToDirectoryAsync(Settings.CacheDirectory, icon);
-
         foreach (string icon in uniquePinIcons)
             if (icon.Contains("custompin_", StringComparison.OrdinalIgnoreCase)) //check if icon is a custompin
                 CopyImageToDirectory(Settings.CacheDirectory, Path.Combine(GlobalJson.Data.ProjectPath, GlobalJson.Data.CustomPinsPath), icon);
@@ -945,7 +938,6 @@ public partial class ExportReport
         return columnList;
     }
 
-
     private static Picture CreateTextBoxWithShape(
         string preText,
         int posNr,
@@ -1096,125 +1088,6 @@ public partial class ExportReport
         }
 
         File.Copy(sourceFilePath, destinationFilePath, true);
-    }
-
-    public static async Task CopyImageToDirectoryAsync(string targetDirectory, string sourceFilename)
-    {
-        string targetPath = Path.Combine(targetDirectory, sourceFilename);
-
-        try
-        {
-            Directory.CreateDirectory(targetDirectory);
-
-            if (File.Exists(targetPath))
-            {
-                File.Delete(targetPath);
-            }
-
-            using Stream inputStream = await FileSystem.Current.OpenAppPackageFileAsync(sourceFilename);
-            using FileStream outputStream = File.Create(targetPath);
-            await inputStream.CopyToAsync(outputStream);
-        }
-        catch (FileNotFoundException)
-        {
-            System.Diagnostics.Debug.WriteLine($"Fehler: Die Datei '{sourceFilename}' wurde im App-Paket nicht gefunden.");
-        }
-        catch (Exception ex)
-        {
-            System.Diagnostics.Debug.WriteLine($"Fehler beim Kopieren der Datei: {ex.Message}");
-        }
-    }
-
-    public static async Task CopyImageToDirectoryAsync_BAK(string destinationPath, string icon)
-    {
-        string destinationFilePath = Path.Combine(destinationPath, icon);
-
-        if (!Directory.Exists(destinationPath))
-            Directory.CreateDirectory(destinationPath);
-
-        Stream stream = null;
-
-        try
-        {
-            // Überprüfen, ob der Stream geöffnet werden kann
-            if (Path.IsPathRooted(icon) && File.Exists(icon))
-            {
-                stream = File.OpenRead(icon);
-            }
-#if ANDROID
-            if (stream == null)
-            {
-                var context = Android.App.Application.Context;
-                var resources = context.Resources;
-
-                var resourceId = resources.GetIdentifier(Path.GetFileNameWithoutExtension(icon), "drawable", context.PackageName);
-                if (resourceId > 0)
-                {
-                    var imageUri = new Android.Net.Uri.Builder()
-                        .Scheme(Android.Content.ContentResolver.SchemeAndroidResource)
-                        .Authority(resources.GetResourcePackageName(resourceId))
-                        .AppendPath(resources.GetResourceTypeName(resourceId))
-                        .AppendPath(resources.GetResourceEntryName(resourceId))
-                        .Build();
-
-                    stream = context.ContentResolver.OpenInputStream(imageUri);
-                }
-            }
-#elif WINDOWS
-            if (stream == null)
-            {
-                try
-                {
-                    Windows.Storage.StorageFile sf = await Windows.Storage.StorageFile.GetFileFromPathAsync(icon);
-                    if (sf is not null)
-                    {
-                        stream = await sf.OpenStreamForReadAsync();
-                    }
-                }
-                catch
-                {
-                }
-
-                if (stream == null && AppInfo.PackagingModel == AppPackagingModel.Packaged)
-                {
-                    Uri uri = new("ms-appx:///" + icon);
-                    Windows.Storage.StorageFile sf = await Windows.Storage.StorageFile.GetFileFromApplicationUriAsync(uri);
-                    stream = await sf.OpenStreamForReadAsync();
-                }
-                else if (stream == null)
-                {
-                    string root = AppContext.BaseDirectory;
-                    icon = Path.Combine(root, icon);
-                    if (File.Exists(icon))
-                        stream = File.OpenRead(icon);
-                }
-            }
-#elif IOS || MACCATALYST
-            if (stream == null)
-            {
-                var root = Foundation.NSBundle.MainBundle.BundlePath;
-#if MACCATALYST || MACOS
-                root = Path.Combine(root, "Contents", "Resources");
-#endif
-                icon = Path.Combine(root, icon);
-                if (File.Exists(icon))
-                    stream = File.OpenRead(icon);
-            }
-#endif
-            if (stream == null)
-                throw new FileNotFoundException($"The file '{icon}' could not be found.");
-
-            // Kopiere den Stream in das Zielverzeichnis
-            using FileStream fileStream = new(destinationFilePath, FileMode.Create, FileAccess.Write);
-            await stream.CopyToAsync(fileStream);
-
-            stream.Close();
-            stream.Dispose();
-        }
-        catch (Exception ex)
-        {
-            throw new Exception($"Error while copying image to directory: {ex.Message}");
-        }
     }
 
     public static void ReplacePlaceholdersWithLineBreaks(MainDocumentPart mainPart, string placeholder)

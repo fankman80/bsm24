@@ -9,9 +9,9 @@ public static class MauiResourceLoader
     /// </summary>
     /// <param name="fileName">Dateiname oder relativer Pfad zur Ressource</param>
     /// <returns>Stream oder null, wenn nicht gefunden</returns>
-    public static async Task<Stream?> GetAppPackageFileStreamAsync(string fileName)
+    public static async Task<Stream> GetAppPackageFileStreamAsync(string fileName)
     {
-        Stream? stream = null;
+        Stream stream = null;
 
         try
         {
@@ -50,8 +50,7 @@ public static class MauiResourceLoader
             }
 
             // 3️⃣ Fallback auf MAUI-Asset-Mechanismus
-            if (stream == null)
-                stream = await FileSystem.Current.OpenAppPackageFileAsync(fileName);
+            stream ??= await FileSystem.Current.OpenAppPackageFileAsync(fileName);
 
 #elif WINDOWS
             stream = await FileSystem.Current.OpenAppPackageFileAsync(fileName);
