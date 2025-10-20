@@ -140,7 +140,7 @@
     </div>
 
     <script>
-        var map, vectorSource, vectorLayer, wmsLayer, overlayLayer, mapReady = false;
+        var map, vectorSource, vectorLayer, wmsLayer, mapReady = false;
         var pendingPositions = [];
         let currentPinkey = null;
         let currentPlankey = null;
@@ -163,12 +163,11 @@
         }
 
         function initMap() {
-            wmsLayer = new ol.layer.Tile({ source: new ol.source.TileWMS({ url: 'https://wms.geo.admin.ch/', params: { LAYERS: 'ch.swisstopo.pixelkarte-farbe', TILED: true }, serverType: 'mapserver' }) });
-            overlayLayer = new ol.layer.Tile({ source: new ol.source.TileWMS({ url: 'https://wms.geo.admin.ch/', params: { LAYERS: '', TILED: true }, serverType: 'mapserver' }) });
+            wmsLayer = new ol.layer.Tile({ source: new ol.source.TileWMS({ url: 'https://wms.geo.admin.ch/', params: { LAYERS: 'ch.swisstopo.pixelkarte-farbe', TILED: true }, serverType: 'mapserver' }) });            
 
             map = new ol.Map({
                 target: 'map',
-                layers: [wmsLayer, overlayLayer],
+                layers: [wmsLayer],
                 view: new ol.View({
                     center: ol.proj.fromLonLat(initialCenter),
                     zoom: initialZoom
@@ -284,8 +283,7 @@
             });
         }
 
-        function changeMapLayer(layer) { wmsLayer.getSource().updateParams({ LAYERS: layer, CACHEBUSTER: new Date().getTime() }); wmsLayer.getSource().refresh(); }
-        function changeOverlayLayer(layer) { overlayLayer.getSource().updateParams({ LAYERS: layer, CACHEBUSTER: new Date().getTime() }); overlayLayer.getSource().refresh(); }
+        function changeMapLayer(layer) { wmsLayer.getSource().updateParams({ LAYERS: layer, CACHEBUSTER: new Date().getTime() }); wmsLayer.getSource().refresh(); }        
 
         function getMarkerCoordinates() {
             var features = vectorSource.getFeatures();
