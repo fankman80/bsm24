@@ -131,21 +131,25 @@
             z-index: 1000;
         }
 
-            .measure-buttons button {
-                background: white;
-                border: 1px solid #999;
-                border-radius: 4px;
-                padding: 6px 8px;
-                cursor: pointer;
-                font-size: 13px;
-                font-family: "Segoe UI", sans-serif;
-                box-shadow: 2px 2px 4px rgba(0,0,0,0.2);
-            }
+        .measure-buttons button {
+            background: white;
+            border: 1px solid #999;
+            border-radius: 4px;
+            padding: 6px 8px;
+            cursor: pointer;
+            font-size: 13px;
+            font-family: "Segoe UI", sans-serif;
+            box-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
 
-                .measure-buttons button.active {
-                    background: #999999;
-                    color: white;
-                }
+        .measure-buttons button.active {
+            background: #999999;
+            color: white;
+        }
+
+        #measureOptions {
+            display: none;
+        }
     </style>
 </head>
 <body>
@@ -156,9 +160,12 @@
     </div>
 
     <div class="measure-buttons">
-        <button id="measureDistance">Distanz messen</button>
-        <button id="measureArea">Fläche messen</button>
-        <button id="clearMeasure">Löschen</button>
+        <button id="startMeasure">Vermessung</button>
+        <div id="measureOptions" style="display:none; flex-direction: column; gap: 6px;">
+            <button id="measureDistance">Distanz messen</button>
+            <button id="measureArea">Fläche messen</button>
+            <button id="clearMeasure">Löschen</button>
+        </div>
     </div>
 
     <script>
@@ -213,19 +220,27 @@
                         text = area > 10000 ? (area / 1000000).toFixed(2) + ' km²' : area.toFixed(2) + ' m²';
                     }
 
-                    return new ol.style.Style({
-                        fill: new ol.style.Fill({ color: 'rgba(255,255,255,0.4)' }),
-                        stroke: new ol.style.Stroke({ color: '#999999', width: 3 }),
-                        image: new ol.style.Circle({ radius: 5, fill: new ol.style.Fill({ color: '#999999' }) }),
-                        text: new ol.style.Text({
-                            text: text,
-                            placement: geom instanceof ol.geom.Polygon ? 'point' : 'line',
-                            font: 'bold 14px Segoe UI',
-                            fill: new ol.style.Fill({ color: '#fff' }),
-                            stroke: new ol.style.Stroke({ color: '#333', width: 3 }),
-                            overflow: true
+                    return [
+                        new ol.style.Style({
+                            stroke: new ol.style.Stroke({ color: 'rgba(255, 255, 255, 1.0)', width: 5 })
+                        }),
+
+                        new ol.style.Style({
+                            fill: new ol.style.Fill({ color: 'rgba(255,255,255,0.4)' }),
+                            stroke: new ol.style.Stroke({ color: '#999999', width: 3 }),
+                            image: new ol.style.Circle({ radius: 5, fill: new ol.style.Fill({ color: '#999999' }) }),
+                            text: new ol.style.Text({
+                                text: text,
+                                placement: geom instanceof ol.geom.Polygon ? 'point' : 'line',
+                                font: 'bold 14px Segoe UI',
+                                fill: new ol.style.Fill({ color: '#fff' }),  // Textfarbe
+                                stroke: new ol.style.Stroke({ color: '#333', width: 3 }), // Umrandung (Schatteneffekt)
+                                backgroundFill: new ol.style.Fill({ color: 'rgba(0,0,0,0.4)' }), // optional dunkler Hintergrund hinter Text
+                                padding: [2, 4, 2, 4],
+                                overflow: true
+                            })
                         })
-                    });
+                    ];
                 }
             });
 
@@ -286,8 +301,15 @@
                 draw.on('drawend', () => removeDraw());
             }
 
+            // --- Button-Logik ---
+            const startMeasureBtn = document.getElementById('startMeasure');
+            const measureOptions = document.getElementById('measureOptions');
+            const distanceBtn = document.getElementById('measureDistance');
+            const areaBtn = document.getElementById('measureArea');
+            const clearBtn = document.getElementById('clearMeasure');
+
             function deactivateButtons() {
-                document.querySelectorAll('.measure-buttons button').forEach(b => b.classList.remove('active'));
+                document.querySelectorAll('#measureOptions button').forEach(b => b.classList.remove('active'));
             }
 
             function activateButton(btn) {
@@ -295,20 +317,27 @@
                 btn.classList.add('active');
             }
 
-            document.getElementById('measureDistance').addEventListener('click', function () {
+            startMeasureBtn.addEventListener('click', function () {
+                startMeasureBtn.style.display = 'none';
+                measureOptions.style.display = 'flex';
+            });
+
+            distanceBtn.addEventListener('click', function () {
                 activateButton(this);
                 addInteraction('length');
             });
 
-            document.getElementById('measureArea').addEventListener('click', function () {
+            areaBtn.addEventListener('click', function () {
                 activateButton(this);
                 addInteraction('area');
             });
 
-            document.getElementById('clearMeasure').addEventListener('click', function () {
+            clearBtn.addEventListener('click', function () {
                 measureSource.clear();
                 removeDraw();
                 deactivateButtons();
+                measureOptions.style.display = 'none';
+                startMeasureBtn.style.display = 'block';
             });
         }
 
@@ -328,6 +357,8 @@
         }
 
         function setMultipleMarkers(positions) { positions.forEach(p => setMarkerPosition(p.lon, p.lat, p.pinname, p.pinlocation, p.pindesc, p.plankey, p.pinkey)); }
+
+        function changeMapLayer(layer) { wmsLayer.getSource().updateParams({ LAYERS: layer, CACHEBUSTER: new Date().getTime() }); wmsLayer.getSource().refresh(); }
 
         function getMarkerCoordinates() {
             const features = vectorSource.getFeatures();
