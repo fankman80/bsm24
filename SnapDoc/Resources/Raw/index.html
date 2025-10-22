@@ -467,45 +467,15 @@
                 pinname, pinlocation, pindesc, plankey, pinkey
             });
 
-            let style;
-
-            if (initialIcon.toLowerCase().includes('customcolor.png')) {
-                // Verwende SVG statt PNG
-                const svgMarkup = `<?xml version="1.0"?>
-<svg width="50" height="50" viewBox="0 0 1100 1740" xmlns="http://www.w3.org/2000/svg">
-	<title>Map-Marker</title>
-	<g>
-		<title>Layer 1</title>
-		<g id="svg_1">
-			<path id="svg_2" fill="#999999" stroke-width="37" stroke="#000000" d="m551.39327,1716.73097c-38.76599,-190.30103 -107.11596,-348.66504 -189.90301,-495.43994c-61.40698,-108.87207 -132.54398,-209.36304 -198.36399,-314.93799c-21.97201,-35.24408 -40.93399,-72.47705 -62.04699,-109.05408c-42.21601,-73.13696 -76.444,-157.935 -74.269,-267.932c2.125,-107.47297 33.20799,-193.68399 78.02998,-264.172c73.71903,-115.93497 197.20102,-210.98898 362.88401,-235.96898c135.466,-20.424 262.47503,14.082 352.54303,66.748c73.60003,43.03799 130.59601,100.52701 173.91998,168.28c45.21997,70.716 76.35901,154.26001 78.97095,263.23199c1.33703,55.83002 -7.80493,107.53199 -20.68396,150.41797c-13.03394,43.40906 -33.99597,79.69501 -52.646,118.45404c-36.406,75.659 -82.04895,144.982 -127.85498,214.34601c-136.43701,206.60596 -264.49603,417.30994 -320.58002,706.02698z"/>
-			<circle id="svg_3" stroke-width="20" stroke="#000" fill="#fff" r="183.33299" cy="528.14894" cx="549.99927"/>
-		</g>
-	</g>
-</svg>`;
-
-                const svgBase64 = 'data:image/svg+xml;utf8,' + encodeURIComponent(svgMarkup);
-
-                style = new ol.style.Style({
-                    image: new ol.style.Icon({
-                        src: svgBase64,
-                        scale: initialIconScale,
-                        anchor: [0.5, 1],
-                        anchorXUnits: 'fraction',
-                        anchorYUnits: 'fraction'
-                    })
-                });
-            } else {
-                // Standard: PNG verwenden
-                style = new ol.style.Style({
-                    image: new ol.style.Icon({
-                        src: initialIcon,
-                        scale: initialIconScale,
-                        anchor: [0.5, 1],
-                        anchorXUnits: 'fraction',
-                        anchorYUnits: 'fraction'
-                    })
-                });
-            }
+            let style = new ol.style.Style({
+                image: new ol.style.Icon({
+                    src: initialIcon,
+                    scale: initialIconScale,
+                    anchor: [0.5, 1],
+                    anchorXUnits: 'fraction',
+                    anchorYUnits: 'fraction'
+                })
+            });
 
             marker.setStyle(style);
             pinSource.addFeature(marker);

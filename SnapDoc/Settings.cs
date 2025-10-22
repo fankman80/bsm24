@@ -88,7 +88,7 @@ public static class Settings
 
     public static readonly List<string> MapIcons =
     [
-        "customcolor.png",
+        "themeColorPin",
         "mappin1a.png",
         "mappin2a.png",
         "mappin3a.png",

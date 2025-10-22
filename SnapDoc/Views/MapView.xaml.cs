@@ -7,6 +7,7 @@ using Android.Webkit;
 using CommunityToolkit.Maui.Alerts;
 using CommunityToolkit.Maui.Extensions;
 using CommunityToolkit.Maui.Storage;
+using DocumentFormat.OpenXml.Presentation;
 using SnapDoc.Models;
 using SnapDoc.Services;
 using SnapDoc.ViewModels;
@@ -54,6 +55,12 @@ public partial class MapView : IQueryAttributable
                 webview2.CoreWebView2.DOMContentLoaded += async (sender2, args2) =>
                 {
                     string icon = SettingsService.Instance.MapIcons[SettingsService.Instance.MapIcon];
+                    if (icon == "themeColorPin")
+                    {
+                        string hexColor = ((Color)Application.Current.Resources["Primary"]).ToRgbaHex();
+                        icon = await LoadSvgAsBase64Async("customcolor.svg", hexColor);
+                    }
+
                     double scale = (double)SettingsService.Instance.MapIconSize / 100;
                     string pinJson = GeneratePinJson();
 
@@ -193,6 +200,20 @@ public partial class MapView : IQueryAttributable
             lat = GPSViewModel.Instance.Lat;
             zoom = 18;
         }
+    }
+
+    private static async Task<string> LoadSvgAsBase64Async(string rawFileName, string color)
+    {
+        using var stream = FileSystem.OpenAppPackageFileAsync(rawFileName).Result;
+        using var reader = new StreamReader(stream);
+        string svgText = reader.ReadToEnd();
+
+        // Farbe ersetzen
+        svgText = svgText.Replace("#999999", color, StringComparison.OrdinalIgnoreCase);
+
+        // SVG in Data-URL Base64 umwandeln
+        string svgBase64 = "data:image/svg+xml;utf8," + Uri.EscapeDataString(svgText);
+        return svgBase64;
     }
 
     private static string LoadHtmlFromFile()
