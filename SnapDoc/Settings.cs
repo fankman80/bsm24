@@ -88,11 +88,11 @@ public static class Settings
 
     public static readonly List<string> MapIcons =
     [
+        "customcolor.png",
         "mappin1a.png",
         "mappin2a.png",
         "mappin3a.png",
-        "mappin4a.png",
-        "mappin5a.png"
+        "mappin4a.png"
     ];
 
     public static readonly PopupOptions PopupOptions = new()
