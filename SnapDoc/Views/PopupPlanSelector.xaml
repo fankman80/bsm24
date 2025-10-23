@@ -26,10 +26,9 @@
     </toolkit:Popup.Resources>
 
     <Grid>
-        <Grid VerticalOptions="Center">
             <Grid.RowDefinitions>
-                <RowDefinition Height="*" />
-                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
             <Label Grid.Row="0"
@@ -85,6 +84,5 @@
                         TextColor="{AppThemeBinding Light={DynamicResource PrimaryDarkText}, Dark={DynamicResource PrimaryText}}"
                         Clicked="OnOkClicked" />
                 </Grid>
-        </Grid>
     </Grid>
 </toolkit:Popup>
