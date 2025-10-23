@@ -54,25 +54,7 @@ public partial class MapView : IQueryAttributable
                 // JS ausführen, sobald das DOM geladen ist
                 webview2.CoreWebView2.DOMContentLoaded += async (sender2, args2) =>
                 {
-                    string icon = SettingsService.Instance.MapIcons[SettingsService.Instance.MapIcon];
-                    if (icon == "themeColorPin")
-                    {
-                        string hexColor = ((Color)Application.Current.Resources["Primary"]).ToRgbaHex();
-                        icon = await LoadSvgMarkupAsync("customcolor.svg", hexColor);
-                        icon = icon.Replace("'", "\\'").Replace("\r", "").Replace("\n", "");
-                    }
-
-                    double scale = (double)SettingsService.Instance.MapIconSize / 100;
-                    string pinJson = GeneratePinJson();
-
-                    string js = $@"initMarkersFromBridge(
-                                [{lon.ToString(CultureInfo.InvariantCulture)}, {lat.ToString(CultureInfo.InvariantCulture)}],
-                                {zoom},
-                                '{icon}',
-                                {scale.ToString(CultureInfo.InvariantCulture)},
-                                {pinJson});";
-
-                    await webview2.ExecuteScriptAsync(js);
+                    await webview2.ExecuteScriptAsync(await GenerateIconString());
                 };
             }
         };
@@ -123,22 +105,11 @@ public partial class MapView : IQueryAttributable
 
     public class CustomWebViewClient(MapView mapView) : WebViewClient
     {
-        public override void OnPageFinished(Android.Webkit.WebView view, string url)
+        public override async void OnPageFinished(Android.Webkit.WebView view, string url)
         {
             base.OnPageFinished(view, url);
 
-            string icon = SettingsService.Instance.MapIcons[SettingsService.Instance.MapIcon];
-            double scale = (double)SettingsService.Instance.MapIconSize / 100;
-            string pinJson = MapView.GeneratePinJson();
-
-            string js = $@"initMarkersFromBridge(
-                        [{mapView.lon.ToString(CultureInfo.InvariantCulture)}, {mapView.lat.ToString(CultureInfo.InvariantCulture)}],
-                        {mapView.zoom},
-                        '{icon}',
-                        {scale.ToString(CultureInfo.InvariantCulture)},
-                        {pinJson});";
-
-            view.EvaluateJavascript(js, null);
+            view.EvaluateJavascript(await mapView.GenerateIconString(), null);
 
             // JS-Bridge definieren
             view.EvaluateJavascript("function sendToCSharp(msg) { jsBridge.invokeAction(msg); }", null);
@@ -216,6 +187,27 @@ public partial class MapView : IQueryAttributable
         svgText = svgText.Trim();
 
         return svgText;
+    }
+
+    private async Task<string> GenerateIconString()
+    {
+        string icon = SettingsService.Instance.MapIcons[SettingsService.Instance.MapIcon];
+        if (icon == "themeColorPin")
+        {
+            string hexColor = ((Color)Application.Current.Resources["Primary"]).ToRgbaHex();
+            icon = await LoadSvgMarkupAsync("customcolor.svg", hexColor);
+            icon = icon.Replace("'", "\\'").Replace("\r", "").Replace("\n", "");
+        }
+
+        double scale = (double)SettingsService.Instance.MapIconSize / 100;
+        string pinJson = GeneratePinJson();
+
+        return $@"initMarkersFromBridge(
+                [{lon.ToString(CultureInfo.InvariantCulture)}, {lat.ToString(CultureInfo.InvariantCulture)}],
+                {zoom},
+                '{icon}',
+                {scale.ToString(CultureInfo.InvariantCulture)},
+                {pinJson});";
     }
 
     private static string LoadHtmlFromFile()

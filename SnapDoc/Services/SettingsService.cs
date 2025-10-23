@@ -186,7 +186,7 @@ public partial class SettingsService : INotifyPropertyChanged
         }
     }
 
-    private int _mapIconSize = 80;
+    private int _mapIconSize = 85;
     public int MapIconSize
     {
         get => _mapIconSize;
@@ -200,7 +200,7 @@ public partial class SettingsService : INotifyPropertyChanged
         }
     }
 
-    private int _mapIcon = 1;
+    private int _mapIcon = 0;
     public int MapIcon
     {
         get => _mapIcon;
