@@ -142,7 +142,7 @@ public partial class EditorView : ContentPage, IQueryAttributable
     public async Task SaveJsonAsync(string json)
     {
         File.WriteAllText(_filePath, json);
-        await DisplayAlert("Erfolg", "Einstellungen gespeichert!", "OK");
+        await DisplayAlertAsync("Erfolg", "Einstellungen gespeichert!", "OK");
         SettingsService.Instance.LoadSettings();
         await Shell.Current.GoToAsync("..");
     }

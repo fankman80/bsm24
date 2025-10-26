@@ -25,8 +25,8 @@
         }
 
         #toolbar {
-            height: 50px;
             display: flex;
+            flex-wrap: wrap; /* ermöglicht Zeilenumbruch */
             align-items: center;
             justify-content: flex-start;
             padding: 0 10px;
@@ -56,14 +56,22 @@
             height: 100% !important;
             width: 100% !important;
         }
+
+        #editorTitle {
+            color: white;
+            font-weight: bold;
+            margin-right: auto; /* schiebt alle Buttons nach rechts */
+            font-size: 16px;
+        }
     </style>
 </head>
 <body>
     <div id="toolbar">
+        <span id="editorTitle">JSON Editor</span>
         <button id="sendButton">Speichern</button>
         <button onclick="formatJson()">Formatieren</button>
-        <button onclick="editor.undo()">Undo</button>
-        <button onclick="editor.redo()">Redo</button>
+        <button onclick="editor.undo()">↶</button>
+        <button onclick="editor.redo()">↷</button>
         <button onclick="validateJson()">Validieren</button>
         <select id="themeSelector" onchange="changeTheme(this.value)">
             <option value="material" selected>Dark</option>
