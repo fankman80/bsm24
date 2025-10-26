@@ -3,6 +3,9 @@
 using CommunityToolkit.Maui.Views;
 using FFImageLoading.Maui;
 using SnapDoc.Services;
+using System.Text;
+using System.Text.Json.Nodes;
+using System.Xml.Linq;
 
 namespace SnapDoc.Views;
 
@@ -27,6 +30,15 @@ public partial class PopupSettings : Popup
     {
         SettingsService.Instance.SaveSettings();
         CloseAsync();
+    }
+
+    private async void OpenXmlEditor(object sender, EventArgs e)
+    {
+        var filePath = Path.Combine(Settings.DataDirectory, "appsettings.ini");
+        if (File.Exists(filePath))
+        {
+            await Shell.Current.GoToAsync($"xmleditor?file={filePath}");
+        }
     }
 
     private static string LoadSvgWithColor(string rawFileName, string newColor)

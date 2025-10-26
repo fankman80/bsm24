@@ -1,0 +1,142 @@
+﻿<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <title>JSON Editor</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- CodeMirror CSS & Theme -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.14/codemirror.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.14/theme/material.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.14/theme/eclipse.min.css">
+
+    <!-- CodeMirror JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.14/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.14/mode/javascript/javascript.min.js"></script>
+
+    <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            font-family: Arial, sans-serif;
+        }
+
+        #toolbar {
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            padding: 0 10px;
+            background: #2d2d2d;
+            gap: 6px;
+        }
+
+        button, select {
+            background: #999999;
+            border: none;
+            color: white;
+            padding: 6px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+            button:hover, select:hover {
+                background: #005fa3;
+            }
+
+        #editor {
+            flex: 1;
+        }
+
+        .CodeMirror {
+            height: 100% !important;
+            width: 100% !important;
+        }
+    </style>
+</head>
+<body>
+    <div id="toolbar">
+        <button id="sendButton">Speichern</button>
+        <button onclick="formatJson()">Formatieren</button>
+        <button onclick="editor.undo()">Undo</button>
+        <button onclick="editor.redo()">Redo</button>
+        <button onclick="validateJson()">Validieren</button>
+        <select id="themeSelector" onchange="changeTheme(this.value)">
+            <option value="material" selected>Dark</option>
+            <option value="eclipse">Light</option>
+        </select>
+    </div>
+
+    <div id="editor"></div>
+
+    <script>
+        let editor;
+        let pendingJson = null;
+
+        window.onload = function () {
+            editor = CodeMirror(document.getElementById("editor"), {
+                value: "",
+                mode: { name: "javascript", json: true },
+                theme: "material",
+                lineNumbers: true,
+                lineWrapping: true
+            });
+
+            if (pendingJson !== null) {
+                editor.setValue(pendingJson);
+                editor.refresh();
+                pendingJson = null;
+            }
+
+            document.getElementById("sendButton").addEventListener("click", sendJsonToCSharp);
+        };
+
+        // JSON von C# setzen
+        window.setJsonText = function (jsonString) {
+            if (editor) {
+                editor.setValue(jsonString);
+                editor.refresh();
+            } else {
+                pendingJson = jsonString;
+            }
+        };
+
+        function sendJsonToCSharp() {
+            const payload = JSON.stringify({ json: editor.getValue() });
+            if (window.chrome?.webview)
+                window.chrome.webview.postMessage(payload); // Windows
+            else if (window.jsBridge?.invokeAction)
+                window.jsBridge.invokeAction(payload);      // Android
+        }
+
+        // JSON formatieren
+        function formatJson() {
+            try {
+                const obj = JSON.parse(editor.getValue());
+                editor.setValue(JSON.stringify(obj, null, 4));
+            } catch (e) {
+                alert("Ungültiges JSON:\n" + e.message);
+            }
+        }
+
+        // JSON validieren
+        function validateJson() {
+            try {
+                JSON.parse(editor.getValue());
+                alert("JSON ist gültig!");
+            } catch (e) {
+                alert("Fehler im JSON:\n" + e.message);
+            }
+        }
+
+        // Theme wechseln
+        function changeTheme(theme) {
+            editor.setOption("theme", theme);
+        }
+    </script>
+</body>
+</html>

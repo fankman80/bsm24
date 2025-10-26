@@ -207,6 +207,10 @@
                         </Border>
                     </Grid>
                 </VerticalStackLayout>
+                <Button Text="Editor"
+                        BackgroundColor="{AppThemeBinding Light={DynamicResource Primary}, Dark={DynamicResource PrimaryDark}}"
+                        TextColor="{AppThemeBinding Light={DynamicResource PrimaryDarkText}, Dark={DynamicResource PrimaryText}}"
+                        Clicked="OpenXmlEditor"></Button>
             </VerticalStackLayout>
         </ScrollView>
 

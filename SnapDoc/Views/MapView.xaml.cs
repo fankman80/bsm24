@@ -7,7 +7,6 @@ using Android.Webkit;
 using CommunityToolkit.Maui.Alerts;
 using CommunityToolkit.Maui.Extensions;
 using CommunityToolkit.Maui.Storage;
-using DocumentFormat.OpenXml.Presentation;
 using SnapDoc.Models;
 using SnapDoc.Services;
 using SnapDoc.ViewModels;
@@ -126,7 +125,6 @@ public partial class MapView : IQueryAttributable
 
         UpdateUiFromQuery();
     }
-
 
     protected override void OnAppearing()
     {

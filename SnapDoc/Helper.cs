@@ -6,6 +6,7 @@ using SkiaSharp;
 using SnapDoc.Services;
 using System.Globalization;
 using System.IO.Compression;
+using System.Text.Json.Nodes;
 using System.Xml.Linq;
 
 namespace SnapDoc;
