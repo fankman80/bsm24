@@ -213,7 +213,7 @@
                         <ColumnDefinition Width="Auto" />
                         <ColumnDefinition Width="Auto" />
                     </Grid.ColumnDefinitions>
-                    <Label Grid.Column="0" Text="Einstellungen im Texteditor bearbeiten:" LineBreakMode="CharacterWrap"/>
+                    <Label Grid.Column="0" Text="Einstellungen bearbeiten:" VerticalTextAlignment="Center"/>
                     <Button Grid.Column="1"
                             Padding="0"
                             BackgroundColor="{AppThemeBinding Light={DynamicResource Primary}, Dark={DynamicResource PrimaryDark}}"

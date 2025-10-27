@@ -22,14 +22,8 @@ public partial class SettingsService : INotifyPropertyChanged
 
     public string AppVersion { get; set; } = $"Version {AppInfo.VersionString}";
 
-    private List<string> _mapIcons =
-    [
-        "themeColorPin",
-        "mappin1a.png",
-        "mappin2a.png",
-        "mappin3a.png",
-        "mappin4a.png"
-    ];
+    private List<string> _mapIcons = Settings.MapIcons;
+
     public List<string> MapIcons
     {
         get => _mapIcons;
@@ -901,7 +895,6 @@ public partial class SettingsService : INotifyPropertyChanged
             IconPreviewSize = this.IconPreviewSize,
             DefaultPinZoom = this.DefaultPinZoom,
             ColorList = this.ColorList,
-            MapIcons = this.MapIcons,
             IconSortCrits = this.IconSortCrits,
             PinSortCrits = this.PinSortCrits,
             PriorityItems = this.PriorityItems,
@@ -980,7 +973,6 @@ public partial class SettingsService : INotifyPropertyChanged
             this.IconPreviewSize = settings.IconPreviewSize;
             this.DefaultPinZoom = settings.DefaultPinZoom;
             this.ColorList = settings.ColorList ?? _colorList;
-            this.MapIcons = settings.MapIcons ?? _mapIcons;
             this.IconSortCrits = settings.IconSortCrits ?? _iconSortCrits;
             this.PinSortCrits = settings.PinSortCrits ?? _pinSortCrits;
             this.PriorityItems = settings.PriorityItems ?? _priorityItems;

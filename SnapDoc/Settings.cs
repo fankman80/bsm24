@@ -54,6 +54,15 @@ public static class Settings
         new MapViewItem { Desc = "SCHUTZGEBIETE_LUFTFAHRT", Id = "ch.bafu.schutzgebiete-luftfahrt" },
         new MapViewItem { Desc = "EISZEIT", Id = "ch.swisstopo.geologie-eiszeit-lgm-raster" }];
 
+    public static readonly List<string> MapIcons =
+    [
+        "themeColorPin",
+        "mappin1a.png",
+        "mappin2a.png",
+        "mappin3a.png",
+        "mappin4a.png"
+    ];
+
     public static readonly PopupOptions PopupOptions = new()
     {
         CanBeDismissedByTappingOutsideOfPopup = false,

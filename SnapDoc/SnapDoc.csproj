@@ -24,7 +24,7 @@
 	<!-- Android Signatur (zentral, gilt für alle Builds) -->
 	<PropertyGroup>
 		<AndroidKeyStore>True</AndroidKeyStore>
-		<AndroidSigningKeyStore>C:\Users\mfankhauser\Desktop\SnapDoc\SnapDoc.keystore</AndroidSigningKeyStore>
+		<AndroidSigningKeyStore>C:\Users\fankhauser\Desktop\SnapDoc\SnapDoc.keystore</AndroidSigningKeyStore>
 		<AndroidSigningStorePass>p0Ny05jY</AndroidSigningStorePass>
 		<AndroidSigningKeyAlias>bsm24</AndroidSigningKeyAlias>
 		<AndroidSigningKeyPass>p0Ny05jY</AndroidSigningKeyPass>
