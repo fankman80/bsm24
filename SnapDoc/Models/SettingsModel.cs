@@ -38,7 +38,6 @@ internal class SettingsModel
     public int IconPreviewSize { get; set; } // Grösse der Icons in der Icon-Auswahl
     public double DefaultPinZoom { get; set; } // Standard Zoomstufe für Pins
     public List<string>? ColorList { get; set; } // Systemweite Farbliste (Hex-Werte)
-    public List<string>? MapIcons { get; set; } // Liste der verfügbaren Karten-Icons
     public List<string>? IconSortCrits { get; set; } // Liste der verfügbaren Sortierkriterien für Icons
     public List<string>? PinSortCrits { get; set; } // Liste der verfügbaren Sortierkriterien für Pins
     public List<PriorityItem>? PriorityItems { get; set; } // Liste der Prioritätsstufen (Name und Hex-Farbcode)
