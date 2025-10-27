@@ -1,998 +1,428 @@
-﻿#nullable disable
+﻿#pragma warning disable MVVMTK0045
+using CommunityToolkit.Mvvm.ComponentModel;
 using SnapDoc.Models;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
 using System.Text.Json;
 
 namespace SnapDoc.Services;
-public partial class SettingsService : INotifyPropertyChanged
+
+public partial class SettingsService : ObservableObject
 {
-    public static SettingsService Instance { get; } = new SettingsService();
+    // --- Singleton ---
+    private static readonly Lazy<SettingsService> _instance = new(() => new SettingsService());
+    public static SettingsService Instance => _instance.Value;
+
     private const string SettingsFileName = "appsettings.ini";
+    private static readonly JsonSerializerOptions _jsonOptions = new() { WriteIndented = true };
+
+    // --- Theme Dictionaries ---
+    private static readonly Dictionary<string, Dictionary<string, string>> ColorThemeMapping = new()
+    {
+        ["EBBE"] = new()
+        {
+            ["Primary"] = "#00b0ca",
+            ["PrimaryText"] = "#000000",
+            ["PrimaryAccent"] = "#5e75ad",
+            ["PrimaryDark"] = "#00b0ca",
+            ["PrimaryDarkText"] = "#ffffff",
+            ["PrimaryDarkAccent"] = "#00b0ca",
+            ["PrimaryBackground"] = "#ffffff",
+            ["Secondary"] = "#00b0ca",
+            ["SecondaryDark"] = "#ffffff",
+            ["SecondaryAccent"] = "#00b0ca"
+        },
+        ["Minimalist"] = new()
+        {
+            ["Primary"] = "#000000",
+            ["PrimaryText"] = "#000000",
+            ["PrimaryAccent"] = "#000000",
+            ["PrimaryDark"] = "#ededed",
+            ["PrimaryDarkText"] = "#ffffff",
+            ["PrimaryDarkAccent"] = "#ffffff",
+            ["PrimaryBackground"] = "#ffffff",
+            ["Secondary"] = "#949494",
+            ["SecondaryDark"] = "#ffffff",
+            ["SecondaryAccent"] = "#000000"
+        },
+        ["Wine"] = new()
+        {
+            ["Primary"] = "#9c4e38",
+            ["PrimaryText"] = "#000000",
+            ["PrimaryAccent"] = "#9c4e38",
+            ["PrimaryDark"] = "#e6c3ba",
+            ["PrimaryDarkText"] = "#ffffff",
+            ["PrimaryDarkAccent"] = "#9c4e38",
+            ["PrimaryBackground"] = "#ffffff",
+            ["Secondary"] = "#e6c3ba",
+            ["SecondaryDark"] = "#ffffff",
+            ["SecondaryAccent"] = "#9c4e38"
+        },
+        ["Grass"] = new()
+        {
+            ["Primary"] = "#32a852",
+            ["PrimaryText"] = "#000000",
+            ["PrimaryAccent"] = "#32a852",
+            ["PrimaryDark"] = "#c1e8c1",
+            ["PrimaryDarkText"] = "#ffffff",
+            ["PrimaryDarkAccent"] = "#32a852",
+            ["PrimaryBackground"] = "#ffffff",
+            ["Secondary"] = "#c1e8c1",
+            ["SecondaryDark"] = "#ffffff",
+            ["SecondaryAccent"] = "#32a852"
+        },
+        ["Fire"] = new()
+        {
+            ["Primary"] = "#e07a2d",
+            ["PrimaryText"] = "#000000",
+            ["PrimaryAccent"] = "#e07a2d",
+            ["PrimaryDark"] = "#f2cdb1",
+            ["PrimaryDarkText"] = "#ffffff",
+            ["PrimaryDarkAccent"] = "#e07a2d",
+            ["PrimaryBackground"] = "#ffffff",
+            ["Secondary"] = "#f2cdb1",
+            ["SecondaryDark"] = "#ffffff",
+            ["SecondaryAccent"] = "#e07a2d"
+        },
+        ["Flower"] = new()
+        {
+            ["Primary"] = "#9f4bcc",
+            ["PrimaryText"] = "#000000",
+            ["PrimaryAccent"] = "#9f4bcc",
+            ["PrimaryDark"] = "#e5befa",
+            ["PrimaryDarkText"] = "#ffffff",
+            ["PrimaryDarkAccent"] = "#9f4bcc",
+            ["PrimaryBackground"] = "#ffffff",
+            ["Secondary"] = "#e5befa",
+            ["SecondaryDark"] = "#ffffff",
+            ["SecondaryAccent"] = "#9f4bcc"
+        },
+        ["Pink"] = new()
+        {
+            ["Primary"] = "#fc03df",
+            ["PrimaryText"] = "#000000",
+            ["PrimaryAccent"] = "#fc03df",
+            ["PrimaryDark"] = "#eed5f2",
+            ["PrimaryDarkText"] = "#ffffff",
+            ["PrimaryDarkAccent"] = "#fc03df",
+            ["PrimaryBackground"] = "#ffffff",
+            ["Secondary"] = "#eed5f2",
+            ["SecondaryDark"] = "#ffffff",
+            ["SecondaryAccent"] = "#fc03df"
+        }
+    };
+
+    // --- Konstruktor ---
     private SettingsService()
     {
-        ColorThemes = ["EBBE", "Minimalist", "Wine", "Grass", "Fire", "Flower", "Pink"];
+        // --- Standardwerte für Nicht-Nullable-Felder ---
+        _selectedColorTheme = string.Empty;
+        _selectedAppTheme = string.Empty;
+        _selectedTemplate = string.Empty;
+
+        ColorThemes = [.. ColorThemeMapping.Keys];
         AppThemes = ["Hell", "Dunkel"];
-        SelectedColorTheme = ColorThemes[0]; // Standardauswahl
-        SelectedAppTheme = AppThemes[0]; // Standardauswahl
-        IconSortCrit = IconSortCrits[0]; // Standardauswahl
-        PinSortCrit = PinSortCrits[0]; // Standardauswahl
-        IconCategory = IconCategories[0]; // Standardauswahl
+        IconCategories = ["alle Icons"];
+        SelectedColorTheme = ColorThemes[0];
+        SelectedAppTheme = AppThemes[0];
+        IconSortCrit = IconSortCrits[0];
+        PinSortCrit = PinSortCrits[0];
+        IconCategory = IconCategories[0];
     }
 
     public string AppVersion { get; set; } = $"Version {AppInfo.VersionString}";
-
-    private List<string> _mapIcons = Settings.MapIcons;
-
-    public List<string> MapIcons
-    {
-        get => _mapIcons;
-        set
-        {
-            if (_mapIcons != value)
-            {
-                _mapIcons = value;
-                OnPropertyChanged(nameof(MapIcons));
-            }
-        }
-    }
-
-    private List<string> _iconSortCrits =
-    [
-        "nach Name",
-        "nach Farbe"
-    ];
-    public List<string> IconSortCrits
-    {
-        get => _iconSortCrits;
-        set
-        {
-            if (_iconSortCrits != value)
-            {
-                _iconSortCrits = value;
-                OnPropertyChanged(nameof(IconSortCrits));
-            }
-        }
-    }
-
+    // --- Observable Properties ---
+    [ObservableProperty] private List<string> _mapIcons = Settings.MapIcons;
+    [ObservableProperty] private List<string> _iconSortCrits = ["nach Name", "nach Farbe"];
+    [ObservableProperty]
     private List<string> _pinSortCrits =
     [
-        "nach Plan",
-        "nach Pin",
-        "nach Standort",
-        "nach Bezeichnung",
-        "nach aktiv/inaktiv",
-        "nach Aufnahmedatum"
+        "nach Plan", "nach Pin", "nach Standort", "nach Bezeichnung", "nach aktiv/inaktiv", "nach Aufnahmedatum"
     ];
-    public List<string> PinSortCrits
-    {
-        get => _pinSortCrits;
-        set
-        {
-            if (_pinSortCrits != value)
-            {
-                _pinSortCrits = value;
-                OnPropertyChanged(nameof(PinSortCrits));
-            }
-        }
-    }
-
+    [ObservableProperty]
     private List<PriorityItem> _priorityItems =
     [
-        new PriorityItem { Key = "", Color = "#000000" },
-        new PriorityItem { Key = "Empfehlung", Color = "#92D050" },
-        new PriorityItem { Key = "Wichtig", Color = "#FFC000" },
-        new PriorityItem { Key = "Kritisch", Color = "#FF0000" }
+        new() { Key = "", Color = "#000000" },
+        new() { Key = "Empfehlung", Color = "#92D050" },
+        new() { Key = "Wichtig", Color = "#FFC000" },
+        new() { Key = "Kritisch", Color = "#FF0000" }
     ];
+    public List<string> IconCategories { get; set; }
 
-    public List<PriorityItem> PriorityItems
-    {
-        get => _priorityItems;
-        set
-        {
-            if (_priorityItems != value)
-            {
-                _priorityItems = value;
-                OnPropertyChanged(nameof(PriorityItems));
-            }
-        }
-    }
+    [ObservableProperty] private bool _isProjectLoaded = false;
+    [ObservableProperty] private string _flyoutHeaderTitle = "by Emch+Berger AG Bern";
+    [ObservableProperty] private string _flyoutHeaderDesc = "SnapDoc";
+    [ObservableProperty] private string _flyoutHeaderImage = "banner_thumbnail.png";
+    [ObservableProperty] private string _iconGalleryMode = "IconListTemplate";
 
-    public List<string> IconCategories { get; set; } = ["alle Icons"];
+    // --- Größe und Export ---
+    [ObservableProperty] private int _maxPdfImageSizeW = 8192;
+    [ObservableProperty] private int _maxPdfImageSizeH = 8192;
+    [ObservableProperty] private int _fotoThumbSize = 150;
+    [ObservableProperty] private int _fotoThumbQuality = 80;
+    [ObservableProperty] private int _fotoQuality = 90;
+    [ObservableProperty] private int _planPreviewSize = 150;
+    [ObservableProperty] private int _iconPreviewSize = 64;
+    [ObservableProperty] private double _defaultPinZoom = 2;
+    [ObservableProperty]
+    private List<string> _colorList =
+    [
+        "#009900","#CAFE96","#000000","#7F00FF","#0365DD","#7FBFFF","#7D5F00","#DF7100","#FFBF00",
+        "#C565E3","#FABAFC","#79F3F3","#0032CC","#FF0000","#FFFF00","#DFDFDF"
+    ];
+    [ObservableProperty] private bool _isPlanRotateLocked = false;
+    [ObservableProperty] private double _pinMinScaleLimit = 80;
+    [ObservableProperty] private double _pinMaxScaleLimit = 100;
+    [ObservableProperty] private int _maxPdfPixelCount = 30000000;
+    [ObservableProperty] private int _mapIconSize = 85;
+    [ObservableProperty] private int _mapIcon = 0;
+    [ObservableProperty] private int _pinPlaceMode = 0;
+    [ObservableProperty] private string _iconSortCrit;
+    [ObservableProperty] private string _pinSortCrit;
+    [ObservableProperty] private string _iconCategory;
 
-    private bool _isProjectLoaded = false;
-    public bool IsProjectLoaded
-    {
-        get => _isProjectLoaded;
-        set
-        {
-            if (_isProjectLoaded != value)
-            {
-                _isProjectLoaded = value;
-                OnPropertyChanged(nameof(IsProjectLoaded));
-            }
-        }
-    }
-
-    private string _flyoutHeaderTitle = "by Emch+Berger AG Bern";
-    public string FlyoutHeaderTitle
-    {
-        get => _flyoutHeaderTitle;
-        set
-        {
-            if (_flyoutHeaderTitle != value)
-            {
-                _flyoutHeaderTitle = value;
-                OnPropertyChanged(nameof(FlyoutHeaderTitle));
-            }
-        }
-    }
-
-    private string _flyoutHeaderDesc = "SnapDoc";
-    public string FlyoutHeaderDesc
-    {
-        get => _flyoutHeaderDesc;
-        set
-        {
-            if (_flyoutHeaderDesc != value)
-            {
-                _flyoutHeaderDesc = value;
-                OnPropertyChanged(nameof(FlyoutHeaderDesc));
-            }
-        }
-    }
-
-    private string _flyoutHeaderImage = "banner_thumbnail.png";
-    public string FlyoutHeaderImage
-    {
-        get => _flyoutHeaderImage;
-        set
-        {
-            if (_flyoutHeaderImage != value)
-            {
-                _flyoutHeaderImage = value;
-                OnPropertyChanged(nameof(FlyoutHeaderImage));
-            }
-        }
-    }
-
-    private string _iconGalleryMode = "IconListTemplate";
-    public string IconGalleryMode
-    {
-        get => _iconGalleryMode;
-        set
-        {
-            if (_iconGalleryMode != value)
-            {
-                _iconGalleryMode = value;
-                OnPropertyChanged(nameof(IconGalleryMode));
-            }
-        }
-    }
-
-    // Allgemeine Größen-Settings
-    private int _maxPdfImageSizeW = 8192;
-    public int MaxPdfImageSizeW
-    {
-        get => _maxPdfImageSizeW;
-        set
-        {
-            if (_maxPdfImageSizeW != value)
-            {
-                _maxPdfImageSizeW = value;
-                OnPropertyChanged(nameof(MaxPdfImageSizeW));
-            }
-        }
-    }
-
-    private int _maxPdfImageSizeH = 8192;
-    public int MaxPdfImageSizeH
-    {
-        get => _maxPdfImageSizeH;
-        set
-        {
-            if (_maxPdfImageSizeH != value)
-            {
-                _maxPdfImageSizeH = value;
-                OnPropertyChanged(nameof(MaxPdfImageSizeH));
-            }
-        }
-    }
-
-    private int _fotothumbSize = 150;
-    public int FotoThumbSize
-    {
-        get => _fotothumbSize;
-        set
-        {
-            if (_fotothumbSize != value)
-            {
-                _fotothumbSize = value;
-                OnPropertyChanged(nameof(FotoThumbSize));
-            }
-        }
-    }
-
-    private int _fotothumbQuality = 80;
-    public int FotoThumbQuality
-    {
-        get => _fotothumbQuality;
-        set
-        {
-            if (_fotothumbQuality != value)
-            {
-                _fotothumbQuality = value;
-                OnPropertyChanged(nameof(FotoThumbQuality));
-            }
-        }
-    }
-
-    private int _fotoQuality = 90;
-    public int FotoQuality
-    {
-        get => _fotoQuality;
-        set
-        {
-            if (_fotoQuality != value)
-            {
-                _fotoQuality = value;
-                OnPropertyChanged(nameof(FotoQuality));
-            }
-        }
-    }
-
-    private int _planPreviewSize = 150;
-    public int PlanPreviewSize
-    {
-        get => _planPreviewSize;
-        set
-        {
-            if (_planPreviewSize != value)
-            {
-                _planPreviewSize = value;
-                OnPropertyChanged(nameof(PlanPreviewSize));
-            }
-        }
-    }
-
-    private int _iconPreviewSize = 64;
-    public int IconPreviewSize
-    {
-        get => _iconPreviewSize;
-        set
-        {
-            if (_iconPreviewSize != value)
-            {
-                _iconPreviewSize = value;
-                OnPropertyChanged(nameof(IconPreviewSize));
-            }
-        }
-    }
-
-    private double _defaultPinZoom = 2;
-    public double DefaultPinZoom
-    {
-        get => _defaultPinZoom;
-        set
-        {
-            if (_defaultPinZoom != value)
-            {
-                _defaultPinZoom = value;
-                OnPropertyChanged(nameof(DefaultPinZoom));
-            }
-        }
-    }
-
-    private List<string> _colorList = [
-    "#009900",
-    "#CAFE96",
-    "#000000",
-    "#7F00FF",
-    "#0365DD",
-    "#7FBFFF",
-    "#7D5F00",
-    "#DF7100",
-    "#FFBF00",
-    "#C565E3",
-    "#FABAFC",
-    "#79F3F3",
-    "#0032CC",
-    "#FF0000",
-    "#FFFF00",
-    "#DFDFDF"];
-    public List<string> ColorList
-    {
-        get => _colorList;
-        set
-        {
-            if (_colorList != value)
-            {
-                _colorList = value;
-                OnPropertyChanged(nameof(ColorList));
-            }
-        }
-    }
-
-    private bool _isPlanRotateLocked = false;
-    public bool IsPlanRotateLocked
-    {
-        get => _isPlanRotateLocked;
-        set
-        {
-            if (_isPlanRotateLocked != value)
-            {
-                _isPlanRotateLocked = value;
-                OnPropertyChanged(nameof(IsPlanRotateLocked));
-            }
-        }
-    }
-
-    private double _pinMinScaleLimit = 60;
-    public double PinMinScaleLimit
-    {
-        get => _pinMinScaleLimit;
-        set
-        {
-            if (_pinMinScaleLimit != value)
-            {
-                _pinMinScaleLimit = Math.Round(value, 0);
-                OnPropertyChanged(nameof(PinMinScaleLimit));
-            }
-        }
-    }
-
-    private double _pinMaxScaleLimit = 100;
-    public double PinMaxScaleLimit
-    {
-        get => _pinMaxScaleLimit;
-        set
-        {
-            if (_pinMaxScaleLimit != value)
-            {
-                _pinMaxScaleLimit = Math.Round(value,0);
-                OnPropertyChanged(nameof(PinMaxScaleLimit));
-            }
-        }
-    }
-
-    private int _maxPdfPixelCount = 30000000;
-    public int MaxPdfPixelCount
-    {
-        get => _maxPdfPixelCount;
-        set
-        {
-            if (_maxPdfPixelCount != value)
-            {
-                _maxPdfPixelCount = (value / 1000000) * 1000000; ;
-                OnPropertyChanged(nameof(MaxPdfPixelCount));
-            }
-        }
-    }
-
-    private int _mapIconSize = 85;
-    public int MapIconSize
-    {
-        get => _mapIconSize;
-        set
-        {
-            if (_mapIconSize != value)
-            {
-                _mapIconSize = value;
-                OnPropertyChanged(nameof(MapIconSize));
-            }
-        }
-    }
-
-    private int _mapIcon = 0;
-    public int MapIcon
-    {
-        get => _mapIcon;
-        set
-        {
-            if (_mapIcon != value)
-            {
-                _mapIcon = value;
-                OnPropertyChanged(nameof(MapIcon));
-            }
-        }
-    }
-
-    private int _pinPlaceMode = 0;
-    public int PinPlaceMode
-    {
-        get => _pinPlaceMode;
-        set
-        {
-            if (_pinPlaceMode != value)
-            {
-                _pinPlaceMode = value;
-                OnPropertyChanged(nameof(PinPlaceMode));
-            }
-        }
-    }
-
-    private string _iconSortCrit;
-    public string IconSortCrit
-    {
-        get => _iconSortCrit;
-        set
-        {
-            if (_iconSortCrit != value)
-            {
-                _iconSortCrit = value;
-                OnPropertyChanged(nameof(IconSortCrit));
-            }
-        }
-    }
-
-    private string _pinSortCrit;
-    public string PinSortCrit
-    {
-        get => _pinSortCrit;
-        set
-        {
-            if (_pinSortCrit != value)
-            {
-                _pinSortCrit = value;
-                OnPropertyChanged(nameof(PinSortCrit));
-            }
-        }
-    }
-
-    private string _iconCategory;
-    public string IconCategory
-    {
-        get => _iconCategory;
-        set
-        {
-            if (_iconCategory != value)
-            {
-                _iconCategory = value;
-                OnPropertyChanged(nameof(IconCategory));
-            }
-        }
-    }
-
-    #region
-    // Export Settings
-
-    private int _imageExportQuality = 80;
-    public int ImageExportQuality
-    {
-        get => _imageExportQuality;
-        set
-        {
-            if (_imageExportQuality != value)
-            {
-                _imageExportQuality = value;
-                OnPropertyChanged(nameof(ImageExportQuality));
-            }
-        }
-    }
-
-    private double _pinLabelFontSize = 4;
-    public double PinLabelFontSize
-    {
-        get => _pinLabelFontSize;
-        set
-        {
-            if (_pinLabelFontSize != value)
-            {
-                _pinLabelFontSize = value;
-                OnPropertyChanged(nameof(PinLabelFontSize));
-            }
-        }
-    }
-
-
-    private string _pinLabelPrefix = "Pos. ";
-    public string PinLabelPrefix
-    {
-        get => _pinLabelPrefix;
-        set
-        {
-            if (_pinLabelPrefix != value)
-            {
-                _pinLabelPrefix = value;
-                OnPropertyChanged(nameof(PinLabelPrefix));
-            }
-        }
-    }
-
-    private bool _isPlanExport = true;
-    public bool IsPlanExport
-    {
-        get => _isPlanExport;
-        set
-        {
-            if (_isPlanExport != value)
-            {
-                _isPlanExport = value;
-                OnPropertyChanged(nameof(IsPlanExport));
-            }
-        }
-    }
-
-    private bool _isPosImageExport = true;
-    public bool IsPosImageExport
-    {
-        get => _isPosImageExport;
-        set
-        {
-            if (_isPosImageExport != value)
-            {
-                _isPosImageExport = value;
-                OnPropertyChanged(nameof(IsPosImageExport));
-            }
-        }
-    }
-
-    private bool _isImageExport = true;
-    public bool IsImageExport
-    {
-        get => _isImageExport;
-        set
-        {
-            if (_isImageExport != value)
-            {
-                _isImageExport = value;
-                OnPropertyChanged(nameof(IsImageExport));
-            }
-        }
-    }
-
-    private bool _isPinIconExport = true;
-    public bool IsPinIconExport
-    {
-        get => _isPinIconExport;
-        set
-        {
-            if (_isPinIconExport != value)
-            {
-                _isPinIconExport = value;
-                OnPropertyChanged(nameof(IsPinIconExport));
-            }
-        }
-    }
-
-    private bool _isFotoOverlayExport = true;
-    public bool IsFotoOverlayExport
-    {
-        get => _isFotoOverlayExport;
-        set
-        {
-            if (_isFotoOverlayExport != value)
-            {
-                _isFotoOverlayExport = value;
-                OnPropertyChanged(nameof(IsFotoOverlayExport));
-            }
-        }
-    }
-
-    private bool _isFotoCompressed = true;
-    public bool IsFotoCompressed
-    {
-        get => _isFotoCompressed;
-        set
-        {
-            if (_isFotoCompressed != value)
-            {
-                _isFotoCompressed = value;
-                OnPropertyChanged(nameof(IsFotoCompressed));
-            }
-        }
-    }
-
-    private int _fotoCompressValue = 20;
-    public int FotoCompressValue
-    {
-        get => _fotoCompressValue;
-        set
-        {
-            if (_fotoCompressValue != value)
-            {
-                _fotoCompressValue = value;
-                OnPropertyChanged(nameof(FotoCompressValue));
-            }
-        }
-    }
-
-    private int _imageExportSize = 40;
-    public int ImageExportSize
-    {
-        get => _imageExportSize;
-        set
-        {
-            if (_imageExportSize != value)
-            {
-                _imageExportSize = value;
-                OnPropertyChanged(nameof(ImageExportSize));
-            }
-        }
-    }
-
-    private double _pinExportSize = 3.2;
-    public double PinExportSize
-    {
-        get => _pinExportSize;
-        set
-        {
-            if (_pinExportSize != value)
-            {
-                _pinExportSize = Math.Round(value, 1);
-                OnPropertyChanged(nameof(PinExportSize));
-            }
-        }
-    }
-
-    private int _titleExportSize = 90;
-    public int TitleExportSize
-    {
-        get => _titleExportSize;
-        set
-        {
-            if (_titleExportSize != value)
-            {
-                _titleExportSize = value;
-                OnPropertyChanged(nameof(TitleExportSize));
-            }
-        }
-    }
-
-    private int _pinPosExportSize = 25;
-    public int PinPosExportSize
-    {
-        get => _pinPosExportSize;
-        set
-        {
-            if (_pinPosExportSize != value)
-            {
-                _pinPosExportSize = value;
-                OnPropertyChanged(nameof(PinPosExportSize));
-            }
-        }
-    }
-
-    private int _pinPosCropExportSize = 300;
-    public int PinPosCropExportSize
-    {
-        get => _pinPosCropExportSize;
-        set
-        {
-            if (_pinPosCropExportSize != value)
-            {
-                _pinPosCropExportSize = value;
-                OnPropertyChanged(nameof(PinPosCropExportSize));
-            }
-        }
-    }
+    #region Export Settings
+    [ObservableProperty] private int _imageExportQuality = 80;
+    [ObservableProperty] private double _pinLabelFontSize = 4;
+    [ObservableProperty] private string _pinLabelPrefix = "Pos. ";
+    [ObservableProperty] private bool _isPlanExport = true;
+    [ObservableProperty] private bool _isPosImageExport = true;
+    [ObservableProperty] private bool _isImageExport = true;
+    [ObservableProperty] private bool _isPinIconExport = true;
+    [ObservableProperty] private bool _isFotoOverlayExport = true;
+    [ObservableProperty] private bool _isFotoCompressed = true;
+    [ObservableProperty] private int _fotoCompressValue = 20;
+    [ObservableProperty] private int _imageExportSize = 40;
+    [ObservableProperty] private double _pinExportSize = 3.2;
+    [ObservableProperty] private int _titleExportSize = 90;
+    [ObservableProperty] private int _pinPosExportSize = 25;
+    [ObservableProperty] private int _pinPosCropExportSize = 300;
     #endregion
 
-    private List<string> _colorThemes;
-    public List<string> ColorThemes
-    {
-        get => _colorThemes;
-        set
-        {
-            _colorThemes = value;
-            OnPropertyChanged(nameof(ColorThemes));
-        }
-    }
+    [ObservableProperty] private List<string> _colorThemes;
+    [ObservableProperty] private List<string> _appThemes;
+    [ObservableProperty] private double _gpsMinDistUpdate = 1.0;
+    [ObservableProperty] private float _gpsMinTimeUpdate = 0.5f;
+    [ObservableProperty] private ObservableCollection<string> _templates = new();
+    [ObservableProperty] private string _selectedTemplate;
 
+    // --- Selected ColorTheme ---
     private string _selectedColorTheme;
     public string SelectedColorTheme
     {
         get => _selectedColorTheme;
         set
         {
-            if (_selectedColorTheme != value)
-            {
-                _selectedColorTheme = value;
-                OnPropertyChanged(nameof(SelectedColorTheme));
-
-                // Logik für das Anwenden der Farben basierend auf der Auswahl
-                switch (_selectedColorTheme)
-                {
-                    case "Minimalist":
-                        App.Current.Resources["Primary"] = Color.FromArgb("#000000");
-                        App.Current.Resources["PrimaryText"] = Color.FromArgb("#000000");
-                        App.Current.Resources["PrimaryAccent"] = Color.FromArgb("#000000");
-                        App.Current.Resources["PrimaryDark"] = Color.FromArgb("#ededed");
-                        App.Current.Resources["PrimaryDarkText"] = Color.FromArgb("#ffffff");
-                        App.Current.Resources["PrimaryDarkAccent"] = Color.FromArgb("#ffffff");
-                        App.Current.Resources["PrimaryBackground"] = Color.FromArgb("#ffffff");
-                        App.Current.Resources["Secondary"] = Color.FromArgb("#949494");
-                        App.Current.Resources["SecondaryDark"] = Color.FromArgb("#ffffff");
-                        App.Current.Resources["SecondaryAccent"] = Color.FromArgb("#000000");
-                        break;
-
-                    case "Wine":
-                        App.Current.Resources["Primary"] = Color.FromArgb("#9c4e38");
-                        App.Current.Resources["PrimaryText"] = Color.FromArgb("#000000");
-                        App.Current.Resources["PrimaryAccent"] = Color.FromArgb("#9c4e38");
-                        App.Current.Resources["PrimaryDark"] = Color.FromArgb("#e6c3ba");
-                        App.Current.Resources["PrimaryDarkText"] = Color.FromArgb("#ffffff");
-                        App.Current.Resources["PrimaryDarkAccent"] = Color.FromArgb("#9c4e38");
-                        App.Current.Resources["PrimaryBackground"] = Color.FromArgb("#ffffff");
-                        App.Current.Resources["Secondary"] = Color.FromArgb("#e6c3ba");
-                        App.Current.Resources["SecondaryDark"] = Color.FromArgb("#ffffff");
-                        App.Current.Resources["SecondaryAccent"] = Color.FromArgb("#9c4e38");
-                        break;
-
-                    case "Grass":
-                        App.Current.Resources["Primary"] = Color.FromArgb("#32a852");
-                        App.Current.Resources["PrimaryText"] = Color.FromArgb("#000000");
-                        App.Current.Resources["PrimaryAccent"] = Color.FromArgb("#32a852");
-                        App.Current.Resources["PrimaryDark"] = Color.FromArgb("#c1e8c1");
-                        App.Current.Resources["PrimaryDarkText"] = Color.FromArgb("#ffffff");
-                        App.Current.Resources["PrimaryDarkAccent"] = Color.FromArgb("#32a852");
-                        App.Current.Resources["PrimaryBackground"] = Color.FromArgb("#ffffff");
-                        App.Current.Resources["Secondary"] = Color.FromArgb("#c1e8c1");
-                        App.Current.Resources["SecondaryDark"] = Color.FromArgb("#ffffff");
-                        App.Current.Resources["SecondaryAccent"] = Color.FromArgb("#32a852");
-                        break;
-
-                    case "EBBE":
-                        App.Current.Resources["Primary"] = Color.FromArgb("#00b0ca");
-                        App.Current.Resources["PrimaryText"] = Color.FromArgb("#000000");
-                        App.Current.Resources["PrimaryAccent"] = Color.FromArgb("#5e75ad");
-                        App.Current.Resources["PrimaryDark"] = Color.FromArgb("#00b0ca");
-                        App.Current.Resources["PrimaryDarkText"] = Color.FromArgb("#ffffff");
-                        App.Current.Resources["PrimaryDarkAccent"] = Color.FromArgb("#00b0ca");
-                        App.Current.Resources["PrimaryBackground"] = Color.FromArgb("#ffffff");
-                        App.Current.Resources["Secondary"] = Color.FromArgb("#00b0ca");
-                        App.Current.Resources["SecondaryDark"] = Color.FromArgb("#ffffff");
-                        App.Current.Resources["SecondaryAccent"] = Color.FromArgb("#00b0ca");
-                        break;
-
-                    case "Fire":
-                        App.Current.Resources["Primary"] = Color.FromArgb("#e07a2d");
-                        App.Current.Resources["PrimaryText"] = Color.FromArgb("#000000");
-                        App.Current.Resources["PrimaryAccent"] = Color.FromArgb("#e07a2d");
-                        App.Current.Resources["PrimaryDark"] = Color.FromArgb("#f2cdb1");
-                        App.Current.Resources["PrimaryDarkText"] = Color.FromArgb("#ffffff");
-                        App.Current.Resources["PrimaryDarkAccent"] = Color.FromArgb("#e07a2d");
-                        App.Current.Resources["PrimaryBackground"] = Color.FromArgb("#ffffff");
-                        App.Current.Resources["Secondary"] = Color.FromArgb("#f2cdb1");
-                        App.Current.Resources["SecondaryDark"] = Color.FromArgb("#ffffff");
-                        App.Current.Resources["SecondaryAccent"] = Color.FromArgb("#e07a2d");
-                        break;
-
-                    case "Flower":
-                        App.Current.Resources["Primary"] = Color.FromArgb("#9f4bcc");
-                        App.Current.Resources["PrimaryText"] = Color.FromArgb("#000000");
-                        App.Current.Resources["PrimaryAccent"] = Color.FromArgb("#9f4bcc");
-                        App.Current.Resources["PrimaryDark"] = Color.FromArgb("#e5befa");
-                        App.Current.Resources["PrimaryDarkText"] = Color.FromArgb("#ffffff");
-                        App.Current.Resources["PrimaryDarkAccent"] = Color.FromArgb("#9f4bcc");
-                        App.Current.Resources["PrimaryBackground"] = Color.FromArgb("#ffffff");
-                        App.Current.Resources["Secondary"] = Color.FromArgb("#e5befa");
-                        App.Current.Resources["SecondaryDark"] = Color.FromArgb("#ffffff");
-                        App.Current.Resources["SecondaryAccent"] = Color.FromArgb("#9f4bcc");
-                        break;
-
-                    case "Pink":
-                        App.Current.Resources["Primary"] = Color.FromArgb("#fc03df");
-                        App.Current.Resources["PrimaryText"] = Color.FromArgb("#000000");
-                        App.Current.Resources["PrimaryAccent"] = Color.FromArgb("#fc03df");
-                        App.Current.Resources["PrimaryDark"] = Color.FromArgb("#eed5f2");
-                        App.Current.Resources["PrimaryDarkText"] = Color.FromArgb("#ffffff");
-                        App.Current.Resources["PrimaryDarkAccent"] = Color.FromArgb("#fc03df");
-                        App.Current.Resources["PrimaryBackground"] = Color.FromArgb("#ffffff");
-                        App.Current.Resources["Secondary"] = Color.FromArgb("#eed5f2");
-                        App.Current.Resources["SecondaryDark"] = Color.FromArgb("#ffffff");
-                        App.Current.Resources["SecondaryAccent"] = Color.FromArgb("#fc03df");
-                        break;
-
-                    default:
-                        break;
-                }
-            }
+            if (_selectedColorTheme == value) return;
+            _selectedColorTheme = value;
+            ApplyColorThemeSafe(value);
         }
     }
 
-    private List<string> _appThemes;
-    public List<string> AppThemes
+    private void ApplyColorThemeSafe(string theme)
     {
-        get => _appThemes;
-        set
-        {
-            _appThemes = value;
-            OnPropertyChanged(nameof(AppThemes));
-        }
+        if (App.Current == null) return;
+        ApplyColorTheme(theme);
     }
 
+    public void ApplyColorTheme(string theme)
+    {
+        if (theme == null) return;
+        if (!ColorThemeMapping.TryGetValue(theme, out var colors)) return;
+
+        foreach (var kvp in colors)
+            Application.Current?.Resources?[kvp.Key] = Color.FromArgb(kvp.Value);
+    }
+
+    public void ApplyThemeAfterAppStart()
+    {
+        if (!string.IsNullOrWhiteSpace(SelectedColorTheme))
+            ApplyColorThemeSafe(SelectedColorTheme);
+    }
+
+    // --- Selected AppTheme ---
     private string _selectedAppTheme;
     public string SelectedAppTheme
     {
         get => _selectedAppTheme;
         set
         {
-            if (_selectedAppTheme != value)
-            {
-                _selectedAppTheme = value;
-                OnPropertyChanged(nameof(SelectedAppTheme));
-
-                // Logik für das Anwenden der Farben basierend auf der Auswahl
-                switch (_selectedAppTheme)
-                {
-                    case "Hell":
-                        App.Current.UserAppTheme = AppTheme.Light; // Setze auf helles Theme
-                        break;
-                    case "Dunkel":
-                        App.Current.UserAppTheme = AppTheme.Dark; // Setze auf dunkles Theme
-                        break;
-                }
-            }
+            if (_selectedAppTheme == value) return;
+            _selectedAppTheme = value;
+            ApplyAppThemeSafe(value);
         }
     }
 
-    private ObservableCollection<string> _templates = [];
-    public ObservableCollection<string> Templates
+    private void ApplyAppThemeSafe(string theme)
     {
-        get => _templates;
-        set
-        {
-            if (_templates != value)
-            {
-                _templates = value;
-                OnPropertyChanged(nameof(Templates));
-            }
-        }
+        if (App.Current == null) return;
+        App.Current.UserAppTheme = theme == "Hell" ? AppTheme.Light : AppTheme.Dark;
     }
 
-    private string _selectedTemplate;
-    public string SelectedTemplate
+    public void ApplyAppThemeAfterAppStart()
     {
-        get => _selectedTemplate;
-        set
-        {
-            if (_selectedTemplate != value)
-            {
-                _selectedTemplate = value;
-                OnPropertyChanged(nameof(SelectedTemplate));
-            }
-        }
+        if (!string.IsNullOrWhiteSpace(SelectedAppTheme))
+            ApplyAppThemeSafe(SelectedAppTheme);
     }
 
+    // --- Save & Load ---
     public void SaveSettings()
     {
         var settings = new SettingsModel
         {
-            PinMinScaleLimit = this.PinMinScaleLimit,
-            PinMaxScaleLimit = this.PinMaxScaleLimit,
-            MapIconSize = this.MapIconSize,
-            MapIcon = this.MapIcon,
-            PinPlaceMode = this.PinPlaceMode,
-            IsPlanRotateLocked = this.IsPlanRotateLocked,
-            MaxPdfPixelCount = this.MaxPdfPixelCount,
-            SelectedColorTheme = ColorThemes.IndexOf(this.SelectedColorTheme),
-            SelectedAppTheme = AppThemes.IndexOf(this.SelectedAppTheme),
-            IconSortCrit = IconSortCrits.IndexOf(this.IconSortCrit),
-            PinSortCrit = PinSortCrits.IndexOf(this.PinSortCrit),
-            IconCategory = IconCategories.IndexOf(this.IconCategory),
-            IsPlanExport = this.IsPlanExport,
-            IsPosImageExport = this.IsPosImageExport,
-            IsPinIconExport = this.IsPinIconExport,
-            IsImageExport = this.IsImageExport,
-            IsFotoOverlayExport = this.IsFotoOverlayExport,
-            IsFotoCompressed = this.IsFotoCompressed,
-            FotoCompressValue = this.FotoCompressValue,
-            PinLabelPrefix = this.PinLabelPrefix,
-            PinLabelFontSize = this.PinLabelFontSize,
-            PinExportSize = this.PinExportSize,
-            ImageExportSize = this.ImageExportSize,
-            PinPosExportSize = this.PinPosExportSize,
-            PinPosCropExportSize = this.PinPosCropExportSize,
-            TitleExportSize = this.TitleExportSize,
-            IconGalleryMode = this.IconGalleryMode,
-            MaxPdfImageSizeW = this.MaxPdfImageSizeW,
-            MaxPdfImageSizeH = this.MaxPdfImageSizeH,
-            FotoThumbSize = this.FotoThumbSize,
-            FotoThumbQuality = this.FotoThumbQuality,
-            FotoQuality = this.FotoQuality,
-            PlanPreviewSize = this.PlanPreviewSize,
-            IconPreviewSize = this.IconPreviewSize,
-            DefaultPinZoom = this.DefaultPinZoom,
-            ColorList = this.ColorList,
-            IconSortCrits = this.IconSortCrits,
-            PinSortCrits = this.PinSortCrits,
-            PriorityItems = this.PriorityItems,
+            PinMinScaleLimit = PinMinScaleLimit,
+            PinMaxScaleLimit = PinMaxScaleLimit,
+            MapIconSize = MapIconSize,
+            MapIcon = MapIcon,
+            PinPlaceMode = PinPlaceMode,
+            IsPlanRotateLocked = IsPlanRotateLocked,
+            MaxPdfPixelCount = MaxPdfPixelCount,
+            SelectedColorTheme = ColorThemes.IndexOf(SelectedColorTheme),
+            SelectedAppTheme = AppThemes.IndexOf(SelectedAppTheme),
+            IconSortCrit = IconSortCrits.IndexOf(IconSortCrit),
+            PinSortCrit = PinSortCrits.IndexOf(PinSortCrit),
+            IconCategory = IconCategories.IndexOf(IconCategory),
+            IsPlanExport = IsPlanExport,
+            IsPosImageExport = IsPosImageExport,
+            IsPinIconExport = IsPinIconExport,
+            IsImageExport = IsImageExport,
+            IsFotoOverlayExport = IsFotoOverlayExport,
+            IsFotoCompressed = IsFotoCompressed,
+            FotoCompressValue = FotoCompressValue,
+            PinLabelPrefix = PinLabelPrefix,
+            PinLabelFontSize = PinLabelFontSize,
+            PinExportSize = PinExportSize,
+            ImageExportSize = ImageExportSize,
+            PinPosExportSize = PinPosExportSize,
+            PinPosCropExportSize = PinPosCropExportSize,
+            TitleExportSize = TitleExportSize,
+            IconGalleryMode = IconGalleryMode,
+            MaxPdfImageSizeW = MaxPdfImageSizeW,
+            MaxPdfImageSizeH = MaxPdfImageSizeH,
+            FotoThumbSize = FotoThumbSize,
+            FotoThumbQuality = FotoThumbQuality,
+            FotoQuality = FotoQuality,
+            PlanPreviewSize = PlanPreviewSize,
+            IconPreviewSize = IconPreviewSize,
+            DefaultPinZoom = DefaultPinZoom,
+            GpsMinDistUpdate = GpsMinDistUpdate,
+            GpsMinTimeUpdate = GpsMinTimeUpdate,
+            ColorList = ColorList,
+            IconSortCrits = IconSortCrits,
+            PinSortCrits = PinSortCrits,
+            PriorityItems = PriorityItems,
         };
-
-        var json = JsonSerializer.Serialize(settings, GetOptions());
-        File.WriteAllText(Path.Combine(Settings.DataDirectory, SettingsFileName), json);
+        File.WriteAllText(Path.Combine(Settings.DataDirectory, SettingsFileName), JsonSerializer.Serialize(settings, _jsonOptions));
     }
 
     public void LoadSettings()
     {
         var filePath = Path.Combine(Settings.DataDirectory, SettingsFileName);
+        if (!File.Exists(filePath)) return;
 
-        if (!File.Exists(filePath))
-            return;
-        
         try
         {
             var json = File.ReadAllText(filePath);
-            if (string.IsNullOrWhiteSpace(json) || !json.TrimStart().StartsWith('{'))
-            {
-                Console.WriteLine("⚠ Ungültige JSON-Struktur – Standardwerte werden verwendet.");
-                return;
-            }
+            if (string.IsNullOrWhiteSpace(json) || !json.TrimStart().StartsWith('{')) return;
 
             var settings = JsonSerializer.Deserialize<SettingsModel>(json);
-            if (settings == null)
-            {
-                Console.WriteLine("⚠ Einstellungen konnten nicht geladen werden – Standardwerte werden verwendet.");
-                return;
-            }
+            if (settings == null) return;
 
-            this.PinMinScaleLimit = settings.PinMinScaleLimit;
-            this.PinMaxScaleLimit = settings.PinMaxScaleLimit;
-            this.MapIconSize = settings.MapIconSize;
-            this.MapIcon = settings.MapIcon;
-            this.PinPlaceMode = settings.PinPlaceMode;
-            this.IsPlanRotateLocked = settings.IsPlanRotateLocked;
-            this.MaxPdfPixelCount = settings.MaxPdfPixelCount;
-            this.SelectedAppTheme = (settings.SelectedAppTheme < AppThemes.Count)
-                ? AppThemes[settings.SelectedAppTheme]
-                : AppThemes[0];
-            this.SelectedColorTheme = (settings.SelectedColorTheme < ColorThemes.Count)
-                ? ColorThemes[settings.SelectedColorTheme]
-                : ColorThemes[0];
-            this.IconSortCrit = (settings.IconSortCrit < IconSortCrits.Count)
-                ? IconSortCrits[settings.IconSortCrit]
-                : IconSortCrits[0];
-            this.PinSortCrit = (settings.PinSortCrit < PinSortCrits.Count)
-                ? PinSortCrits[settings.PinSortCrit]
-                : PinSortCrits[0];
-            this.IconCategory = (settings.IconCategory < IconCategories.Count && settings.IconCategory > 0)
-                ? IconCategories[settings.IconCategory]
-                : IconCategories[0];
-            this.IsPlanExport = settings.IsPlanExport;
-            this.IsPosImageExport = settings.IsPosImageExport;
-            this.IsPinIconExport = settings.IsPinIconExport;
-            this.IsImageExport = settings.IsImageExport;
-            this.IsFotoOverlayExport = settings.IsFotoOverlayExport;
-            this.IsFotoCompressed = settings.IsFotoCompressed;
-            this.FotoCompressValue = settings.FotoCompressValue;
-            this.PinLabelPrefix = settings.PinLabelPrefix ?? string.Empty;
-            this.PinLabelFontSize = settings.PinLabelFontSize;
-            this.PinExportSize = settings.PinExportSize;
-            this.ImageExportSize = settings.ImageExportSize;
-            this.PinPosExportSize = settings.PinPosExportSize;
-            this.PinPosCropExportSize = settings.PinPosCropExportSize;
-            this.TitleExportSize = settings.TitleExportSize;
-            this.IconGalleryMode = settings.IconGalleryMode ?? "IconListTemplate";
-            this.MaxPdfImageSizeW = settings.MaxPdfImageSizeW;
-            this.MaxPdfImageSizeH = settings.MaxPdfImageSizeH;
-            this.FotoThumbSize = settings.FotoThumbSize;
-            this.FotoThumbQuality = settings.FotoThumbQuality;
-            this.FotoQuality = settings.FotoQuality;
-            this.PlanPreviewSize = settings.PlanPreviewSize;
-            this.IconPreviewSize = settings.IconPreviewSize;
-            this.DefaultPinZoom = settings.DefaultPinZoom;
-            this.ColorList = settings.ColorList ?? _colorList;
-            this.IconSortCrits = settings.IconSortCrits ?? _iconSortCrits;
-            this.PinSortCrits = settings.PinSortCrits ?? _pinSortCrits;
-            this.PriorityItems = settings.PriorityItems ?? _priorityItems;
+            PinMinScaleLimit = settings.PinMinScaleLimit;
+            PinMaxScaleLimit = settings.PinMaxScaleLimit;
+            MapIconSize = settings.MapIconSize;
+            MapIcon = settings.MapIcon;
+            PinPlaceMode = settings.PinPlaceMode;
+            IsPlanRotateLocked = settings.IsPlanRotateLocked;
+            MaxPdfPixelCount = settings.MaxPdfPixelCount;
+
+            SelectedAppTheme = (settings.SelectedAppTheme < AppThemes.Count) ? AppThemes[settings.SelectedAppTheme] : AppThemes[0];
+            SelectedColorTheme = (settings.SelectedColorTheme < ColorThemes.Count) ? ColorThemes[settings.SelectedColorTheme] : ColorThemes[0];
+
+            IconSortCrit = (settings.IconSortCrit < IconSortCrits.Count) ? IconSortCrits[settings.IconSortCrit] : IconSortCrits[0];
+            PinSortCrit = (settings.PinSortCrit < PinSortCrits.Count) ? PinSortCrits[settings.PinSortCrit] : PinSortCrits[0];
+            IconCategory = (settings.IconCategory < IconCategories.Count && settings.IconCategory > 0) ? IconCategories[settings.IconCategory] : IconCategories[0];
+
+            IsPlanExport = settings.IsPlanExport;
+            IsPosImageExport = settings.IsPosImageExport;
+            IsPinIconExport = settings.IsPinIconExport;
+            IsImageExport = settings.IsImageExport;
+            IsFotoOverlayExport = settings.IsFotoOverlayExport;
+            IsFotoCompressed = settings.IsFotoCompressed;
+            FotoCompressValue = settings.FotoCompressValue;
+            PinLabelPrefix = settings.PinLabelPrefix ?? string.Empty;
+            PinLabelFontSize = settings.PinLabelFontSize;
+            PinExportSize = settings.PinExportSize;
+            ImageExportSize = settings.ImageExportSize;
+            PinPosExportSize = settings.PinPosExportSize;
+            PinPosCropExportSize = settings.PinPosCropExportSize;
+            TitleExportSize = settings.TitleExportSize;
+            IconGalleryMode = settings.IconGalleryMode ?? "IconListTemplate";
+            MaxPdfImageSizeW = settings.MaxPdfImageSizeW;
+            MaxPdfImageSizeH = settings.MaxPdfImageSizeH;
+            FotoThumbSize = settings.FotoThumbSize;
+            FotoThumbQuality = settings.FotoThumbQuality;
+            FotoQuality = settings.FotoQuality;
+            PlanPreviewSize = settings.PlanPreviewSize;
+            IconPreviewSize = settings.IconPreviewSize;
+            DefaultPinZoom = settings.DefaultPinZoom;
+            GpsMinDistUpdate = settings.GpsMinDistUpdate;
+            GpsMinTimeUpdate = settings.GpsMinTimeUpdate;
+            ColorList = settings.ColorList ?? ColorList;
+            IconSortCrits = settings.IconSortCrits ?? IconSortCrits;
+            PinSortCrits = settings.PinSortCrits ?? PinSortCrits;
+            PriorityItems = settings.PriorityItems ?? PriorityItems;
         }
         catch (Exception ex)
         {
             Console.WriteLine($"⚠ Fehler beim Laden der Einstellungen: {ex.Message}");
-            Console.WriteLine("Standardwerte werden verwendet.");
         }
     }
 
-    public static JsonSerializerOptions GetOptions()
+    public void ResetSettingsToDefaults()
     {
-        return new() { WriteIndented = true };
-    }
-
-    public event PropertyChangedEventHandler PropertyChanged;
-
-    protected virtual void OnPropertyChanged(string propertyName)
-    {
-        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        // Einfach den Konstruktor einmal wieder aufrufen
+        var defaultSettings = new SettingsService();
+        PinMinScaleLimit = defaultSettings.PinMinScaleLimit;
+        PinMaxScaleLimit = defaultSettings.PinMaxScaleLimit;
+        MapIconSize = defaultSettings.MapIconSize;
+        MapIcon = defaultSettings.MapIcon;
+        PinPlaceMode = defaultSettings.PinPlaceMode;
+        IsPlanRotateLocked = defaultSettings.IsPlanRotateLocked;
+        MaxPdfPixelCount = defaultSettings.MaxPdfPixelCount;
+        SelectedColorTheme = defaultSettings.SelectedColorTheme;
+        SelectedAppTheme = defaultSettings.SelectedAppTheme;
+        IconSortCrit = defaultSettings.IconSortCrit;
+        PinSortCrit = defaultSettings.PinSortCrit;
+        IconCategory = defaultSettings.IconCategory;
+        IsPlanExport = defaultSettings.IsPlanExport;
+        IsPosImageExport = defaultSettings.IsPosImageExport;
+        IsPinIconExport = defaultSettings.IsPinIconExport;
+        IsImageExport = defaultSettings.IsImageExport;
+        IsFotoOverlayExport = defaultSettings.IsFotoOverlayExport;
+        IsFotoCompressed = defaultSettings.IsFotoCompressed;
+        FotoCompressValue = defaultSettings.FotoCompressValue;
+        PinLabelPrefix = defaultSettings.PinLabelPrefix;
+        PinLabelFontSize = defaultSettings.PinLabelFontSize;
+        PinExportSize = defaultSettings.PinExportSize;
+        ImageExportSize = defaultSettings.ImageExportSize;
+        PinPosExportSize = defaultSettings.PinPosExportSize;
+        PinPosCropExportSize = defaultSettings.PinPosCropExportSize;
+        TitleExportSize = defaultSettings.TitleExportSize;
+        IconGalleryMode = defaultSettings.IconGalleryMode;
+        MaxPdfImageSizeW = defaultSettings.MaxPdfImageSizeW;
+        MaxPdfImageSizeH = defaultSettings.MaxPdfImageSizeH;
+        FotoThumbSize = defaultSettings.FotoThumbSize;
+        FotoThumbQuality = defaultSettings.FotoThumbQuality;
+        FotoQuality = defaultSettings.FotoQuality;
+        PlanPreviewSize = defaultSettings.PlanPreviewSize;
+        IconPreviewSize = defaultSettings.IconPreviewSize;
+        DefaultPinZoom = defaultSettings.DefaultPinZoom;
+        GpsMinDistUpdate = defaultSettings.GpsMinDistUpdate;
+        GpsMinTimeUpdate = defaultSettings.GpsMinTimeUpdate;
+        ColorList = [.. defaultSettings.ColorList];
+        IconSortCrits = [.. defaultSettings.IconSortCrits];
+        PinSortCrits = [.. defaultSettings.PinSortCrits];
+        PriorityItems = [.. defaultSettings.PriorityItems];
     }
 }
+#pragma warning restore MVVMTK0045

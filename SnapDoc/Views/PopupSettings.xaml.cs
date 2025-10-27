@@ -49,7 +49,8 @@ public partial class PopupSettings : Popup
             var filePath = Path.Combine(Settings.DataDirectory, "appsettings.ini");
             if (File.Exists(filePath))
                 File.Delete(filePath);
-            SettingsService.Instance.LoadSettings();
+
+            SettingsService.Instance.ResetSettingsToDefaults();
             SettingsService.Instance.SaveSettings();
         }
     }

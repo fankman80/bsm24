@@ -32,8 +32,6 @@ public partial class App : Application
         await InitializeAsync();
     }
 
-
-
     private async static Task InitializeAsync()
     {
         // Template-Dateien und Konfigurationsdatei kopieren

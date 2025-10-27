@@ -37,6 +37,8 @@ internal class SettingsModel
     public int PlanPreviewSize { get; set; } // Grösse Planvorschau im PDF-Import-Dialog
     public int IconPreviewSize { get; set; } // Grösse der Icons in der Icon-Auswahl
     public double DefaultPinZoom { get; set; } // Standard Zoomstufe für Pins
+    public double GpsMinDistUpdate { get; set; } // Minimale Distanzänderung für GPS-Updates
+    public float GpsMinTimeUpdate { get; set; } // Minimale Zeitänderung für GPS-Updates
     public List<string>? ColorList { get; set; } // Systemweite Farbliste (Hex-Werte)
     public List<string>? IconSortCrits { get; set; } // Liste der verfügbaren Sortierkriterien für Icons
     public List<string>? PinSortCrits { get; set; } // Liste der verfügbaren Sortierkriterien für Pins

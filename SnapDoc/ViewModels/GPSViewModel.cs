@@ -1,6 +1,7 @@
 ﻿#nullable disable
 using GeolocatorPlugin;
 using GeolocatorPlugin.Abstractions;
+using SnapDoc.Services;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using static Microsoft.Maui.ApplicationModel.Permissions;
@@ -9,7 +10,6 @@ namespace SnapDoc.ViewModels;
 public partial class GPSViewModel : INotifyPropertyChanged
 {
     public static GPSViewModel Instance { get; } = new GPSViewModel();
-    private const double MIN_MARK_INTERVAL = 1.0d;
     public event PropertyChangedEventHandler PropertyChanged;
     private string _gpsData;
     private FontImageSource _gpsButtonIcon;
@@ -103,8 +103,7 @@ public partial class GPSViewModel : INotifyPropertyChanged
         }
         else
         {
-            float minTime = .5f;
-            if (await CrossGeolocator.Current.StartListeningAsync(TimeSpan.FromSeconds(minTime), MIN_MARK_INTERVAL, true, new ListenerSettings
+            if (await CrossGeolocator.Current.StartListeningAsync(TimeSpan.FromSeconds(SettingsService.Instance.GpsMinTimeUpdate), SettingsService.Instance.GpsMinDistUpdate, true, new ListenerSettings
             {
                 ActivityType = ActivityType.AutomotiveNavigation,
                 AllowBackgroundUpdates = true,
