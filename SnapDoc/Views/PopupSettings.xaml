@@ -195,7 +195,8 @@
                                 StrokeShape="RoundRectangle 8">
                             <Picker x:Name="darkModePicker"
                                     ItemsSource="{Binding AppThemes}"
-                                    SelectedItem="{Binding SelectedAppTheme}"/>
+                                    SelectedItem="{Binding SelectedAppTheme}"
+                                    SelectedIndexChanged="OnThemeChanged"/>
                         </Border>
                         <Border Grid.Column="1"
                                 Stroke="{DynamicResource SecondaryBackground}"
@@ -203,7 +204,8 @@
                                 StrokeShape="RoundRectangle 8">
                             <Picker x:Name="colorThemePicker"
                                     ItemsSource="{Binding ColorThemes}"
-                                    SelectedItem="{Binding SelectedColorTheme}"/>
+                                    SelectedItem="{Binding SelectedColorTheme}"
+                                    SelectedIndexChanged="OnThemeChanged"/>
                         </Border>
                     </Grid>
                 </VerticalStackLayout>

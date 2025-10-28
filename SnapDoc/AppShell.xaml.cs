@@ -30,6 +30,24 @@ public partial class AppShell : Shell
         BindingContext = this;
     }
 
+    public void RebuildFlyout()
+    {
+        try
+        {
+            // FlyoutContent neu aufbauen
+            if (PlanCollectionView != null)
+            {
+                var items = PlanCollectionView.ItemsSource;
+                PlanCollectionView.ItemsSource = null;
+                PlanCollectionView.ItemsSource = items;
+            }
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"Flyout rebuild failed: {ex.Message}");
+        }
+    }
+
     private async void OnSettingsClicked(object sender, EventArgs e)
     {
         var popup = new PopupSettings();

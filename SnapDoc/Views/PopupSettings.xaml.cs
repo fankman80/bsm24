@@ -11,6 +11,8 @@ public partial class PopupSettings : Popup
 {
     public SvgCachedImage PinSvgImage;
 
+    private readonly HashSet<Picker> _initializedPickers = [];
+
     public PopupSettings()
     {
         InitializeComponent();
@@ -28,6 +30,21 @@ public partial class PopupSettings : Popup
     {
         SettingsService.Instance.SaveSettings();
         CloseAsync();
+    }
+
+    private void OnThemeChanged(object sender, EventArgs e)
+    {
+        if (sender is not Picker picker)
+            return;
+
+        if (_initializedPickers.Add(picker) == false)
+        {
+            if (Application.Current?.Windows.Count > 0 &&
+                Application.Current.Windows[0].Page is AppShell shell)
+            {
+                shell.RebuildFlyout();
+            }
+        }
     }
 
     private async void OpenEditor(object sender, EventArgs e)
