@@ -73,7 +73,7 @@
                                              BorderColorOff ="Transparent"
                                              KnobColorOn="White"
                                              KnobColorOff="White"
-                                             SwitchColorOn="{AppThemeBinding {DynamicResource Primary}}"
+                                             SwitchColorOn="{AppThemeBinding Light={DynamicResource Primary}, Dark={DynamicResource PrimaryDark}}"
                                              SwitchColorOff="{AppThemeBinding Light=LightGray, Dark=Gray}"/>
                             <Label Text="Exportiere Pläne" Grid.Column="1" VerticalOptions="Center" />
                         </Grid>
@@ -85,7 +85,7 @@
                                              BorderColorOff ="Transparent"
                                              KnobColorOn="White"
                                              KnobColorOff="White"
-                                             SwitchColorOn="{AppThemeBinding {DynamicResource Primary}}"
+                                             SwitchColorOn="{AppThemeBinding Light={DynamicResource Primary}, Dark={DynamicResource PrimaryDark}}"
                                              SwitchColorOff="{AppThemeBinding Light=LightGray, Dark=Gray}"/>
                             <Label Text="Exportiere Positionsbilder" Grid.Column="1" VerticalOptions="Center" />
                         </Grid>
@@ -97,7 +97,7 @@
                                              BorderColorOff ="Transparent"
                                              KnobColorOn="White"
                                              KnobColorOff="White"
-                                             SwitchColorOn="{AppThemeBinding {DynamicResource Primary}}"
+                                             SwitchColorOn="{AppThemeBinding Light={DynamicResource Primary}, Dark={DynamicResource PrimaryDark}}"
                                              SwitchColorOff="{AppThemeBinding Light=LightGray, Dark=Gray}"/>
                             <Label Text="Exportiere Pin-Icons" Grid.Column="1" VerticalOptions="Center" />
                         </Grid>
@@ -109,7 +109,7 @@
                                              BorderColorOff ="Transparent"
                                              KnobColorOn="White"
                                              KnobColorOff="White"
-                                             SwitchColorOn="{AppThemeBinding {DynamicResource Primary}}"
+                                             SwitchColorOn="{AppThemeBinding Light={DynamicResource Primary}, Dark={DynamicResource PrimaryDark}}"
                                              SwitchColorOff="{AppThemeBinding Light=LightGray, Dark=Gray}"/>
                             <Label Text="Exportiere Fotos" Grid.Column="1" VerticalOptions="Center" />
                         </Grid>
@@ -121,7 +121,7 @@
                                              BorderColorOff ="Transparent"
                                              KnobColorOn="White"
                                              KnobColorOff="White"
-                                             SwitchColorOn="{AppThemeBinding {DynamicResource Primary}}"
+                                             SwitchColorOn="{AppThemeBinding Light={DynamicResource Primary}, Dark={DynamicResource PrimaryDark}}"
                                              SwitchColorOff="{AppThemeBinding Light=LightGray, Dark=Gray}"/>
                             <Label Text="Exportiere Foto-Overlays" Grid.Column="1" VerticalOptions="Center" IsVisible="{Binding IsImageExport}"/>
                         </Grid>
@@ -133,7 +133,7 @@
                                              BorderColorOff ="Transparent"
                                              KnobColorOn="White"
                                              KnobColorOff="White"
-                                             SwitchColorOn="{AppThemeBinding {DynamicResource Primary}}"
+                                             SwitchColorOn="{AppThemeBinding Light={DynamicResource Primary}, Dark={DynamicResource PrimaryDark}}"
                                              SwitchColorOff="{AppThemeBinding Light=LightGray, Dark=Gray}"/>
                             <Label Text="Bildkomprimierung" Grid.Column="1" VerticalOptions="Center" />
                         </Grid>

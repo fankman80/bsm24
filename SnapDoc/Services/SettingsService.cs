@@ -21,93 +21,51 @@ public partial class SettingsService : ObservableObject
         ["EBBE"] = new()
         {
             ["Primary"] = "#00b0ca",
-            ["PrimaryText"] = "#000000",
-            ["PrimaryAccent"] = "#5e75ad",
             ["PrimaryDark"] = "#00b0ca",
-            ["PrimaryDarkText"] = "#ffffff",
             ["PrimaryDarkAccent"] = "#00b0ca",
-            ["PrimaryBackground"] = "#ffffff",
             ["Secondary"] = "#00b0ca",
-            ["SecondaryDark"] = "#ffffff",
-            ["SecondaryAccent"] = "#00b0ca"
         },
         ["Minimalist"] = new()
         {
             ["Primary"] = "#000000",
-            ["PrimaryText"] = "#000000",
-            ["PrimaryAccent"] = "#000000",
             ["PrimaryDark"] = "#ededed",
-            ["PrimaryDarkText"] = "#ffffff",
             ["PrimaryDarkAccent"] = "#ffffff",
-            ["PrimaryBackground"] = "#ffffff",
             ["Secondary"] = "#949494",
-            ["SecondaryDark"] = "#ffffff",
-            ["SecondaryAccent"] = "#000000"
-        },
-        ["Wine"] = new()
-        {
-            ["Primary"] = "#9c4e38",
-            ["PrimaryText"] = "#000000",
-            ["PrimaryAccent"] = "#9c4e38",
-            ["PrimaryDark"] = "#e6c3ba",
-            ["PrimaryDarkText"] = "#ffffff",
-            ["PrimaryDarkAccent"] = "#9c4e38",
-            ["PrimaryBackground"] = "#ffffff",
-            ["Secondary"] = "#e6c3ba",
-            ["SecondaryDark"] = "#ffffff",
-            ["SecondaryAccent"] = "#9c4e38"
-        },
-        ["Grass"] = new()
-        {
-            ["Primary"] = "#32a852",
-            ["PrimaryText"] = "#000000",
-            ["PrimaryAccent"] = "#32a852",
-            ["PrimaryDark"] = "#c1e8c1",
-            ["PrimaryDarkText"] = "#ffffff",
-            ["PrimaryDarkAccent"] = "#32a852",
-            ["PrimaryBackground"] = "#ffffff",
-            ["Secondary"] = "#c1e8c1",
-            ["SecondaryDark"] = "#ffffff",
-            ["SecondaryAccent"] = "#32a852"
-        },
-        ["Fire"] = new()
-        {
-            ["Primary"] = "#e07a2d",
-            ["PrimaryText"] = "#000000",
-            ["PrimaryAccent"] = "#e07a2d",
-            ["PrimaryDark"] = "#f2cdb1",
-            ["PrimaryDarkText"] = "#ffffff",
-            ["PrimaryDarkAccent"] = "#e07a2d",
-            ["PrimaryBackground"] = "#ffffff",
-            ["Secondary"] = "#f2cdb1",
-            ["SecondaryDark"] = "#ffffff",
-            ["SecondaryAccent"] = "#e07a2d"
         },
         ["Flower"] = new()
         {
             ["Primary"] = "#9f4bcc",
-            ["PrimaryText"] = "#000000",
-            ["PrimaryAccent"] = "#9f4bcc",
-            ["PrimaryDark"] = "#e5befa",
-            ["PrimaryDarkText"] = "#ffffff",
-            ["PrimaryDarkAccent"] = "#9f4bcc",
-            ["PrimaryBackground"] = "#ffffff",
-            ["Secondary"] = "#e5befa",
-            ["SecondaryDark"] = "#ffffff",
-            ["SecondaryAccent"] = "#9f4bcc"
+            ["PrimaryDark"] = "#c37de8",
+            ["PrimaryDarkAccent"] = "#c37de8",
+            ["Secondary"] = "#9f4bcc",
+        },
+        ["Wine"] = new()
+        {
+            ["Primary"] = "#9c4e38",
+            ["PrimaryDark"] = "#b8705c",
+            ["PrimaryDarkAccent"] = "#b8705c",
+            ["Secondary"] = "#9c4e38",
+        },
+        ["Grass"] = new()
+        {
+            ["Primary"] = "#32a852",
+            ["PrimaryDark"] = "#52c771",
+            ["PrimaryDarkAccent"] = "#52c771",
+            ["Secondary"] = "#32a852",
+        },
+        ["Fire"] = new()
+        {
+            ["Primary"] = "#e07a2d",
+            ["PrimaryDark"] = "#ed9f64",
+            ["PrimaryDarkAccent"] = "#ed9f64",
+            ["Secondary"] = "#e07a2d",
         },
         ["Pink"] = new()
         {
             ["Primary"] = "#fc03df",
-            ["PrimaryText"] = "#000000",
-            ["PrimaryAccent"] = "#fc03df",
-            ["PrimaryDark"] = "#eed5f2",
-            ["PrimaryDarkText"] = "#ffffff",
-            ["PrimaryDarkAccent"] = "#fc03df",
-            ["PrimaryBackground"] = "#ffffff",
-            ["Secondary"] = "#eed5f2",
-            ["SecondaryDark"] = "#ffffff",
-            ["SecondaryAccent"] = "#fc03df"
+            ["PrimaryDark"] = "#f763e6",
+            ["PrimaryDarkAccent"] = "#f763e6",
+            ["Secondary"] = "#fc03df",
         }
     };
 

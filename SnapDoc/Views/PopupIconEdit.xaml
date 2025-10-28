@@ -118,7 +118,7 @@
                                          BorderColorOff ="Transparent"
                                          KnobColorOn="White"
                                          KnobColorOff="White"
-                                         SwitchColorOn="{AppThemeBinding {DynamicResource Primary}}"
+                                         SwitchColorOn="{AppThemeBinding Light={DynamicResource Primary}, Dark={DynamicResource PrimaryDark}}"
                                          SwitchColorOff="{AppThemeBinding Light=LightGray, Dark=Gray}"/>
                         <Label Text="Rotation sperren" Grid.Column="1" VerticalOptions="Center" />
                     </Grid>
@@ -131,7 +131,7 @@
                                          BorderColorOff ="Transparent"
                                          KnobColorOn="White"
                                          KnobColorOff="White"
-                                         SwitchColorOn="{AppThemeBinding {DynamicResource Primary}}"
+                                         SwitchColorOn="{AppThemeBinding Light={DynamicResource Primary}, Dark={DynamicResource PrimaryDark}}"
                                          SwitchColorOff="{AppThemeBinding Light=LightGray, Dark=Gray}"/>
                         <Label Text="Icon löschen" Grid.Column="1" VerticalOptions="Center" />
                     </Grid>

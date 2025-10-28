@@ -67,7 +67,7 @@
                                      BorderColorOff ="Transparent"
                                      KnobColorOn="White"
                                      KnobColorOff="White"
-                                     SwitchColorOn="{AppThemeBinding {DynamicResource Primary}}"
+                                     SwitchColorOn="{AppThemeBinding Light={DynamicResource Primary}, Dark={DynamicResource PrimaryDark}}"
                                      SwitchColorOff="{AppThemeBinding Light=LightGray, Dark=Gray}"/>
                     <Label Text="Planrotation sperren" Grid.Column="1" VerticalOptions="Center" />
                 </Grid>
