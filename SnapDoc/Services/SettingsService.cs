@@ -202,7 +202,7 @@ public partial class SettingsService : ObservableObject
     [ObservableProperty] private List<string> _appThemes;
     [ObservableProperty] private double _gpsMinDistUpdate = 1.0;
     [ObservableProperty] private float _gpsMinTimeUpdate = 0.5f;
-    [ObservableProperty] private ObservableCollection<string> _templates = new();
+    [ObservableProperty] private ObservableCollection<string> _templates = [];
     [ObservableProperty] private string _selectedTemplate;
 
     // --- Selected ColorTheme ---
@@ -218,13 +218,13 @@ public partial class SettingsService : ObservableObject
         }
     }
 
-    private void ApplyColorThemeSafe(string theme)
+    private static void ApplyColorThemeSafe(string theme)
     {
         if (App.Current == null) return;
         ApplyColorTheme(theme);
     }
 
-    public void ApplyColorTheme(string theme)
+    public static void ApplyColorTheme(string theme)
     {
         if (theme == null) return;
         if (!ColorThemeMapping.TryGetValue(theme, out var colors)) return;
@@ -252,7 +252,7 @@ public partial class SettingsService : ObservableObject
         }
     }
 
-    private void ApplyAppThemeSafe(string theme)
+    private static void ApplyAppThemeSafe(string theme)
     {
         if (App.Current == null) return;
         App.Current.UserAppTheme = theme == "Hell" ? AppTheme.Light : AppTheme.Dark;

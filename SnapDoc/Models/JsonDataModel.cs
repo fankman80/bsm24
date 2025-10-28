@@ -1,6 +1,8 @@
 ﻿#nullable disable
+#pragma warning disable MVVMTK0045
+
 using SkiaSharp;
-using System.ComponentModel;
+using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace SnapDoc.Models;
 
@@ -23,7 +25,7 @@ public class JsonDataModel
     public Size TitleImageSize { get; set; }
 }
 
-public class Plan
+public partial class Plan : ObservableObject
 {
     public string Name { get; set; }
     public string File { get; set; }
@@ -31,54 +33,15 @@ public class Plan
     public bool IsGrayscale { get; set; }
     public string Description { get; set; }
     public Dictionary<string, Pin> Pins { get; set; } = [];
-    private bool _allowExport;
-    public bool AllowExport
-    {
-        get => _allowExport;
-        set
-        {
-            if (_allowExport != value)
-            {
-                _allowExport = value;
-                OnPropertyChanged(nameof(AllowExport));
-            }
-        }
-    }
-    private string _planColor;
-    public string PlanColor
-    {
-        get => _planColor;
-        set
-        {
-            if (_planColor != value)
-            {
-                _planColor = value;
-                OnPropertyChanged(nameof(PlanColor));
-            }
-        }
-    }
-    private int _pinCount;
-    public int PinCount
-    {
-        get => _pinCount;
-        set
-        {
-            if (_pinCount != value)
-            {
-                _pinCount = value;
-                OnPropertyChanged(nameof(PinCount));
-            }
-        }
-    }
 
-    public event PropertyChangedEventHandler PropertyChanged;
-    protected virtual void OnPropertyChanged(string propertyName)
-    {
-        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-    }
+    [ObservableProperty] private bool _allowExport;
+
+    [ObservableProperty] private string _planColor;
+
+    [ObservableProperty] private int _pinCount;
 }
 
-public partial class Pin : INotifyPropertyChanged
+public partial class Pin : ObservableObject
 {
     public Point Pos { get; set; }
     public Point Anchor { get; set; }
@@ -99,53 +62,18 @@ public partial class Pin : INotifyPropertyChanged
     public double PinScale { get; set; }
     public double PinRotation { get; set; }
     public GeoLocData GeoLocation { get; set; }
-    private bool _allowExport;
-    public bool AllowExport
-    {
-        get => _allowExport;
-        set
-        {
-            if (_allowExport != value)
-            {
-                _allowExport = value;
-                OnPropertyChanged(nameof(AllowExport));
-            }
-        }
-    }
 
-    public event PropertyChangedEventHandler PropertyChanged;
-    protected virtual void OnPropertyChanged(string propertyName)
-    {
-        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-    }
+    [ObservableProperty] private bool _allowExport;
 }
 
-public class Foto
+public partial class Foto : ObservableObject
 {
     public string File { get; set; }
     public bool HasOverlay { get; set; }
     public DateTime DateTime { get; set; }
     public Size ImageSize { get; set; }
 
-    private bool _allowExport;
-    public bool AllowExport
-    {
-        get => _allowExport;
-        set
-        {
-            if (_allowExport != value)
-            {
-                _allowExport = value;
-                OnPropertyChanged(nameof(AllowExport));
-            }
-        }
-    }
-
-    public event PropertyChangedEventHandler PropertyChanged;
-    protected virtual void OnPropertyChanged(string propertyName)
-    {
-        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-    }
+    [ObservableProperty] private bool _allowExport;
 }
 
 public class GeoLocData
@@ -203,3 +131,4 @@ public class Position
     public float X { get; set; }
     public float Y { get; set; }
 }
+#pragma warning restore MVVMTK0045

@@ -4,6 +4,7 @@ using SkiaSharp;
 using SnapDoc.Models;
 using System.ComponentModel;
 using System.Globalization;
+using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace SnapDoc
 {
@@ -30,7 +31,7 @@ namespace SnapDoc
         public required string ThumbnailPath { get; set; }
     }
 
-    public partial class PinItem : INotifyPropertyChanged
+    public partial class PinItem : ObservableObject
     {
         public required string PinDesc { get; set; }
         public required string PinIcon { get; set; }
@@ -41,26 +42,7 @@ namespace SnapDoc
         public required string SelfId { get; set; }
         public required DateTime Time { get; set; }
 
-        private bool allowExport;
-        public bool AllowExport
-        {
-            get => allowExport;
-            set
-            {
-                if (allowExport != value)
-                {
-                    allowExport = value;
-                    OnPropertyChanged(nameof(AllowExport)); // Hier wird die Änderung gemeldet
-                }
-            }
-        }
-
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        protected virtual void OnPropertyChanged(string propertyName)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
+        [ObservableProperty] private bool _allowExport;
     }
 
     public class ColorPickerReturn(string colorHex, int width)
@@ -90,52 +72,37 @@ namespace SnapDoc
         public required string Id { get; set; }
     }
 
-    public partial class PlanItem : INotifyPropertyChanged
+    public partial class PlanItem : ObservableObject
     {
         private readonly Plan _plan; // direkte Referenz auf das zugrundeliegende Modell
 
         public PlanItem(Plan plan)
         {
-            _plan = plan;
-            PlanId = plan != null ? "" : string.Empty;
+            _plan = plan ?? throw new ArgumentNullException(nameof(plan));
+
             _plan.PropertyChanged += (s, e) =>
             {
                 if (e.PropertyName == nameof(Plan.AllowExport))
                     OnPropertyChanged(nameof(AllowExport));
-
-                if (e.PropertyName == nameof(Plan.PlanColor))
+                else if (e.PropertyName == nameof(Plan.PlanColor))
                     OnPropertyChanged(nameof(PlanColor));
-
-                if (e.PropertyName == nameof(Plan.PinCount))
+                else if (e.PropertyName == nameof(Plan.PinCount))
                     OnPropertyChanged(nameof(PinCount));
             };
         }
 
-        private string _title;
-        public string Title
-        {
-            get => _title;
-            set
-            {
-                if (_title != value)
-                {
-                    _title = value;
-                    OnPropertyChanged(nameof(Title));
-                }
-            }
-        }
+        public string PlanId { get; set; } = string.Empty;
+        public string PlanRoute { get; set; } = string.Empty;
 
-        public string PlanId { get; set; }
-        public string PlanRoute { get; set; }
         public bool AllowExport
         {
-            get => _plan != null && _plan.AllowExport;
+            get => _plan.AllowExport;
             set
             {
-                if (_plan != null && _plan.AllowExport != value)
+                if (_plan.AllowExport != value)
                 {
                     _plan.AllowExport = value;
-                    OnPropertyChanged(nameof(AllowExport));
+                    OnPropertyChanged();
                 }
             }
         }
@@ -166,50 +133,17 @@ namespace SnapDoc
             }
         }
 
-        private bool _isSelected;
-        public bool IsSelected
-        {
-            get => _isSelected;
-            set
-            {
-                if (_isSelected != value)
-                {
-                    _isSelected = value;
-                    OnPropertyChanged(nameof(IsSelected));
-                }
-            }
-        }
+        [ObservableProperty] private string _title;
 
-        public event PropertyChangedEventHandler PropertyChanged;
-        protected virtual void OnPropertyChanged(string propertyName)
-            => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        [ObservableProperty] private bool _isSelected;
     }
 
-    public partial class FotoItem : INotifyPropertyChanged
+    public partial class FotoItem : ObservableObject
     {
         public string ImagePath { get; set; }
         public DateTime DateTime { get; set; }
 
-        private bool allowExport;
-        public bool AllowExport
-        {
-            get => allowExport;
-            set
-            {
-                if (allowExport != value)
-                {
-                    allowExport = value;
-                    OnPropertyChanged(nameof(AllowExport)); // Hier wird die Änderung gemeldet
-                }
-            }
-        }
-
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        protected virtual void OnPropertyChanged(string propertyName)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
+        [ObservableProperty] private bool _allowExport;
     }
 
     public class PdfItem
