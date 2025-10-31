@@ -1,34 +1,50 @@
-name: Build iOS App
+name: Build MAUI App (iOS + Android)
 
 on:
-  workflow_dispatch
+  workflow_dispatch:
 
 jobs:
-  build-ios:
-    runs-on: macos-latest
+  build-maui:
+    runs-on: macos-26  # macOS-26 hat Xcode 26 für .NET 10 iOS Builds
 
     steps:
+      # 1️⃣ Repo auschecken
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      - name: Setup .NET 10 (Preview)
+      # 2️⃣ .NET 10 RC2 installieren
+      - name: Setup .NET 10 RC2
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: '10.0.x'
+          dotnet-version: '10.0.100-rc.2.*'
 
+      # 3️⃣ MAUI Workloads installieren
       - name: Install MAUI workloads
         run: |
           dotnet workload restore
           dotnet workload install maui-ios maui-android
 
+      # 4️⃣ NuGet-Pakete wiederherstellen
       - name: Restore NuGet packages
         run: dotnet restore SnapDoc.sln
 
+      # 5️⃣ iOS-Build (Release)
       - name: Build iOS app (Release)
-        run: dotnet build SnapDoc.sln -f net9.0-ios -c Release
-        
-      - name: Upload build result
+        run: dotnet build SnapDoc.sln -f net10.0-ios -c Release
+
+      # 6️⃣ Android-Build (Release)
+      - name: Build Android app (Release)
+        run: dotnet build SnapDoc.sln -f net10.0-android -c Release
+
+      # 7️⃣ Artefakte hochladen
+      - name: Upload iOS artifact
         uses: actions/upload-artifact@v4
         with:
           name: SnapDoc-iOS
           path: '**/*.ipa'
+
+      - name: Upload Android artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: SnapDoc-Android
+          path: '**/*.apk'
