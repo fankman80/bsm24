@@ -65,18 +65,29 @@
     </PropertyGroup>
 
 	<ItemGroup>
-		<!-- Android-spezifisches Icon -->
-		<MauiIcon Include="Resources\AppIcon\appicon_android_bg.png" ForegroundFile="Resources\AppIcon\appicon_android_fg.png" Condition="'$(TargetFramework)' == 'net10.0-android'" />
+        <!-- Android-spezifisches Icon -->
+        <MauiIcon Include="Resources\AppIcon\appicon_android_bg.png"
+          ForegroundFile="Resources\AppIcon\appicon_android_fg.png"
+          Condition="'$(TargetFramework)' == 'net10.0-android'"
+          LogicalName="AppIcon\%(Filename)%(Extension)" />
 
-		<!-- Windows-spezifisches Icon -->
-		<MauiIcon Include="Resources\AppIcon\appicon_win.png" Condition="'$(TargetFramework)' == 'net10.0-windows10.0.26100.0'" />
+        <!-- Windows-spezifisches Icon -->
+        <MauiIcon Include="Resources\AppIcon\appicon_win.png"
+          Condition="'$(TargetFramework)' == 'net10.0-windows10.0.26100.0'"
+          LogicalName="AppIcon\%(Filename)%(Extension)" />
 
-		<!-- iOS-spezifisches Icon -->
-		<MauiIcon Include="Resources\appicon.svg" ForegroundFile="Resources\appiconfg.svg" Color="#512BD4" Condition="'$(TargetFramework)' == 'net10.0-ios'" />	
-		
-		<!-- Splash Screen -->
-		<MauiSplashScreen Include="Resources\Splash\splash.svg" Color="White" />
-		
+        <!-- iOS-spezifisches Icon -->
+        <MauiIcon Include="Resources\appicon.svg"
+          ForegroundFile="Resources\appiconfg.svg"
+          Color="#512BD4"
+          Condition="'$(TargetFramework)' == 'net10.0-ios'"
+          LogicalName="%(Filename)%(Extension)" />	
+
+        <!-- Splash Screen -->
+        <MauiSplashScreen Include="Resources\Splash\splash.svg"
+                  Color="White"
+                  LogicalName="Splash\splash.svg" />
+
 		<!-- Images -->
         <MauiImage Include="Resources\Images\*" LogicalName="Images\%(RecursiveDir)%(Filename)%(Extension)" />
 
