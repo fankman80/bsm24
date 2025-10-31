@@ -112,14 +112,14 @@
         "idiom": "ipad",
         "size": "83.5x83.5",
         "scale": "2x",
-        "filename": "icon_83x83_2x.png"
+        "filename": "icon_83_5x83_5_2x.png"
       },
-        {
-            "size" : "1024x1024",
-            "idiom" : "ios-marketing",
-            "scale" : "1x",
-            "filename" : "itunes_artwork_2x.png"
-        }
+      {
+          "size" : "1024x1024",
+          "idiom" : "ios-marketing",
+          "scale" : "1x",
+          "filename" : "itunes_artwork_1x.png"
+      }
     ],
     "info":{
         "version":1,
