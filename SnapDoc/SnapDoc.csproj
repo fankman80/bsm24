@@ -85,21 +85,21 @@
 	</ItemGroup>
 
 	<ItemGroup Condition="'$(TargetFramework)'=='net10.0-ios'">
-		<MauiIcon Include="Resources\Images\Assets.xcassets\AppIcon.appiconset\icon_20x20_1x.png" />
-		<MauiIcon Include="Resources\Images\Assets.xcassets\AppIcon.appiconset\icon_20x20_2x.png" />
-		<MauiIcon Include="Resources\Images\Assets.xcassets\AppIcon.appiconset\icon_20x20_3x.png" />
-		<MauiIcon Include="Resources\Images\Assets.xcassets\AppIcon.appiconset\icon_29x29_1x.png" />
-		<MauiIcon Include="Resources\Images\Assets.xcassets\AppIcon.appiconset\icon_29x29_2x.png" />
-		<MauiIcon Include="Resources\Images\Assets.xcassets\AppIcon.appiconset\icon_29x29_3x.png" />
-		<MauiIcon Include="Resources\Images\Assets.xcassets\AppIcon.appiconset\icon_40x40_1x.png" />
-		<MauiIcon Include="Resources\Images\Assets.xcassets\AppIcon.appiconset\icon_40x40_2x.png" />
-		<MauiIcon Include="Resources\Images\Assets.xcassets\AppIcon.appiconset\icon_40x40_3x.png" />
-		<MauiIcon Include="Resources\Images\Assets.xcassets\AppIcon.appiconset\icon_60x60_2x.png" />
-		<MauiIcon Include="Resources\Images\Assets.xcassets\AppIcon.appiconset\icon_60x60_3x.png" />
-		<MauiIcon Include="Resources\Images\Assets.xcassets\AppIcon.appiconset\icon_76x76_1x.png" />
-		<MauiIcon Include="Resources\Images\Assets.xcassets\AppIcon.appiconset\icon_76x76_2x.png" />
-		<MauiIcon Include="Resources\Images\Assets.xcassets\AppIcon.appiconset\icon_83_5x83_5_2x.png" />
-		<MauiIcon Include="Resources\Images\Assets.xcassets\AppIcon.appiconset\itunes_artwork_1x.png" />
+		<MauiIcon Include="Resources\Images\Assets.xcassets\appIcon.appiconset\icon_20x20_1x.png" />
+		<MauiIcon Include="Resources\Images\Assets.xcassets\appIcon.appiconset\icon_20x20_2x.png" />
+		<MauiIcon Include="Resources\Images\Assets.xcassets\appIcon.appiconset\icon_20x20_3x.png" />
+		<MauiIcon Include="Resources\Images\Assets.xcassets\appIcon.appiconset\icon_29x29_1x.png" />
+		<MauiIcon Include="Resources\Images\Assets.xcassets\appIcon.appiconset\icon_29x29_2x.png" />
+		<MauiIcon Include="Resources\Images\Assets.xcassets\appIcon.appiconset\icon_29x29_3x.png" />
+		<MauiIcon Include="Resources\Images\Assets.xcassets\appIcon.appiconset\icon_40x40_1x.png" />
+		<MauiIcon Include="Resources\Images\Assets.xcassets\appIcon.appiconset\icon_40x40_2x.png" />
+		<MauiIcon Include="Resources\Images\Assets.xcassets\appIcon.appiconset\icon_40x40_3x.png" />
+		<MauiIcon Include="Resources\Images\Assets.xcassets\appIcon.appiconset\icon_60x60_2x.png" />
+		<MauiIcon Include="Resources\Images\Assets.xcassets\appIcon.appiconset\icon_60x60_3x.png" />
+		<MauiIcon Include="Resources\Images\Assets.xcassets\appIcon.appiconset\icon_76x76_1x.png" />
+		<MauiIcon Include="Resources\Images\Assets.xcassets\appIcon.appiconset\icon_76x76_2x.png" />
+		<MauiIcon Include="Resources\Images\Assets.xcassets\appIcon.appiconset\icon_83_5x83_5_2x.png" />
+		<MauiIcon Include="Resources\Images\Assets.xcassets\appIcon.appiconset\itunes_artwork_1x.png" />
 	</ItemGroup>
 
 	<ItemGroup>
