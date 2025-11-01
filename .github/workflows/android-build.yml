@@ -1,4 +1,4 @@
-name: Build MAUI Android
+name: Build MAUI Android (.NET 10 - Manual)
 
 on:
   workflow_dispatch:
@@ -6,6 +6,10 @@ on:
 jobs:
   build:
     runs-on: windows-latest
+
+    defaults:
+      run:
+        working-directory: snapdoc   # <-- sorgt dafür, dass alle Befehle im richtigen Ordner laufen
 
     steps:
       - name: Checkout code
@@ -20,33 +24,33 @@ jobs:
         run: dotnet workload install maui
 
       - name: Restore dependencies
-        run: dotnet restore bsm24.sln
+        run: dotnet restore SnapDoc.sln
 
       - name: Decode and save keystore
         shell: pwsh
         run: |
           echo $env:ANDROID_KEYSTORE_BASE64 | Out-File temp.txt
-          certutil -decode temp.txt bsm24.keystore
+          certutil -decode temp.txt snapdoc.keystore
           del temp.txt
 
       - name: Build Android App (Release)
         shell: pwsh
         run: |
-          dotnet build bsm24.sln -c Release -f net10.0-android `
+          dotnet build SnapDoc.sln -c Release -f net10.0-android `
             /p:AndroidKeyStore=true `
             /p:AndroidSigningKeyAlias=$env:ANDROID_KEY_ALIAS `
             /p:AndroidSigningKeyPass=$env:ANDROID_KEY_PASSWORD `
-            /p:AndroidSigningKeyStore=bsm24.keystore `
+            /p:AndroidSigningKeyStore=snapdoc.keystore `
             /p:AndroidSigningStorePass=$env:ANDROID_KEYSTORE_PASSWORD
 
       - name: Publish Android AAB
         shell: pwsh
-        run: dotnet publish bsm24.sln -c Release -f net10.0-android -p:AndroidPackageFormat=aab
+        run: dotnet publish SnapDoc.sln -c Release -f net10.0-android -p:AndroidPackageFormat=aab
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
           name: AndroidApp
           path: |
-            **/bin/Release/net10.0-android/**/*.apk
-            **/bin/Release/net10.0-android/**/*.aab
+            snapdoc/**/bin/Release/net10.0-android/**/*.apk
+            snapdoc/**/bin/Release/net10.0-android/**/*.aab
