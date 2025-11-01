@@ -44,12 +44,12 @@ jobs:
       - name: Build Android App (Release)
         shell: pwsh
         run: |
-          dotnet build SnapDoc\SnapDoc.csproj -c Release -f net10.0-android `
-            /p:AndroidKeyStore=true `
-            /p:AndroidSigningKeyAlias=$env:ANDROID_KEY_ALIAS `
-            /p:AndroidSigningKeyPass=$env:ANDROID_KEY_PASSWORD `
-            /p:AndroidSigningKeyStore=SnapDoc.keystore `
-            /p:AndroidSigningStorePass=$env:ANDROID_KEYSTORE_PASSWORD
+         dotnet build SnapDoc.sln -c Release -f net10.0-android `
+         /p:AndroidKeyStore=true `
+         /p:AndroidSigningKeyAlias=$env:ANDROID_KEYSTORE_ALIAS `
+         /p:AndroidSigningKeyPass=$env:ANDROID_KEYSTORE_PASSWORD `
+         /p:AndroidSigningStorePass=$env:ANDROID_KEYSTORE_PASSWORD `
+         /p:AndroidSigningKeyStore=SnapDoc.keystore
 
       # 7️⃣ Android App veröffentlichen als AAB
       - name: Publish Android AAB
@@ -57,8 +57,8 @@ jobs:
         run: |
           dotnet publish SnapDoc\SnapDoc.csproj -c Release -f net10.0-android `
             -p:AndroidKeyStore=true `
-            -p:AndroidSigningKeyAlias=$env:ANDROID_KEY_ALIAS `
-            -p:AndroidSigningKeyPass=$env:ANDROID_KEY_PASSWORD `
+            -p:AndroidSigningKeyAlias=$env:ANDROID_KEYSTORE_ALIAS `
+            -p:AndroidSigningKeyPass=$env:ANDROID_KEYSTORE_PASSWORD `
             -p:AndroidSigningKeyStore=SnapDoc.keystore `
             -p:AndroidSigningStorePass=$env:ANDROID_KEYSTORE_PASSWORD `
             -p:AndroidPackageFormat=aab
