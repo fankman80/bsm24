@@ -9,7 +9,7 @@ jobs:
 
     defaults:
       run:
-        working-directory: snapdoc   # <-- sorgt dafür, dass alle Befehle im richtigen Ordner laufen
+        working-directory: .   # Root-Verzeichnis des Repos
 
     steps:
       - name: Checkout code
@@ -52,5 +52,5 @@ jobs:
         with:
           name: AndroidApp
           path: |
-            snapdoc/**/bin/Release/net10.0-android/**/*.apk
-            snapdoc/**/bin/Release/net10.0-android/**/*.aab
+            **/bin/Release/net10.0-android/**/*.apk
+            **/bin/Release/net10.0-android/**/*.aab
