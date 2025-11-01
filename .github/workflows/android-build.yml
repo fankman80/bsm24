@@ -29,9 +29,7 @@ jobs:
       - name: Decode and save keystore
         shell: pwsh
         run: |
-          echo $env:ANDROID_KEYSTORE_BASE64 | Out-File temp.txt
-          certutil -decode temp.txt snapdoc.keystore
-          del temp.txt
+           [System.IO.File]::WriteAllBytes("snapdoc.keystore", [Convert]::FromBase64String($env:ANDROID_KEYSTORE_BASE64))
 
       - name: Build Android App (Release)
         shell: pwsh
