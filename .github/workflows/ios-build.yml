@@ -28,13 +28,16 @@ jobs:
       - name: Restore NuGet packages
         run: dotnet restore SnapDoc.sln
 
-      # 5️⃣ iOS-Build (Release)
-      - name: Build iOS app (Release)
-        run: dotnet build SnapDoc.sln -f net10.0-ios -c Release
+      # 5️⃣ iOS Build (Release) mit IPA-Erzeugung
+      - name: Build iOS IPA (Release)
+        run: dotnet publish SnapDoc.sln -f net10.0-ios -c Release /p:BuildIpa=true
 
       # 6️⃣ Artefakte hochladen
-      - name: Upload iOS App
+      - name: Upload iOS IPA
+        if: success()
         uses: actions/upload-artifact@v4
         with:
           name: ios-app
-          path: ./bin/ios/**/*.ipa
+          path: |
+            **/bin/Release/net10.0-ios/**/*.ipa
+            **/bin/Release/net10.0-ios/**/*.app
