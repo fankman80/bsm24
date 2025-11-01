@@ -26,9 +26,9 @@ jobs:
       - name: Install MAUI workload
         run: dotnet workload install maui
 
-      # 4️⃣ Abhängigkeiten wiederherstellen (nur Android)
-      - name: Restore dependencies for Android
-        run: dotnet restore SnapDoc.sln -f net10.0-android
+      # 4️⃣ Abhängigkeiten wiederherstellen (für die ganze Lösung, ohne -f)
+      - name: Restore dependencies
+        run: dotnet restore SnapDoc.sln
 
       # 5️⃣ Keystore aus Base64 dekodieren
       - name: Decode and save keystore
@@ -40,7 +40,7 @@ jobs:
       - name: Build Android App (Release)
         shell: pwsh
         run: |
-          dotnet build SnapDoc.sln -c Release -f net10.0-android `
+          dotnet build SnapDoc\SnapDoc.csproj -c Release -f net10.0-android `
             /p:AndroidKeyStore=true `
             /p:AndroidSigningKeyAlias=$env:ANDROID_KEY_ALIAS `
             /p:AndroidSigningKeyPass=$env:ANDROID_KEY_PASSWORD `
@@ -51,7 +51,7 @@ jobs:
       - name: Publish Android AAB
         shell: pwsh
         run: |
-          dotnet publish SnapDoc.sln -c Release -f net10.0-android `
+          dotnet publish SnapDoc\SnapDoc.csproj -c Release -f net10.0-android `
             -p:AndroidKeyStore=true `
             -p:AndroidSigningKeyAlias=$env:ANDROID_KEY_ALIAS `
             -p:AndroidSigningKeyPass=$env:ANDROID_KEY_PASSWORD `
