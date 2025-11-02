@@ -21,21 +21,21 @@
 		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 	</PropertyGroup>
 
-<PropertyGroup Condition="'$(Configuration)' == 'Release' And '$(TargetFramework)' == 'net10.0-android'">
-  <AndroidKeyStore>true</AndroidKeyStore>
+	<PropertyGroup Condition="'$(Configuration)' == 'Release' And '$(TargetFramework)' == 'net10.0-android'">
+	  <AndroidKeyStore>true</AndroidKeyStore>
 
-  <!-- GitHub Actions Variablen -->
-  <AndroidSigningKeyAlias>$(AndroidKeyAlias)</AndroidSigningKeyAlias>
-  <AndroidSigningKeyPass>$(AndroidKeyPassword)</AndroidSigningKeyPass>
-  <AndroidSigningStorePass>$(AndroidStorePassword)</AndroidSigningStorePass>
-  <AndroidSigningKeyStore>$(AndroidKeyStorePath)</AndroidSigningKeyStore>
+	  <!-- GitHub Actions Variablen -->
+	  <AndroidSigningKeyAlias>$(AndroidKeyAlias)</AndroidSigningKeyAlias>
+	  <AndroidSigningKeyPass>$(AndroidKeyPassword)</AndroidSigningKeyPass>
+	  <AndroidSigningStorePass>$(AndroidStorePassword)</AndroidSigningStorePass>
+	  <AndroidSigningKeyStore>$(AndroidKeyStorePath)</AndroidSigningKeyStore>
 
-  <!-- Fallback für lokale Builds -->
-  <AndroidSigningKeyAlias Condition="'$(AndroidKeyAlias)' == ''">bsm24</AndroidSigningKeyAlias>
-  <AndroidSigningKeyPass Condition="'$(AndroidKeyPassword)' == ''">p0Ny05jY</AndroidSigningKeyPass>
-  <AndroidSigningStorePass Condition="'$(AndroidStorePassword)' == ''">p0Ny05jY</AndroidSigningStorePass>
-  <AndroidSigningKeyStore Condition="'$(AndroidKeyStorePath)' == ''">C:\Users\fankhauser\Desktop\SnapDoc\SnapDoc.keystore</AndroidSigningKeyStore>
-</PropertyGroup>
+	  <!-- Fallback für lokale Builds -->
+	  <AndroidSigningKeyAlias Condition="'$(AndroidKeyAlias)' == ''">bsm24</AndroidSigningKeyAlias>
+	  <AndroidSigningKeyPass Condition="'$(AndroidKeyPassword)' == ''">p0Ny05jY</AndroidSigningKeyPass>
+	  <AndroidSigningStorePass Condition="'$(AndroidStorePassword)' == ''">p0Ny05jY</AndroidSigningStorePass>
+	  <AndroidSigningKeyStore Condition="'$(AndroidKeyStorePath)' == ''">$(MSBuildProjectDirectory)\SnapDoc.keystore</AndroidSigningKeyStore>
+	</PropertyGroup>
 
 	<!-- Debug Android -->
 	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net10.0-android|AnyCPU'">
@@ -68,13 +68,13 @@
     <PropertyGroup>
         <ApplicationIconScaling>true</ApplicationIconScaling>
         <PackageIcon>appicon.png</PackageIcon>
+        <WindowsPackageType>None</WindowsPackageType>
     </PropertyGroup>
 
 	<ItemGroup>
 		<!-- Android mit Hintergrundfarbe -->
 		<MauiIcon Include="Resources\AppIcon\appicon.svg"
 				  ForegroundFile="Resources\AppIcon\appiconfg.svg"
-				  Color="#11b2c9"
 				  Condition="'$(TargetFramework)' == 'net10.0-android'" />
 
 		<!-- iOS mit eigenem, flachem Icon -->
@@ -86,7 +86,9 @@
 				  Condition="'$(TargetFramework)' == 'net10.0-windows10.0.26100.0'" />
 		
 		<!-- Splash Screen -->
-		<MauiSplashScreen Include="Resources\Splash\splash.svg" Color="#ffffff" BaseSize="128,128" />
+		<MauiSplashScreen Include="Resources\Splash\splash.svg"
+						  Color="#ffffff"
+						  BaseSize="128,128" />
 
 		<!-- Images -->
 		<MauiImage Include="Resources\Images\*" />
