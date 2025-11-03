@@ -7,7 +7,7 @@
 Mit SnapDoc lassen sich **Bestandesaufnahmen von Gebäuden und Außenbereichen** effizient erstellen, Mängel oder Bausituationen **geolokalisiert dokumentieren** und mit **Text, Symbolen/Icons und Fotografien** ergänzen. Aus diesen Daten können automatisch **Berichte** generiert werden, basierend auf einfachen Word-Vorlagen.
 
 ### Technologien
-- .NET MAUI (.NET 9 / MAUI 9.0)
+- .NET MAUI (.NET 10)
 - C#
 - MR.Gestures (für Pinch, Pan, Touch-Gesten)
 - CommunityToolkit.Maui.Views.DrawingView (für Zeichnungen)
@@ -33,7 +33,7 @@ Mit SnapDoc lassen sich **Bestandesaufnahmen von Gebäuden und Außenbereichen**
 With SnapDoc, you can efficiently create **surveys of buildings and outdoor areas**, **geolocate defects or construction situations**, and enhance them with **text, symbols/icons, and photographs**. From this data, **reports** can be automatically generated based on simple Word templates.
 
 ### Technologies
-- .NET MAUI (.NET 9 / MAUI 9.0)
+- .NET MAUI (.NET 10)
 - C#
 - MR.Gestures (for pinch, pan, and touch gestures)
 - CommunityToolkit.Maui.Views.DrawingView (for annotations)
