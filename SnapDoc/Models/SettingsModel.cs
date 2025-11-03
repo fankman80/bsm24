@@ -28,7 +28,7 @@ internal class SettingsModel
     public int PinPosExportSize { get; set; } // Größe der Pin-Position-Bilder im Bericht (maximale Kantenlänge in Pixel)
     public int PinPosCropExportSize { get; set; } // Größe der zugeschnittenen Pin-Position-Bilder im Bericht
     public int TitleExportSize { get; set; } // Grösse vom Titelbild im Bericht
-    public string? IconGalleryMode { get; set; } // Modus der Icon-Galerie (Raster oder Liste)
+    public bool IconGalleryGridView { get; set; } // Modus der Icon-Galerie (Raster oder Liste)
     public int MaxPdfImageSizeW { get; set; } // Maximale Breite eines PDF-Bildes beim Import
     public int MaxPdfImageSizeH { get; set; } // Maximale Höhe eines PDF-Bildes beim Import
     public int FotoThumbSize { get; set; } // Thumbnail-Größe der Fotos (minimale Kantenlänge)

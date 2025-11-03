@@ -35,7 +35,7 @@ public partial class IconGallery : ContentPage, IQueryAttributable
         SortPicker.SelectedIndexChanged += OnSortPickerChanged;
         CategoryPicker.SelectedIndexChanged += OnCategoryPickerChanged;
 
-        IconCollectionView.ItemTemplate = (DataTemplate)Resources[SettingsService.Instance.IconGalleryMode];
+        SetIconGridView();
         UpdateButton();
         UpdateSpan();
         IconSorting(OrderDirection);
@@ -257,21 +257,24 @@ public partial class IconGallery : ContentPage, IQueryAttributable
 
     private void OnChangeRowsClicked(object sender, EventArgs e)
     {
-        if (SettingsService.Instance.IconGalleryMode == "IconListTemplate")
-            SettingsService.Instance.IconGalleryMode = "IconGridTemplate";
-        else
-            SettingsService.Instance.IconGalleryMode = "IconListTemplate";
-
+        SettingsService.Instance.IconGalleryGridView = !SettingsService.Instance.IconGalleryGridView;
         SettingsService.Instance.SaveSettings();
-
-        IconCollectionView.ItemTemplate = (DataTemplate)Resources[SettingsService.Instance.IconGalleryMode];
+        SetIconGridView();
         UpdateButton();
         UpdateSpan();
     }
 
+    private void SetIconGridView()
+    {
+        if (SettingsService.Instance.IconGalleryGridView)
+            IconCollectionView.ItemTemplate = (DataTemplate)Resources["IconGridTemplate"];
+        else
+            IconCollectionView.ItemTemplate = (DataTemplate)Resources["IconListTemplate"];
+    }
+
     private void UpdateButton()
     {
-        if (SettingsService.Instance.IconGalleryMode == "IconGridTemplate")
+        if (SettingsService.Instance.IconGalleryGridView)
         {
             btnRows.IconImageSource = new FontImageSource
             {
@@ -298,7 +301,7 @@ public partial class IconGallery : ContentPage, IQueryAttributable
 
     private void UpdateSpan()
     {
-        if (SettingsService.Instance.IconGalleryMode == "IconGridTemplate")
+        if (SettingsService.Instance.IconGalleryGridView)
         {
             double screenWidth = this.Width;
             double imageWidth = SettingsService.Instance.IconPreviewSize; // Mindestbreite in Pixeln

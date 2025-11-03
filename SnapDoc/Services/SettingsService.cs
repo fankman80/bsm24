@@ -110,7 +110,7 @@ public partial class SettingsService : ObservableObject
     [ObservableProperty] private string _flyoutHeaderTitle = "by Emch+Berger AG Bern";
     [ObservableProperty] private string _flyoutHeaderDesc = "SnapDoc";
     [ObservableProperty] private string _flyoutHeaderImage = "banner_thumbnail.png";
-    [ObservableProperty] private string _iconGalleryMode = "IconListTemplate";
+    [ObservableProperty] private bool _iconGalleryGridView = false;
 
     // --- Größe und Export ---
     [ObservableProperty] private int _maxPdfImageSizeW = 8192;
@@ -253,7 +253,7 @@ public partial class SettingsService : ObservableObject
             PinPosExportSize = PinPosExportSize,
             PinPosCropExportSize = PinPosCropExportSize,
             TitleExportSize = TitleExportSize,
-            IconGalleryMode = IconGalleryMode,
+            IconGalleryGridView = IconGalleryGridView,
             MaxPdfImageSizeW = MaxPdfImageSizeW,
             MaxPdfImageSizeH = MaxPdfImageSizeH,
             FotoThumbSize = FotoThumbSize,
@@ -314,7 +314,7 @@ public partial class SettingsService : ObservableObject
             PinPosExportSize = settings.PinPosExportSize;
             PinPosCropExportSize = settings.PinPosCropExportSize;
             TitleExportSize = settings.TitleExportSize;
-            IconGalleryMode = settings.IconGalleryMode ?? "IconListTemplate";
+            IconGalleryGridView = settings.IconGalleryGridView;
             MaxPdfImageSizeW = settings.MaxPdfImageSizeW;
             MaxPdfImageSizeH = settings.MaxPdfImageSizeH;
             FotoThumbSize = settings.FotoThumbSize;
@@ -366,7 +366,7 @@ public partial class SettingsService : ObservableObject
         PinPosExportSize = defaultSettings.PinPosExportSize;
         PinPosCropExportSize = defaultSettings.PinPosCropExportSize;
         TitleExportSize = defaultSettings.TitleExportSize;
-        IconGalleryMode = defaultSettings.IconGalleryMode;
+        IconGalleryGridView = defaultSettings.IconGalleryGridView;
         MaxPdfImageSizeW = defaultSettings.MaxPdfImageSizeW;
         MaxPdfImageSizeH = defaultSettings.MaxPdfImageSizeH;
         FotoThumbSize = defaultSettings.FotoThumbSize;
