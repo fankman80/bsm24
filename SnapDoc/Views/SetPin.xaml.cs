@@ -13,6 +13,7 @@ namespace SnapDoc.Views;
 
 public partial class SetPin : ContentPage, IQueryAttributable
 {
+    private readonly HashSet<Picker> _initializedPickers = [];
     public ObservableCollection<FotoItem> Images { get; set; }
     public int DynamicSpan { get; set; } = 3; // Standardwert
     public int DynamicSize;
@@ -38,16 +39,14 @@ public partial class SetPin : ContentPage, IQueryAttributable
     {
         InitializeComponent();
         UpdateSpan();
-        SizeChanged += OnSizeChanged;
-        priorityPicker.PropertyChanged += OnSelectedItemChanged;
+        SizeChanged += OnSizeChanged;;
     }
 
     protected override void OnDisappearing()
     {
         base.OnDisappearing();
 
-        SizeChanged -= OnSizeChanged;
-        priorityPicker.PropertyChanged -= OnSelectedItemChanged;
+        SizeChanged -= OnSizeChanged;;
     }
 
     public void ApplyQueryAttributes(IDictionary<string, object> query)
@@ -88,7 +87,7 @@ public partial class SetPin : ContentPage, IQueryAttributable
         PinImage.Source = file;
         LockSwitch.IsToggled = GlobalJson.Data.Plans[PlanId].Pins[PinId].IsLocked;
         AllowExport.IsToggled = GlobalJson.Data.Plans[PlanId].Pins[PinId].AllowExport;
-        priorityPicker.SelectedIndex = GlobalJson.Data.Plans[PlanId].Pins[PinId].PinPriority;
+        priorityPicker.SelectedIndex = Math.Max(0, GlobalJson.Data.Plans[PlanId].Pins[PinId].PinPriority);
 
         if (GlobalJson.Data.Plans[PlanId].Pins[PinId].GeoLocation != null)
         {
@@ -112,6 +111,10 @@ public partial class SetPin : ContentPage, IQueryAttributable
             PriorityColor = Application.Current.RequestedTheme == AppTheme.Dark
                         ? (Color)Application.Current.Resources["PrimaryDarkText"]
                         : (Color)Application.Current.Resources["PrimaryText"];
+        }
+        else
+        {
+            PriorityColor = Color.FromArgb(SettingsService.Instance.PriorityItems[priorityPicker.SelectedIndex].Color);
         }
     }
 
@@ -269,11 +272,12 @@ public partial class SetPin : ContentPage, IQueryAttributable
 
     private void OnSelectedItemChanged(object sender, EventArgs e)
     {
-        if (sender is PickerField picker)
+        if (sender is not Picker picker)
+            return;
+
+        if (_initializedPickers.Add(picker) == false)
         {
-            var selectedIndex = picker.SelectedIndex;
-            if (selectedIndex >= 0)
-                PriorityColor = Color.FromArgb(SettingsService.Instance.PriorityItems[selectedIndex].Color);
+            PriorityColor = Color.FromArgb(SettingsService.Instance.PriorityItems[picker.SelectedIndex].Color);
         }
     }
 

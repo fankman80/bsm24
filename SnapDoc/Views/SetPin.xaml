@@ -109,7 +109,7 @@
                                   TextColor="{AppThemeBinding Light={DynamicResource PrimaryText}, Dark={DynamicResource PrimaryDarkText}}"
                                   AccentColor="{AppThemeBinding Light={DynamicResource Primary}, Dark={DynamicResource PrimaryDark}}"
                                   Title="Beschreibung"/>
-            <Grid ColumnSpacing="6" RowSpacing="0">
+            <Grid RowSpacing="0">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="Auto" />
@@ -158,25 +158,25 @@
                                  Padding="12"/>
                 </Border>
             </Grid>
-            
-            <Grid x:DataType="views:SetPin">
-                <material:PickerField x:Name="priorityPicker" 
-                                      Title="Priorität"
-                                      AllowClear="False"
-                                      TitleColor="{DynamicResource SecondaryBackground}"
-                                      BorderColor="{DynamicResource SecondaryBackground}"                        
-                                      TextColor="{AppThemeBinding Light={DynamicResource PrimaryText}, Dark={DynamicResource PrimaryDarkText}}"
-                                      AccentColor="{AppThemeBinding Light={DynamicResource Primary}, Dark={DynamicResource PrimaryDark}}"/>
-                <Label Text="{x:Static m:MaterialOutlined.Traffic}"                       
-                       Margin="0,0,0,4"
-                       HorizontalOptions="End"
-                       WidthRequest="50"
-                       HorizontalTextAlignment="Start"
-                       VerticalTextAlignment="Center"
-                       FontFamily="MaterialOutlined"
-                       TextColor="{Binding PriorityColor}"
-                       FontSize="40"/>
-            </Grid>
+
+            <Border x:DataType="views:SetPin"
+                    Stroke="{DynamicResource SecondaryBackground}"
+                    StrokeThickness="1"
+                    StrokeShape="RoundRectangle 8">
+                <Grid ColumnDefinitions="*,Auto" ColumnSpacing="0">
+                    <Picker Grid.Column="0"
+                            x:Name="priorityPicker"
+                            BackgroundColor="Transparent"
+                            SelectedIndexChanged="OnSelectedItemChanged"/>
+                    <Label Grid.Column="1" Text="{x:Static m:MaterialOutlined.Traffic}"
+                           WidthRequest="60"
+                           HorizontalTextAlignment="Center"
+                           VerticalTextAlignment="Center"
+                           FontFamily="MaterialOutlined"
+                           TextColor="{Binding PriorityColor}"
+                           FontSize="34"/>
+                </Grid>
+            </Border>
 
             <Grid>
                 <Grid.ColumnDefinitions>
