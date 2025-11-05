@@ -8,6 +8,7 @@ using SkiaSharp.Views.Maui.Controls.Hosting;
 using UraniumUI;
 using Shiny;
 using Shiny.Locations;
+using SnapDoc.Services;
 
 #if WINDOWS
 using Microsoft.Maui.LifecycleEvents;
