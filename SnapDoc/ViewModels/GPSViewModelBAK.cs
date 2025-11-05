@@ -7,7 +7,7 @@ using System.Runtime.CompilerServices;
 using static Microsoft.Maui.ApplicationModel.Permissions;
 
 namespace SnapDoc.ViewModels;
-public partial class GPSViewModel : INotifyPropertyChanged
+public partial class GPSViewModelBAK : INotifyPropertyChanged
 {
     public static GPSViewModel Instance { get; } = new GPSViewModel();
     public event PropertyChangedEventHandler PropertyChanged;
