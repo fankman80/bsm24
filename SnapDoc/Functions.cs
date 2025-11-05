@@ -1,62 +1,77 @@
 ﻿
+using System.Text.Json;
+
 namespace SnapDoc;
 
 internal class Functions
 {
-    static double DecToSexAngle(double dec)
-    {
-        int deg = (int)Math.Floor(dec);
-        int min = (int)Math.Floor((dec - deg) * 60);
-        double sec = (((dec - deg) * 60) - min) * 60;
+    private static readonly HttpClient _httpClient = new();
 
-        return deg + (double)min / 100 + (double)sec / 10000;
+    public static async Task<(double E, double N)> Wgs84ToLv95Async(double latitude, double longitude)
+    {
+        try
+        {
+            string url = $"https://geodesy.geo.admin.ch/reframe/wgs84tolv95?easting={longitude}&northing={latitude}";
+            var response = await _httpClient.GetAsync(url);
+            response.EnsureSuccessStatusCode();
+
+            var json = await response.Content.ReadAsStringAsync();
+            using var doc = JsonDocument.Parse(json);
+            var root = doc.RootElement;
+
+            double e, n;
+
+            if (root.TryGetProperty("easting", out var eProp) && root.TryGetProperty("northing", out var nProp))
+            {
+                e = eProp.GetDouble();
+                n = nProp.GetDouble();
+            }
+            else if (root.TryGetProperty("coordinates", out var coords) && coords.GetArrayLength() >= 2)
+            {
+                e = coords[0].GetDouble();
+                n = coords[1].GetDouble();
+            }
+            else
+            {
+                throw new Exception("Unbekanntes REFRAME-Format");
+            }
+
+            return (e, n);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"REFRAME fehlgeschlagen ({ex.Message}), Fallback auf Näherungsformel...");
+            return Wgs84ToLv95Approx(latitude, longitude);
+        }
     }
 
-    static double SexAngleToSeconds(double dms)
+    /// <summary>
+    /// Näherungsformel von Dupraz/Marti (swisstopo 1999) – Genauigkeit ~1 m
+    /// </summary>
+    public static (double E, double N) Wgs84ToLv95Approx(double latitude, double longitude)
     {
-        double deg, min, sec;
-        deg = Math.Floor(dms);
-        min = Math.Floor((dms - deg) * 100);
-        sec = (((dms - deg) * 100) - min) * 100;
+        // Schritt 1: Umrechnung in Sexagesimalsekunden
+        double latSec = latitude * 3600.0;
+        double lonSec = longitude * 3600.0;
 
-        return sec + (double)min * 60 + (double)deg * 3600;
-    }
+        // Schritt 2: Hilfsgrössen (Differenz zu Bern in 10000")
+        double latAux = (latSec - 169028.66) / 10000.0;
+        double lonAux = (lonSec - 26782.5) / 10000.0;
 
-    static double WGStoCHy(double lat, double lng)
-    {
-        lat = DecToSexAngle(lat);
-        lng = DecToSexAngle(lng);
+        // Schritt 3: LV95 berechnen (nach swisstopo-Dokument)
+        double e = 2600072.37
+                   + 211455.93 * lonAux
+                   - 10938.51 * lonAux * latAux
+                   - 0.36 * lonAux * latAux * latAux
+                   - 44.54 * Math.Pow(lonAux, 3);
 
-        lat = SexAngleToSeconds(lat);
-        lng = SexAngleToSeconds(lng);
+        double n = 1200147.07
+                   + 308807.95 * latAux
+                   + 3745.25 * lonAux * lonAux
+                   + 76.63 * latAux * latAux
+                   - 194.56 * lonAux * lonAux * latAux
+                   + 119.79 * Math.Pow(latAux, 3);
 
-        double lat_aux = (lat - 169028.66) / 10000;
-        double lng_aux = (lng - 26782.5) / 10000;
-
-        double y = 600072.37 + 211455.93 * lng_aux - 10938.51 * lng_aux * lat_aux - 0.36 * lng_aux * Math.Pow(lat_aux, 2) - 44.54 * Math.Pow(lng_aux, 3);
-
-        return y;
-    }
-
-    static double WGStoCHx(double lat, double lng)
-    {
-        lat = DecToSexAngle(lat);
-        lng = DecToSexAngle(lng);
-
-        lat = SexAngleToSeconds(lat);
-        lng = SexAngleToSeconds(lng);
-
-        double lat_aux = (lat - 169028.66) / 10000;
-        double lng_aux = (lng - 26782.5) / 10000;
-
-        double x = 200147.07 + 308807.95 * lat_aux + 3745.25 * Math.Pow(lng_aux, 2) + 76.63 * Math.Pow(lat_aux, 2) - 194.56 * Math.Pow(lng_aux, 2) * lat_aux + 119.79 * Math.Pow(lat_aux, 3);
-
-        return x;
-    }
-
-    public static void LLtoSwissGrid(double Lat, double Long, out double SwissEasting, out double SwissNorthing)
-    {
-        SwissNorthing = 1000000 + WGStoCHx(Lat, Long);
-        SwissEasting = 2000000 + WGStoCHy(Lat, Long);
+        return (e, n);
     }
 }

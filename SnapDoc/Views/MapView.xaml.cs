@@ -277,7 +277,6 @@ public partial class MapView : IQueryAttributable
         GeoAdminWebView.Reload();
     }
 
-
     private async void GetCoordinatesClicked(object sender, EventArgs e)
     {
         var script = "getMarkerCoordinates()";
@@ -290,9 +289,17 @@ public partial class MapView : IQueryAttributable
 
             foreach (var coord in coordinates)
             {
-                GlobalJson.Data.Plans[coord.PlanKey].Pins[coord.PinKey].GeoLocation.WGS84.Longitude = coord.Lon;
-                GlobalJson.Data.Plans[coord.PlanKey].Pins[coord.PinKey].GeoLocation.WGS84.Latitude = coord.Lat;
-                GlobalJson.Data.Plans[coord.PlanKey].Pins[coord.PinKey].GeoLocation.Accuracy = 0;
+                var pin = GlobalJson.Data.Plans[coord.PlanKey].Pins[coord.PinKey];
+
+                // Prüfen, ob sich die Koordinaten geändert haben
+                if (pin.GeoLocation.WGS84.Latitude != coord.Lat || pin.GeoLocation.WGS84.Longitude != coord.Lon)
+                {
+                    pin.GeoLocation.WGS84.Latitude = coord.Lat;
+                    pin.GeoLocation.WGS84.Longitude = coord.Lon;
+                    pin.GeoLocation.Accuracy = 0;
+
+                    await pin.GeoLocation.UpdateCH1903Async();
+                }
             }
 
             // save data to file

@@ -89,7 +89,7 @@ public class GeoLocData
     public GeolocationAccuracy Accuracy { get; set; }
     public LocationWGS84 WGS84 { get; set; }
     public LocationCH1903 CH1903 { get; set; }
-    private void Initialize()
+    private async void Initialize()
     {
         if (_wsg84 != null)
         {
@@ -98,8 +98,17 @@ public class GeoLocData
                         ? (GeolocationAccuracy)_wsg84.Accuracy.Value
                         : GeolocationAccuracy.Default;
             WGS84 = new LocationWGS84(_wsg84.Latitude, _wsg84.Longitude);
-            Functions.LLtoSwissGrid(_wsg84.Latitude, _wsg84.Longitude, out double swissEasting, out double swissNorthing);
+            (double swissEasting, double swissNorthing) = await Functions.Wgs84ToLv95Async(_wsg84.Latitude, _wsg84.Longitude);
             CH1903 = new LocationCH1903(swissEasting, swissNorthing);
+        }
+    }
+
+    public async Task UpdateCH1903Async()
+    {
+        if (WGS84 != null)
+        {
+            (double e, double n) = await Functions.Wgs84ToLv95Async(WGS84.Latitude, WGS84.Longitude);
+            CH1903 = new LocationCH1903(e, n);
         }
     }
 }
@@ -111,7 +120,7 @@ public class LocationCH1903(double x, double y)
 
     public override string ToString()
     {
-        return $"X: {X}, Y: {Y}";
+        return $"East: {X}, North: {Y}";
     }
 }
 
