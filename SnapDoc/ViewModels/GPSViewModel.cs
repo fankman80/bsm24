@@ -1,48 +1,58 @@
-﻿#nullable disable
-using GeolocatorPlugin;
-using GeolocatorPlugin.Abstractions;
+#nullable disable
+using Microsoft.Maui.ApplicationModel;
+using Microsoft.Maui.Devices.Sensors;
 using SnapDoc.Services;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
-using static Microsoft.Maui.ApplicationModel.Permissions;
 
 namespace SnapDoc.ViewModels;
+
 public partial class GPSViewModel : INotifyPropertyChanged
 {
     public static GPSViewModel Instance { get; } = new GPSViewModel();
     public event PropertyChangedEventHandler PropertyChanged;
+
     private string _gpsData;
     private FontImageSource _gpsButtonIcon;
     private double _lon;
     private double _lat;
     private double _acc;
+
     public string GPSData
     {
-        get { return _gpsData; }
-        set { _gpsData = value; OnPropertyChanged(nameof(GPSData)); }
+        get => _gpsData;
+        set { _gpsData = value; OnPropertyChanged(); }
     }
+
     public double Lon
     {
-        get { return _lon; }
-        set { _lon = value; OnPropertyChanged(nameof(Lon)); }
+        get => _lon;
+        set { _lon = value; OnPropertyChanged(); }
     }
+
     public double Lat
     {
-        get { return _lat; }
-        set { _lat = value; OnPropertyChanged(nameof(Lat)); }
+        get => _lat;
+        set { _lat = value; OnPropertyChanged(); }
     }
+
     public double Acc
     {
-        get { return _acc; }
-        set { _acc = value; OnPropertyChanged(nameof(Acc)); }
+        get => _acc;
+        set { _acc = value; OnPropertyChanged(); }
     }
+
     public bool IsRunning { get; set; }
+
     public FontImageSource GPSButtonIcon
     {
-        get { return _gpsButtonIcon; }
-        set { _gpsButtonIcon = value; OnPropertyChanged(nameof(GPSButtonIcon)); }
+        get => _gpsButtonIcon;
+        set { _gpsButtonIcon = value; OnPropertyChanged(); }
     }
-    public Command ToggleGPSCommand { get; set; }
+
+    public Command ToggleGPSCommand { get; }
+
+    private CancellationTokenSource _gpsToken;
 
     private GPSViewModel()
     {
@@ -54,13 +64,8 @@ public partial class GPSViewModel : INotifyPropertyChanged
             Color = Application.Current.RequestedTheme == AppTheme.Dark
                     ? (Color)Application.Current.Resources["PrimaryDark"]
                     : (Color)Application.Current.Resources["Primary"],
-            Size=24
+            Size = 24
         };
-    }
-
-    public virtual void OnPropertyChanged([CallerMemberName] string propertyName = "")
-    {
-        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }
 
     private async void OnToggleGPS(object obj)
@@ -80,98 +85,110 @@ public partial class GPSViewModel : INotifyPropertyChanged
         };
     }
 
+    public virtual void OnPropertyChanged([CallerMemberName] string propertyName = "")
+        => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+
     /// <summary>
-    /// Activates/Deactives the gps device
+    /// Aktiviert/deaktiviert die Standortabfrage.
     /// </summary>
-    /// <param name="isOn"></param>
     public async Task<bool> Toggle(bool isOn)
     {
-        BasePermission gpsPermission = new LocationWhenInUse();
-        var hasPermission = await Utils.CheckPermissions(gpsPermission, true);
-        if (!hasPermission)
+        var status = await Permissions.CheckStatusAsync<Permissions.LocationWhenInUse>();
+        if (status != PermissionStatus.Granted)
+            status = await Permissions.RequestAsync<Permissions.LocationWhenInUse>();
+
+        if (status != PermissionStatus.Granted)
+        {
+            GPSData = "Standortberechtigung verweigert.";
             return false;
+        }
 
         if (!isOn)
         {
-            if (await CrossGeolocator.Current.StopListeningAsync())
-            {
-                CrossGeolocator.Current.PositionChanged -= CrossGeolocator_Current_PositionChanged;
-                CrossGeolocator.Current.PositionError -= CrossGeolocator_Current_PositionError;
-            }
+            _gpsToken?.Cancel();
+            _gpsToken = null;
             GPSData = string.Empty;
             IsRunning = false;
         }
         else
         {
-            if (await CrossGeolocator.Current.StartListeningAsync(TimeSpan.FromSeconds(SettingsService.Instance.GpsMinTimeUpdate), SettingsService.Instance.GpsMinDistUpdate, true, new ListenerSettings
-            {
-                ActivityType = ActivityType.AutomotiveNavigation,
-                AllowBackgroundUpdates = true,
-                DeferLocationUpdates = false,
-                ListenForSignificantChanges = false,
-                PauseLocationUpdatesAutomatically = false,
-                ShowsBackgroundLocationIndicator = true,
-            }))
-            {
-                CrossGeolocator.Current.PositionChanged += CrossGeolocator_Current_PositionChanged;
-                CrossGeolocator.Current.PositionError += CrossGeolocator_Current_PositionError;
-            }
-
+            _gpsToken = new CancellationTokenSource();
             IsRunning = true;
+            _ = Task.Run(() => StartListeningAsync(_gpsToken.Token));
         }
 
         return true;
     }
 
-
     /// <summary>
-    /// Handles Position Changed events from the plugin
+    /// Wiederholte Standortabfrage (simuliert Listener).
     /// </summary>
-    /// <param name="sender"></param>
-    /// <param name="e"></param>
-    private void CrossGeolocator_Current_PositionChanged(object sender, PositionEventArgs e)
+    private async Task StartListeningAsync(CancellationToken token)
     {
-        GPSData = string.Format("Time: {0} \nLat: {1} \nLong: {2} \nAltitude: {3} \nAltitude Accuracy: {4} \nAccuracy: {5} \nHeading: {6} \nSpeed: {7}",
-            e.Position.Timestamp,
-            e.Position.Latitude,
-            e.Position.Longitude,
-            e.Position.Altitude,
-            e.Position.AltitudeAccuracy,
-            e.Position.Accuracy,
-            e.Position.Heading,
-            e.Position.Speed);
-
-        Lon = e.Position.Longitude;
-        Lat = e.Position.Latitude;
-        Acc = e.Position.Accuracy;
-
-        IsRunning = true;
-    }
-
-    /// <summary>
-    /// Handles position errors
-    /// </summary>
-    /// <param name="sender"></param>
-    /// <param name="e"></param>
-    private void CrossGeolocator_Current_PositionError(object sender, PositionErrorEventArgs e)
-    {
-        Console.WriteLine(e.Error.ToString());
-    }
-
-    /// <summary>
-    /// Returns the Last Known Location of the device
-    /// </summary>
-    /// <returns></returns>
-    internal async Task<Position> GetLastKnownLocation()
-    {
-        BasePermission gpsPermission = new LocationWhenInUse();
-        var hasPermission = await Utils.CheckPermissions(gpsPermission, true);
-        if (hasPermission)
+        while (!token.IsCancellationRequested)
         {
-            var position = await CrossGeolocator.Current.GetLastKnownLocationAsync();
-            CrossGeolocator_Current_PositionChanged(this, new PositionEventArgs(position));
-            return position;
+            try
+            {
+                var request = new GeolocationRequest(
+                    GeolocationAccuracy.High,
+                    TimeSpan.FromSeconds(SettingsService.Instance.GpsMinTimeUpdate));
+
+                var location = await Geolocation.Default.GetLocationAsync(request, token);
+
+                if (location != null)
+                {
+                    Lat = location.Latitude;
+                    Lon = location.Longitude;
+                    Acc = location.Accuracy ?? 0;
+
+                    GPSData = string.Format(
+                        "Zeit: {0}\nLat: {1:F6}\nLon: {2:F6}\nGenauigkeit: {3:F1} m\nQuelle: {4}",
+                        location.Timestamp.LocalDateTime,
+                        Lat,
+                        Lon,
+                        Acc,
+                        location.Source);
+                }
+            }
+            catch (Exception ex)
+            {
+                GPSData = $"Fehler: {ex.Message}";
+            }
+
+            // Wartezeit zwischen Updates
+            await Task.Delay(TimeSpan.FromSeconds(SettingsService.Instance.GpsMinTimeUpdate), token);
         }
-        return null;
+    }
+
+    /// <summary>
+    /// Liefert den letzten bekannten Standort (ohne neue Abfrage).
+    /// </summary>
+    public async Task<Location> GetLastKnownLocation()
+    {
+        try
+        {
+            var status = await Permissions.CheckStatusAsync<Permissions.LocationWhenInUse>();
+            if (status != PermissionStatus.Granted)
+                status = await Permissions.RequestAsync<Permissions.LocationWhenInUse>();
+
+            if (status != PermissionStatus.Granted)
+                return null;
+
+            var location = await Geolocation.Default.GetLastKnownLocationAsync();
+            if (location != null)
+            {
+                Lat = location.Latitude;
+                Lon = location.Longitude;
+                Acc = location.Accuracy ?? 0;
+                GPSData = $"Letzter Standort: {Lat:F6}, {Lon:F6} (±{Acc:F1}m)";
+            }
+
+            return location;
+        }
+        catch (Exception ex)
+        {
+            GPSData = $"Fehler: {ex.Message}";
+            return null;
+        }
     }
 }
