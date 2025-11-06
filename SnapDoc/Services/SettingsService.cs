@@ -157,7 +157,7 @@ public partial class SettingsService : ObservableObject
 
     [ObservableProperty] private List<string> _colorThemes;
     [ObservableProperty] private List<string> _appThemes;
-    [ObservableProperty] private double _gpsMinDistUpdate = 1.0;
+    [ObservableProperty] private double _gpsResponseTimeOut = 10;
     [ObservableProperty] private float _gpsMinTimeUpdate = 2.0f;
     [ObservableProperty] private ObservableCollection<string> _templates = [];
     [ObservableProperty] private string _selectedTemplate;
@@ -261,7 +261,7 @@ public partial class SettingsService : ObservableObject
             PlanPreviewSize = PlanPreviewSize,
             IconPreviewSize = IconPreviewSize,
             DefaultPinZoom = DefaultPinZoom,
-            GpsMinDistUpdate = GpsMinDistUpdate,
+            GpsResponseTimeOut = GpsResponseTimeOut,
             GpsMinTimeUpdate = GpsMinTimeUpdate,
             ColorList = ColorList,
             IconSortCrits = IconSortCrits,
@@ -322,7 +322,7 @@ public partial class SettingsService : ObservableObject
             PlanPreviewSize = settings.PlanPreviewSize;
             IconPreviewSize = settings.IconPreviewSize;
             DefaultPinZoom = settings.DefaultPinZoom;
-            GpsMinDistUpdate = settings.GpsMinDistUpdate;
+            GpsResponseTimeOut = settings.GpsResponseTimeOut;
             GpsMinTimeUpdate = settings.GpsMinTimeUpdate;
             ColorList = settings.ColorList ?? ColorList;
             IconSortCrits = settings.IconSortCrits ?? IconSortCrits;
@@ -374,7 +374,7 @@ public partial class SettingsService : ObservableObject
         PlanPreviewSize = defaultSettings.PlanPreviewSize;
         IconPreviewSize = defaultSettings.IconPreviewSize;
         DefaultPinZoom = defaultSettings.DefaultPinZoom;
-        GpsMinDistUpdate = defaultSettings.GpsMinDistUpdate;
+        GpsResponseTimeOut = defaultSettings.GpsResponseTimeOut;
         GpsMinTimeUpdate = defaultSettings.GpsMinTimeUpdate;
         ColorList = [.. defaultSettings.ColorList];
         IconSortCrits = [.. defaultSettings.IconSortCrits];
