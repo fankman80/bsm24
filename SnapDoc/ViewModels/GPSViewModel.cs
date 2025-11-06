@@ -1,8 +1,10 @@
 #nullable disable
-using Microsoft.Maui.ApplicationModel;
-using Shiny.Locations;
+using GeolocatorPlugin;
+using GeolocatorPlugin.Abstractions;
+using SnapDoc.Services;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using static Microsoft.Maui.ApplicationModel.Permissions;
 
 namespace SnapDoc.ViewModels;
 
@@ -10,75 +12,62 @@ public partial class GPSViewModel : INotifyPropertyChanged
 {
     public static GPSViewModel Instance { get; } = new GPSViewModel();
     public event PropertyChangedEventHandler PropertyChanged;
-
-    public event Action<GpsReading> LocationUpdated;
-
     private string _gpsData;
     private FontImageSource _gpsButtonIcon;
     private double _lon;
     private double _lat;
     private double _acc;
-
     public string GPSData
     {
-        get => _gpsData;
-        set { _gpsData = value; OnPropertyChanged(); }
+        get { return _gpsData; }
+        set { _gpsData = value; OnPropertyChanged(nameof(GPSData)); }
     }
-
     public double Lon
     {
-        get => _lon;
-        set { _lon = value; OnPropertyChanged(); }
+        get { return _lon; }
+        set { _lon = value; OnPropertyChanged(nameof(Lon)); }
     }
-
     public double Lat
     {
-        get => _lat;
-        set { _lat = value; OnPropertyChanged(); }
+        get { return _lat; }
+        set { _lat = value; OnPropertyChanged(nameof(Lat)); }
     }
-
     public double Acc
     {
-        get => _acc;
-        set { _acc = value; OnPropertyChanged(); }
+        get { return _acc; }
+        set { _acc = value; OnPropertyChanged(nameof(Acc)); }
     }
-
     public bool IsRunning { get; set; }
-
     public FontImageSource GPSButtonIcon
     {
-        get => _gpsButtonIcon;
-        set { _gpsButtonIcon = value; OnPropertyChanged(); }
+        get { return _gpsButtonIcon; }
+        set { _gpsButtonIcon = value; OnPropertyChanged(nameof(GPSButtonIcon)); }
     }
-
-    private string _gpsButtonText = "AUS";
-    public string GPSButtonText
-    {
-        get => _gpsButtonText;
-        set { _gpsButtonText = value; OnPropertyChanged(); }
-    }
-
-    public Command ToggleGPSCommand { get; }
-
-    private IGpsManager _gpsManager;
+    public Command ToggleGPSCommand { get; set; }
 
     private GPSViewModel()
     {
         ToggleGPSCommand = new Command(OnToggleGPS);
-        UpdateGPSButtonIcon();
-        _gpsManager = Shiny.ShinyHost.Resolve<IGpsManager>();
+        GPSButtonIcon = new FontImageSource
+        {
+            FontFamily = "MaterialOutlined",
+            Glyph = UraniumUI.Icons.MaterialSymbols.MaterialOutlined.Location_off,
+            Color = Application.Current.RequestedTheme == AppTheme.Dark
+                    ? (Color)Application.Current.Resources["PrimaryDark"]
+                    : (Color)Application.Current.Resources["Primary"],
+            Size=24
+        };
+    }
+
+    public virtual void OnPropertyChanged([CallerMemberName] string propertyName = "")
+    {
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }
 
     private async void OnToggleGPS(object obj)
     {
-        GPSButtonText = IsRunning ? "AUS" : "initialisiere...";
-        UpdateGPSButtonIcon();
-
         await Toggle(!IsRunning);
-    }
 
-    private void UpdateGPSButtonIcon()
-    {
         GPSButtonIcon = new FontImageSource
         {
             FontFamily = "MaterialOutlined",
@@ -92,65 +81,99 @@ public partial class GPSViewModel : INotifyPropertyChanged
         };
     }
 
-    public virtual void OnPropertyChanged([CallerMemberName] string propertyName = "")
-        => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-
     /// <summary>
-    /// Startet oder stoppt den Shiny-GPS-Service.
+    /// Activates/Deactives the gps device
     /// </summary>
-    public async Task Toggle(bool isOn)
+    /// <param name="isOn"></param>
+    public async Task<bool> Toggle(bool isOn)
     {
-        if (!await _gpsManager.RequestAccess().ConfigureAwait(false))
-        {
-            GPSData = "Standortberechtigung verweigert.";
-            GPSButtonText = "AUS";
-            return;
-        }
+        BasePermission gpsPermission = new LocationWhenInUse();
+        var hasPermission = await Utils.CheckPermissions(gpsPermission, true);
+        if (!hasPermission)
+            return false;
 
         if (!isOn)
         {
-            await _gpsManager.StopListener();
+            if (await CrossGeolocator.Current.StopListeningAsync())
+            {
+                CrossGeolocator.Current.PositionChanged -= CrossGeolocator_Current_PositionChanged;
+                CrossGeolocator.Current.PositionError -= CrossGeolocator_Current_PositionError;
+            }
+            GPSData = string.Empty;
             IsRunning = false;
-            GPSButtonText = "AUS";
         }
         else
         {
-            var request = new GpsRequest
+            CrossGeolocator.Current.DesiredAccuracy = 1;
+            if (await CrossGeolocator.Current.StartListeningAsync(TimeSpan.FromSeconds(SettingsService.Instance.GpsMinTimeUpdate), SettingsService.Instance.GpsMinDistUpdate, true, new ListenerSettings
             {
-                Accuracy = GpsAccuracy.High,
-                Interval = TimeSpan.FromSeconds(SettingsService.Instance.GpsMinTimeUpdate),
-                ThrottledInterval = TimeSpan.FromSeconds(SettingsService.Instance.GpsMinTimeUpdate),
-                UseBackground = false
-            };
+                ActivityType = ActivityType.AutomotiveNavigation,
+                AllowBackgroundUpdates = true,
+                DeferLocationUpdates = false,
+                ListenForSignificantChanges = false,
+                PauseLocationUpdatesAutomatically = false,
+                ShowsBackgroundLocationIndicator = true,
+            }))
+            {
+                CrossGeolocator.Current.PositionChanged += CrossGeolocator_Current_PositionChanged;
+                CrossGeolocator.Current.PositionError += CrossGeolocator_Current_PositionError;
+            }
 
-            await _gpsManager.StartListener(request);
             IsRunning = true;
-            GPSButtonText = "AN";
         }
 
-        UpdateGPSButtonIcon();
+        return true;
+    }
+
+
+    /// <summary>
+    /// Handles Position Changed events from the plugin
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
+    private void CrossGeolocator_Current_PositionChanged(object sender, PositionEventArgs e)
+    {
+        GPSData = string.Format("Time: {0} \nLat: {1} \nLong: {2} \nAltitude: {3} \nAltitude Accuracy: {4} \nAccuracy: {5} \nHeading: {6} \nSpeed: {7}",
+            e.Position.Timestamp,
+            e.Position.Latitude,
+            e.Position.Longitude,
+            e.Position.Altitude,
+            e.Position.AltitudeAccuracy,
+            e.Position.Accuracy,
+            e.Position.Heading,
+            e.Position.Speed);
+
+        Lon = e.Position.Longitude;
+        Lat = e.Position.Latitude;
+        Acc = e.Position.Accuracy;
+
+        IsRunning = true;
     }
 
     /// <summary>
-    /// Wird von LocationDelegate bei jedem neuen GPS-Update aufgerufen.
+    /// Handles position errors
     /// </summary>
-    public void OnGpsReading(GpsReading reading)
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
+    private void CrossGeolocator_Current_PositionError(object sender, PositionErrorEventArgs e)
     {
-        MainThread.BeginInvokeOnMainThread(() =>
+        Console.WriteLine(e.Error.ToString());
+    }
+
+    /// <summary>
+    /// Returns the Last Known Location of the device
+    /// </summary>
+    /// <returns></returns>
+    internal async Task<Position> GetLastKnownLocation()
+    {
+        BasePermission gpsPermission = new LocationWhenInUse();
+        var hasPermission = await Utils.CheckPermissions(gpsPermission, true);
+        if (hasPermission)
         {
-            Lat = reading.Position.Latitude;
-            Lon = reading.Position.Longitude;
-            Acc = reading.Position.Accuracy ?? 0;
-
-            GPSData = string.Format(
-                "Zeit: {0}\nLat: {1:F6}\nLon: {2:F6}\nGenauigkeit: {3:F1} m",
-                reading.Timestamp.LocalDateTime,
-                Lat,
-                Lon,
-                Acc);
-
-            GPSButtonText = "AN";
-            LocationUpdated?.Invoke(reading);
-        });
+            var position = await CrossGeolocator.Current.GetLastKnownLocationAsync();
+            CrossGeolocator_Current_PositionChanged(this, new PositionEventArgs(position));
+            return position;
+        }
+        return null;
     }
 }

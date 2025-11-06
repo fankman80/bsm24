@@ -6,9 +6,6 @@ using Microsoft.Maui.Platform;
 using MR.Gestures;
 using SkiaSharp.Views.Maui.Controls.Hosting;
 using UraniumUI;
-using Shiny;
-using Shiny.Locations;
-using SnapDoc.Services;
 
 #if WINDOWS
 using Microsoft.Maui.LifecycleEvents;
@@ -34,14 +31,6 @@ public static class MauiProgram
                 fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
                 fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
                 fonts.AddMaterialSymbolsFonts();
-            })
-            .UseShiny()
-            .UseGps<LocationDelegate>(true, new GpsRequest
-            {
-                UseBackground = false,
-                Accuracy = GpsAccuracy.High,
-                Interval = TimeSpan.FromSeconds(3),
-                ThrottledInterval = TimeSpan.FromSeconds(3)
             });
 
         // Registriere die AppShell
