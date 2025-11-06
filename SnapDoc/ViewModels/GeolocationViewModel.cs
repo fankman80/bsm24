@@ -111,7 +111,7 @@ public partial class GeolocationViewModel : BaseViewModel
                     return null;
             }
 
-            var request = new GeolocationRequest(GeolocationAccuracy.Best, TimeSpan.FromSeconds(SettingsService.Instance.GpsTimeOut));
+            var request = new GeolocationRequest(GeolocationAccuracy.Best, TimeSpan.FromSeconds(SettingsService.Instance.GpsResponseTimeOut));
             cts = new CancellationTokenSource();
             var location = await Geolocation.Default.GetLocationAsync(request, cts.Token);
 
