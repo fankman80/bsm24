@@ -10,7 +10,8 @@ namespace SnapDoc.Views;
 public partial class EditorView : ContentPage, IQueryAttributable
 {
     private string _jsonString = string.Empty;
-    private string _filePath;
+    private string _filePath = null;
+    private string _stringTxt = null;
     private bool _editorReady = false;
     private bool _isReadOnly = false;
 
@@ -33,8 +34,10 @@ public partial class EditorView : ContentPage, IQueryAttributable
     {
         if (query.TryGetValue("file", out var value1))
             _filePath = value1 as string;
-        if (query.TryGetValue("fileMode", out object value2))
-            if (value2 as string == "R")
+        if (query.TryGetValue("string", out var value2))
+            _stringTxt = value2 as string;
+        if (query.TryGetValue("fileMode", out object value3))
+            if (value3 as string == "R")
                 _isReadOnly = true;
     }    
 
@@ -100,8 +103,12 @@ public partial class EditorView : ContentPage, IQueryAttributable
 
     private async void OnLoaded(object sender, EventArgs e)
     {
-        if (!string.IsNullOrEmpty(_filePath) && File.Exists(_filePath))
+        if (!string.IsNullOrEmpty(_stringTxt))
+            _jsonString = _stringTxt;
+        else if (!string.IsNullOrEmpty(_filePath) && File.Exists(_filePath))
             _jsonString = File.ReadAllText(_filePath);
+        else
+            _jsonString = "";
 
         EditorWebView.Source = new HtmlWebViewSource
         {
