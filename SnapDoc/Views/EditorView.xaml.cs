@@ -12,6 +12,7 @@ public partial class EditorView : ContentPage, IQueryAttributable
     private string _jsonString = string.Empty;
     private string _filePath;
     private bool _editorReady = false;
+    private bool _isReadOnly = false;
 
     public EditorView()
     {
@@ -27,6 +28,13 @@ public partial class EditorView : ContentPage, IQueryAttributable
 
         Loaded += OnLoaded;
     }
+
+    public void ApplyQueryAttributes(IDictionary<string, object> query)
+    {
+        if (query.TryGetValue("fileMode", out object value))
+            if (value as string == "R")
+                _isReadOnly = true;
+    }    
 
     #region Handler Setup
 
@@ -95,7 +103,7 @@ public partial class EditorView : ContentPage, IQueryAttributable
 
         EditorWebView.Source = new HtmlWebViewSource
         {
-            Html = LoadHtmlFromFile(false)
+            Html = LoadHtmlFromFile(_isReadOnly)
         };
     }
 
