@@ -260,43 +260,27 @@
             </HorizontalStackLayout>
         </AbsoluteLayout>
 
-        <Grid x:Name="SetPinFrame" IsVisible="false">
-            <Border Stroke="Red"
-                    StrokeThickness="40"
-                    StrokeLineJoin="Miter"
+        <AbsoluteLayout x:Name="SetPinFrame" IsVisible="false">
+            <Border AbsoluteLayout.LayoutBounds="0, 0, 1, 1"
+                    AbsoluteLayout.LayoutFlags="All"
+                    Stroke="Red"
+                    StrokeThickness="16"
+                    StrokeLineJoin="Miter"                    
+                    StrokeDashArray="1"
                     Opacity="0.2"
-                    ZIndex="9997"/>
-            <Label Text="Setze Pin..."
-                   Margin="0,8,0,0"
-                   FontSize="20"
-                   FontAttributes="Bold"
-                   TextColor="White"
-                   HorizontalTextAlignment="Center"
-                   ZIndex="9998">
-                <Label.Shadow>
-                    <Shadow Brush="Black"
-                    Offset="0,0"
-                    Radius="5"
-                    Opacity="1"/>
-                </Label.Shadow>
-            </Label>
-            <Button ImageSource="{FontImageSource FontFamily=MaterialOutlined, Color=White, Glyph={x:Static m:MaterialOutlined.Cancel}}"
-                    Padding="0"
-                    HorizontalOptions="End"
-                    VerticalOptions="Start"
-                    WidthRequest="30"
-                    HeightRequest="30"
-                    BackgroundColor="Transparent"
+                    ZIndex="9998"/>
+            <Button AbsoluteLayout.LayoutBounds="1, 1, AutoSize, AutoSize"
+                    AbsoluteLayout.LayoutFlags="PositionProportional"
+                    Margin="0,0,20,20"
+                    WidthRequest="60"
+                    HeightRequest="60"
+                    CornerRadius="30"
+                    BackgroundColor="Red"
+                    ImageSource="{FontImageSource FontFamily=MaterialOutlined, Color=White, Glyph={x:Static m:MaterialOutlined.Cancel}}"                    
                     Clicked="OnPinSetCancelClicked"
-                    ZIndex="9999">
-                <Button.Shadow>
-                <Shadow Brush="Black"
-                    Offset="0,0"
-                    Radius="5"
-                    Opacity="1"/>
-            </Button.Shadow>
-            </Button>
-        </Grid>
+                    ZIndex="9999"/>
+
+        </AbsoluteLayout>
 
         <!-- Overlay für Busy-Indikator -->
         <local:BusyOverlayView x:Name="busyOverlay"

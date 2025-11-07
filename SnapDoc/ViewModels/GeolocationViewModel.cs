@@ -60,8 +60,69 @@ public partial class GeolocationViewModel : BaseViewModel
     // ----------------------------------------------------------------------
     public async Task OnToggleGPSAsync()
     {
-        IsGpsActive = !IsGpsActive;
+        // Wenn GPS ausgeschaltet werden soll:
+        if (IsGpsActive)
+        {
+            IsGpsActive = false;
+            UpdateGPSButtonIcon();
+            StopListening();
+            return;
+        }
 
+        // Prüfen, ob Standortberechtigung erlaubt ist
+        var status = await Permissions.CheckStatusAsync<Permissions.LocationWhenInUse>();
+        if (status != PermissionStatus.Granted)
+        {
+            status = await Permissions.RequestAsync<Permissions.LocationWhenInUse>();
+            if (status != PermissionStatus.Granted)
+            {
+                await Shell.Current.DisplayAlertAsync("GPS deaktiviert",
+                    "Standortberechtigung wurde nicht erteilt. GPS kann nicht aktiviert werden.",
+                    "OK");
+                return; // Abbrechen
+            }
+        }
+
+        // Prüfen, ob das System-GPS aktiv ist
+        bool isGpsEnabled = await IsSystemGpsEnabledAsync();
+        if (!isGpsEnabled)
+        {
+            bool openSettings = await Shell.Current.DisplayAlertAsync(
+                "GPS ist deaktiviert",
+                "Um die Standorterkennung zu aktivieren, bitte GPS in den Systemeinstellungen einschalten.",
+                "Einstellungen öffnen",
+                "Abbrechen");
+
+            if (openSettings)
+            {
+#if ANDROID
+            // Systemeinstellungen öffnen
+            var intent = new Android.Content.Intent(Android.Provider.Settings.ActionLocationSourceSettings);
+            intent.AddFlags(Android.Content.ActivityFlags.NewTask);
+            Android.App.Application.Context.StartActivity(intent);
+#endif
+            }
+
+            // GPS bleibt deaktiviert → Toggle bleibt aus
+            return;
+        }
+
+        // Jetzt darf GPS aktiviert werden
+        IsGpsActive = true;
+        UpdateGPSButtonIcon();
+        await StartListeningAsync();
+
+        // Erste Position abfragen
+        if (LastKnownLocation == null)
+        {
+            var location = await GetCurrentLocationAsync();
+            if (location != null)
+                LastKnownLocation = location;
+        }
+    }
+
+    private void UpdateGPSButtonIcon()
+    {
         GPSButtonIcon = new FontImageSource
         {
             FontFamily = "MaterialOutlined",
@@ -73,25 +134,27 @@ public partial class GeolocationViewModel : BaseViewModel
                     : (Color)Application.Current.Resources["Primary"],
             Size = 24
         };
-
-        if (IsGpsActive)
-        {
-            await StartListeningAsync();
-
-            // einmalige Abfrage beim Aktivieren
-            if (LastKnownLocation == null)
-            {
-                var location = await GetCurrentLocationAsync();
-                if (location != null)
-                    LastKnownLocation = location;
-            }
-        }
-        else
-        {
-            StopListening();
-        }
     }
 
+    private async Task<bool> IsSystemGpsEnabledAsync()
+    {
+#if ANDROID
+    try
+    {
+        var locationManager = (Android.Locations.LocationManager)
+            Android.App.Application.Context.GetSystemService(Android.Content.Context.LocationService);
+        return locationManager.IsProviderEnabled(Android.Locations.LocationManager.GpsProvider)
+            || locationManager.IsProviderEnabled(Android.Locations.LocationManager.NetworkProvider);
+    }
+    catch
+    {
+        return false;
+    }
+#else
+        await Task.CompletedTask;
+        return true; // Unter Windows immer true, da kein System-GPS-Schalter
+#endif
+    }
 
     // ----------------------------------------------------------------------
     // 🔹 Aktuelle Position einmalig abfragen, nur wenn GPS aktiv ist

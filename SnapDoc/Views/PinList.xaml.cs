@@ -132,8 +132,6 @@ public partial class PinList : ContentPage
         string planId = button.AutomationId;
         string pinId = button.ClassId;
 
-        //await Shell.Current.GoToAsync($"///{planId}");
-        //await Shell.Current.Navigation.PopToRootAsync();
         await Shell.Current.GoToAsync($"setpin?planId={planId}&pinId={pinId}&sender=pinList");
     }
 
@@ -211,6 +209,9 @@ public partial class PinList : ContentPage
                 case var crit when crit == SettingsService.Instance.PinSortCrits[5]:
                     pinItems = [.. pinItems.OrderBy(pin => pin.Time).ToList()];
                     break;
+                case var crit when crit == SettingsService.Instance.PinSortCrits[6]:
+                    pinItems = [.. pinItems.OrderBy(pin => pin.PinPriority).ToList()];
+                    break;
             }
         }
         else // Sortiere absteigend
@@ -234,6 +235,9 @@ public partial class PinList : ContentPage
                     break;
                 case var crit when crit == SettingsService.Instance.PinSortCrits[5]:
                     pinItems = [.. pinItems.OrderByDescending(pin => pin.Time).ToList()];
+                    break;
+                case var crit when crit == SettingsService.Instance.PinSortCrits[6]:
+                    pinItems = [.. pinItems.OrderByDescending(pin => pin.PinPriority).ToList()];
                     break;
             }
         }

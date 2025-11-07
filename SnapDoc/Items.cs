@@ -53,6 +53,7 @@ namespace SnapDoc
         public string PinDesc => _pin.PinDesc;
         public string PinIcon => _pin.PinIcon;
         public string PinName => _pin.PinName;
+        public int PinPriority => _pin.PinPriority;
         public DateTime Time => _pin.DateTime;
 
         public bool AllowExport

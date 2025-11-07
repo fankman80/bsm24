@@ -568,7 +568,7 @@ public partial class NewPage : IQueryAttributable, INotifyPropertyChanged
         // Sicherstellen, dass der Plan existiert
         if (GlobalJson.Data.Plans.TryGetValue(PlanId, out Plan plan))
         {
-            plan.Pins ??= new();
+            plan.Pins ??= [];
             plan.Pins[currentDateTime] = newPinData;
             GlobalJson.Data.Plans[PlanId].PinCount += 1;
 
@@ -576,28 +576,7 @@ public partial class NewPage : IQueryAttributable, INotifyPropertyChanged
 
             AddPin(currentDateTime, newPinData.PinIcon);
 
-            // Asynchron GPS abrufen und später aktualisieren
-            _ = Task.Run(async () =>
-           {
-                try
-                {
-                    var location = await geoViewModel.GetCurrentLocationAsync();
-                    if (location != null)
-                    {
-                        newPinData.GeoLocation = new GeoLocData(location);
-                        // JSON erneut speichern, um GeoLocation zu aktualisieren
-                        GlobalJson.SaveToFile();
-                    }
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine($"Fehler beim Abrufen der GPS-Koordinaten: {ex.Message}");
-                }
-            });
-        }
-        else
-        {
-            Console.WriteLine($"Plan mit ID {PlanId} existiert nicht.");
+            _ = UpdatePinLocationAsync(newPinData);
         }
     }
 
@@ -625,6 +604,23 @@ public partial class NewPage : IQueryAttributable, INotifyPropertyChanged
         else
             shiftKeyDown = false;
 #endif
+    }
+
+    private async Task UpdatePinLocationAsync(Pin pin)
+    {
+        try
+        {
+            var location = await geoViewModel.GetCurrentLocationAsync();
+            if (location != null)
+            {
+                pin.GeoLocation = new GeoLocData(location);
+                GlobalJson.SaveToFile();
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Fehler beim Abrufen der GPS-Koordinaten: {ex.Message}");
+        }
     }
 
     private void OnMouseScroll(object sender, ScrollWheelEventArgs e)

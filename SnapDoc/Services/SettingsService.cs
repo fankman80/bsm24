@@ -94,7 +94,7 @@ public partial class SettingsService : ObservableObject
     [ObservableProperty]
     private List<string> _pinSortCrits =
     [
-        "nach Plan", "nach Pin", "nach Standort", "nach Bezeichnung", "nach aktiv/inaktiv", "nach Aufnahmedatum"
+        "nach Plan", "nach Pin", "nach Standort", "nach Bezeichnung", "nach aktiv/inaktiv", "nach Aufnahmedatum", "nach Priorität"
     ];
     [ObservableProperty]
     private List<PriorityItem> _priorityItems =
