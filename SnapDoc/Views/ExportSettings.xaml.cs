@@ -180,14 +180,19 @@ public partial class ExportSettings : ContentPage
 
     private void OnDeleteDocument(object sender, EventArgs e)
     {
-        if (!string.IsNullOrEmpty(SettingsService.Instance.SelectedTemplate))
+        var popup = new PopupDualResponse("Wollen Sie diese Vorlage wirklich löschen?");
+        var result = await this.ShowPopupAsync<string>(popup, Settings.PopupOptions);
+        if (result.Result != null)
         {
-            var filePath = Path.Combine(Settings.TemplateDirectory, SettingsService.Instance.SelectedTemplate);
-
-            if (File.Exists(filePath))
+            if (!string.IsNullOrEmpty(SettingsService.Instance.SelectedTemplate))
             {
-                File.Delete(filePath);
-                SettingsService.Instance.Templates.Remove(SettingsService.Instance.SelectedTemplate);
+                var filePath = Path.Combine(Settings.TemplateDirectory, SettingsService.Instance.SelectedTemplate);
+
+                if (File.Exists(filePath))
+                {
+                    File.Delete(filePath);
+                    SettingsService.Instance.Templates.Remove(SettingsService.Instance.SelectedTemplate);
+                }
             }
         }
     }
