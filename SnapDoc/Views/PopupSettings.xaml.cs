@@ -47,7 +47,25 @@ public partial class PopupSettings : Popup
         }
     }
 
-    private async void OpenEditor(object sender, EventArgs e)
+    private async void OpenPrgEditor(object sender, EventArgs e)
+    {
+        var filePath = Path.Combine(Settings.DataDirectory, "appsettings.ini");
+        if (File.Exists(filePath))
+        {
+            await Shell.Current.GoToAsync($"xmleditor?file={filePath}&fileMode=W");
+        }
+    }
+
+    private async void OpenDocEditor(object sender, EventArgs e)
+    {
+        var filePath = Path.Combine(Settings.DataDirectory, "appsettings.ini");
+        if (File.Exists(filePath))
+        {
+            await Shell.Current.GoToAsync($"xmleditor?file={filePath}&fileMode=W");
+        }
+    }
+
+    private async void OpenIconEditor(object sender, EventArgs e)
     {
         var filePath = Path.Combine(Settings.DataDirectory, "appsettings.ini");
         if (File.Exists(filePath))
