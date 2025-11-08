@@ -175,6 +175,13 @@
         // Theme wechseln
         function changeTheme(theme) {
             editor.setOption("theme", theme);
+
+            // Theme an C# senden
+            const payload = JSON.stringify({ theme: theme });
+            if (window.chrome?.webview)
+                window.chrome.webview.postMessage(payload); // Windows
+            else if (window.jsBridge?.invokeAction)
+                window.jsBridge.invokeAction(payload);      // Android
         }
     </script>
 </body>
