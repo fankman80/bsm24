@@ -236,8 +236,8 @@
                             <Label Text="Erweiterte Einstellungen"/>
                         </uranium:ExpanderView.Header>
                         <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto">
-                            <Label Grid.Column="0" Grid.Row="0" Text="JSON Texteditor" VerticalTextAlignment="Center"/>
-                            <Label Grid.Column="0" Grid.Row="1" Text="Grundeinstellungen" VerticalTextAlignment="Center"/>
+                            <Label Grid.Column="0" Grid.Row="0" Text="INI Texteditor" VerticalTextAlignment="Center"/>
+                            <Label Grid.Column="0" Grid.Row="1" Text="Zurück setzen" VerticalTextAlignment="Center"/>
                             <Button Grid.Column="1" Grid.Row="0"
                                     BackgroundColor="{AppThemeBinding Light={DynamicResource Primary}, Dark={DynamicResource PrimaryDark}}"
                                     TextColor="{AppThemeBinding Light={DynamicResource PrimaryDarkText}, Dark={DynamicResource PrimaryText}}"                        
