@@ -136,7 +136,7 @@ public partial class EditorView : ContentPage, IQueryAttributable
         htmlContent = htmlContent.Replace("#IS_READ_ONLY", isReadOnly.ToString().ToLowerInvariant());
 
         // Thema setzen
-        htmlContent = htmlContent.Replace("#THEME_REPLACE", isReadOnly.ToString().ToLowerInvariant());
+        htmlContent = htmlContent.Replace("#THEME_REPLACE", SettingsService.Instance.EditorTheme);
 
         return htmlContent;
     }
