@@ -178,7 +178,7 @@ public partial class ExportSettings : ContentPage
         }
     }
 
-    private void OnDeleteDocument(object sender, EventArgs e)
+    private async void OnDeleteDocument(object sender, EventArgs e)
     {
         var popup = new PopupDualResponse("Wollen Sie diese Vorlage wirklich löschen?");
         var result = await this.ShowPopupAsync<string>(popup, Settings.PopupOptions);
