@@ -107,6 +107,9 @@
                 readOnly: isReadOnly // <- hier wird das Flag gleich für den Editor genutzt
             });
 
+            // aktuell gewähltes Theme im Dropdown anzeigen
+            document.getElementById("themeSelector").value = "#THEME_REPLACE";
+
             if (isReadOnly) {
                 // bestimmte Buttons verstecken
                 document.getElementById("sendButton").style.display = "none";
