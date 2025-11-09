@@ -58,7 +58,7 @@ public partial class PopupSettings : Popup
 
     private async void OpenDocEditor(object sender, EventArgs e)
     {
-        var filePath = Path.Combine(GlobalJson.Data.ProjectPath, GlobalJson.Data.JsonFile);
+        var filePath = Path.Combine(Settings.DataDirectory, GlobalJson.Data.ProjectPath, GlobalJson.Data.JsonFile);
         if (File.Exists(filePath))
         {
             await Shell.Current.GoToAsync($"xmleditor?file={filePath}&fileMode=W");

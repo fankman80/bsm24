@@ -17,6 +17,8 @@
     <!-- CodeMirror JS -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.14/codemirror.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.14/mode/javascript/javascript.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.14/mode/xml/xml.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.14/mode/meta.min.js"></script>
 
     <style>
         html, body {
@@ -74,7 +76,7 @@
         <button onclick="editor.undo()">↶</button>
         <button onclick="editor.redo()">↷</button>
         <button onclick="formatJson()">Formatieren</button>
-        <button onclick="validateJson()">Validieren</button>
+        <button onclick="validateContent()">Validieren</button>
         <select id="themeSelector" onchange="changeTheme(this.value)">
             <option value="material-darker" selected>Material (Dark)</option>
             <option value="material">Material (Light)</option>
@@ -131,6 +133,7 @@
         window.setJsonText = function (jsonString) {
             if (editor) {
                 editor.setValue(jsonString);
+                detectLanguageAndSetMode(jsonString); // <--- hier aufrufen
                 editor.refresh();
             } else {
                 pendingJson = jsonString;
@@ -163,15 +166,47 @@
             }
         }
 
-        // JSON validieren
-        function validateJson() {
-            try {
-                JSON.parse(editor.getValue());
-                alert("JSON ist gültig!");
-            } catch (e) {
-                alert("Fehler im JSON:\n\n" + e.message);
+        // validieren
+        function validateContent() {
+            const content = editor.getValue().trim();
+
+            if (!content) {
+                alert("Der Inhalt ist leer.");
+                return;
             }
+
+            // Prüfen, ob es sich um XML handelt
+            if (content.startsWith("<")) {
+                try {
+                    const parser = new DOMParser();
+                    const xmlDoc = parser.parseFromString(content, "application/xml");
+                    const parseError = xmlDoc.getElementsByTagName("parsererror");
+                    if (parseError.length > 0) {
+                        alert("❌ Fehler im XML:\n\n" + parseError[0].textContent);
+                    } else {
+                        alert("✅ XML ist gültig!");
+                    }
+                } catch (e) {
+                    alert("❌ Fehler beim XML-Parsing:\n\n" + e.message);
+                }
+                return;
+            }
+
+            // Prüfen, ob es sich um JSON handelt
+            if (content.startsWith("{") || content.startsWith("[")) {
+                try {
+                    JSON.parse(content);
+                    alert("✅ JSON ist gültig!");
+                } catch (e) {
+                    alert("❌ Fehler im JSON:\n\n" + e.message);
+                }
+                return;
+            }
+
+            // Wenn weder noch
+            alert("Der Inhalt ist weder JSON noch XML.");
         }
+
 
         // Theme wechseln
         function changeTheme(theme) {
@@ -183,6 +218,21 @@
                 window.chrome.webview.postMessage(payload); // Windows
             else if (window.jsBridge?.invokeAction)
                 window.jsBridge.invokeAction(payload);      // Android
+        }
+
+        // Automatische Spracherkennung für JSON, XML und Text
+        function detectLanguageAndSetMode(content) {
+            let mode = "plaintext"; // Standard: normaler Text
+
+            if (/^\s*</.test(content)) {
+                // Wenn der Text mit "<" beginnt → wahrscheinlich XML
+                mode = "xml";
+            } else if (/^\s*[{[]/.test(content)) {
+                // Wenn der Text mit "{" oder "[" beginnt → JSON
+                mode = { name: "javascript", json: true };
+            }
+
+            editor.setOption("mode", mode);
         }
     </script>
 </body>
