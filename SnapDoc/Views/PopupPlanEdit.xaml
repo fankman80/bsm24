@@ -34,14 +34,13 @@
                                 AccentColor="{AppThemeBinding Light={DynamicResource Primary}, Dark={DynamicResource PrimaryDark}}"
                                 AllowClear="True"/>
 
-            <material:TextField x:Name="desc_entry"
+            <material:EditorField x:Name="desc_entry"
                                 Title="Beschreibung"
                                 MaxLength="2000"
                                 TitleColor="{DynamicResource SecondaryBackground}"
                                 BorderColor="{DynamicResource SecondaryBackground}"
                                 TextColor="{AppThemeBinding Light={DynamicResource PrimaryText}, Dark={DynamicResource PrimaryDarkText}}"
-                                AccentColor="{AppThemeBinding Light={DynamicResource Primary}, Dark={DynamicResource PrimaryDark}}"
-                                AllowClear="True"/>
+                                AccentColor="{AppThemeBinding Light={DynamicResource Primary}, Dark={DynamicResource PrimaryDark}}"/>
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />

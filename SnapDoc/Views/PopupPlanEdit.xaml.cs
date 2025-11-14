@@ -55,6 +55,7 @@ public partial class PopupPlanEdit : Popup<PlanEditReturn>, INotifyPropertyChang
 
         if (result.Result != null)
             SelectedColor = Color.FromArgb(result.Result.PenColorHex);
+            Transparency = SelectedColor.Alpha;
     }
 
     private void PlanRotateLeft(object sender, EventArgs e)
