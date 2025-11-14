@@ -102,8 +102,7 @@
             <Label Text="Kategorie"
                    FontSize="12"
                    FontAttributes="Bold"
-                   VerticalTextAlignment="Center"
-                   TextColor="Black" />
+                   VerticalTextAlignment="Center" />
             <Border VerticalOptions="Center"
                     HeightRequest="38"
                     StrokeThickness="1"
